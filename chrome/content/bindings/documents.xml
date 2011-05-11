@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bindings>
+<bindings id="documentBindings"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="document">
+        <!--<ressources>
+                <stylesheet src="chrome://dcpoffline/skin/document.css"/>
+            </ressources>-->
+        
+        <content>
+            <xul:vbox flex="1" style="border: 3px solid white">
+                <children/>
+            </xul:vbox>
+        </content>
+        
+        <implementation>
+            <property
+                name="docid"
+                onget="return this.getAttribute('docid');"
+                onset="if (val) this.setAttribute('docid',val);"/>
+            <property name="fromName"
+                onget="return this.getAttribute('fromName');"
+                onset="if (val) this.setAttribute('fromName',val);"/>
+            <!-- mode: "edit" or "view", default is "view" -->
+            <property
+                name="mode"
+                readonly="true">
+                <getter><![CDATA[
+                    if(this.hasAttribute('mode')){
+                        var mode = this.getAttribute('mode');
+                        if( (mode != 'view') && (mode != 'edit') ){
+                            this.setAttribute('mode', 'view');
+                        }
+                        return mode;
+                    }
+                    return 'view';
+                ]]></getter>
+            </property>
+            <method name="save">
+                <body><![CDATA[
+                    //TODO
+                    return true;
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+                Components.utils.import("resource://modules/logger.jsm", dcpOffline);
+                log("<--------- entering document [" + this.docid + "] constructor");
+                try{
+                    Components.utils.import("resource://modules/docManager.jsm", dcpOffline);
+                    docManager.initDocInstance({id : this.docid});
+                    //TODO: register as a render
+                    return true;
+                } catch(e){
+                    //TODO
+                    log("[document donstructor] " + e);
+                }
+                log("leaving document [" + this.docid + "] constructor --------->");
+            ]]></constructor>
+            <destructor><![CDATA[
+                try{
+                    //TODO: unregister as a render
+                    return true;
+                } catch(e){
+                    log(e);
+                }
+            ]]></destructor>
+        </implementation>
+        <!--
+            <handlers>
+
+            </handlers>
+            -->
+    </binding>
+    
+</bindings>

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<?xml-stylesheet href="attr-bindings.css" type="text/css"?>
+
+<window id="animal9999" 
+    title="animal 9999"
+    height="300px"
+    width="300px"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    >
+
+    <!--<script type="application/javascript" 
+        src="chrome://dcpoffline/content/templates/animal9999.js"/>-->
+        
+    <toolbox id="main-toolbox">
+        <menubar id="main-menubar">
+            <menu id="organize-menu" label="Organize" disabled="true">
+                <menupopup>
+                    <menu id="organize-menu-new-menu" label="New">
+                        <menupopup>
+                            <menuitem id="organize-menu-new-menu-folder" label="Folder"/>
+                            <menuitem id="organize-menu-new-menu-search" label="Search"/>
+                        </menupopup>
+                    </menu>
+                </menupopup>
+            </menu>
+            <spacer flex="1"/>
+            <textbox type="search" searchbutton="true"/>
+            <hbox>
+                <label value="Domaine:"/>
+                <menulist id='domain' label="Sélectionnez un domaine"/>
+            </hbox>
+        </menubar>
+    </toolbox>
+    
+    <hbox flex="1" style="border: 3px solid red">
+        <dcpDocument docid="9999" mode="view">
+            <dcpAttribute attrid="frame1" type="frame">
+                <dcpAttribute attrid="attr1" type="text"/>
+            </dcpAttribute>
+        </dcpDocument>
+    </hbox>
+    
+    <statusbar>
+        <hbox flex ="1">
+            <statusbarpanel label="" flex="1"/>
+            <progressmeter mode="determined"/>
+            <statusbarpanel label="Connection status"/>
+        </hbox>
+    </statusbar>
+
+</window>

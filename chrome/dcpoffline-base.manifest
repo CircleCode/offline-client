@@ -1,0 +1,17 @@
+## main content
+content dcpoffline content/
+
+## JS modules
+resource    modules                         modules/
+
+## locales
+locale      dcpoffline      fr-FR           locale/fr-FR/
+
+## customizable skin
+skin        dcpoffline      custom-skin     skins/custom/
+
+## single customizations
+## [SAMPLE] overlay chrome://dcpoffline/content/origin.xul chrome://dcpoffline/content/custom-origin.xul
+
+## single overrides
+## [SAMPLE] override chrome://package/type/original-uri.whatever new-resolved-URI [flags]
