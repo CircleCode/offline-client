@@ -97,7 +97,7 @@ docManager = function() {
     };
 }();
 
-let defaultDomain = Preferences.get('domain');
+let defaultDomain = Preferences.get('dcpoffline.domain');
 log('default domain is [' + defaultDomain + ']');
 if (defaultDomain) {
     docManager.setActiveDomain({

@@ -4,32 +4,41 @@ Components.utils.import("resource://modules/storageManager.jsm");
 
 var EXPORTED_SYMBOLS = ["offlineLightDocument"];
 
+var cc = cc;
+var ci = ci;
+
 var offlineLightDocument = function(config) {
 
-    var _docid = null;
-    var _fromid = null;
-    var _values = null;
+    var that = this;
+    
+    var _initid = null;
 
-    var retrieve = function(config) {
-        var doc = storageManager.getDocument({
-            docid : config.docid
-        });
-        log(doc);
-        _docid = doc.docid;
-        _fromid = doc.fromid;
-        _values = doc.values;
+    function retrieve(config) {
+        try{
+            var doc = storageManager.getDocument({
+                initid : config.initid
+            });
+            log(doc, "retrieved doc");
+            that.properties = doc.properties;
+            that.attributes = doc.attributes;
+            that._initid = doc.properties.initid;
+        } catch(e){
+            log(e, "error when retrieving values");
+            throw(e);
+        }
     };
 
-    var create = function() {
+    function create() {
         // FIXME
-        _docid = Components.classes["@mozilla.org/uuid-generator;1"]
-        .getService(Components.interfaces.nsIUUIDGenerator).generateUUID().toString();
+        _docid = cc["@mozilla.org/uuid-generator;1"]
+                .getService(ci.nsIUUIDGenerator)
+                .generateUUID().toString();
     };
 
     if (config) {
-        if (config.docid) {
+        if (config.initid) {
             // existing document
-            retrieve(config.docid);
+            retrieve(config.initid);
         } else if (config.fromid) {
             // new document
             create();
@@ -39,55 +48,60 @@ var offlineLightDocument = function(config) {
         }
         if (config.addToDocManager) {
             // XXX: does it work?
-            config.doc = this
-            initDocInstance(config);
+            config.doc = this;
+            docManager.initDocInstance(config);// FIXME
         }
     } else {
-        // FIXME
-        throw "missing arguments";
+        throw "missing arguments for offlineLightDocument creation";
     }
 
     return {
-        get docid () {
-            return _docid;
-        },
-        
-        getValue : function(config) {
-            if (config && config.attrid) {
-                return _values[config.attrid];
+        get initid () {return that._initid;},
+
+        get : function(id) {
+            if (id) {
+                return that[id];
             } else {
+                // FIXME
                 throw "missing arguments";
             }
         },
-        setValue : function(config) {
-            if (config && config.attrid && config.hasOwnAttribute('value')) {
-                this._values[config.attrid] = config.value;
+        set : function(id, value) {
+            if (id && (value !== undefined)) {
+                that[id] = value;
             } else {
+                // FIXME
                 throw "missing arguments";
             }
             return this;
         },
 
         save : function(config) {
-            config = config || {};
-            config.docid = _docid;
-            config.values = _values;
-            return storageManager.setDocumentValues(config);
+            if (that.editable || config.force) {
+                config.values = this;
+                return storageManager.saveDocumentValues(config);
+            } else {
+                throw "document " + that.initid + " is not editable";
+            }
         },
 
-        getDisplayValue : function(config) {
+        getDisplayValue : function(id) {
             // TODO: getDisplayValue
-            if (config.attrid) {
-                return this.getValue(config);
+            if (id) {
+                return that.get(id);
             } else {
+                // FIXME
                 throw "missing arguments";
             }
         },
 
-        getLabel : function(config) {
+        getLabel : function(id) {
             // TODO: getLabel
             // XXX: should be internationalized
-            switch (config.attrid) {
+            switch (id) {
+                case '' :
+                    return 'no id';
+                    break;
                 default :
                     return 'title of ' + config.attrid + ' for document '
                             + this.docid;
