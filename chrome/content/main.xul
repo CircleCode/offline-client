@@ -26,8 +26,10 @@
             <menubar id="main-menubar">
                 <menu id="debug-menu" label="&debug;">
                     <menupopup>
-                        <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;" command="start_venkman()"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" command="customDebug();"/>
+                        <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;" oncommand="start_venkman()"/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(1);"/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(2);"/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(3);"/>
                     </menupopup>
                 </menu>
                 <menu id="organize-menu" label="Organize" disabled="true">
