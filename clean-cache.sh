@@ -5,6 +5,7 @@ echo "#######################"
 UUID=`uuidgen` 
 sed "s/^BuildID=.*$/BuildID=$UUID/" <application.ini >application.ini.tmp 
 mv application.ini.tmp application.ini
+rm -rf ~/.anakeen/dynacase-offline-client/
 
 echo ""
 echo "#######################"
