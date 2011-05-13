@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS attrmappings;
+DROP TABLE IF EXISTS docsbydomain;
+DROP TABLE IF EXISTS documents;
+DROP TABLE IF EXISTS domainmodes;
+DROP TABLE IF EXISTS domains;
+DROP TABLE IF EXISTS families;
+DROP TABLE IF EXISTS sharepolicies;
+DROP TABLE IF EXISTS transactionpolicies;
+DROP TABLE IF EXISTS synchrotimes;
+DROP TABLE IF EXISTS templates;
