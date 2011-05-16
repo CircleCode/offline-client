@@ -22,11 +22,12 @@ function customDebug(level) {
     Components.utils.import("resource://modules/storageManager.jsm");
 
     var C = new Fdl.Context({
-        url : "http://dynacase.r2d2.paris.lan/dev/"
+        //url : "http://dynacase.r2d2.paris.lan/dev/"
+            url : "http://localhost/eric/"
     });
     if (!C.isAuthenticated()) {
         var u = C.setAuthentification({
-            login : 'admin',
+            login : 'nono',
             password : 'anakeen'
         });
         if (!u)

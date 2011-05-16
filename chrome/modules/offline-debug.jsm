@@ -4,6 +4,7 @@
  * @license http://www.fsf.org/licensing/licenses/agpl-3.0.html GNU Affero General Public License
  */
 
+Components.utils.import("resource://modules/fdl-data-debug.jsm");
 /**
  * @class Fdl.OfflineCore
  * @param {Object}
@@ -12,7 +13,7 @@
  * @cfg {String} name the application name
  * @constructor
  */
-
+var EXPORTED_SYMBOLS = [ "Fdl", "JSON" ];
 Fdl.OfflineCore = function(config) {
 	if (config && config.context) {
 		this.context = config.context;
@@ -143,11 +144,21 @@ Fdl.OfflineDomain.prototype.callDomainMethod = function(config) {
 /**
  * retrieve content (recursive) of shared folder
  * 
+ * @param object config
+ *            <ul>
+ *            <li><b>until : </b>{String} date since documents has been
+ *            modified</li>
+ *            </ul>
  * @return {Fdl.DocumentList} list of document of user's domain
  */
-Fdl.OfflineDomain.prototype.getSharedDocuments = function() {
+Fdl.OfflineDomain.prototype.getSharedDocuments = function(config) {
+	var until = null;
+	if (config && config.until) {
+		until = config.until;
+	}
 	var data = this.callDomainMethod({
-		method : 'getShareDocuments'
+		method : 'getSharedDocuments',
+		until : until
 	});
 	if (data) {
 		data.context = this.context;
@@ -170,7 +181,6 @@ Fdl.OfflineDomain.prototype.getUserMode = function() {
 		});
 		if (data) {
 			this.userMode = data.userMode;
-
 		} else {
 			return null;
 		}
@@ -179,12 +189,20 @@ Fdl.OfflineDomain.prototype.getUserMode = function() {
 };
 /**
  * retrieve content (recursive) of user folder
- * 
+ * @param object config
+ *            <ul>
+ *            <li><b>until : </b>{String} date since documents has been
+ *            modified</li>
+ *            </ul>
  * @return {Fdl.DocumentList} list of document of user's domain
  */
-Fdl.OfflineDomain.prototype.getUserDocuments = function() {
+Fdl.OfflineDomain.prototype.getUserDocuments = function(config) {
+	var until = null;
+	if (config && config.until) {
+		until = config.until;
+	}
 	var data = this.callDomainMethod({
-		method : 'getUserDocuments'
+		method : 'getUserDocuments',until:until
 	});
 	if (data) {
 		data.context = this.context;
@@ -230,6 +248,120 @@ Fdl.OfflineDomain.prototype.getAvailableFamilies = function() {
 		}
 	}
 	return this.availableFamilies;
+};
+/**
+ * put a lock to document
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>document : </b>{Fdl.Document} the document to reserve</li>
+ *            </ul>
+ * @return {Fdl.Document} reverted document (null if error)
+ */
+Fdl.OfflineDomain.prototype.bookDocument = function(config) {
+	if (config && config.document) {
+		config.method = 'bookDocument';
+		config.docid = config.document.id;
+		var data = this.callDomainMethod(config);
+
+		if (data) {
+			if (!data.error) {
+				return this.context.getDocument({
+					data : data
+				});
+			}
+		}
+	}
+
+	return null;
+};
+
+/**
+ * cancel the reservation if local document is changed a revert is also
+ * completed
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>document : </b>{Fdl.Document} the document where cancel
+ *            the reservation</li>
+ *            </ul>
+ * @return {Fdl.Document} cancelled document (null if error)
+ */
+Fdl.OfflineDomain.prototype.unbookDocument = function(config) {
+	if (config && config.document) {
+		config.method = 'unbookDocument';
+		config.docid = config.document.id;
+		var data = this.callDomainMethod(config);
+
+		if (data) {
+			if (!data.error) {
+				return this.context.getDocument({
+					data : data
+				});
+			}
+		}
+	}
+
+	return null;
+};
+
+/**
+ * delete waiting changes and return update document 
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>document : </b>{Fdl.Document} the document where cancel
+ *            the reservation</li>
+ *            </ul>
+ * @return {Fdl.Document} reverted document (null if error)
+ */
+Fdl.OfflineDomain.prototype.revertDocument = function(config) {
+	if (config && config.document) {
+		config.method = 'revertDocument';
+		config.docid = config.document.id;
+		var data = this.callDomainMethod(config);
+
+		if (data) {
+			if (!data.error) {
+				return this.context.getDocument({
+					data : data
+				});
+			}
+		}
+	}
+
+	return null;
+};
+
+/**
+ * remove document from user space the document is not deleted. It is just
+ * remove from collection set to synchronize
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>document : </b>{Fdl.Document} the document to remove</li>
+ *            </ul>
+ * @return {Fdl.Document} removed document (null if error)
+ */
+Fdl.OfflineDomain.prototype.removeDocument = function(config) {
+	if (config && config.document) {
+		config.method = 'removeDocument';
+		config.docid = config.document.id;
+		var data = this.callDomainMethod(config);
+
+		if (data) {
+			if (!data.error) {
+				return this.context.getDocument({
+					data : data
+				});
+			}
+		}
+	}
+	return null;
 };
 
 /**
@@ -327,62 +459,9 @@ Fdl.OfflineSync.prototype = {
 	 */
 	transactionStatus : null,
 
-	/**
-	 * retrieve server document and replace local document
-	 * 
-	 * @param {Object}
-	 *            config
-	 *            <ul>
-	 *            <li><b>document : </b>{Fdl.Document} the document to revert</li>
-	 *            </ul>
-	 * @return {Fdl.Document} reverted document (null if error)
-	 */
-	revertDocument : function(config) {
-		var data = this.callSyncMethod({
-			method : 'revertDocument'
-		});
-		if (data) {
-			return this.context.getDocument(data); //TODO
-		}
-		return null;
-	},
 
-	/**
-	 * put a lock to document
-	 * 
-	 * @param {Object}
-	 *            config
-	 *            <ul>
-	 *            <li><b>document : </b>{Fdl.Document} the document to reserve</li>
-	 *            </ul>
-	 * @return {Fdl.Document} reverted document (null if error)
-	 */
-	bookDocument : function(config) {
-		if (config && config.document) {
-			return config.document.lock(); // not really that, must verify TODO
-			// families before
-		}
-		return null;
-	},
 
-	/**
-	 * cancel the reservation if local document is changed a revert is also
-	 * completed
-	 * 
-	 * @param {Object}
-	 *            config
-	 *            <ul>
-	 *            <li><b>document : </b>{Fdl.Document} the document where
-	 *            cancel the reservation</li>
-	 *            </ul>
-	 * @return {Fdl.Document} cancelled document (null if error)
-	 */
-	unbookDocument : function(config) {
-		if (config && config.document) {
-			return config.document.unlock(); // TODO verify
-		}
-		return null;
-	},
+
 	/**
 	 * begin transaction
 	 * 
@@ -445,12 +524,7 @@ Fdl.OfflineSync.prototype = {
 		}
 		return null;
 	},
-	/**
-	 * @private
-	 */
-	dirname : function(path) {
-		return path.replace(/\\/g, '/').replace(/\/[^\/]*$/, '');
-	},
+	
 
 	/**
 	 * save document to the server
@@ -550,23 +624,99 @@ Fdl.OfflineSync.prototype = {
 	},
 
 	/**
-	 * remove document from domain folder
+	 * retrieve server document and replace local document
 	 * 
 	 * @param {Object}
 	 *            config
 	 *            <ul>
-	 *            <li><b>document : </b>{Fdl.Document} the document to remove</li>
+	 *            <li><b>document : </b>{Fdl.Document} the document to revert</li>
 	 *            </ul>
 	 * @return {Fdl.Document} reverted document (null if error)
 	 */
-	removeDocument : function(config) {
-		return null; //TODO
+	revertDocument : function(config) {
+		if (config && config.document) {
+			config.method = 'revertDocument';
+			config.docid = document.id;
+			var data = this.callSyncMethod(config); 
+
+			if (data) {
+				if (!data.error) {
+					return this.context.getDocument({
+						data : data
+					});
+				}
+			}
+		}
+		return null;
 	},
 
 	toString : function() {
 		return 'Fdl.OfflineSync';
 	}
 };
+
+
+/**
+ * retrieve content (recursive) of shared folder
+ * 
+ * @param object config
+ *            <ul>
+ *            <li><b>until : </b>{String} date since documents has been
+ *            modified</li>
+ *            </ul>
+ * @return {Fdl.DocumentList} list of document of user's domain
+ */
+Fdl.OfflineSync.prototype.getSharedDocuments = function(config) {
+	var until = null;
+	if (config && config.until) {
+		until = config.until;
+	}
+	var data = this.callSyncMethod({
+		method : 'getSharedDocuments',
+		until : until
+	});
+	if (data) {
+		data.acknowledgement=this.callSyncMethod({
+			method : 'getSharedDocumentsAcknowledgement'
+		});
+		data.context = this.context;
+		return new Fdl.DocumentList(data);
+
+	} else {
+		return null;
+	}
+};
+
+/**
+ * retrieve content (recursive) of user folder
+ * @param object config
+ *            <ul>
+ *            <li><b>until : </b>{String} date since documents has been
+ *            modified</li>
+ *            </ul>
+ * @return {Fdl.DocumentList} list of document of user's domain
+ */
+Fdl.OfflineSync.prototype.getUserDocuments = function(config) {
+	var until = null;
+	if (config && config.until) {
+		until = config.until;
+	}
+	var data = this.callSyncMethod({
+		method : 'getUserDocuments',until:until
+	});
+	if (data) {
+		data.acknowledgement=this.callSyncMethod({
+			method : 'getUserDocumentsAcknowledgement'
+		});
+		data.context = this.context;
+		return new Fdl.DocumentList(data);
+
+	} else {
+		return null;
+	}
+
+};
+
 /**
  * Call a method for domain api
  * 

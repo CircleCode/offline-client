@@ -1,3 +1,4 @@
+var EXPORTED_SYMBOLS = [ "Fdl" ];
 
 /**
  * @author Anakeen
@@ -487,18 +488,21 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
  * @author Anakeen
  * @license http://www.fsf.org/licensing/licenses/agpl-3.0.html GNU Affero General Public License
  */
+Components.utils.import("resource://modules/logger.jsm");
 
 /**
  * @class Fdl
  * @singleton
  */
-if (!("console" in window)) {
+log(typeof window);
+if (typeof window != 'undefined') {
+if ((!("console" in window))) {
 	window.console = {
 		'log' : function(s) {
 		}
 	};
 }; // to debug
-
+}
 var Fdl = {
 	version : "0.1",
 	_isAuthenticate : null,
@@ -695,11 +699,15 @@ Fdl.retrieveData = function(urldata, parameters, anonymousmode) {
 	 * authenticate'); return null; }
 	 */
 	var xreq=null;
-	if (window.XMLHttpRequest) {
-		 xreq = new XMLHttpRequest();
-	} else if (window.ActiveXObject) {
-		// branch for IE/Windows ActiveX version
-		 xreq = new ActiveXObject("Microsoft.XMLHTTP");
+	if (typeof window != 'undefined') {
+		if (window.XMLHttpRequest) {
+			xreq = new XMLHttpRequest();
+		} else if (window.ActiveXObject) {
+			// branch for IE/Windows ActiveX version
+			xreq = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	} else {
+		xreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
 	}
 	var sync = true;
 
@@ -1106,7 +1114,6 @@ Fdl.createDocument = function(config) {
  * @author Anakeen
  * @license http://www.fsf.org/licensing/licenses/agpl-3.0.html GNU Affero General Public License
  */
-if (!("console" in window)) {window.console = {'log': function(s) {}};}
 /**
  * @class Fdl.Context The connection context object to access to freedom
  *        documents
@@ -1483,12 +1490,15 @@ Fdl.Context.prototype.retrieveData = function(urldata, parameters,
 	var bsend = '';
 	var ANAKEENBOUNDARY = '--------Anakeen www.anakeen.com 2009';
 	var xreq=null;
-
-	if (window.XMLHttpRequest) {
-		 xreq = new XMLHttpRequest();
-	} else if (window.ActiveXObject) {
-		// branch for IE/Windows ActiveX version
-		 xreq = new ActiveXObject("Microsoft.XMLHTTP");
+	if (typeof window != 'undefined') {
+		if (window.XMLHttpRequest) {
+			xreq = new XMLHttpRequest();
+		} else if (window.ActiveXObject) {
+			// branch for IE/Windows ActiveX version
+			xreq = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	} else {
+		xreq = Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance(Components.interfaces.nsIXMLHttpRequest);
 	}
 	var sync = true;
 
