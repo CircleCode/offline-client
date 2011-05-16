@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+      <!ENTITY % base-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/base-attributes-binding.dtd" >
+      <!ENTITY separator "&#160;:&#160;" >
+      %base-attributes-bindingDTD;
+]>
+
+<bindings id="base-attributes-binding"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <!--
+        Anonymous implementation of base attributes.
+        -->
+    <binding id="base-attr">
+        <implementation>
+            <property
+                name="docid"
+                onget="return this.getAttribute('docid');"
+                onset="if (val) this.setAttribute('docid',val);"/>
+            <property
+                name="type"
+                onget="return this.getAttribute('type');"
+                readonly="true"/>
+            <property
+                name="attrid"
+                onget="return this.getAttribute('attrid');"
+                readonly="true"/>
+            <method name="getDocument">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/domUtils.jsm", dcpOffline);
+                    return domUtils.getParentByTagName(this, 'dcpDocument');
+                ]]></body>
+            </method>
+            <method name="getLabel">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/docManager.jsm", dcpOffline);
+                    return docManager.getDocInstance({docid: this.docid})
+                                     .getLabel({attrid : this.attrid});
+                ]]></body>
+            </method>
+            <method name="getChild">
+                <parameter name="aChildName"/>
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+                Components.utils.import("resource://modules/logger.jsm", dcpOffline);
+                log("<---- entering base-attribute constructor");
+                this.docid = this.getDocument().docid;
+                log(this.docid+':'+this.attrid);
+                this.getChild('label').setAttribute('label', this.getLabel());
+                this.getChild('label').setAttribute('value', this.getLabel());
+                log("leaving base-attribute constructor ---->");
+            ]]></constructor>
+            <destructor><![CDATA[
+            ]]></destructor>
+        </implementation>
+    </binding>
+    
+</bindings>

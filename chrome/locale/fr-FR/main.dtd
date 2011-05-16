@@ -1,0 +1,9 @@
+<!ENTITY  debug                         "Débogage">
+<!ENTITY  menu.debug.launch.venkman     "Lancer Venkman">
+<!ENTITY  menu.debug.launch.method      "Lancer la méthode de débogage">
+<!ENTITY  menu.debug.eric               "Lancer le débogage d'Éric">
+<!ENTITY  menu.debug.matthieu           "Lancer le débogage de Matthieu">
+
+<!ENTITY  domain.choose                 "Choisissez un domaine">
+<!ENTITY  welcome                       "Bienvenue">
+<!ENTITY  welcome.message               "Message de Bienvenue">
