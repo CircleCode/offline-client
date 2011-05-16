@@ -3,34 +3,37 @@
 <!DOCTYPE window [
 <!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
 %mainDTD;
+<!ENTITY % debug-matDTD SYSTEM "chrome://dcpoffline/locale/debug-mat.dtd" >
+%debug-matDTD;
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<window id="main" 
-    title="Dynacase offline"
+<window id="debug-ericDTD" 
+    title="Mat's debug window"
     width="800px"
     height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="log('application loaded');">
+    onload="log('Mat's debug window');">
     
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js"/>
 
     <script type="application/javascript" 
-        src="chrome://dcpoffline/content/main.js"/>
+            src="chrome://dcpoffline/content/mat-debug.js"/>
     <script type="application/javascript" 
-        src="chrome://dcpoffline/content/fdl-data-debug.js"/>
+            src="chrome://dcpoffline/content/fdl-data-debug.js"/>
         
     <toolbox id="main-toolbox">
         <toolbar>
+            <menubar id="main-menubar">
                 <menu id="debug-menu" label="&debug;">
                     <menupopup>
                         <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;" oncommand="start_venkman()"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.eric;" oncommand='window.open("chrome://dcpoffline/content/debug-eric.xul","Eric", "chrome,centerscreen");'/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.matthieu;" oncommand='window.open("chrome://dcpoffline/content/debug-mat.xul","Mat", "chrome,centerscreen");'/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(1);"/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(2);"/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(3);"/>
                     </menupopup>
                 </menu>
-            <menubar id="main-menubar">
                 <menu id="organize-menu" label="Organize" disabled="true">
                     <menupopup>
                         <menu id="organize-menu-new-menu" label="New">
