@@ -4,29 +4,31 @@ Components.utils.import("resource://gre/modules/ISO8601DateUtils.jsm");
 
 var EXPORTED_SYMBOLS = ["storageManager"];
 
-var TABLES_DOCUMENTS = "documents";
-var TABLES_MAPPING = "attrmappings";
+const TABLES_DOCUMENTS = "documents";
+const TABLES_MAPPING = "attrmappings";
+const TABLES_FAMILIES = "families";
+const TABLES_DOMAINS = "domains";
 
-var VIEWS_ATTRIBUTES_SUFFIX = "_attributes";
-var VIEWS_PROPERTIES_SUFFIX = "_properties";
+const VIEWS_ATTRIBUTES_SUFFIX = "_attributes";
+const VIEWS_PROPERTIES_SUFFIX = "_properties";
 
-var ANONATTRIBUTES_PREFIX = "anonattribute_";
-var ANONATTRIBUTES_REGEXP = "^anonattribute_\d*$";
+const ANONATTRIBUTES_PREFIX = "anonattribute_";
+const ANONATTRIBUTES_REGEXP = "^anonattribute_[0-9]*$";
 
-var defaultDbName = 'default';
+const defaultDbName = 'default';
 
-var cc = Components.classes;
-var ci = Components.interfaces;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
 
-var file = Components.classes["@mozilla.org/file/directory_service;1"]
-        .getService(Components.interfaces.nsIProperties).get("ProfD", Components.interfaces.nsIFile);
+var file = Cc["@mozilla.org/file/directory_service;1"]
+        .getService(Ci.nsIProperties).get("ProfD", Ci.nsIFile);
 log(file.path, "storage database dir");
 
 file.append('storage.sqlite');
 log(file.path, "storage database");
 
-var storageService = cc["@mozilla.org/storage/service;1"]
-        .getService(ci.mozIStorageService);
+var storageService = Cc["@mozilla.org/storage/service;1"]
+        .getService(Ci.mozIStorageService);
 
 var _dbConnections = {};
 
@@ -107,7 +109,7 @@ var storageManager = {
          *            to use (the connection must already be registered with
          *            {@link addDbConnection})
          * @param {mozIStorageStatementCallback|function}
-         *            [config.callBack] The callback to be used (if provided,
+         *            [config.callback] The callback to be used (if provided,
          *            will autmatically make an asynchronous query)
          * @see http://mxr.mozilla.org/mozilla-central/source/storage/public/mozIStorageStatementCallback.idl
          */
@@ -117,7 +119,7 @@ var storageManager = {
                 try{
                     var stmt = null;
                     try{
-                        if (config.callBack) {
+                        if (config.callback) {
                             stmt = dbCon.createAsyncStatement(config.query);
                         } else {
                             stmt = dbCon.createStatement(config.query);
@@ -134,11 +136,12 @@ var storageManager = {
                             stmt.params[param] = config.params[param];
                         }
                     }
-                    if (config.callBack) {
+                    if (config.callback) {
                         var stmtCallback = {};
-                        if ((typeof config.callBack) === "function") {
+                        if ((typeof config.callback) === "function") {
                             stmtCallback.handleResult = callback;
-                        } else if ((typeof config.callBack) === "object") {
+                        } else if ((typeof config.callback) === "object") {
+                            var callback = config.callback;
                             if (callback.handleResult){
                                 stmtCallback.handleResult = callback.handleResult;
                             }
@@ -192,8 +195,9 @@ var storageManager = {
                         if (rows.length) {
                             return rows;
                         }
-                        // If there is no result, we return
+                        // If there is no result, we return lastInsertRowID
                         return dbCon.lastInsertRowID;
+                        //FIXME: lastInsertRowID is not always optimal...
                     }
                 } catch(e){
                     log(e, "storageManager::execQuery failed");
@@ -262,17 +266,17 @@ var storageManager = {
                     // Here we go across all properties this family has
                     var properties = family.getProperties();
                     for( let property in properties ){
+                        columnId = property;
                         if(propertiesColumns.indexOf(property) === -1){
                             // this property does not exists in documents table
                             // add it
-                            columnId = property;
                             columnsToAdd.push(columnId);
                             propertiesColumns.push(columnId);
                         }
                         propertiesMapping.push({
-                            columnId    : property,
-                            attrId      : property,
-                            ismultiple  : typeof(properties[property]) === 'object',
+                            columnId    : columnId,
+                            attrId      : columnId,
+                            ismultiple  : typeof(properties[columnId]) === 'object',
                             isproperty  : true,
                             type        : 'property'
                         });
@@ -283,10 +287,10 @@ var storageManager = {
                     for each (let attribute in attributes){
                         if (attribute.isLeaf()) {
                             // only leaf attributes have storable value
+                            var columnId = ANONATTRIBUTES_PREFIX + virtualColumnRang;
                             if (virtualColumnRang >= nbVirtualColumns) {
                                 // there is not enough virtual columns,
                                 // add one
-                                var columnId = ANONATTRIBUTES_PREFIX + virtualColumnRang;
                                 columnsToAdd.push(columnId);
                                 virtualColumns.push(columnId);
                                 nbVirtualColumns++;
@@ -325,10 +329,10 @@ var storageManager = {
                             }
                             catch(e){
                                 dbCon.rollbackTransaction();
-                                log(e, 'transaction aborted');
+                                log(e, 'storageManager::initFamilyView (transaction aborted)');
                             }
                         } catch(e){
-                            log(e, "could not create an exclusive transaction");
+                            log(e, "storageManager::initFamilyView (could not create an exclusive transaction)");
                         }
                     };
 
@@ -348,35 +352,65 @@ var storageManager = {
                         viewPropertiesQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
                     });
 
-                    var viewDocumentQuery = 'CREATE VIEW ' + family.getProperty('name')
-                    + ' AS SELECT ' + viewDocumentQuerySelect.join(', ')
-                    + ' FROM ' + TABLES_DOCUMENTS
-                    + ' WHERE ' + viewQueryWhere;
+                    var viewName = family.getProperty('name');
+                    
+                    var viewDocumentQuery = 'CREATE VIEW ' + viewName
+                            + ' AS SELECT ' + viewDocumentQuerySelect.join(', ')
+                            + ' FROM ' + TABLES_DOCUMENTS
+                            + ' WHERE ' + viewQueryWhere;
+                    
+                    try{
+                        this.execQuery({
+                            query : "DROP VIEW IF EXISTS " + viewName
+                        });
+                        this.execQuery({
+                            query : viewDocumentQuery
+                        });
+                    } catch(e){
+                        log(e, "storageManager::initFamilyView (document view creation)");
+                        throw(e);
+                    }
 
-                    this.execQuery({
-                        query : viewDocumentQuery
-                    });
+                    viewName = family.getProperty('name') + VIEWS_PROPERTIES_SUFFIX;
+                    
+                    var viewPropertiesQuery = 'CREATE VIEW ' + viewName
+                            + ' AS SELECT ' + viewPropertiesQuerySelect.join(', ')
+                            + ' FROM ' + TABLES_DOCUMENTS
+                            + ' WHERE ' + viewQueryWhere;
+                    
+                    try{
+                        this.execQuery({
+                            query : "DROP VIEW IF EXISTS " + viewName
+                        });
+                        this.execQuery({
+                            query : viewPropertiesQuery
+                        });
+                    } catch(e){
+                        log(e, "storageManager::initFamilyView (properties view creation)");
+                        throw(e);
+                    }
 
-                    var viewPropertiesQuery = 'CREATE VIEW ' + family.getProperty('name') + VIEWS_PROPERTIES_SUFFIX
-                    + ' AS SELECT ' + viewPropertiesQuerySelect.join(', ')
-                    + ' FROM ' + TABLES_DOCUMENTS
-                    + ' WHERE ' + viewQueryWhere;
-
-                    this.execQuery({
-                        query : viewPropertiesQuery
-                    });
+                    viewName = family.getProperty('name') + VIEWS_ATTRIBUTES_SUFFIX;
 
                     // we add initid to the list of selected attributes
                     // to ensure you can still join when using views
                     viewAttributesQuerySelect.push('initid as initid');
-                    var viewAttributesQuery = 'CREATE VIEW ' + family.getProperty('name') + VIEWS_ATTRIBUTES_SUFFIX
-                    + ' AS SELECT ' + viewAttributesQuerySelect.join(', ')
-                    + ' FROM ' + TABLES_DOCUMENTS
-                    + ' WHERE ' + viewQueryWhere;
-
-                    this.execQuery({
-                        query : viewAttributesQuery
-                    });
+                    var viewAttributesQuery = 'CREATE VIEW ' + viewName
+                            + ' AS SELECT ' + viewAttributesQuerySelect.join(', ')
+                            + ' FROM ' + TABLES_DOCUMENTS
+                            + ' WHERE ' + viewQueryWhere;
+                    
+                    try{
+                        this.execQuery({
+                            query : "DROP VIEW IF EXISTS " + viewName
+                        });
+                        this.execQuery({
+                            query : viewAttributesQuery
+                        });
+                    } catch(e){
+                        log(e, "storageManager::initFamilyView (attributes view creation)");
+                        throw(e);
+                    }
 
                     // at the end, we insert the mappings in TABLES_MAPPING
                     var mappingQuery = "INSERT INTO " + TABLES_MAPPING
@@ -417,6 +451,7 @@ var storageManager = {
                 // FIXME
                 throw "missing arguments";
             }
+            return this;
         },
 
         addDbConnection : function(config) {
@@ -468,17 +503,21 @@ var storageManager = {
                 config.params = {
                         initid : config.initid
                 };
-                var attributes = this.execQuery(config);
+                try{
+                    var attributes = this.execQuery(config);
+                } catch(e){
+                    log(e, "storageManager::getDocumentValues");
+                    throw(e);
+                }
                 
                 return {
                     properties: properties,
                     attributes: attributes
-                }
+                };
             }
         },
         saveDocumentValues : function(config){
             // TESTME storageManager::saveDocumentValues
-            // @JSD_BREAK
             if( config ){
                 var initid = config.initid || config.properties.initid;
                 if(! initid ){
@@ -507,47 +546,50 @@ var storageManager = {
                         for( let attrId in attributes ){
                             var value = attributes[attrId];
                             var mapAttribute = mapping.attributes[attrId];
-                            if( mapAttribute.ismultiple ){
-                                if(Array.isArray(value)){
-                                    value = JSON.stringify(value);
+                            if(mapAttribute){
+                                if( mapAttribute.ismultiple ){
+                                    if(Array.isArray(value)){
+                                        value = JSON.stringify(value);
+                                    } else {
+                                        throw "value is not an array for " + attrId
+                                                " which is marked as multiple";
+                                    }
                                 } else {
-                                    throw "value is not an array for " + attrId
-                                            " which is marked as multiple";
+                                    switch( mapAttribute.type ){
+                                        // XXX add specific attributes pre-save
+                                        // formatting
+                                        case 'text' :
+                                        case 'longtext' :
+                                        case 'time' :
+                                        case 'htmltext' :
+                                        case 'image' :
+                                        case 'file' :
+                                        case 'enum' :
+                                        case 'thesaurus' :
+                                        case 'docid' :
+                                        case 'timestamp' :
+                                        case 'date' :
+                                        case 'array' :
+                                        case 'int' :
+                                        case 'integer' :
+                                        case 'float' :
+                                        case 'money' :
+                                        case 'color' :
+                                        default :
+                                            value = value;
+                                    }
                                 }
-                            } else {
-                                switch( mapAttribute.type ){
-                                    // XXX add specific attributes pre-save
-                                    // formatting
-                                    case 'text' :
-                                    case 'longtext' :
-                                    case 'time' :
-                                    case 'htmltext' :
-                                    case 'image' :
-                                    case 'file' :
-                                    case 'enum' :
-                                    case 'thesaurus' :
-                                    case 'docid' :
-                                    case 'timestamp' :
-                                    case 'date' :
-                                    case 'array' :
-                                    case 'int' :
-                                    case 'integer' :
-                                    case 'float' :
-                                    case 'money' :
-                                    case 'color' :
-                                    default :
-                                        value = value;
-                                }
+                                
+                                columns.push(mapAttribute.columnid);
+                                params[mapAttribute.columnid] = value;
                             }
-                            
-                            columns.push(mapAttribute.columnid);
-                            params[mapAttribute.columnid] = value;
                         }
                         
                         config.query = "INSERT INTO " + TABLES_DOCUMENTS
                                 + "(" + columns.join(', ') + ")"
                                 + " VALUES (:" + columns.join(', :') + ")";
                         config.params = params;
+                        
                         
                         return this.execQuery(config,{
                             handleCompletion: function(reason){
@@ -563,19 +605,103 @@ var storageManager = {
                     }
                 } else {
                     // XXX throws correct exception
-                    log("missing fromid arguments");
-                    throw "missing fromid arguments";
+                    log("storageManager::saveDocumentValues (missing fromid parameters)");
+                    throw "storageManager::saveDocumentValues (missing fromid parameters)";
                 }
             } else {
                 // XXX throws correct exception
-                throw "missing arguments";
+                throw "storageManager::saveDocumentValues (missing parameters)";
             }
+            return this;
         },
 
         getFamilyValues : function(config){
-            // FIXME write storageManager::getFamily
+            if(config){
+                if(config.famid){
+                    var where = "famid = :famid";
+                    var params = {
+                        famid: famid
+                    };
+                } else if (config.name){
+                    var where = "name = :name";
+                    var params = {
+                        name: name
+                    };
+                } else {
+                    throw "missing parameters";
+                }
+                config.query = "SELECT famid, name, json_object as values"
+                        + " FROM " + TABLES_FAMILIES
+                        + " WHERE " + where;
+                config.params = params;
+                try{
+                    var values = this.execQuery(config);
+                } catch(e){
+                    log(e, "storageManager::getFamilyValues");
+                    throw(e);
+                }
+                return values;
+            }
         },
         saveFamilyValues : function(config){
-            // FIXME write storageManager::saveFamily
+            var famid = config.values.properties.id;
+            var famname = config.values.properties.name;
+            if(famid && famname && config && config.values){
+                config.query = "INSERT INTO " + TABLES_FAMILIES
+                        + " (famid, name, json_object)"
+                        + " VALUES(:famid, :famname, :values)";
+                config.params = {
+                    famid : famid,
+                    famname : famname,
+                    values : values
+                };
+                try{
+                    this.execQuery(config);
+                } catch(e){
+                    log(e, "storageManager::saveFamilyValues");
+                    throw(e);
+                }
+            } else {
+                throw "storageManager::saveFamilyValues (missing parameters)";
+            }
+            return this;
+        },
+        
+        getDomainValues : function(config){
+            if(config){
+                if(config.domainid){
+                    var where = "domainid = :domainid";
+                    var params = {
+                        domainid : domainid
+                    };
+                } else if (config.name){
+                    var where = "name = :domainname";
+                    var params = {
+                            name: domainname
+                    };
+                } else {
+                    throw "storageManager::getDomainValues (missing parameters)";
+                }
+                config.query = "SELECT *"
+                        + " FROM " + TABLES_DOMAINS
+                        + " WHERE " + where;
+                config.params = params;
+                try{
+                    var value = this.execQuery(config);
+                } catch(e){
+                    log(e, "storageManager::getDomainValues");
+                    throw(e);
+                }
+            } else {
+                throw "storageManager::getDomainValues (missing parameters)";
+            }
+            return values;
+        },
+        saveDomainValues : function(config){
+            if(config){
+                //FIXME: write storageManager::saveDomainValues
+            } else {
+                throw "storageManager::saveDomainValues (missing parameters)";
+            }
         }
 };
