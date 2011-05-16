@@ -1,7 +1,7 @@
 var EXPORTED_SYMBOLS = ["log"];
 
 const debugOutput = true;
-debugMaxDepth = 25;
+debugMaxDepth = 2;
 
 log = function() {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"]

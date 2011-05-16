@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = [ "Fdl" ];
+var EXPORTED_SYMBOLS = [ "Fdl" , "JSON" ];
 
 /**
  * @author Anakeen
@@ -488,13 +488,12 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
  * @author Anakeen
  * @license http://www.fsf.org/licensing/licenses/agpl-3.0.html GNU Affero General Public License
  */
-Components.utils.import("resource://modules/logger.jsm");
 
 /**
  * @class Fdl
  * @singleton
  */
-log(typeof window);
+
 if (typeof window != 'undefined') {
 if ((!("console" in window))) {
 	window.console = {
@@ -1660,12 +1659,17 @@ Fdl.Context.prototype.addFamilyMap = function(config) {
 Fdl.Context.prototype.stringToFunction = function(str) {
 	  var arr = str.split(".");
 
-	  var fn = window;
-	  if (! fn) fn=this;
+	  var fn=eval(str);
+	  /*
+	  if (typeof window != 'undefined') {
+		  fn = window;
+	  } else {
+		  fn=this;
+	  }
 	  for (var i = 0, len = arr.length; i < len; i++) {
 	    fn = fn[arr[i]];
 	  }
-
+*/
 	  if (typeof fn !== "function") {
 	    throw new Error("function not found");
 	  }
