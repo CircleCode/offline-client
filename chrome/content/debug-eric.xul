@@ -12,13 +12,13 @@
     width="800px"
     height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="log('Eric's debug window');">
+    onload="initEricContext()">
     
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js"/>
 
     <script type="application/javascript" 
-            src="chrome://dcpoffline/content/eric-debug.js"/>
-    <script type="application/javascript" 
-            src="chrome://dcpoffline/content/fdl-data-debug.js"/>
-
+            src="chrome://dcpoffline/content/debug-eric.js"/>
+   
+<button label="record domains" onclick="clicOfflineDomains()" />
+<button label="clicGetAvailableFamilies()" onclick="clicGetAvailableFamilies();" />
 </window>
