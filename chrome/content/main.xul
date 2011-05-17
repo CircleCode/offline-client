@@ -18,8 +18,6 @@
 
     <script type="application/javascript" 
         src="chrome://dcpoffline/content/main.js"/>
-    <script type="application/javascript" 
-        src="chrome://dcpoffline/content/fdl-data-debug.js"/>
         
     <toolbox id="main-toolbox">
         <toolbar>

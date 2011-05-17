@@ -92,7 +92,9 @@ function getAttrMapping(config){
     }
 }
 
-_dbConnections[defaultDbName] = storageService.openDatabase(file); 
+_dbConnections[defaultDbName] = storageService.openDatabase(file);
+
+_dbConnections[defaultDbName].ExecuteSimpleSQL("PRAGMA locking_mode = EXCLUSIVE");
 
 var storageManager = {
         /**
@@ -126,9 +128,10 @@ var storageManager = {
                         }
                         log(config, "statement created by storageManager::execQuery");
                     } catch(e){
-                        log(e, "statement creation falied in storageManager::execQuery");
+                        Components.utils.reportError("statement creation falied in storageManager::execQuery");
+                        Components.utils.reportError(e);
                         log(config, "statement that storageManager::execQuery tried to create");
-                        throw "aborting execQuery";
+                        throw(e);
                     }
                     if (config.params) {
                         // binding parameters
@@ -200,12 +203,15 @@ var storageManager = {
                         //FIXME: lastInsertRowID is not always optimal...
                     }
                 } catch(e){
+                    Components.utils.reportError("storageManager::execQuery failed");
+                    Components.utils.reportError(e);
                     log(e, "storageManager::execQuery failed");
                 }
             }
         },
 
         initFamilyView : function(config) {
+            var dbCon = this.getDbConnection();
             if (config) {
                 var families = [];
 
@@ -310,7 +316,6 @@ var storageManager = {
                     // if yes, alter documents table with new columns
                     if (columnsToAdd.length) {
                         try{
-                            var dbCon = this.getDbConnection();
                             if(!dbCon.tableExists(TABLES_DOCUMENTS)){
                                 throw "table "+TABLES_DOCUMENTS+" does not exists";
                             }
@@ -321,7 +326,8 @@ var storageManager = {
                                         var query = "ALTER TABLE " + TABLES_DOCUMENTS + " ADD COLUMN "+ columnToAdd +" TEXT DEFAULT ''";
                                         dbCon.executeSimpleSQL(query);
                                     } catch(e){
-                                        log(query, "failed to add column " + columnToAdd);
+                                        Components.utils.reportError("failed to add column " + columnToAdd);
+                                        Components.utils.reportError(e);
                                         throw(e);
                                     }
                                 }
@@ -329,10 +335,14 @@ var storageManager = {
                             }
                             catch(e){
                                 dbCon.rollbackTransaction();
-                                log(e, 'storageManager::initFamilyView (transaction aborted)');
+                                Components.utils.reportError('storageManager::initFamilyView (transaction aborted)');
+                                Components.utils.reportError(e);
+                                throw(e);
                             }
                         } catch(e){
-                            log(e, "storageManager::initFamilyView (could not create an exclusive transaction)");
+                            Components.utils.reportError('storageManager::initFamilyView (could not create an exclusive transaction)');
+                            Components.utils.reportError(e);
+                            throw(e);
                         }
                     };
 
@@ -367,7 +377,8 @@ var storageManager = {
                             query : viewDocumentQuery
                         });
                     } catch(e){
-                        log(e, "storageManager::initFamilyView (document view creation)");
+                        Components.utils.reportError('storageManager::initFamilyView (document view creation)');
+                        Components.utils.reportError(e);
                         throw(e);
                     }
 
@@ -386,7 +397,8 @@ var storageManager = {
                             query : viewPropertiesQuery
                         });
                     } catch(e){
-                        log(e, "storageManager::initFamilyView (properties view creation)");
+                        Components.utils.reportError('storageManager::initFamilyView (properties view creation)');
+                        Components.utils.reportError(e);
                         throw(e);
                     }
 
@@ -408,7 +420,8 @@ var storageManager = {
                             query : viewAttributesQuery
                         });
                     } catch(e){
-                        log(e, "storageManager::initFamilyView (attributes view creation)");
+                        Components.utils.reportError('storageManager::initFamilyView (attributes view creation)');
+                        Components.utils.reportError(e);
                         throw(e);
                     }
 
@@ -416,7 +429,6 @@ var storageManager = {
                     var mappingQuery = "INSERT INTO " + TABLES_MAPPING
                             + " (famid, attrid, columnid, ismultiple, isproperty, type)"
                             + " VALUES (:famid, :attrid, :columnid, :ismultiple, :isproperty, :type)";
-                    log(mappingQuery, "mappingQuery");
                     try{
                         var mappingStmt = dbCon.createStatement(mappingQuery);
                         var mappingParams = mappingStmt.newBindingParamsArray();
@@ -433,18 +445,19 @@ var storageManager = {
                         mappingStmt.bindParameters(mappingParams);
                         
                         mappingStmt.executeAsync({
-                            handleCompletion: function(reason){
-                                log(reason, "completion reason");
-                            },
+                            handleCompletion: function(reason){},
                             handleError: function(reason){
-                                log(reason, "mapping Stmt error");
+                                Components.utils.reportError('mapping Stmt error');
+                                Components.utils.reportError(reason);
                             }
                         });
                         
                         // mappingStmt.execute();
                         // FIXME: add failure handler
                     } catch(e) {
-                        log(e, "mapping query failed");
+                        Components.utils.reportError('storageManager::initFamilyView (mapping query failed)');
+                        Components.utils.reportError(e);
+                        throw(e);
                     }
                 }, this);
             } else {
@@ -495,6 +508,9 @@ var storageManager = {
                         initid : config.initid
                 };
                 var properties = this.execQuery(config);
+                for ( property in properties ){
+                    properties[property] = JSON.parse(properties[property]);
+                }
                 
                 // get the attributes
                 config.query = "SELECT *"
@@ -506,7 +522,8 @@ var storageManager = {
                 try{
                     var attributes = this.execQuery(config);
                 } catch(e){
-                    log(e, "storageManager::getDocumentValues");
+                    Components.utils.reportError('storageManager::getDocumentValues');
+                    Components.utils.reportError(e);
                     throw(e);
                 }
                 
@@ -517,14 +534,12 @@ var storageManager = {
             }
         },
         saveDocumentValues : function(config){
-            // TESTME storageManager::saveDocumentValues
             if( config ){
                 var initid = config.initid || config.properties.initid;
                 if(! initid ){
                     throw "missing initid argument";
                 }
                 var fromid = config.fromid || config.properties.fromid;
-                log(fromid, "fromid");
                 if(fromid){
                     try{
                         var attributes = config.attributes || [];
@@ -547,6 +562,8 @@ var storageManager = {
                             var value = attributes[attrId];
                             var mapAttribute = mapping.attributes[attrId];
                             if(mapAttribute){
+                                //ignore "virtual" attributes (like *_title, for example)
+                                
                                 if( mapAttribute.ismultiple ){
                                     if(Array.isArray(value)){
                                         value = JSON.stringify(value);
@@ -592,16 +609,16 @@ var storageManager = {
                         
                         
                         return this.execQuery(config,{
-                            handleCompletion: function(reason){
-                                log(reason, "completion reason");
-                            },
+                            handleCompletion: function(reason){},
                             handleError: function(reason){
-                                log(reason, "mapping Stmt error");
+                                Components.utils.reportError('mapping Stmt error');
+                                Components.utils.reportError(reason);
                             }
                         });
                     } catch(e){
-                        log(e, "storageManager::saveDocumentValues");
-                        throw e;
+                        Components.utils.reportError('storageManager::saveDocumentValues');
+                        Components.utils.reportError(e);
+                        throw(e);
                     }
                 } else {
                     // XXX throws correct exception
@@ -637,7 +654,8 @@ var storageManager = {
                 try{
                     var values = this.execQuery(config);
                 } catch(e){
-                    log(e, "storageManager::getFamilyValues");
+                    Components.utils.reportError('storageManager::getFamilyValues');
+                    Components.utils.reportError(e);
                     throw(e);
                 }
                 return values;
@@ -658,7 +676,8 @@ var storageManager = {
                 try{
                     this.execQuery(config);
                 } catch(e){
-                    log(e, "storageManager::saveFamilyValues");
+                    Components.utils.reportError('storageManager::saveFamilyValues');
+                    Components.utils.reportError(e);
                     throw(e);
                 }
             } else {
@@ -689,7 +708,8 @@ var storageManager = {
                 try{
                     var value = this.execQuery(config);
                 } catch(e){
-                    log(e, "storageManager::getDomainValues");
+                    Components.utils.reportError('storageManager::getDomainValues');
+                    Components.utils.reportError(e);
                     throw(e);
                 }
             } else {
