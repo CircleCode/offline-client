@@ -20,5 +20,14 @@
             src="chrome://dcpoffline/content/debug-eric.js"/>
    
 <button label="record domains" onclick="clicOfflineDomains()" />
-<button label="clicGetAvailableFamilies()" onclick="clicGetAvailableFamilies();" />
+
+<hbox><label  id='domain'>Testing..</label>
+<statusbar>
+  <statusbarpanel label="Left panel"/>
+  <spacer flex="1"/>
+  <progressmeter id="progressGlobal" mode="determined" value="10"/>
+  <progressmeter id="progressDetail" mode="determined" value="0"/>
+  <statusbarpanel id="detailLabel" label="Right panel"/>
+</statusbar>
+</hbox>
 </window>

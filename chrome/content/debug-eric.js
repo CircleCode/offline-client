@@ -9,7 +9,7 @@ Components.utils.import("resource://modules/offlineSynchronize.jsm");
 
 function initEricContext() {
 	context.url = 'http://localhost/eric/';
-	
+
 	if (!context.isAuthenticated()) {
 		var u = context.setAuthentification({
 			login : 'nono',
@@ -17,24 +17,24 @@ function initEricContext() {
 		});
 		if (!u)
 			alert('error authent:' + context.getLastErrorMessage());
-		logTime(u.lastname+' is log in');
+		logTime(u.lastname + ' is log in');
 	}
 
-	storageManager.execQuery({
-		query : "delete from families"
-	});
 }
 function clicOfflineDomains() {
-	
-	
-	var domains=offlineSync.recordOfflineDomains();
-	for (var i =0 ; i< domains.length; i++) {
-		offlineSync.synchronizeDomain(domains.getDocument(i));
+	offlineSync.setProgressElements({
+		global : document.getElementById('progressGlobal'),
+		detail : document.getElementById('progressDetail'),
+		label : document.getElementById('detailLabel')
+	});
+	var label=document.getElementById('domain');
+	var domains = offlineSync.recordOfflineDomains();
+	var onedom=null;
+	for ( var i = 0; i < domains.length; i++) {
+		onedom=domains.getDocument(i);
+		label.value+="\n--"+onedom.getTitle();
+		offlineSync.synchronizeDomain(onedom);
 	}
-}
-
-function clicGetAvailableFamilies() {
-	alert('clicGetAvailableFamilies');
-	var av = offlineSync.getAvailableFamilies();
+	label.value+="\nFINISH";
 	
 }

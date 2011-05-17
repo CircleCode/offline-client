@@ -72,9 +72,9 @@ CREATE TABLE IF NOT EXISTS "templates" (
 
 CREATE TABLE IF NOT EXISTS "synchrotimes" (
     "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
-    "lastsyncremote"    DATETIME_TEXT,
-    "lastsynclocal"     DATETIME_TEXT,
-    "lastsavelocal"     DATETIME_TEXT,
+    "lastsyncremote"    DATETIME,
+    "lastsynclocal"     DATETIME,
+    "lastsavelocal"     DATETIME,
 
     PRIMARY KEY ("initid") ON CONFLICT REPLACE
 );

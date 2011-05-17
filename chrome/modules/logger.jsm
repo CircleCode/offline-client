@@ -8,10 +8,10 @@ log = function() {
 
 var dinit=new Date().getTime();
 var dlast=dinit;
-logTime = function(msg) {
+logTime = function(msg, obj) {
 	var dloc=new Date().getTime();
 	var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
-	_log(prefix+msg);
+	_log(obj, prefix+msg);
 	dlast=dloc;
 }
 

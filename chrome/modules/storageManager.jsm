@@ -94,9 +94,25 @@ function getAttrMapping(config){
 
 _dbConnections[defaultDbName] = storageService.openDatabase(file);
 
-_dbConnections[defaultDbName].ExecuteSimpleSQL("PRAGMA locking_mode = EXCLUSIVE");
-
 var storageManager = {
+		/**
+         * execute a query
+         * 
+         * @param {object}
+         *            config
+         * @param {boolean}
+         *            config.lock set to true to lock/ false to unlock
+         */
+		lockDatabase : function(config) {
+			if (config) {
+                var dbCon = this.getDbConnection(config.dbName || defaultDbName);
+                if (config.lock) {
+                dbCon.executeSimpleSQL("PRAGMA locking_mode = EXCLUSIVE");	
+                } else {
+                    dbCon.executeSimpleSQL("PRAGMA locking_mode = NORMAL");	
+                }
+			}
+		},
         /**
          * execute a query
          * 
@@ -128,9 +144,9 @@ var storageManager = {
                         }
                         log(config, "statement created by storageManager::execQuery");
                     } catch(e){
-                        Components.utils.reportError("statement creation falied in storageManager::execQuery");
+                        Components.utils.reportError("statement creation failed in storageManager::execQuery");
                         Components.utils.reportError(e);
-                        log(config, "statement that storageManager::execQuery tried to create");
+                        logTime( "statement that storageManager::execQuery tried to create", config);
                         throw(e);
                     }
                     if (config.params) {
