@@ -1,4 +1,7 @@
-var EXPORTED_SYMBOLS = ["log", "logTime"];
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+var EXPORTED_SYMBOLS = ["log", "logError", "logTime"];
 
 const debugOutput = true;
 debugMaxDepth = 2;
@@ -16,8 +19,8 @@ logTime = function(msg, obj) {
 }
 
 _log = function() {
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-            .getService(Components.interfaces.nsIConsoleService);
+   var consoleService = Cc["@mozilla.org/consoleservice;1"]
+            .getService(Ci.nsIConsoleService);
 
     var ddump = function(text, ret) {
         if (debugOutput)
@@ -76,5 +79,9 @@ _log = function() {
         }
     };
 }();
+
+function logError(aMessage){
+    return Cu.reportError(aMessage);
+}
 
 log('logger loaded');

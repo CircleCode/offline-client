@@ -38,7 +38,7 @@ CREATE TABLE  IF NOT EXISTS "domains" (
     "transactionpolicy" TEXT NOT NULL REFERENCES transactionpolicies("name"),
     "sharepolicy"       TEXT NOT NULL REFERENCES sharepolicies("name"),
     "iamadmin"          BOOLEAN NOT NULL DEFAULT FALSE,
-    "lastsyncremote"    DATETIME_TEXT DEFAULT NULL,
+    "lastsyncremote"    DATETIME DEFAULT NULL,
 
     PRIMARY KEY ("id") ON CONFLICT REPLACE
 );

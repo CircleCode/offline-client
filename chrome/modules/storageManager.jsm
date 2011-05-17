@@ -94,6 +94,7 @@ function getAttrMapping(config){
 
 _dbConnections[defaultDbName] = storageService.openDatabase(file);
 
+
 var storageManager = {
 		/**
          * execute a query
@@ -113,631 +114,631 @@ var storageManager = {
                 }
 			}
 		},
-        /**
-         * execute a query
-         * 
-         * @param {object}
-         *            config
-         * @param {String}
-         *            config.query The query to execute.
-         * @param {object}
-         *            [config.params] The parameters to be bound to this query
-         * @param {object}
-         *            [config.dbName={@link defaultDbName}] the dbConnection
-         *            to use (the connection must already be registered with
-         *            {@link addDbConnection})
-         * @param {mozIStorageStatementCallback|function}
-         *            [config.callback] The callback to be used (if provided,
-         *            will autmatically make an asynchronous query)
-         * @see http://mxr.mozilla.org/mozilla-central/source/storage/public/mozIStorageStatementCallback.idl
-         */
-        execQuery : function(config) {
-            if (config && config.query) {
-                var dbCon = this.getDbConnection(config.dbName || defaultDbName);
+    /**
+     * execute a query
+     * 
+     * @param {object}
+     *            config
+     * @param {String}
+     *            config.query The query to execute.
+     * @param {object}
+     *            [config.params] The parameters to be bound to this query
+     * @param {object}
+     *            [config.dbName={@link defaultDbName}] the dbConnection
+     *            to use (the connection must already be registered with
+     *            {@link addDbConnection})
+     * @param {mozIStorageStatementCallback|function}
+     *            [config.callback] The callback to be used (if provided,
+     *            will autmatically make an asynchronous query)
+     * @see http://mxr.mozilla.org/mozilla-central/source/storage/public/mozIStorageStatementCallback.idl
+     */
+    execQuery : function(config) {
+        if (config && config.query) {
+            var dbCon = this.getDbConnection(config.dbName || defaultDbName);
+            try{
+                var stmt = null;
                 try{
-                    var stmt = null;
-                    try{
-                        if (config.callback) {
-                            stmt = dbCon.createAsyncStatement(config.query);
-                        } else {
-                            stmt = dbCon.createStatement(config.query);
-                        }
-                        log(config, "statement created by storageManager::execQuery");
-                    } catch(e){
-                        Components.utils.reportError("statement creation failed in storageManager::execQuery");
-                        Components.utils.reportError(e);
-                        logTime( "statement that storageManager::execQuery tried to create", config);
-                        throw(e);
-                    }
-                    if (config.params) {
-                        // binding parameters
-                        for (let param in stmt.params) {
-                            stmt.params[param] = config.params[param];
-                        }
-                    }
                     if (config.callback) {
-                        var stmtCallback = {};
-                        if ((typeof config.callback) === "function") {
-                            stmtCallback.handleResult = callback;
-                        } else if ((typeof config.callback) === "object") {
-                            var callback = config.callback;
-                            if (callback.handleResult){
-                                stmtCallback.handleResult = callback.handleResult;
-                            }
-                            if (callback.handleError){
-                                stmtCallback.handleError = callback.handleError;
-                            }
-                            if (callback.handleCompletion){
-                                stmtCallback.handleCompletion = callback.handleCompletion;
-                            }
-                        }
-                        stmt.executeAsync(stmtCallback);
+                        stmt = dbCon.createAsyncStatement(config.query);
                     } else {
-                        var cols = stmt.columnCount;
-                        var rows = [], colNames = [], colTypes = [];
-                        if (cols) {
-                            while (stmt.executeStep()) {
-                                var row = {};
-                                for (let col = 0; col < cols; col++) {
-                                    if (colNames[col] === undefined) {
-                                        colNames[col] = stmt.getColumnName(col);
-                                        colTypes[col] = stmt.getTypeOfIndex(col);
-                                    }
-                                    var value = null;
-                                    switch (colTypes[col]) {
-                                        case stmt.VALUE_TYPE_NULL :
-                                            value = null;
-                                            break;
-                                        case stmt.VALUE_TYPE_INTEGER :
-                                            value = stmt.getInt64(col);
-                                            break;
-                                        case stmt.VALUE_TYPE_FLOAT :
-                                            value = stmt.getDouble(col);
-                                            break;
-                                        case stmt.VALUE_TYPE_TEXT :
-                                            value = stmt.getUTF8String(col);
-                                            break;
-                                        case stmt.VALUE_TYPE_BLOB :
-                                            value = stmt.getBlob(col);
-                                            break;
-                                        default :
-                                            throw "unknown coltype for col " + col;
-                                    }
-                                    row[colNames[col]] = value;
-                                }
-                                rows.push(row);
-                            }
-                        } else {
-                            stmt.execute();
-                        }
-                        stmt.reset();
-                        if (rows.length) {
-                            return rows;
-                        }
-                        // If there is no result, we return lastInsertRowID
-                        return dbCon.lastInsertRowID;
-                        //FIXME: lastInsertRowID is not always optimal...
+                        stmt = dbCon.createStatement(config.query);
                     }
+                    log(config, "statement created by storageManager::execQuery");
                 } catch(e){
-                    Components.utils.reportError("storageManager::execQuery failed");
-                    Components.utils.reportError(e);
-                    log(e, "storageManager::execQuery failed");
-                }
-            }
-        },
-
-        initFamilyView : function(config) {
-            var dbCon = this.getDbConnection();
-            if (config) {
-                var families = [];
-
-                var isFamily = function(o) {
-                    return (o && o.getProperty && (o.getProperty('doctype') === 'C'));
-                };
-
-                var addFamily = function(family) {
-                    if (family) {
-                        if ((typeof(family) === "string")
-                                || (typeof(family) === "number")) {
-                            // config is the name / id of a family we already
-                            // know
-                            var fam = this.getFamily(family);
-                            if (fam) {
-                                families.push(fam);
-                            }
-                        } else if (isFamily(family)) {
-                            families.push(family);
-                        }
-                    }
-                };
-
-                if (Array.isArray(config)) {
-                    // config is an array of families or family names / id
-                    config.forEach(addFamily);
-                } else {
-                    addFamily(config);
-                }
-
-                // first we get all available virtual columns
-                var re = new RegExp(ANONATTRIBUTES_REGEXP);
-                var allColumns = this.execQuery({
-                    query : "PRAGMA table_info("+TABLES_DOCUMENTS+")"
-                });
-                var virtualColumns = [];
-                var propertiesColumns = [];
-                var propertiesMapping = [];
-                allColumns.forEach(function(column){
-                    if(re.test(column.name)){
-                        virtualColumns.push(column.name);
-                    } else {
-                        propertiesColumns.push(column.name);
-                    }
-                });
-                var nbVirtualColumns = virtualColumns.length;
-
-                families.forEach(function(family) {
-                    var virtualColumnRang = 0;
-
-                    var columnsToAdd = [];
-                    var attributesMapping = [];
-
-                    var viewQueryWhere = "fromid = "
-                        + family.getProperty('id');
-                    // FIXME: viewQueryWhere must use inheritance tree
-                    
-                    // Here we go across all properties this family has
-                    var properties = family.getProperties();
-                    for( let property in properties ){
-                        columnId = property;
-                        if(propertiesColumns.indexOf(property) === -1){
-                            // this property does not exists in documents table
-                            // add it
-                            columnsToAdd.push(columnId);
-                            propertiesColumns.push(columnId);
-                        }
-                        propertiesMapping.push({
-                            columnId    : columnId,
-                            attrId      : columnId,
-                            ismultiple  : typeof(properties[columnId]) === 'object',
-                            isproperty  : true,
-                            type        : 'property'
-                        });
-                    }
-                    
-                 // Here we go across all attributes this family has
-                    var attributes = family.getAttributes();
-                    for each (let attribute in attributes){
-                        if (attribute.isLeaf()) {
-                            // only leaf attributes have storable value
-                            var columnId = ANONATTRIBUTES_PREFIX + virtualColumnRang;
-                            if (virtualColumnRang >= nbVirtualColumns) {
-                                // there is not enough virtual columns,
-                                // add one
-                                columnsToAdd.push(columnId);
-                                virtualColumns.push(columnId);
-                                nbVirtualColumns++;
-                            }
-                            attributesMapping.push({
-                                columnId    : columnId,
-                                attrId      : attribute.id,
-                                ismultiple  : attribute.inArray() || (attribute.getOption('multiple')==='yes'),
-                                isproperty  : false,
-                                type        : attribute.type
-                            });
-                            virtualColumnRang++;
-                        }
-                    };
-
-                    // do we have some columns to add?
-                    // if yes, alter documents table with new columns
-                    if (columnsToAdd.length) {
-                        try{
-                            if(!dbCon.tableExists(TABLES_DOCUMENTS)){
-                                throw "table "+TABLES_DOCUMENTS+" does not exists";
-                            }
-                            dbCon.beginTransactionAs(dbCon.TRANSACTION_EXCLUSIVE);
-                            try{
-                                for each (let columnToAdd in columnsToAdd){
-                                    try{
-                                        var query = "ALTER TABLE " + TABLES_DOCUMENTS + " ADD COLUMN "+ columnToAdd +" TEXT DEFAULT ''";
-                                        dbCon.executeSimpleSQL(query);
-                                    } catch(e){
-                                        Components.utils.reportError("failed to add column " + columnToAdd);
-                                        Components.utils.reportError(e);
-                                        throw(e);
-                                    }
-                                }
-                                dbCon.commitTransaction();
-                            }
-                            catch(e){
-                                dbCon.rollbackTransaction();
-                                Components.utils.reportError('storageManager::initFamilyView (transaction aborted)');
-                                Components.utils.reportError(e);
-                                throw(e);
-                            }
-                        } catch(e){
-                            Components.utils.reportError('storageManager::initFamilyView (could not create an exclusive transaction)');
-                            Components.utils.reportError(e);
-                            throw(e);
-                        }
-                    };
-
-                    // Now, we juste have to create the 3 views:
-                    // - family
-                    // - family_properties
-                    // - family_attributes
-                    var viewDocumentQuerySelect = [];
-                    var viewPropertiesQuerySelect = [];
-                    var viewAttributesQuerySelect = [];
-                    attributesMapping.forEach(function(mapping){
-                        viewDocumentQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
-                        viewAttributesQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
-                    });
-                    propertiesMapping.forEach(function(mapping){
-                        viewDocumentQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
-                        viewPropertiesQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
-                    });
-
-                    var viewName = family.getProperty('name');
-                    
-                    var viewDocumentQuery = 'CREATE VIEW ' + viewName
-                            + ' AS SELECT ' + viewDocumentQuerySelect.join(', ')
-                            + ' FROM ' + TABLES_DOCUMENTS
-                            + ' WHERE ' + viewQueryWhere;
-                    
-                    try{
-                        this.execQuery({
-                            query : "DROP VIEW IF EXISTS " + viewName
-                        });
-                        this.execQuery({
-                            query : viewDocumentQuery
-                        });
-                    } catch(e){
-                        Components.utils.reportError('storageManager::initFamilyView (document view creation)');
-                        Components.utils.reportError(e);
-                        throw(e);
-                    }
-
-                    viewName = family.getProperty('name') + VIEWS_PROPERTIES_SUFFIX;
-                    
-                    var viewPropertiesQuery = 'CREATE VIEW ' + viewName
-                            + ' AS SELECT ' + viewPropertiesQuerySelect.join(', ')
-                            + ' FROM ' + TABLES_DOCUMENTS
-                            + ' WHERE ' + viewQueryWhere;
-                    
-                    try{
-                        this.execQuery({
-                            query : "DROP VIEW IF EXISTS " + viewName
-                        });
-                        this.execQuery({
-                            query : viewPropertiesQuery
-                        });
-                    } catch(e){
-                        Components.utils.reportError('storageManager::initFamilyView (properties view creation)');
-                        Components.utils.reportError(e);
-                        throw(e);
-                    }
-
-                    viewName = family.getProperty('name') + VIEWS_ATTRIBUTES_SUFFIX;
-
-                    // we add initid to the list of selected attributes
-                    // to ensure you can still join when using views
-                    viewAttributesQuerySelect.push('initid as initid');
-                    var viewAttributesQuery = 'CREATE VIEW ' + viewName
-                            + ' AS SELECT ' + viewAttributesQuerySelect.join(', ')
-                            + ' FROM ' + TABLES_DOCUMENTS
-                            + ' WHERE ' + viewQueryWhere;
-                    
-                    try{
-                        this.execQuery({
-                            query : "DROP VIEW IF EXISTS " + viewName
-                        });
-                        this.execQuery({
-                            query : viewAttributesQuery
-                        });
-                    } catch(e){
-                        Components.utils.reportError('storageManager::initFamilyView (attributes view creation)');
-                        Components.utils.reportError(e);
-                        throw(e);
-                    }
-
-                    // at the end, we insert the mappings in TABLES_MAPPING
-                    var mappingQuery = "INSERT INTO " + TABLES_MAPPING
-                            + " (famid, attrid, columnid, ismultiple, isproperty, type)"
-                            + " VALUES (:famid, :attrid, :columnid, :ismultiple, :isproperty, :type)";
-                    try{
-                        var mappingStmt = dbCon.createStatement(mappingQuery);
-                        var mappingParams = mappingStmt.newBindingParamsArray();
-                        for each (let mapping in attributesMapping.concat(propertiesMapping)) {
-                            var bp = mappingParams.newBindingParams();
-                            bp.bindByName("famid", family.getProperty('id'));
-                            bp.bindByName("attrid", mapping.attrId);
-                            bp.bindByName("columnid", mapping.columnId);
-                            bp.bindByName("ismultiple", mapping.ismultiple);
-                            bp.bindByName("isproperty", mapping.isproperty);
-                            bp.bindByName("type", mapping.type);
-                            mappingParams.addParams(bp);
-                        }
-                        mappingStmt.bindParameters(mappingParams);
-                        
-                        mappingStmt.executeAsync({
-                            handleCompletion: function(reason){},
-                            handleError: function(reason){
-                                Components.utils.reportError('mapping Stmt error');
-                                Components.utils.reportError(reason);
-                            }
-                        });
-                        
-                        // mappingStmt.execute();
-                        // FIXME: add failure handler
-                    } catch(e) {
-                        Components.utils.reportError('storageManager::initFamilyView (mapping query failed)');
-                        Components.utils.reportError(e);
-                        throw(e);
-                    }
-                }, this);
-            } else {
-                // FIXME
-                throw "missing arguments";
-            }
-            return this;
-        },
-
-        addDbConnection : function(config) {
-            if (config && config.file && config.name) {
-                if (_dbConnections.hasOwnProperty(name)) {
-                    if (!config.silent) {
-                        // XXX: throw correct exception
-                        throw "this connection already exists";
-                    }
-                }
-                _dbConnections[name] = storageService.openDatabase(file);
-                return _dbConnections[name];
-            }
-        },
-        getDbConnection : function(config) {
-            var config = config || {};
-            var dbName = config.dbName || defaultDbName;
-            return _dbConnections[dbName];
-        },
-        
-        getDocumentValues : function(config) {
-            // TESTME
-            if (config && 'config.docid=9999') {
-                return {
-                    initid : 9999,
-                    fromid : 9999,
-                    values : {
-                        frame1 : 'frame1_value',
-                        attr1 : 'attr1_value'
-                    }
-                };
-            }
-            if (config && config.initid ) {
-                var view = getDocumentView(config);
-                
-                // get the properties
-                config.query = "SELECT *"
-                    + " FROM " + view + VIEWS_PROPERTIES_SUFFIX
-                    + " WHERE initid=:initid";
-                config.params = {
-                        initid : config.initid
-                };
-                var properties = this.execQuery(config);
-                for ( property in properties ){
-                    properties[property] = JSON.parse(properties[property]);
-                }
-                
-                // get the attributes
-                config.query = "SELECT *"
-                    + " FROM " + view + VIEWS_ATTRIBUTES_SUFFIX
-                    + " WHERE initid=:initid";
-                config.params = {
-                        initid : config.initid
-                };
-                try{
-                    var attributes = this.execQuery(config);
-                } catch(e){
-                    Components.utils.reportError('storageManager::getDocumentValues');
-                    Components.utils.reportError(e);
+                    logError("statement creation falied in storageManager::execQuery");
+                    logError(e);
+                    log(config, "statement that storageManager::execQuery tried to create");
                     throw(e);
                 }
-                
-                return {
-                    properties: properties,
-                    attributes: attributes
-                };
-            }
-        },
-        saveDocumentValues : function(config){
-            if( config ){
-                var initid = config.initid || config.properties.initid;
-                if(! initid ){
-                    throw "missing initid argument";
+                if (config.params) {
+                    // binding parameters
+                    for (let param in stmt.params) {
+                        stmt.params[param] = config.params[param];
+                    }
                 }
-                var fromid = config.fromid || config.properties.fromid;
-                if(fromid){
-                    try{
-                        var attributes = config.attributes || [];
-                        var properties = config.properties || [];
-                        var mapping = getAttrMapping({
-                            fromid: fromid
-                        });
-                        
-                        var params = {};
-                        var columns = [];
-                        
-                        for( let propertyId in properties ){
-                            var value = JSON.stringify(properties[propertyId]);
-                            
-                            columns.push(propertyId);
-                            params[propertyId] = value;
+                if (config.callback) {
+                    var stmtCallback = {};
+                    if ((typeof config.callback) === "function") {
+                        stmtCallback.handleResult = callback;
+                    } else if ((typeof config.callback) === "object") {
+                        var callback = config.callback;
+                        if (callback.handleResult){
+                            stmtCallback.handleResult = callback.handleResult;
                         }
-                        
-                        for( let attrId in attributes ){
-                            var value = attributes[attrId];
-                            var mapAttribute = mapping.attributes[attrId];
-                            if(mapAttribute){
-                                //ignore "virtual" attributes (like *_title, for example)
-                                
-                                if( mapAttribute.ismultiple ){
-                                    if(Array.isArray(value)){
-                                        value = JSON.stringify(value);
-                                    } else {
-                                        throw "value is not an array for " + attrId
-                                                " which is marked as multiple";
-                                    }
-                                } else {
-                                    switch( mapAttribute.type ){
-                                        // XXX add specific attributes pre-save
-                                        // formatting
-                                        case 'text' :
-                                        case 'longtext' :
-                                        case 'time' :
-                                        case 'htmltext' :
-                                        case 'image' :
-                                        case 'file' :
-                                        case 'enum' :
-                                        case 'thesaurus' :
-                                        case 'docid' :
-                                        case 'timestamp' :
-                                        case 'date' :
-                                        case 'array' :
-                                        case 'int' :
-                                        case 'integer' :
-                                        case 'float' :
-                                        case 'money' :
-                                        case 'color' :
-                                        default :
-                                            value = value;
-                                    }
+                        if (callback.handleError){
+                            stmtCallback.handleError = callback.handleError;
+                        }
+                        if (callback.handleCompletion){
+                            stmtCallback.handleCompletion = callback.handleCompletion;
+                        }
+                    }
+                    stmt.executeAsync(stmtCallback);
+                } else {
+                    var cols = stmt.columnCount;
+                    var rows = [], colNames = [], colTypes = [];
+                    if (cols) {
+                        while (stmt.executeStep()) {
+                            var row = {};
+                            for (let col = 0; col < cols; col++) {
+                                if (colNames[col] === undefined) {
+                                    colNames[col] = stmt.getColumnName(col);
+                                    colTypes[col] = stmt.getTypeOfIndex(col);
                                 }
-                                
-                                columns.push(mapAttribute.columnid);
-                                params[mapAttribute.columnid] = value;
+                                var value = null;
+                                switch (colTypes[col]) {
+                                    case stmt.VALUE_TYPE_NULL :
+                                        value = null;
+                                        break;
+                                    case stmt.VALUE_TYPE_INTEGER :
+                                        value = stmt.getInt64(col);
+                                        break;
+                                    case stmt.VALUE_TYPE_FLOAT :
+                                        value = stmt.getDouble(col);
+                                        break;
+                                    case stmt.VALUE_TYPE_TEXT :
+                                        value = stmt.getUTF8String(col);
+                                        break;
+                                    case stmt.VALUE_TYPE_BLOB :
+                                        value = stmt.getBlob(col);
+                                        break;
+                                    default :
+                                        throw "unknown coltype for col " + col;
+                                }
+                                row[colNames[col]] = value;
                             }
+                            rows.push(row);
                         }
-                        
-                        config.query = "INSERT INTO " + TABLES_DOCUMENTS
-                                + "(" + columns.join(', ') + ")"
-                                + " VALUES (:" + columns.join(', :') + ")";
-                        config.params = params;
-                        
-                        
-                        return this.execQuery(config,{
-                            handleCompletion: function(reason){},
-                            handleError: function(reason){
-                                Components.utils.reportError('mapping Stmt error');
-                                Components.utils.reportError(reason);
-                            }
+                    } else {
+                        stmt.execute();
+                    }
+                    stmt.reset();
+                    if (rows.length) {
+                        return rows;
+                    }
+                    // If there is no result, we return lastInsertRowID
+                    return dbCon.lastInsertRowID;
+                    //FIXME: lastInsertRowID is not always optimal...
+                }
+            } catch(e){
+                logError("storageManager::execQuery failed");
+                logError(e);
+                log(e, "storageManager::execQuery failed");
+            }
+        }
+    },
+
+    initFamilyView : function(config) {
+        var dbCon = this.getDbConnection();
+        if (config) {
+            var families = [];
+
+            var isFamily = function(o) {
+                return (o && o.getProperty && (o.getProperty('doctype') === 'C'));
+            };
+
+            var addFamily = function(family) {
+                if (family) {
+                    if ((typeof(family) === "string")
+                            || (typeof(family) === "number")) {
+                        // config is the name / id of a family we already
+                        // know
+                        var fam = this.getFamily(family);
+                        if (fam) {
+                            families.push(fam);
+                        }
+                    } else if (isFamily(family)) {
+                        families.push(family);
+                    }
+                }
+            };
+
+            if (Array.isArray(config)) {
+                // config is an array of families or family names / id
+                config.forEach(addFamily);
+            } else {
+                addFamily(config);
+            }
+
+            // first we get all available virtual columns
+            var re = new RegExp(ANONATTRIBUTES_REGEXP);
+            var allColumns = this.execQuery({
+                query : "PRAGMA table_info("+TABLES_DOCUMENTS+")"
+            });
+            var virtualColumns = [];
+            var propertiesColumns = [];
+            var propertiesMapping = [];
+            allColumns.forEach(function(column){
+                if(re.test(column.name)){
+                    virtualColumns.push(column.name);
+                } else {
+                    propertiesColumns.push(column.name);
+                }
+            });
+            var nbVirtualColumns = virtualColumns.length;
+
+            families.forEach(function(family) {
+                var virtualColumnRang = 0;
+
+                var columnsToAdd = [];
+                var attributesMapping = [];
+
+                var viewQueryWhere = "fromid = "
+                    + family.getProperty('id');
+                // FIXME: viewQueryWhere must use inheritance tree
+                
+                // Here we go across all properties this family has
+                var properties = family.getProperties();
+                for( let property in properties ){
+                    columnId = property;
+                    if(propertiesColumns.indexOf(property) === -1){
+                        // this property does not exists in documents table
+                        // add it
+                        columnsToAdd.push(columnId);
+                        propertiesColumns.push(columnId);
+                    }
+                    propertiesMapping.push({
+                        columnId    : columnId,
+                        attrId      : columnId,
+                        ismultiple  : typeof(properties[columnId]) === 'object',
+                        isproperty  : true,
+                        type        : 'property'
+                    });
+                }
+                
+             // Here we go across all attributes this family has
+                var attributes = family.getAttributes();
+                for each (let attribute in attributes){
+                    if (attribute.isLeaf()) {
+                        // only leaf attributes have storable value
+                        var columnId = ANONATTRIBUTES_PREFIX + virtualColumnRang;
+                        if (virtualColumnRang >= nbVirtualColumns) {
+                            // there is not enough virtual columns,
+                            // add one
+                            columnsToAdd.push(columnId);
+                            virtualColumns.push(columnId);
+                            nbVirtualColumns++;
+                        }
+                        attributesMapping.push({
+                            columnId    : columnId,
+                            attrId      : attribute.id,
+                            ismultiple  : attribute.inArray() || (attribute.getOption('multiple')==='yes'),
+                            isproperty  : false,
+                            type        : attribute.type
                         });
+                        virtualColumnRang++;
+                    }
+                };
+
+                // do we have some columns to add?
+                // if yes, alter documents table with new columns
+                if (columnsToAdd.length) {
+                    try{
+                        if(!dbCon.tableExists(TABLES_DOCUMENTS)){
+                            throw "table "+TABLES_DOCUMENTS+" does not exists";
+                        }
+                        dbCon.beginTransactionAs(dbCon.TRANSACTION_EXCLUSIVE);
+                        try{
+                            for each (let columnToAdd in columnsToAdd){
+                                try{
+                                    var query = "ALTER TABLE " + TABLES_DOCUMENTS + " ADD COLUMN "+ columnToAdd +" TEXT DEFAULT ''";
+                                    dbCon.executeSimpleSQL(query);
+                                } catch(e){
+                                    logError("failed to add column " + columnToAdd);
+                                    logError(e);
+                                    throw(e);
+                                }
+                            }
+                            dbCon.commitTransaction();
+                        }
+                        catch(e){
+                            dbCon.rollbackTransaction();
+                            logError('storageManager::initFamilyView (transaction aborted)');
+                            logError(e);
+                            throw(e);
+                        }
                     } catch(e){
-                        Components.utils.reportError('storageManager::saveDocumentValues');
-                        Components.utils.reportError(e);
+                        logError('storageManager::initFamilyView (could not create an exclusive transaction)');
+                        logError(e);
                         throw(e);
                     }
-                } else {
-                    // XXX throws correct exception
-                    log("storageManager::saveDocumentValues (missing fromid parameters)");
-                    throw "storageManager::saveDocumentValues (missing fromid parameters)";
+                };
+
+                // Now, we juste have to create the 3 views:
+                // - family
+                // - family_properties
+                // - family_attributes
+                var viewDocumentQuerySelect = [];
+                var viewPropertiesQuerySelect = [];
+                var viewAttributesQuerySelect = [];
+                attributesMapping.forEach(function(mapping){
+                    viewDocumentQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
+                    viewAttributesQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
+                });
+                propertiesMapping.forEach(function(mapping){
+                    viewDocumentQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
+                    viewPropertiesQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
+                });
+
+                var viewName = family.getProperty('name');
+                
+                var viewDocumentQuery = 'CREATE VIEW ' + viewName
+                        + ' AS SELECT ' + viewDocumentQuerySelect.join(', ')
+                        + ' FROM ' + TABLES_DOCUMENTS
+                        + ' WHERE ' + viewQueryWhere;
+                
+                try{
+                    this.execQuery({
+                        query : "DROP VIEW IF EXISTS " + viewName
+                    });
+                    this.execQuery({
+                        query : viewDocumentQuery
+                    });
+                } catch(e){
+                    logError('storageManager::initFamilyView (document view creation)');
+                    logError(e);
+                    throw(e);
+                }
+
+                viewName = family.getProperty('name') + VIEWS_PROPERTIES_SUFFIX;
+                
+                var viewPropertiesQuery = 'CREATE VIEW ' + viewName
+                        + ' AS SELECT ' + viewPropertiesQuerySelect.join(', ')
+                        + ' FROM ' + TABLES_DOCUMENTS
+                        + ' WHERE ' + viewQueryWhere;
+                
+                try{
+                    this.execQuery({
+                        query : "DROP VIEW IF EXISTS " + viewName
+                    });
+                    this.execQuery({
+                        query : viewPropertiesQuery
+                    });
+                } catch(e){
+                    logError('storageManager::initFamilyView (properties view creation)');
+                    logError(e);
+                    throw(e);
+                }
+
+                viewName = family.getProperty('name') + VIEWS_ATTRIBUTES_SUFFIX;
+
+                // we add initid to the list of selected attributes
+                // to ensure you can still join when using views
+                viewAttributesQuerySelect.push('initid as initid');
+                var viewAttributesQuery = 'CREATE VIEW ' + viewName
+                        + ' AS SELECT ' + viewAttributesQuerySelect.join(', ')
+                        + ' FROM ' + TABLES_DOCUMENTS
+                        + ' WHERE ' + viewQueryWhere;
+                
+                try{
+                    this.execQuery({
+                        query : "DROP VIEW IF EXISTS " + viewName
+                    });
+                    this.execQuery({
+                        query : viewAttributesQuery
+                    });
+                } catch(e){
+                    logError('storageManager::initFamilyView (attributes view creation)');
+                    logError(e);
+                    throw(e);
+                }
+
+                // at the end, we insert the mappings in TABLES_MAPPING
+                var mappingQuery = "INSERT INTO " + TABLES_MAPPING
+                        + " (famid, attrid, columnid, ismultiple, isproperty, type)"
+                        + " VALUES (:famid, :attrid, :columnid, :ismultiple, :isproperty, :type)";
+                try{
+                    var mappingStmt = dbCon.createStatement(mappingQuery);
+                    var mappingParams = mappingStmt.newBindingParamsArray();
+                    for each (let mapping in attributesMapping.concat(propertiesMapping)) {
+                        var bp = mappingParams.newBindingParams();
+                        bp.bindByName("famid", family.getProperty('id'));
+                        bp.bindByName("attrid", mapping.attrId);
+                        bp.bindByName("columnid", mapping.columnId);
+                        bp.bindByName("ismultiple", mapping.ismultiple);
+                        bp.bindByName("isproperty", mapping.isproperty);
+                        bp.bindByName("type", mapping.type);
+                        mappingParams.addParams(bp);
+                    }
+                    mappingStmt.bindParameters(mappingParams);
+                    
+                    mappingStmt.executeAsync({
+                        handleCompletion: function(reason){},
+                        handleError: function(reason){
+                            logError('mapping Stmt error');
+                            logError(reason);
+                        }
+                    });
+                    
+                    // mappingStmt.execute();
+                    // FIXME: add failure handler
+                } catch(e) {
+                    logError('storageManager::initFamilyView (mapping query failed)');
+                    logError(e);
+                    throw(e);
+                }
+            }, this);
+        } else {
+            // FIXME
+            throw "missing arguments";
+        }
+        return this;
+    },
+
+    addDbConnection : function(config) {
+        if (config && config.file && config.name) {
+            if (_dbConnections.hasOwnProperty(name)) {
+                if (!config.silent) {
+                    // XXX: throw correct exception
+                    throw "this connection already exists";
+                }
+            }
+            _dbConnections[name] = storageService.openDatabase(file);
+            return _dbConnections[name];
+        }
+    },
+    getDbConnection : function(config) {
+        var config = config || {};
+        var dbName = config.dbName || defaultDbName;
+        return _dbConnections[dbName];
+    },
+    
+    getDocumentValues : function(config) {
+        // TESTME
+        if (config && 'config.docid=9999') {
+            return {
+                initid : 9999,
+                fromid : 9999,
+                values : {
+                    frame1 : 'frame1_value',
+                    attr1 : 'attr1_value'
+                }
+            };
+        }
+        if (config && config.initid ) {
+            var view = getDocumentView(config);
+            
+            // get the properties
+            config.query = "SELECT *"
+                + " FROM " + view + VIEWS_PROPERTIES_SUFFIX
+                + " WHERE initid=:initid";
+            config.params = {
+                    initid : config.initid
+            };
+            var properties = this.execQuery(config);
+            for ( property in properties ){
+                properties[property] = JSON.parse(properties[property]);
+            }
+            
+            // get the attributes
+            config.query = "SELECT *"
+                + " FROM " + view + VIEWS_ATTRIBUTES_SUFFIX
+                + " WHERE initid=:initid";
+            config.params = {
+                    initid : config.initid
+            };
+            try{
+                var attributes = this.execQuery(config);
+            } catch(e){
+                logError('storageManager::getDocumentValues');
+                logError(e);
+                throw(e);
+            }
+            
+            return {
+                properties: properties,
+                attributes: attributes
+            };
+        }
+    },
+    saveDocumentValues : function(config){
+        if( config ){
+            var initid = config.initid || config.properties.initid;
+            if(! initid ){
+                throw "missing initid argument";
+            }
+            var fromid = config.fromid || config.properties.fromid;
+            if(fromid){
+                try{
+                    var attributes = config.attributes || [];
+                    var properties = config.properties || [];
+                    var mapping = getAttrMapping({
+                        fromid: fromid
+                    });
+                    
+                    var params = {};
+                    var columns = [];
+                    
+                    for( let propertyId in properties ){
+                        var value = JSON.stringify(properties[propertyId]);
+                        
+                        columns.push(propertyId);
+                        params[propertyId] = value;
+                    }
+                    
+                    for( let attrId in attributes ){
+                        var value = attributes[attrId];
+                        var mapAttribute = mapping.attributes[attrId];
+                        if(mapAttribute){
+                            //ignore "virtual" attributes (like *_title, for example)
+                            
+                            if( mapAttribute.ismultiple ){
+                                if(Array.isArray(value)){
+                                    value = JSON.stringify(value);
+                                } else {
+                                    throw "value is not an array for " + attrId
+                                            " which is marked as multiple";
+                                }
+                            } else {
+                                switch( mapAttribute.type ){
+                                    // XXX add specific attributes pre-save
+                                    // formatting
+                                    case 'text' :
+                                    case 'longtext' :
+                                    case 'time' :
+                                    case 'htmltext' :
+                                    case 'image' :
+                                    case 'file' :
+                                    case 'enum' :
+                                    case 'thesaurus' :
+                                    case 'docid' :
+                                    case 'timestamp' :
+                                    case 'date' :
+                                    case 'array' :
+                                    case 'int' :
+                                    case 'integer' :
+                                    case 'float' :
+                                    case 'money' :
+                                    case 'color' :
+                                    default :
+                                        value = value;
+                                }
+                            }
+                            
+                            columns.push(mapAttribute.columnid);
+                            params[mapAttribute.columnid] = value;
+                        }
+                    }
+                    
+                    config.query = "INSERT INTO " + TABLES_DOCUMENTS
+                            + "(" + columns.join(', ') + ")"
+                            + " VALUES (:" + columns.join(', :') + ")";
+                    config.params = params;
+                    
+                    
+                    return this.execQuery(config,{
+                        handleCompletion: function(reason){},
+                        handleError: function(reason){
+                            logError('mapping Stmt error');
+                            logError(reason);
+                        }
+                    });
+                } catch(e){
+                    logError('storageManager::saveDocumentValues');
+                    logError(e);
+                    throw(e);
                 }
             } else {
                 // XXX throws correct exception
-                throw "storageManager::saveDocumentValues (missing parameters)";
+                log("storageManager::saveDocumentValues (missing fromid parameters)");
+                throw "storageManager::saveDocumentValues (missing fromid parameters)";
             }
-            return this;
-        },
+        } else {
+            // XXX throws correct exception
+            throw "storageManager::saveDocumentValues (missing parameters)";
+        }
+        return this;
+    },
 
-        getFamilyValues : function(config){
-            if(config){
-                if(config.famid){
-                    var where = "famid = :famid";
-                    var params = {
-                        famid: famid
-                    };
-                } else if (config.name){
-                    var where = "name = :name";
-                    var params = {
-                        name: name
-                    };
-                } else {
-                    throw "missing parameters";
-                }
-                config.query = "SELECT famid, name, json_object as values"
-                        + " FROM " + TABLES_FAMILIES
-                        + " WHERE " + where;
-                config.params = params;
-                try{
-                    var values = this.execQuery(config);
-                } catch(e){
-                    Components.utils.reportError('storageManager::getFamilyValues');
-                    Components.utils.reportError(e);
-                    throw(e);
-                }
-                return values;
-            }
-        },
-        saveFamilyValues : function(config){
-            var famid = config.values.properties.id;
-            var famname = config.values.properties.name;
-            if(famid && famname && config && config.values){
-                config.query = "INSERT INTO " + TABLES_FAMILIES
-                        + " (famid, name, json_object)"
-                        + " VALUES(:famid, :famname, :values)";
-                config.params = {
-                    famid : famid,
-                    famname : famname,
-                    values : values
+    getFamilyValues : function(config){
+        if(config){
+            if(config.famid){
+                var where = "famid = :famid";
+                var params = {
+                    famid: famid
                 };
-                try{
-                    this.execQuery(config);
-                } catch(e){
-                    Components.utils.reportError('storageManager::saveFamilyValues');
-                    Components.utils.reportError(e);
-                    throw(e);
-                }
+            } else if (config.name){
+                var where = "name = :name";
+                var params = {
+                    name: name
+                };
             } else {
-                throw "storageManager::saveFamilyValues (missing parameters)";
+                throw "missing parameters";
             }
-            return this;
-        },
-        
-        getDomainValues : function(config){
-            if(config){
-                if(config.domainid){
-                    var where = "domainid = :domainid";
-                    var params = {
-                        domainid : domainid
-                    };
-                } else if (config.name){
-                    var where = "name = :domainname";
-                    var params = {
-                            name: domainname
-                    };
-                } else {
-                    throw "storageManager::getDomainValues (missing parameters)";
-                }
-                config.query = "SELECT *"
-                        + " FROM " + TABLES_DOMAINS
-                        + " WHERE " + where;
-                config.params = params;
-                try{
-                    var value = this.execQuery(config);
-                } catch(e){
-                    Components.utils.reportError('storageManager::getDomainValues');
-                    Components.utils.reportError(e);
-                    throw(e);
-                }
+            config.query = "SELECT famid, name, json_object as values"
+                    + " FROM " + TABLES_FAMILIES
+                    + " WHERE " + where;
+            config.params = params;
+            try{
+                var values = this.execQuery(config);
+            } catch(e){
+                logError('storageManager::getFamilyValues');
+                logError(e);
+                throw(e);
+            }
+            return values;
+        }
+    },
+    saveFamilyValues : function(config){
+        var famid = config.values.properties.id;
+        var famname = config.values.properties.name;
+        if(famid && famname && config && config.values){
+            config.query = "INSERT INTO " + TABLES_FAMILIES
+                    + " (famid, name, json_object)"
+                    + " VALUES(:famid, :famname, :values)";
+            config.params = {
+                famid : famid,
+                famname : famname,
+                values : config.values
+            };
+            try{
+                this.execQuery(config);
+            } catch(e){
+                logError('storageManager::saveFamilyValues');
+                logError(e);
+                throw(e);
+            }
+        } else {
+            throw "storageManager::saveFamilyValues (missing parameters)";
+        }
+        return this;
+    },
+    
+    getDomainValues : function(config){
+        if(config){
+            if(config.domainid){
+                var where = "domainid = :domainid";
+                var params = {
+                    domainid : domainid
+                };
+            } else if (config.name){
+                var where = "name = :domainname";
+                var params = {
+                        name: domainname
+                };
             } else {
                 throw "storageManager::getDomainValues (missing parameters)";
             }
-            return values;
-        },
-        saveDomainValues : function(config){
-            if(config){
-                //FIXME: write storageManager::saveDomainValues
-            } else {
-                throw "storageManager::saveDomainValues (missing parameters)";
+            config.query = "SELECT *"
+                    + " FROM " + TABLES_DOMAINS
+                    + " WHERE " + where;
+            config.params = params;
+            try{
+                var value = this.execQuery(config);
+            } catch(e){
+                logError('storageManager::getDomainValues');
+                logError(e);
+                throw(e);
             }
+        } else {
+            throw "storageManager::getDomainValues (missing parameters)";
         }
+        return values;
+    },
+    saveDomainValues : function(config){
+        if(config){
+            //FIXME: write storageManager::saveDomainValues
+        } else {
+            throw "storageManager::saveDomainValues (missing parameters)";
+        }
+    }
 };
