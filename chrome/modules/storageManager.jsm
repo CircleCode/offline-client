@@ -94,9 +94,26 @@ function getAttrMapping(config){
 
 _dbConnections[defaultDbName] = storageService.openDatabase(file);
 
-_dbConnections[defaultDbName].executeSimpleSQL("PRAGMA locking_mode = EXCLUSIVE");
 
 var storageManager = {
+		/**
+         * execute a query
+         * 
+         * @param {object}
+         *            config
+         * @param {boolean}
+         *            config.lock set to true to lock/ false to unlock
+         */
+		lockDatabase : function(config) {
+			if (config) {
+                var dbCon = this.getDbConnection(config.dbName || defaultDbName);
+                if (config.lock) {
+                dbCon.executeSimpleSQL("PRAGMA locking_mode = EXCLUSIVE");	
+                } else {
+                    dbCon.executeSimpleSQL("PRAGMA locking_mode = NORMAL");	
+                }
+			}
+		},
     /**
      * execute a query
      * 

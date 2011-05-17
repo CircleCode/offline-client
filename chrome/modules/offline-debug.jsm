@@ -1,10 +1,10 @@
+Components.utils.import("resource://modules/fdl-data-debug.jsm");var EXPORTED_SYMBOLS = [ "Fdl", "JSON" ];
 /*!
  * Offline Class
  * @author Anakeen
  * @license http://www.fsf.org/licensing/licenses/agpl-3.0.html GNU Affero General Public License
  */
 
-Components.utils.import("resource://modules/fdl-data-debug.jsm");
 /**
  * @class Fdl.OfflineCore
  * @param {Object}
@@ -13,7 +13,7 @@ Components.utils.import("resource://modules/fdl-data-debug.jsm");
  * @cfg {String} name the application name
  * @constructor
  */
-var EXPORTED_SYMBOLS = [ "Fdl", "JSON" ];
+
 Fdl.OfflineCore = function(config) {
 	if (config && config.context) {
 		this.context = config.context;
