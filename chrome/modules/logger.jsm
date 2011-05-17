@@ -1,9 +1,21 @@
-var EXPORTED_SYMBOLS = ["log"];
+var EXPORTED_SYMBOLS = ["log", "logTime"];
 
 const debugOutput = true;
 debugMaxDepth = 2;
-
 log = function() {
+	
+}
+
+var dinit=new Date().getTime();
+var dlast=dinit;
+logTime = function(msg) {
+	var dloc=new Date().getTime();
+	var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
+	_log(prefix+msg);
+	dlast=dloc;
+}
+
+_log = function() {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
             .getService(Components.interfaces.nsIConsoleService);
 

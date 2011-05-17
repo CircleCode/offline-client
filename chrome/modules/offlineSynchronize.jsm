@@ -1,6 +1,7 @@
 Components.utils.import("resource://modules/logger.jsm");
 
 log('Synchro');
+Components.utils.import("resource://gre/modules/ISO8601DateUtils.jsm");
 
 Components.utils.import("resource://modules/docManager.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
@@ -58,7 +59,8 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
 						transactionPolicies : domain
 								.getValue('off_transactionpolicy'),
 						sharePolicies : domain.getValue('off_sharepolicy'),
-						iAmAdmin : false // not necessary
+						iAmAdmin : false
+					// not necessary
 					}
 				});
 
@@ -76,7 +78,11 @@ offlineSynchronize.prototype.synchronizeDomain = function(domain) {
 	this.pullDocuments(domain);
 };
 offlineSynchronize.prototype.recordFamilies = function(domain) {
+	logTime('recordFamilies ');
+
 	var families = domain.getAvailableFamilies();
+	logTime('pull famlilies : ');
+
 	var fam = null;
 	for ( var i = 0; i < families.length; i++) {
 		fam = families.getDocument(i);
@@ -104,45 +110,80 @@ offlineSynchronize.prototype.pushDocument = function(domain, document) {
 	// TODO put document and modifies files
 };
 
+offlineSynchronize.prototype.isEditable = function(domain, document) {
+	// log2(document.id+' --'+domain.id +
+	// '='+document.getProperty('lockdomainid')+':'+document.getProperty('locked')+'='+document.context.getUser().id);
+	if (document.getProperty('lockdomainid') != domain.getProperty('id'))
+		return false;
+	if (document.getProperty('locked') != document.context.getUser().id)
+		return false;
+
+	return true;
+};
+
 offlineSynchronize.prototype.pullDocuments = function(domain) {
-	return;
+
 	// TODO pull all documents and modifies files
+var now=new Date();
+	logTime('pull : ');
 	var shared = domain.sync().getSharedDocuments({
 	// until : '2011-05-01 13:00'
 	});
+    var serverDate=shared.date.replace(" ","T");
+	logTime('pull shared : ' + shared.length + ':'+ serverDate);
 	var onedoc = null;
 	var j = 0;
 	for (j = 0; j < shared.length; j++) {
 		onedoc = shared.getDocument(j);
-		log('store : ' + onedoc.getTitle());
+
 		storageManager.saveDocumentValues({
 			properties : onedoc.getProperties(),
 			attributes : onedoc.getValues()
 		});
 
 		// storage in domain doc table also
+
 		storageManager
 				.execQuery({
-					query : "insert into docsbydomain(initid, domainid, editable) values(:initid, :domainid, :editable)",
+					query : "insert into docsbydomain(initid, domainid, editable) values (:initid, :domainid, :editable)",
 					params : {
 						initid : onedoc.getProperty('initid'),
 						domainid : domain.getProperty('initid'),
-						editable : onedoc.canEdit()
+						editable : this.isEditable(domain, onedoc)
 					}
 				});
+		/*
+		 * docsDomainQuery += "insert into docsbydomain(initid, domainid,
+		 * editable) values (" + onedoc.getProperty('initid') + ',' +
+		 * domain.getProperty('initid') + ',' + (this.isEditable(domain, onedoc) ?
+		 * 1 : 0) + ');';
+		 */
+		logTime('store : ' + onedoc.getTitle());
 	}
+	// var dbcon=storageManager.getDbConnection();
+	// dbcon.executeSimpleSQL(docsDomainQuery);
+	// logTime('docsDomain : '+docsDomainQuery);
+
 	var userd = domain.sync().getUserDocuments({
 	// until : '2011-05-01 13:00'
 	});
+
+	logTime('pull users : ' + userd.length);
 	for (j = 0; j < userd.length; j++) {
 		onedoc = userd.getDocument(j);
-		log('store : ' + onedoc.getTitle());
+		logTime('store : ' + onedoc.getTitle());
 		storageManager.saveDocumentValues({
 			properties : onedoc.getProperties(),
 			attributes : onedoc.getValues()
 		});
 	}
-
+	var nowString = ISO8601DateUtils.create(now);
+	storageManager
+			.execQuery({
+				query : "insert into synchrotimes (initid, lastsyncremote, lastsynclocal, lastsyncsave) select initid , :serverDate, :clientDate , :clientDate from documents",
+				params : {clientDate: nowString, serverDate:serverDate}
+			});
+	logTime('synchrotimes : ');
 };
 
 log('End Synchro');

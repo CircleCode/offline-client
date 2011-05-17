@@ -17,7 +17,7 @@ function initEricContext() {
 		});
 		if (!u)
 			alert('error authent:' + context.getLastErrorMessage());
-		log(u.lastname+' is log in');
+		logTime(u.lastname+' is log in');
 	}
 
 	storageManager.execQuery({
