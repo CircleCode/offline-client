@@ -1,11 +1,14 @@
-var EXPORTED_SYMBOLS = ["log"];
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+var EXPORTED_SYMBOLS = ["log", "logError"];
 
 const debugOutput = true;
 debugMaxDepth = 25;
 
 log = function() {
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-            .getService(Components.interfaces.nsIConsoleService);
+    var consoleService = Cc["@mozilla.org/consoleservice;1"]
+            .getService(Ci.nsIConsoleService);
 
     var ddump = function(text, ret) {
         if (debugOutput)
@@ -64,5 +67,9 @@ log = function() {
         }
     };
 }();
+
+function logError(aMessage){
+    return Cu.reportError('aMessage');
+}
 
 log('logger loaded');
