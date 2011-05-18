@@ -145,7 +145,7 @@ var storageManager = {
                     }
                     log(config, "statement created by storageManager::execQuery");
                 } catch(e){
-                    logError("statement creation falied in storageManager::execQuery");
+                    logError("statement creation failed in storageManager::execQuery :" + config.query);
                     logError(e);
                     log(config, "statement that storageManager::execQuery tried to create");
                     throw(e);

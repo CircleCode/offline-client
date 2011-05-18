@@ -4,6 +4,7 @@ log('Synchro');
 
 Components.utils.import("resource://modules/docManager.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
+Components.utils.import("resource://modules/fileManager.jsm");
 Components.utils.import("resource://modules/fdl-context.jsm");
 Components.utils.import("resource://modules/fdl-data-debug.jsm");
 Components.utils.import("resource://modules/offline-debug.jsm");
@@ -17,25 +18,24 @@ function offlineSynchronize(config) {
 };
 
 offlineSynchronize.prototype = {
+	filesToDownload : [],
 	offlineCore : null,
 	toString : function() {
 		return 'offlineSynchronize';
 	}
 };
 
-offlineSynchronize.prototype = {
-	getCore : function() {
-		if (!this.offlineCore) {
-			this.offlineCore = new Fdl.OfflineCore({
-				context : context
-			});
+offlineSynchronize.prototype.getCore = function() {
+	if (!this.offlineCore) {
+		this.offlineCore = new Fdl.OfflineCore({
+			context : context
+		});
 
-			log('core synv' + typeof this.offlineCore
-					+ this.offlineCore.toString());
-		}
-
-		return this.offlineCore;
+		log('core synv' + typeof this.offlineCore + this.offlineCore.toString());
 	}
+
+	return this.offlineCore;
+
 };
 offlineSynchronize.prototype.recordOfflineDomains = function(config) {
 	var domains = this.getCore().getOfflineDomains();
@@ -140,7 +140,6 @@ offlineSynchronize.prototype.detailPercent = function(p) {
 offlineSynchronize.prototype.globalPercent = function(p) {
 	if (this.progress && this.progress.global) {
 		this.progress.global.value = p;
-		logTime('global '+p);
 	}
 };
 offlineSynchronize.prototype.detailLabel = function(t) {
@@ -163,6 +162,83 @@ offlineSynchronize.prototype.toIso8601 = function(now) {
 			+ this.twoDigits(now.getSeconds());
 
 };
+offlineSynchronize.prototype.pullFiles = function(domain, document) {
+	var oas = document.getAttributes();
+	var oa = null;
+	var url = '';
+	for ( var aid in oas) {
+		oa = oas[aid];
+
+		if ((oa.type == 'file') || (oa.type == 'image')) {
+			if (document.getValue(aid)) {
+				var writable=this.isEditable(domain, document) && (oa.getVisibility()=='W');
+				 
+				if (oa.inArray()) {
+					var vs = document.getValue(aid);
+					for ( var fi = 0; fi < vs.length; fi++) {
+						if (vs[fi]) {
+							url = oa.getUrl(vs, document.id, {index:fi});
+							
+							if (url) {
+								this.filesToDownload.push({
+									url : url,
+									basename : oa.getFileName(vs[fi]),
+									index : fi,
+									attrid : aid,
+									initid : document.getProperty('initid'),
+									writable:writable
+								});
+							}
+						}
+					}
+				} else {
+					url = oa.getUrl(document.getValue(aid), document.id);
+					if (url) {
+						this.filesToDownload
+								.push({
+									url : oa.getUrl(document.getValue(aid),
+											document.id),
+									basename : oa.getFileName(document
+											.getValue(aid)),
+									index : -1,
+									attrid : aid,
+									initid : document.getProperty('initid'),
+									writable:writable
+								});
+					}
+				}
+			}
+		}
+	}
+};
+
+offlineSynchronize.prototype.recordFiles = function() {
+	if (this.filesToDownload.length > 0) {
+		fileManager.downloadFiles(this.filesToDownload);
+	}
+};
+
+offlineSynchronize.prototype.recordDocument = function(domain, document) {
+	storageManager.saveDocumentValues({
+		properties : document.getProperties(),
+		attributes : document.getValues()
+	});
+
+	// storage in domain doc table also
+
+	storageManager
+			.execQuery({
+				query : "insert into docsbydomain(initid, domainid, editable) values (:initid, :domainid, :editable)",
+				params : {
+					initid : document.getProperty('initid'),
+					domainid : domain.getProperty('initid'),
+					editable : this.isEditable(domain, document)
+				}
+			});
+
+	this.pullFiles(domain, document);
+};
+
 offlineSynchronize.prototype.pullDocuments = function(domain) {
 
 	// TODO pull all documents and modifies files
@@ -189,31 +265,9 @@ offlineSynchronize.prototype.pullDocuments = function(domain) {
 	var j = 0;
 	for (j = 0; j < shared.length; j++) {
 		onedoc = shared.getDocument(j);
-
-		storageManager.saveDocumentValues({
-			properties : onedoc.getProperties(),
-			attributes : onedoc.getValues()
-		});
-
-		// storage in domain doc table also
-
-		storageManager
-				.execQuery({
-					query : "insert into docsbydomain(initid, domainid, editable) values (:initid, :domainid, :editable)",
-					params : {
-						initid : onedoc.getProperty('initid'),
-						domainid : domain.getProperty('initid'),
-						editable : this.isEditable(domain, onedoc)
-					}
-				});
-		/*
-		 * docsDomainQuery += "insert into docsbydomain(initid, domainid,
-		 * editable) values (" + onedoc.getProperty('initid') + ',' +
-		 * domain.getProperty('initid') + ',' + (this.isEditable(domain, onedoc) ?
-		 * 1 : 0) + ');';
-		 */
+		this.recordDocument(domain, onedoc);
 		logTime('store : ' + onedoc.getTitle());
-		this.detailPercent((j+1) / shared.length * 100);
+		this.detailPercent((j + 1) / shared.length * 100);
 	}
 	this.detailPercent(100);
 	this.globalPercent(50);
@@ -230,23 +284,8 @@ offlineSynchronize.prototype.pullDocuments = function(domain) {
 	logTime('pull users : ' + userd.length);
 	for (j = 0; j < userd.length; j++) {
 		onedoc = userd.getDocument(j);
-		logTime('store : ' + onedoc.getTitle());
-		storageManager.saveDocumentValues({
-			properties : onedoc.getProperties(),
-			attributes : onedoc.getValues()
-		});
-		// storage in domain doc table also
-
-		storageManager
-				.execQuery({
-					query : "insert into docsbydomain(initid, domainid, editable) values (:initid, :domainid, :editable)",
-					params : {
-						initid : onedoc.getProperty('initid'),
-						domainid : domain.getProperty('initid'),
-						editable : this.isEditable(domain, onedoc)
-					}
-				});
-		this.detailPercent((j+1) / userd.length * 100);
+		this.recordDocument(domain, onedoc);
+		this.detailPercent((j + 1) / userd.length * 100);
 	}
 	this.globalPercent(90);
 	storageManager
@@ -257,10 +296,15 @@ offlineSynchronize.prototype.pullDocuments = function(domain) {
 					serverDate : serverDate
 				}
 			});
+	
+	this.recordFiles();
+	
 	storageManager.lockDatabase({
 		lock : false
 	});
-	logTime('synchrotimes : ');
+	storageManager.execQuery("update domains set id=id");
+	//logTime('synchrotimes : ', this.filesToDownload);
+
 	this.globalPercent(100);
 };
 
