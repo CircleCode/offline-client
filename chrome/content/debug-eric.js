@@ -25,16 +25,20 @@ function clicOfflineDomains() {
 	offlineSync.setProgressElements({
 		global : document.getElementById('progressGlobal'),
 		detail : document.getElementById('progressDetail'),
-		label : document.getElementById('detailLabel')
+		label : document.getElementById('detailLabel'),
+		documentsToRecord : document.getElementById('documentsToRecord'),
+		documentsRecorded : document.getElementById('documentsRecorded'),
+		filesToRecord : document.getElementById('filesToRecord'),
+		filesRecorded : document.getElementById('filesRecorded')
 	});
-	var label=document.getElementById('domain');
+	var label = document.getElementById('domain');
 	var domains = offlineSync.recordOfflineDomains();
-	var onedom=null;
+	var onedom = null;
 	for ( var i = 0; i < domains.length; i++) {
-		onedom=domains.getDocument(i);
-		label.value+="\n--"+onedom.getTitle();
+		onedom = domains.getDocument(i);
+		label.value += "\n--" + onedom.getTitle();
 		offlineSync.synchronizeDomain(onedom);
 	}
-	label.value+="\nFINISH";
-	
+	label.value += "\nFINISH";
+
 }

@@ -20,6 +20,7 @@ function offlineSynchronize(config) {
 offlineSynchronize.prototype = {
 	filesToDownload : [],
 	offlineCore : null,
+	recordFilesInProgress: false,
 	toString : function() {
 		return 'offlineSynchronize';
 	}
@@ -147,7 +148,32 @@ offlineSynchronize.prototype.detailLabel = function(t) {
 		this.progress.label.setAttribute('label', t);
 	}
 };
+offlineSynchronize.prototype.addDocumentsToRecord = function(delta) {
+	if (this.progress && this.progress.documentsToRecord) {
+		this.progress.documentsToRecord.value = parseInt(this.progress.documentsToRecord.value)
+				+ delta;
+	}
+};
 
+offlineSynchronize.prototype.addDocumentsRecorded = function(delta) {
+	if (this.progress && this.progress.documentsRecorded) {
+		this.progress.documentsRecorded.value = parseInt(this.progress.documentsRecorded.value)
+				+ delta;
+	}
+};
+offlineSynchronize.prototype.addFilesToRecord = function(delta) {
+	if (this.progress && this.progress.filesToRecord) {
+		this.progress.filesToRecord.value = parseInt(this.progress.filesToRecord.value)
+				+ delta;
+	}
+};
+
+offlineSynchronize.prototype.addFilesRecorded = function(delta) {
+	if (this.progress && this.progress.filesRecorded) {
+		this.progress.filesRecorded.value = parseInt(this.progress.filesRecorded.value)
+				+ delta;
+	}
+};
 offlineSynchronize.prototype.twoDigits = function(n) {
 	if (n > 9)
 		return n.toString();
@@ -162,7 +188,7 @@ offlineSynchronize.prototype.toIso8601 = function(now) {
 			+ this.twoDigits(now.getSeconds());
 
 };
-offlineSynchronize.prototype.pullFiles = function(domain, document) {
+offlineSynchronize.prototype.pendingFiles = function(domain, document) {
 	var oas = document.getAttributes();
 	var oa = null;
 	var url = '';
@@ -171,14 +197,17 @@ offlineSynchronize.prototype.pullFiles = function(domain, document) {
 
 		if ((oa.type == 'file') || (oa.type == 'image')) {
 			if (document.getValue(aid)) {
-				var writable=this.isEditable(domain, document) && (oa.getVisibility()=='W');
-				 
+				var writable = this.isEditable(domain, document)
+						&& (oa.getVisibility() == 'W');
+
 				if (oa.inArray()) {
 					var vs = document.getValue(aid);
 					for ( var fi = 0; fi < vs.length; fi++) {
 						if (vs[fi]) {
-							url = oa.getUrl(vs, document.id, {index:fi});
-							
+							url = oa.getUrl(vs, document.id, {
+								index : fi
+							});
+
 							if (url) {
 								this.filesToDownload.push({
 									url : url,
@@ -186,8 +215,9 @@ offlineSynchronize.prototype.pullFiles = function(domain, document) {
 									index : fi,
 									attrid : aid,
 									initid : document.getProperty('initid'),
-									writable:writable
+									writable : writable
 								});
+								this.addFilesToRecord(1);
 							}
 						}
 					}
@@ -203,51 +233,97 @@ offlineSynchronize.prototype.pullFiles = function(domain, document) {
 									index : -1,
 									attrid : aid,
 									initid : document.getProperty('initid'),
-									writable:writable
+									writable : writable
 								});
+						this.addFilesToRecord(1);
 					}
 				}
 			}
 		}
 	}
 };
-
+/**
+ * 
+ */
 offlineSynchronize.prototype.recordFiles = function() {
+	if (! this.recordFilesInProgress) {
+		logTime('recordFilesInProgress');
 	if (this.filesToDownload.length > 0) {
-		fileManager.downloadFiles(this.filesToDownload);
+		var me = this;
+		this.recordFilesInProgress=true;
+
+		logTime('start',this.filesToDownload );
+		fileManager.downloadFiles({
+			files : this.filesToDownload,
+			acquitFileCallback : function() {
+				me.addFilesRecorded(1);
+			},
+			completeFilecallback : function() {
+				me.recordFilesInProgress=false;
+			}
+		});
+	}
 	}
 };
-
+/**
+ * 
+ * @param domain
+ * @param document
+ */
 offlineSynchronize.prototype.recordDocument = function(domain, document) {
-	storageManager.saveDocumentValues({
-		properties : document.getProperties(),
-		attributes : document.getValues()
-	});
-
-	// storage in domain doc table also
-
+	this.addDocumentsToRecord(1);
+	var me = this;
 	storageManager
-			.execQuery({
-				query : "insert into docsbydomain(initid, domainid, editable) values (:initid, :domainid, :editable)",
-				params : {
-					initid : document.getProperty('initid'),
-					domainid : domain.getProperty('initid'),
-					editable : this.isEditable(domain, document)
+			.saveDocumentValues({
+				properties : document.getProperties(),
+				attributes : document.getValues(),
+				callback : {
+					handleCompletion : function() {
+						storageManager
+								.execQuery({
+									query : "insert into docsbydomain(initid, domainid, editable) values (:initid, :domainid, :editable)",
+									params : {
+										initid : document.getProperty('initid'),
+										domainid : domain.getProperty('initid'),
+										editable : me.isEditable(domain,
+												document)
+									},
+									callback : {
+										handleCompletion : function() {
+											me.addDocumentsRecorded(1);
+										}
+									}
+								});
+					}
 				}
 			});
 
-	this.pullFiles(domain, document);
+	// storage in domain doc table also
+	/*
+	 * storageManager .execQuery({ query : "insert into docsbydomain(initid,
+	 * domainid, editable) values (:initid, :domainid, :editable)", params : {
+	 * initid : document.getProperty('initid'), domainid :
+	 * domain.getProperty('initid'), editable : this.isEditable(domain,
+	 * document) }, callback : { handleCompletion : function(result) {
+	 * logTime("return from a callback");
+	 * 
+	 * me.addDocumentsRecorded(1); } } });
+	 */
+	// this.addDocumentsRecorded(1);
+	this.pendingFiles(domain, document);
 };
-
+/**
+ * 
+ * @param domain
+ */
 offlineSynchronize.prototype.pullDocuments = function(domain) {
 
 	// TODO pull all documents and modifies files
 	var now = new Date();
 	logTime('pull : ');
-	storageManager.lockDatabase({
-		lock : true
-	});
-
+	/*
+	 * storageManager.lockDatabase({ lock : true });
+	 */
 	this.detailPercent(0);
 	this.globalPercent(0);
 	this.detailLabel(domain.getTitle() + ':get shared documents');
@@ -296,14 +372,14 @@ offlineSynchronize.prototype.pullDocuments = function(domain) {
 					serverDate : serverDate
 				}
 			});
-	
+
 	this.recordFiles();
-	
+
 	storageManager.lockDatabase({
 		lock : false
 	});
 	storageManager.execQuery("update domains set id=id");
-	//logTime('synchrotimes : ', this.filesToDownload);
+	// logTime('synchrotimes : ', this.filesToDownload);
 
 	this.globalPercent(100);
 };

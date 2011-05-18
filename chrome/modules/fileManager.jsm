@@ -6,7 +6,8 @@ Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/storageManager.jsm");
 
 var EXPORTED_SYMBOLS = [ "fileManager" ];
-
+const STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
+const STATE_STOP = Components.interfaces.nsIWebProgressListener.STATE_STOP;
 const PATH_FILES = "Files";
 
 const PERMISSIONS_WRITABLE = 0660;
@@ -24,7 +25,7 @@ var fileDwldProgress = {};
 var fileManager = {
 	saveFile : function saveFile(config) {
 		
-		if (config && config.initid && config.attrid && config.basename) {
+		if (config && config.initid && config.attrid && config.basename && config.aFile) {
 			try {
 
 				config.writable = config.writable || false;
@@ -33,24 +34,11 @@ var fileManager = {
 					config.index = -1;
 				}
 
-
 				var destDir=filesRoot.clone();
 				destDir.append(config.initid);
 				destDir.append(config.attrid);
 				if (config.index>=0) destDir.append(config.index);
 				
-				if ((!config.aFile) && config.url) {
-					try {
-						var aFile = retrieveFile(config);
-						if (aFile) {
-							config.aFile = aFile;
-						}
-					} catch (e) {
-						logError('missing parameters');
-						logError(e);
-						throw (e);
-					}
-				}
 
 				if (config.aFile) {
 					// verify file is in correct dir
@@ -64,9 +52,10 @@ var fileManager = {
 							logError(e);
 						}
 					}
-					logTime('save in '+destDir.path);
+					//logTime('save in '+destDir.path);
 					config.aFile.permissions = config.writable ? PERMISSIONS_WRITABLE
 							: PERMISSIONS_NOT_WRITABLE;
+					// set ref in database
 					storeFile(config);
 				}
 			} catch (e) {
@@ -74,6 +63,9 @@ var fileManager = {
 				throw (e);
 			}
 
+		} else {
+			logError('saveFile : missing parameters');
+			//logTime('error', config);
 		}
 	},
 	getFile : function getFile(config) {
@@ -126,10 +118,16 @@ var fileManager = {
 			openExternal(f);
 		}
 	},
-	downloadFiles : function(files) {
+	downloadFiles : function(config) {
 
-		if (files) {
-			this.filesToDownLoad = files;
+		if (config && config.files) {
+			this.filesToDownLoad = config.files;
+		}
+		if (config && config.acquitFileCallback) {
+			this.acquitFileCallback=config.acquitFileCallback;
+		}
+		if (config && config.completeFileCallback) {
+			this.completeFileCallback=config.completeFileCallback;
 		}
 		var file = null;
 		for ( var idf = 0; idf < this.filesToDownLoad.length; idf++) {
@@ -140,10 +138,11 @@ var fileManager = {
 		}
 		if (!file) {
 			this.filesToDownLoad = [];
+			if (this.completeFileCallback) this.completeFileCallback();
 		}
 
 		if (file) {
-			logTime("downloading the " + file.url + ": " + file.name);
+			//logTime("downloading the " + file.url + ": " + file.name);
 			// create file destination
 
 			 file.aFile = createTmpFile();
@@ -174,8 +173,8 @@ var fileManager = {
 				onStateChange : function(aWebProgress, aRequest, aStateFlags,
 						aStatus) {
 					/* var ele = document.getElementById("progress_element"); */
-					if (aStateFlags == 327696) {
-						logTime(file.name + 'downloaded');
+					if (aStateFlags & STATE_STOP) {
+						//logTime(file.basename + 'downloaded');
 
 						if (file.writable) {
 							file.aFile.permissions = 0444;
@@ -191,6 +190,8 @@ var fileManager = {
 						}
 						// me.filesToDownLoad.pop();
 						// refreshProgressBar()
+						if (typeof me.acquitFileCallback == "function") me.acquitFileCallback();
+						
 						logTime("file in queue: " + me.filesToDownLoad.length);
 						me.downloadFiles();
 					}
@@ -219,7 +220,7 @@ function storeFile(config) {
 	if (config && config.initid && config.attrid && config.basename
 			&& config.aFile && config.hasOwnProperty('index')
 			&& config.hasOwnProperty('writable')) {
-		logTime("storeFile", config);
+		
 		storageManager
 				.execQuery({
 					query : 'insert into '

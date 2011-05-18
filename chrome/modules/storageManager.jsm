@@ -139,7 +139,9 @@ var storageManager = {
                 var stmt = null;
                 try{
                     if (config.callback) {
-                        stmt = dbCon.createAsyncStatement(config.query);
+                        stmt = dbCon.createStatement(config.query);
+                        //stmt = dbCon.createAsyncStatement(config.query);
+                        //logTime("async" + config.query);
                     } else {
                         stmt = dbCon.createStatement(config.query);
                     }
@@ -159,7 +161,13 @@ var storageManager = {
                 if (config.callback) {
                     var stmtCallback = {};
                     if ((typeof config.callback) === "function") {
-                        stmtCallback.handleResult = callback;
+                        stmtCallback.handleResult = config.callback;
+                    	
+                        stmtCallback.handleError = function(error){
+                            logError('storage mapping Stmt error');
+                            logError(error);
+                        };
+                        stmtCallback.handleCompletion=function(reason) {};
                     } else if ((typeof config.callback) === "object") {
                         var callback = config.callback;
                         if (callback.handleResult){
@@ -172,6 +180,7 @@ var storageManager = {
                             stmtCallback.handleCompletion = callback.handleCompletion;
                         }
                     }
+
                     stmt.executeAsync(stmtCallback);
                 } else {
                     var cols = stmt.columnCount;
@@ -625,13 +634,7 @@ var storageManager = {
                     config.params = params;
                     
                     
-                    return this.execQuery(config,{
-                        handleCompletion: function(reason){},
-                        handleError: function(reason){
-                            logError('mapping Stmt error');
-                            logError(reason);
-                        }
-                    });
+                    return this.execQuery(config);
                 } catch(e){
                     logError('storageManager::saveDocumentValues');
                     logError(e);
