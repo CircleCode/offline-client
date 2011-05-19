@@ -8,7 +8,8 @@ Components.utils.import("resource://modules/fileManager.jsm");
 Components.utils.import("resource://modules/fdl-context.jsm");
 Components.utils.import("resource://modules/fdl-data-debug.jsm");
 Components.utils.import("resource://modules/offline-debug.jsm");
-
+Components.utils.import("resource://modules/utils.jsm");
+Components.utils.import("resource://modules/offlineLightDocument.jsm");
 // Components.utils.import("chrome://dcpoffline/content/fdl-data-debug.js");
 
 var EXPORTED_SYMBOLS = [ "offlineSync" ];
@@ -20,7 +21,7 @@ function offlineSynchronize(config) {
 offlineSynchronize.prototype = {
 	filesToDownload : [],
 	offlineCore : null,
-	recordFilesInProgress: false,
+	recordFilesInProgress : false,
 	toString : function() {
 		return 'offlineSynchronize';
 	}
@@ -174,24 +175,12 @@ offlineSynchronize.prototype.addFilesRecorded = function(delta) {
 				+ delta;
 	}
 };
-offlineSynchronize.prototype.twoDigits = function(n) {
-	if (n > 9)
-		return n.toString();
-	else
-		return '0' + n.toString();
-};
-offlineSynchronize.prototype.toIso8601 = function(now) {
-	return now.getFullYear() + '-' + this.twoDigits(now.getMonth() + 1) + '-'
-			+ this.twoDigits(now.getDate()) + 'T'
-			+ this.twoDigits(now.getHours()) + ':'
-			+ this.twoDigits(now.getMinutes()) + ':'
-			+ this.twoDigits(now.getSeconds());
 
-};
 offlineSynchronize.prototype.pendingFiles = function(domain, document) {
 	var oas = document.getAttributes();
 	var oa = null;
 	var url = '';
+	var basename = '';
 	for ( var aid in oas) {
 		oa = oas[aid];
 
@@ -209,9 +198,12 @@ offlineSynchronize.prototype.pendingFiles = function(domain, document) {
 							});
 
 							if (url) {
+								basename = oa.getFileName(vs[fi]);
+								if (!basename)
+									basename = "noname";
 								this.filesToDownload.push({
 									url : url,
-									basename : oa.getFileName(vs[fi]),
+									basename : basename,
 									index : fi,
 									attrid : aid,
 									initid : document.getProperty('initid'),
@@ -224,12 +216,14 @@ offlineSynchronize.prototype.pendingFiles = function(domain, document) {
 				} else {
 					url = oa.getUrl(document.getValue(aid), document.id);
 					if (url) {
+						basename = oa.getFileName(document.getValue(aid));
+						if (!basename)
+							basename = "noname";
 						this.filesToDownload
 								.push({
 									url : oa.getUrl(document.getValue(aid),
 											document.id),
-									basename : oa.getFileName(document
-											.getValue(aid)),
+									basename : basename,
 									index : -1,
 									attrid : aid,
 									initid : document.getProperty('initid'),
@@ -246,23 +240,25 @@ offlineSynchronize.prototype.pendingFiles = function(domain, document) {
  * 
  */
 offlineSynchronize.prototype.recordFiles = function() {
-	if (! this.recordFilesInProgress) {
+	if (!this.recordFilesInProgress) {
 		logTime('recordFilesInProgress');
-	if (this.filesToDownload.length > 0) {
-		var me = this;
-		this.recordFilesInProgress=true;
+		if (this.filesToDownload.length > 0) {
+			var me = this;
+			this.recordFilesInProgress = true;
 
-		logTime('start',this.filesToDownload );
-		fileManager.downloadFiles({
-			files : this.filesToDownload,
-			acquitFileCallback : function() {
-				me.addFilesRecorded(1);
-			},
-			completeFilecallback : function() {
-				me.recordFilesInProgress=false;
-			}
-		});
-	}
+			fileManager.downloadFiles({
+				files : this.filesToDownload,
+				acquitFileCallback : function() {
+					me.addFilesRecorded(1);
+				},
+				completeFileCallback : function() {
+					logTime('end files', this.filesToDownload);
+
+					me.recordFilesInProgress = false;
+					fileManager.initModificationDates();
+				}
+			});
+		}
 	}
 };
 /**
@@ -321,9 +317,11 @@ offlineSynchronize.prototype.pullDocuments = function(domain) {
 	// TODO pull all documents and modifies files
 	var now = new Date();
 	logTime('pull : ');
-	/*
-	 * storageManager.lockDatabase({ lock : true });
-	 */
+
+	storageManager.lockDatabase({
+		lock : true
+	});
+
 	this.detailPercent(0);
 	this.globalPercent(0);
 	this.detailLabel(domain.getTitle() + ':get shared documents');
@@ -332,7 +330,7 @@ offlineSynchronize.prototype.pullDocuments = function(domain) {
 	});
 	this.globalPercent(10);
 	var serverDate = shared.date.replace(" ", "T");
-	var clientDate = this.toIso8601(now);
+	var clientDate = utils.toIso8601(now);
 
 	this.detailLabel('recording shared documents : ' + shared.length);
 	logTime('pull shared : ' + shared.length + ':' + serverDate + '--'
@@ -384,6 +382,17 @@ offlineSynchronize.prototype.pullDocuments = function(domain) {
 	this.globalPercent(100);
 };
 
+/**
+ * 
+ * @param domain
+ */
+offlineSynchronize.prototype.pushDocuments = function(domain) {
+	this.globalPercent(0);
+	docManager.setActiveDomain({domain:domain.id});
+	logTime("active domain"+docManager.getActiveDomain());
+	var modifiedFiles = fileManager.getModifiedFiles(domain.id);
+	logTime('mod files', modifiedFiles);
+}
 log('End Synchro');
 
 var offlineSync = new offlineSynchronize();

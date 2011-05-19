@@ -4,6 +4,8 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/storageManager.jsm");
+Cu.import("resource://modules/utils.jsm");
+Cu.import("resource://modules/docManager.jsm");
 
 var EXPORTED_SYMBOLS = [ "fileManager" ];
 const STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
@@ -68,6 +70,93 @@ var fileManager = {
 			//logTime('error', config);
 		}
 	},
+	
+	/**
+	 * return files modified
+	 */
+	getModifiedFiles : function (domainId) {
+		this.updateModificationDates();
+		logTime('domain'+domainId);
+		var r = storageManager
+		.execQuery({
+			query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and recorddate is not null and recorddate < modifydate',
+			params: {
+				domainid:domainId
+			}
+		});
+		return r;
+	},
+	/**
+	 * init recorddate when files were downloaded
+	 */
+	initModificationDates : function () {
+		var r = storageManager
+		.execQuery({
+			query : 'SELECT * from '
+				+ TABLE_FILES
+				+ ' WHERE recorddate is null'
+
+		});
+		var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		for (var i=0;i<r.length;i++) {
+			file.initWithPath(r[i].path);
+			storageManager
+			.execQuery({
+				query : 'update '
+					+ TABLE_FILES
+					+ ' set recorddate=:recorddate, modifydate=:recorddate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
+					params : {
+						recorddate : utils.toIso8601(new Date(file.lastModifiedTime)),
+						initid:r[i].initid,
+						index:r[i].index,
+						attrid:r[i].attrid
+					}
+			});
+		}
+	},
+
+	/**
+	 * update modifydate from files
+	 */
+	updateModificationDates : function () {
+		var r = storageManager
+		.execQuery({
+			query : 'SELECT * from '
+				+ TABLE_FILES
+				+ ' WHERE recorddate is not null'
+
+		});
+		var mdate;
+		var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		var localDoc=null;
+		for (var i=0;i<r.length;i++) {
+			file.initWithPath(r[i].path);
+			mdate=utils.toIso8601(new Date(file.lastModifiedTime));
+			if (mdate != r[i].modifydate) {
+				storageManager
+				.execQuery({
+					query : 'update '
+						+ TABLE_FILES
+						+ ' set modifydate=:modifydate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
+						params : {
+							modifydate : mdate,
+							initid:r[i].initid,
+							index:r[i].index,
+							attrid:r[i].attrid
+						}
+				});
+				
+				localDoc=docManager.getLocalDocument({initid:r[i].initid});
+				//logTime('doclocal', localDoc);
+				try {
+				localDoc.save(); // to change modification date
+				} catch (e) {
+					// nothing may be not in good domain 
+					// normaly never go here
+				}
+			}
+		}
+	},
 	getFile : function getFile(config) {
 		if (config && config.initid && config.attrid) {
 			if (!config.hasOwnProperty('index')) {
@@ -93,7 +182,7 @@ var fileManager = {
 				config.basename = r[0].basename;
 			}
 
-			var destDirPath = config.initid + '/' + config.attrid;
+			var destDirPath = config.initid + '/' + config.attrid; // TODO see savefile to set correctly
 			if (config.index >= 0) {
 				destDirPath += '/' + config.index;
 			}
@@ -118,6 +207,9 @@ var fileManager = {
 			openExternal(f);
 		}
 	},
+	/**
+	 * retrieve file from server
+	 */
 	downloadFiles : function(config) {
 
 		if (config && config.files) {
@@ -164,11 +256,8 @@ var fileManager = {
 				onProgressChange : function(aWebProgress, aRequest,
 						aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress,
 						aMaxTotalProgress) {
-					var percentComplete = (aCurTotalProgress / aMaxTotalProgress) * 100;
-					/*
-					 * var ele = document.getElementById("progress_element");
-					 * ele.value = percentComplete + "%";
-					 */
+					//var percentComplete = (aCurTotalProgress / aMaxTotalProgress) * 100;
+					
 				},
 				onStateChange : function(aWebProgress, aRequest, aStateFlags,
 						aStatus) {
@@ -238,7 +327,7 @@ function storeFile(config) {
 				});
 	}
 }
-
+/*
 function retrieveFile(config) {
 	if (config && config.url) {
 		if (!config.aFile) {
@@ -254,14 +343,14 @@ function retrieveFile(config) {
 		throw "missing parameters";
 	}
 }
-
+*/
 function createTmpFile() {
 	var aFile = Services.dirsvc.get("TmpD", Ci.nsILocalFile);
 	aFile.append("suggestedName.tmp");
 	aFile.createUnique(aFile.NORMAL_FILE_TYPE, 0666);
 	return aFile;
 }
-
+/*
 function addPending(config) {
 	if (config && config.initid && config.attrid && config.index) {
 		fileDwldProgress[initid] = fileDwldProgress[initid] || {};
@@ -289,3 +378,4 @@ function getPending(config) {
 		}
 	}
 }
+*/
