@@ -35,16 +35,16 @@ var _dbConnections = {};
 var _attrMappings = {};
 
 function getDocumentView(initid){
-    // XXX Maybe a cache system could be welcome
-    var r = storageManager.execQuery({
-        query : "SELECT fromname, fromid"
-                + " FROM " + TABLES_DOCUMENTS
-                + " WHERE initid = :id",
-        params : {
-            initid: initid
-        }
-    });
-    return r.fromname;
+	// XXX Maybe a cache system could be welcome
+	var r = storageManager.execQuery({
+		query : 'select fromname from documents where initid=:initid',
+		params:{
+			initid:initid
+		}});
+	if (r.length == 1) {
+		return r[0].fromname;
+	}
+	return '';
 }
 
 function getAttrMapping(config){
@@ -133,19 +133,23 @@ var storageManager = {
      * @see http://mxr.mozilla.org/mozilla-central/source/storage/public/mozIStorageStatementCallback.idl
      */
     execQuery : function(config) {
+    	var rows=false;
+    	var cols=false;
         if (config && config.query) {
             var dbCon = this.getDbConnection(config.dbName || defaultDbName);
             try{
                 var stmt = null;
                 try{
                     if (config.callback) {
-                        stmt = dbCon.createAsyncStatement(config.query);
+                        stmt = dbCon.createStatement(config.query);
+                        //stmt = dbCon.createAsyncStatement(config.query);
+                        //logTime("async" + config.query);
                     } else {
                         stmt = dbCon.createStatement(config.query);
                     }
                     log(config, "statement created by storageManager::execQuery");
                 } catch(e){
-                    logError("statement creation falied in storageManager::execQuery");
+                    logError("statement creation failed in storageManager::execQuery :" + config.query);
                     logError(e);
                     log(config, "statement that storageManager::execQuery tried to create");
                     throw(e);
@@ -159,7 +163,13 @@ var storageManager = {
                 if (config.callback) {
                     var stmtCallback = {};
                     if ((typeof config.callback) === "function") {
-                        stmtCallback.handleResult = callback;
+                        stmtCallback.handleResult = config.callback;
+                    	
+                        stmtCallback.handleError = function(error){
+                            logError('storage mapping Stmt error');
+                            logError(error);
+                        };
+                        stmtCallback.handleCompletion=function(reason) {};
                     } else if ((typeof config.callback) === "object") {
                         var callback = config.callback;
                         if (callback.handleResult){
@@ -172,10 +182,12 @@ var storageManager = {
                             stmtCallback.handleCompletion = callback.handleCompletion;
                         }
                     }
+
                     stmt.executeAsync(stmtCallback);
                 } else {
-                    var cols = stmt.columnCount;
-                    var rows = [], colNames = [], colTypes = [];
+                     cols = stmt.columnCount;
+                     rows = []
+                     var colNames = [], colTypes = [];
                     if (cols) {
                         while (stmt.executeStep()) {
                             var row = {};
@@ -212,7 +224,7 @@ var storageManager = {
                         stmt.execute();
                     }
                     stmt.reset();
-                    if (rows.length) {
+                    if (cols) {
                         return rows;
                     }
                     // If there is no result, we return lastInsertRowID
@@ -222,6 +234,8 @@ var storageManager = {
             } catch(e){
                 logError("storageManager::execQuery failed");
                 logError(e);
+                logError(config.query);
+                logTime('params',config.params);
                 log(e, "storageManager::execQuery failed");
             }
         }
@@ -497,64 +511,42 @@ var storageManager = {
         }
     },
     getDbConnection : function(config) {
-        var config = config || {};
+        config = config || {};
         var dbName = config.dbName || defaultDbName;
         return _dbConnections[dbName];
     },
     
-    getDocumentValues : function(config) {
-        // TESTME
-        if (config && 'config.docid=9999') {
-            return {
-                initid : 9999,
-                fromid : 9999,
-                values : {
-                    frame1 : 'frame1_value',
-                    attr1 : 'attr1_value'
-                }
-            };
-        }
-        if (config && config.initid ) {
-            var view = getDocumentView(config);
-            
-            // get the properties
-            config.query = "SELECT *"
-                + " FROM " + view + VIEWS_PROPERTIES_SUFFIX
-                + " WHERE initid=:initid";
-            config.params = {
-                    initid : config.initid
-            };
-            var properties = this.execQuery(config);
-            for ( property in properties ){
-                properties[property] = JSON.parse(properties[property]);
-            }
-            
-            // get the attributes
-            config.query = "SELECT *"
-                + " FROM " + view + VIEWS_ATTRIBUTES_SUFFIX
-                + " WHERE initid=:initid";
-            config.params = {
-                    initid : config.initid
-            };
-            try{
-                var attributes = this.execQuery(config);
-            } catch(e){
-                logError('storageManager::getDocumentValues');
-                logError(e);
-                throw(e);
-            }
-            
-            return {
-                properties: properties,
-                attributes: attributes
-            };
-        }
+   
+    getDocument : function (config){
+    	if( config ){
+    		var initid = config.initid;
+    		if(! initid ) {
+    			throw "getDocument :: missing initid argument";
+    		}
+    		var tableview=getDocumentView(initid);
+    		if (tableview) {
+    			var r = storageManager.execQuery({
+    				query : 'select * from '+tableview+' where initid=:initid',
+    				params:{
+    					initid:initid
+    				}});
+    			//logTime("getdoc", r);
+    			if (r.length == 1) {
+    				return r[0];
+    			} else {
+    				throw "getDocument in view :: not found "+ initid;
+    			}
+
+    		} else {
+    			throw "getDocument :: not found "+ initid;
+    		}
+    	}
     },
     saveDocumentValues : function(config){
         if( config ){
             var initid = config.initid || config.properties.initid;
             if(! initid ){
-                throw "missing initid argument";
+                throw "saveDocumentValues ::missing initid argument";
             }
             var fromid = config.fromid || config.properties.fromid;
             if(fromid){
@@ -582,12 +574,14 @@ var storageManager = {
                             //ignore "virtual" attributes (like *_title, for example)
                             
                             if( mapAttribute.ismultiple ){
+                            	if (value) {
                                 if(Array.isArray(value)){
                                     value = JSON.stringify(value);
                                 } else {
                                     throw "value is not an array for " + attrId
                                             " which is marked as multiple";
                                 }
+                            	}
                             } else {
                                 switch( mapAttribute.type ){
                                     // XXX add specific attributes pre-save
@@ -625,13 +619,7 @@ var storageManager = {
                     config.params = params;
                     
                     
-                    return this.execQuery(config,{
-                        handleCompletion: function(reason){},
-                        handleError: function(reason){
-                            logError('mapping Stmt error');
-                            logError(reason);
-                        }
-                    });
+                    return this.execQuery(config);
                 } catch(e){
                     logError('storageManager::saveDocumentValues');
                     logError(e);

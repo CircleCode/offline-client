@@ -4936,7 +4936,10 @@ Fdl.Attribute.prototype = {
 		return this.label;
 	},
 	getVisibility : function() {
-		return this.mvisibility;
+		if (this.mvisibility) {
+			return this.mvisibility;
+		}
+		return this.visibility;
 	},
 	getOption : function(optkey) {
 		if (this.options && this.options[optkey]) {

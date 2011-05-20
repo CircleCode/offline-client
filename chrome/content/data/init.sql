@@ -122,6 +122,8 @@ CREATE TABLE IF NOT EXISTS "files" (
     "basename"          TEXT NOT NULL,
     "path"              TEXT NOT NULL,
     "writable"          BOOLEAN NOT NULL DEFAULT FALSE,
+    "recorddate"        DATETIME,
+    "modifydate"        DATETIME,
     
     PRIMARY KEY ("initid", "attrid", "index") ON CONFLICT REPLACE
 );
