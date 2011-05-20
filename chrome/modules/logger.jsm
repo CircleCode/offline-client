@@ -14,7 +14,8 @@ var dlast=dinit;
 logTime = function(msg, obj) {
 	var dloc=new Date().getTime();
 	var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
-	_log(obj, prefix+msg);
+	if (obj) _log(obj, prefix+msg);
+	else _log( prefix+msg);
 	dlast=dloc;
 }
 
@@ -28,11 +29,11 @@ _log = function() {
     };
     var ddumpObject = function(obj, name, maxDepth, curDepth, ret) {
         if (!debugOutput)
-            return;
+            return '';
         if (curDepth == undefined)
             curDepth = 0;
         if (maxDepth != undefined && curDepth > maxDepth)
-            return;
+            return '';
 
         var i = 0, msg = '';
         var indent = "\n";
@@ -41,6 +42,7 @@ _log = function() {
         }
         for (prop in obj) {
             i++;
+            try {
             if (typeof (obj[prop]) == "object") {
                 if (obj[prop] && obj[prop].length != undefined)
                     msg += indent + prop + "=[probably array, length "
@@ -55,6 +57,7 @@ _log = function() {
                 msg += indent + prop + "=[function]", ret;
             else
                 msg += indent + prop + "=" + obj[prop];
+            } catch (e) {}
         }
         if (!i)
             msg = "<empty>";
@@ -63,6 +66,7 @@ _log = function() {
             return out;
         else
             ddump(out);
+        return '';
     };
     var dumpError = function(text) {
         dump("[ERROR]" + text + "\n");
