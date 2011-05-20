@@ -186,7 +186,7 @@ var storageManager = {
                     stmt.executeAsync(stmtCallback);
                 } else {
                      cols = stmt.columnCount;
-                     rows = []
+                     rows = [];
                      var colNames = [], colTypes = [];
                     if (cols) {
                         while (stmt.executeStep()) {
@@ -385,12 +385,12 @@ var storageManager = {
                 var viewPropertiesQuerySelect = [];
                 var viewAttributesQuerySelect = [];
                 attributesMapping.forEach(function(mapping){
-                    viewDocumentQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
-                    viewAttributesQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
+                    viewDocumentQuerySelect.push(mapping.columnId + ' as "' + mapping.attrId +'"');
+                    viewAttributesQuerySelect.push(mapping.columnId + ' as "' + mapping.attrId+'"');
                 });
                 propertiesMapping.forEach(function(mapping){
-                    viewDocumentQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
-                    viewPropertiesQuerySelect.push(mapping.columnId + " as " + mapping.attrId);
+                    viewDocumentQuerySelect.push(mapping.columnId + ' as "' + mapping.attrId+'"');
+                    viewPropertiesQuerySelect.push(mapping.columnId + ' as "' + mapping.attrId+'"');
                 });
 
                 var viewName = family.getProperty('name');
@@ -399,8 +399,7 @@ var storageManager = {
                         + ' AS SELECT ' + viewDocumentQuerySelect.join(', ')
                         + ' FROM ' + TABLES_DOCUMENTS
                         + ' WHERE ' + viewQueryWhere;
-                
-                try{
+                try {
                     this.execQuery({
                         query : "DROP VIEW IF EXISTS " + viewName
                     });
@@ -412,7 +411,7 @@ var storageManager = {
                     logError(e);
                     throw(e);
                 }
-
+/*
                 viewName = family.getProperty('name') + VIEWS_PROPERTIES_SUFFIX;
                 
                 var viewPropertiesQuery = 'CREATE VIEW ' + viewName
@@ -432,7 +431,8 @@ var storageManager = {
                     logError(e);
                     throw(e);
                 }
-
+*/
+                /*
                 viewName = family.getProperty('name') + VIEWS_ATTRIBUTES_SUFFIX;
 
                 // we add initid to the list of selected attributes
@@ -455,7 +455,7 @@ var storageManager = {
                     logError(e);
                     throw(e);
                 }
-
+*/
                 // at the end, we insert the mappings in TABLES_MAPPING
                 var mappingQuery = "INSERT INTO " + TABLES_MAPPING
                         + " (famid, attrid, columnid, ismultiple, isproperty, type)"
@@ -484,6 +484,7 @@ var storageManager = {
                     });
                     
                     // mappingStmt.execute();
+                    
                     // FIXME: add failure handler
                 } catch(e) {
                     logError('storageManager::initFamilyView (mapping query failed)');
@@ -578,8 +579,7 @@ var storageManager = {
                                 if(Array.isArray(value)){
                                     value = JSON.stringify(value);
                                 } else {
-                                    throw "value is not an array for " + attrId
-                                            " which is marked as multiple";
+                                    throw "value is not an array for " + attrId + " which is marked as multiple";
                                 }
                             	}
                             } else {
@@ -634,7 +634,6 @@ var storageManager = {
             // XXX throws correct exception
             throw "storageManager::saveDocumentValues (missing parameters)";
         }
-        return this;
     },
 
     getFamilyValues : function(config){

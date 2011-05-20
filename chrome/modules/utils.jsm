@@ -1,5 +1,5 @@
 
-var EXPORTED_SYMBOLS = [ "utils" ];
+var EXPORTED_SYMBOLS = [ "utils" , "ArgException"];
 
 function Protoutils(config) {
 
@@ -29,3 +29,4 @@ Protoutils.prototype.toIso8601 = function(now, withoutT) {
 };
 
 var utils = new Protoutils();
+
