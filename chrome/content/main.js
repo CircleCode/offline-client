@@ -1,11 +1,12 @@
-// start_venkman();
-Components.utils.import("resource://modules/logger.jsm");
-Components.utils.import("resource://modules/docManager.jsm");
-// Components.utils.import("chrome://dcpoffline/content/logger.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://modules/logger.jsm");
+Cu.import("resource://modules/docManager.jsm");
 
 /* enabling password manager */
-Components.classes["@mozilla.org/login-manager;1"]
-        .getService(Components.interfaces.nsILoginManager);
+Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
 /* debug stuff */
 
@@ -15,6 +16,41 @@ function toOpenWindowByType(inType, uri) {
     window.open(uri, "_blank", winopts);
 }
 
+function openLoginDialog() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
+            "chrome,modal");
+}
+
+function openNewDocumentDialog() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/newDocument.xul", "",
+            "chrome,modal");
+}
+
+function openCloseDialog() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/close.xul", "",
+            "chrome,modal");
+}
+
+function openPreferences() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/preferences.xul", "",
+            "chrome,modal");
+}
+
+function openSynchro() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/synchro.xul", "",
+            "chrome,modal");
+}
+
+function openLog() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/log.xul", "",
+            "chrome,modal");
+}
+
+function openAbout() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/about.xul", "",
+            "chrome,modal");
+}
+
 /* some tests */
 function customDebug(level) {
     log("starting customDebug at level " + level);
@@ -22,8 +58,8 @@ function customDebug(level) {
     Components.utils.import("resource://modules/storageManager.jsm");
 
     var C = new Fdl.Context({
-        //url : "http://dynacase.r2d2.paris.lan/dev/"
-            url : "http://localhost/eric/"
+        // url : "http://dynacase.r2d2.paris.lan/dev/"
+        url : "http://localhost/eric/"
     });
     if (!C.isAuthenticated()) {
         var u = C.setAuthentification({
@@ -37,47 +73,47 @@ function customDebug(level) {
     log("context is authenticated");
 
     switch (level) {
-        case 1 :
+    case 1:
 
-            var fam = C.getDocument({
-                id : 'ZOO_ANIMAL'
-            });
-            var r1 = storageManager
-                    .execQuery({
-                        query : "insert into families(famid, name, json_object) values(:famid, :famname, :fam)",
-                        params : {
-                            famid : fam.getProperty('id'),
-                            famname : fam.getProperty('name'),
-                            fam : JSON.stringify(fam)
-                        }
-                    });
-
-            log(r1, "family is stored");
-
-            break;
-        case 2 :
-
-            var fam = C.getDocument({
-                id : 'ZOO_ANIMAL'
-            });
-
-            var r2 = storageManager.initFamilyView(fam);
-
-            log(r2, "familyView is initialised");
-            break;
-        case 3 :
-            for ( var i = 0; i < 10; i++) {
-
-                var animal = C.getDocument({
-                    id : 1080 + i
-                });
-                var r3 = storageManager.saveDocumentValues({
-                    properties : animal.getProperties(),
-                    attributes : animal.getValues()
+        var fam = C.getDocument({
+            id : 'ZOO_ANIMAL'
+        });
+        var r1 = storageManager
+                .execQuery({
+                    query : "insert into families(famid, name, json_object) values(:famid, :famname, :fam)",
+                    params : {
+                        famid : fam.getProperty('id'),
+                        famname : fam.getProperty('name'),
+                        fam : JSON.stringify(fam)
+                    }
                 });
 
-                log(r3, "document is saved");
-            }
+        log(r1, "family is stored");
+
+        break;
+    case 2:
+
+        var fam = C.getDocument({
+            id : 'ZOO_ANIMAL'
+        });
+
+        var r2 = storageManager.initFamilyView(fam);
+
+        log(r2, "familyView is initialised");
+        break;
+    case 3:
+        for ( var i = 0; i < 10; i++) {
+
+            var animal = C.getDocument({
+                id : 1080 + i
+            });
+            var r3 = storageManager.saveDocumentValues({
+                properties : animal.getProperties(),
+                attributes : animal.getValues()
+            });
+
+            log(r3, "document is saved");
+        }
     }
 
 }
