@@ -50,7 +50,7 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
 	});
 	for ( var i = 0; i < domains.length; i++) {
 		domain = domains.getDocument(i);
-		log('domain :' + domain.getTitle());
+		this.log('record domain :' + domain.getTitle());
 		storageManager
 				.execQuery({
 					query : "insert into domains(id, name, description, mode,  transactionpolicy, sharepolicy) values(:initid, :name, :description, :mode,  :transactionPolicies, :sharePolicies)",
@@ -105,7 +105,7 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
 					});
 			// view generation
 			storageManager.initFamilyView(fam);
-			logTime("record family :" + fam.getTitle());
+			this.log("record family :" + fam.getTitle());
 		}
 	} else {
 		throw new ArgException("recordFamilies need domain parameter");
@@ -138,12 +138,13 @@ offlineSynchronize.prototype.pushDocument = function(config) {
 			});
 			
 			if (!updateDocument) {
-				throw "pushDocument:" + domain.context.getLastErrorMessage();
+				throw new SyncException("pushDocument");
 			} else {
+			    this.log('push document '+updateDocument.getTitle());
 				this.callObserver('onAddDocumentsSaved',1);
 			}
 		} else {
-			throw "pushDocument: no document";
+			throw new SyncException("pushDocument: no document");
 		}
 	} else {
 		throw new ArgException(
@@ -195,7 +196,6 @@ offlineSynchronize.prototype.setObservers = function(config) {
 
 offlineSynchronize.prototype.callObserver = function(fn, arg) {
 	if ((typeof this.observers == 'object') && this.observers[fn]) {
-		logTime('call:'+fn);
 		this.observers[fn](arg);
 	}
 }
@@ -243,6 +243,7 @@ offlineSynchronize.prototype.pendingFiles = function(config) {
 												writable : writable
 											});
 									this.callObserver('onAddFilesToRecord',1);
+									this.log('recording file '+basename);
 								}
 							}
 						}
@@ -271,6 +272,11 @@ offlineSynchronize.prototype.pendingFiles = function(config) {
 		throw new ArgException("pendingFiles need domain, document parameter");
 	}
 };
+
+
+offlineSynchronize.prototype.log = function(msg) {
+    log({message:msg, code:'SYNC'});
+};
 /**
  * 
  */
@@ -289,6 +295,8 @@ offlineSynchronize.prototype.recordFiles = function() {
 				completeFileCallback : function() {
 					logTime('end files', this.filesToDownload);
 
+			        this.callObserver('onAllFilesRecorded');
+			        me.log('all files recorded');
 					me.recordFilesInProgress = false;
 					fileManager.initModificationDates();
 				}
@@ -330,6 +338,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
 										callback : {
 											handleCompletion : function() {
 												me.callObserver('onAddDocumentsRecorded',1);
+												me.log('record document:'+document.getTitle());
 												me.updateSyncDate({document:document});
 											}
 										}
@@ -396,6 +405,7 @@ logDebug('testpullDocuments');
 				document : onedoc
 			});
 			logTime('store : ' + onedoc.getTitle());
+			this.log('pull from share :'+ onedoc.getTitle());
 			this.callObserver('onDetailPercent',((j + 1) / shared.length * 100));
 		}
 		this.callObserver('onDetailPercent',100);
@@ -417,6 +427,7 @@ logDebug('testpullDocuments');
 				domain : domain,
 				document : onedoc
 			});
+            this.log('pull from user :'+ onedoc.getTitle());
 			this.callObserver('onDetailPercent',(j + 1) / userd.length * 100);
 		}
 		this.callObserver('onGlobalPercent',90);
@@ -535,7 +546,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
 			}
 		}
 	} else {
-		throw "no transaction set:" + domain.context.getLastErrorMessage();
+		throw new SyncException("no transaction set");
 	}
 	logTime('mod files', modifiedFiles);
 	} else {

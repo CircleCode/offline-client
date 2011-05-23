@@ -8,7 +8,6 @@ var EXPORTED_SYMBOLS = ["logDebug", "logError", "logTime", "log"];
 const debugOutput = true;
 debugMaxDepth = 2;
 logDebug = function(msg) {
-
     logFile.write({message:msg, priority:logFile.DEBUG});
 };
 
