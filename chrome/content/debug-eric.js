@@ -33,15 +33,17 @@ function clicPullDomain(domainid) {
 			domain : domain.id
 		});
 
-		offlineSync.setProgressElements({
-			global : document.getElementById('progressGlobal'),
-			detail : document.getElementById('progressDetail'),
-			label : document.getElementById('detailLabel'),
-			documentsToRecord : document.getElementById('documentsToRecord'),
-			documentsRecorded : document.getElementById('documentsRecorded'),
-			filesToRecord : document.getElementById('filesToRecord'),
-			filesRecorded : document.getElementById('filesRecorded')
-		});
+		myObservers();
+		/*
+		 * offlineSync.setProgressElements({ global :
+		 * document.getElementById('progressGlobal'), detail :
+		 * document.getElementById('progressDetail'), label :
+		 * document.getElementById('detailLabel'), documentsToRecord :
+		 * document.getElementById('documentsToRecord'), documentsRecorded :
+		 * document.getElementById('documentsRecorded'), filesToRecord :
+		 * document.getElementById('filesToRecord'), filesRecorded :
+		 * document.getElementById('filesRecorded') });
+		 */
 		var label = document.getElementById('domain');
 
 		label.value = domain.getTitle();
@@ -61,23 +63,22 @@ function clicPushDomain(domainid) {
 	var domain = context.getDocument({
 		id : domainid
 	});
-	
 
-	
 	if (domain) {
 		docManager.setActiveDomain({
 			domain : domain.id
 		});
-
-		offlineSync.setProgressElements({
-			global : document.getElementById('progressGlobal'),
-			detail : document.getElementById('progressDetail'),
-			label : document.getElementById('detailLabel'),
-			documentsToSave : document.getElementById('documentsToSave'),
-			documentsSaved : document.getElementById('documentsSaved'),
-			filesToSave : document.getElementById('filesToSave'),
-			filesSaved : document.getElementById('filesSaved')
-		});
+		myObservers();
+		/*
+		 * offlineSync.setProgressElements({ global :
+		 * document.getElementById('progressGlobal'), detail :
+		 * document.getElementById('progressDetail'), label :
+		 * document.getElementById('detailLabel'), documentsToSave :
+		 * document.getElementById('documentsToSave'), documentsSaved :
+		 * document.getElementById('documentsSaved'), filesToSave :
+		 * document.getElementById('filesToSave'), filesSaved :
+		 * document.getElementById('filesSaved') });
+		 */
 		modifyAntilope();
 		var label = document.getElementById('domain');
 
@@ -118,24 +119,107 @@ function modifyAntilope() {
 	}
 }
 
-function clicPullEverythings() {
-	offlineSync.setProgressElements({
-		global : document.getElementById('progressGlobal'),
-		detail : document.getElementById('progressDetail'),
-		label : document.getElementById('detailLabel'),
-		documentsToRecord : document.getElementById('documentsToRecord'),
-		documentsRecorded : document.getElementById('documentsRecorded'),
-		filesToRecord : document.getElementById('filesToRecord'),
-		filesRecorded : document.getElementById('filesRecorded')
-	});
-	var label = document.getElementById('domain');
-	var domains = offlineSync.recordOfflineDomains();
-	var onedom = null;
-	for ( var i = 0; i < domains.length; i++) {
-		onedom = domains.getDocument(i);
-		label.value += "\n--" + onedom.getTitle();
-		offlineSync.synchronizeDomain(onedom);
-	}
-	label.value += "\nFINISH";
+function myObservers() {
+	/*
+	 * offlineSync.setProgressElements({ global :
+	 * document.getElementById('progressGlobal'), detail :
+	 * document.getElementById('progressDetail'), label :
+	 * document.getElementById('detailLabel'), documentsToRecord :
+	 * document.getElementById('documentsToRecord'), documentsRecorded :
+	 * document.getElementById('documentsRecorded'), filesToRecord :
+	 * document.getElementById('filesToRecord'), filesRecorded :
+	 * document.getElementById('filesRecorded') });
+	 */
 
+	offlineSync.setObservers({
+		onDetailPercent : function(p) {
+			myDetailPercent(p);
+		},
+
+		onGlobalPercent : function(p) {
+			myGlobalPercent(p);
+		},
+		onDetailLabel : function(t) {
+			myDetailLabel(t);
+		},
+		onAddDocumentsToRecord : function(t) {
+			myAddDocumentsToRecord(t);
+		},
+		onAddDocumentsRecorded : function(t) {
+			myAddDocumentsRecorded(t);
+		},
+		onAddFilesToRecord : function(t) {
+			myAddFilesToRecord(t);
+		},
+		onAddFilesRecorded : function(t) {
+			myAddFilesRecorded(t);
+		},
+		onAddDocumentsToSave : function(t) {
+			myAddDocumentsToSave(t);
+		},
+		onAddDocumentsSaved : function(t) {
+			myAddDocumentsSaved(t);
+		},
+		onAddFilesToSave : function(t) {
+			myAddFilesToSave(t);
+		},
+		onAddFilesSaved : function(t) {
+			myAddFilesSaved(t);
+		}
+	});
+	
 }
+
+function myDetailPercent(p) {
+	document.getElementById('progressDetail').value = p;
+};
+
+function myGlobalPercent(p) {
+	document.getElementById('progressGlobal').value = p;
+
+};
+function myDetailLabel(t) {
+	document.getElementById('detailLabel').setAttribute('label', t);
+
+};
+function myAddDocumentsToRecord(delta) {
+	var r = document.getElementById('documentsToRecord')
+	r.value = parseInt(r.value) + delta;
+};
+
+function myAddDocumentsRecorded(delta) {
+	var r = document.getElementById('documentsRecorded');
+	r.value = parseInt(r.value) + delta;
+
+};
+function myAddFilesToRecord(delta) {
+
+	var r = document.getElementById('filesToRecord');
+	r.value = parseInt(r.value) + delta;
+};
+
+function myAddFilesRecorded(delta) {
+
+	var r = document.getElementById('filesRecorded');
+	r.value = parseInt(r.value) + delta;
+};
+
+function myAddDocumentsToSave(delta) {
+	var r = document.getElementById('documentsToSave')
+	r.value = parseInt(r.value) + delta;
+};
+
+function myAddDocumentsSaved(delta) {
+	var r = document.getElementById('documentsSaved');
+	r.value = parseInt(r.value) + delta;
+};
+function myAddFilesToSave(delta) {
+	var r = document.getElementById('filesToSave');
+	r.value = parseInt(r.value) + delta;
+};
+
+function myAddFilesSaved(delta) {
+
+	var r = document.getElementById('filesSaved');
+	r.value = parseInt(r.value) + delta;
+};

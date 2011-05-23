@@ -24,6 +24,7 @@ offlineSynchronize.prototype = {
 	filesToDownload : [],
 	offlineCore : null,
 	recordFilesInProgress : false,
+	observers : null,
 	toString : function() {
 		return 'offlineSynchronize';
 	}
@@ -140,7 +141,7 @@ offlineSynchronize.prototype.pushDocument = function(config) {
 			if (!updateDocument) {
 				throw "pushDocument:" + domain.context.getLastErrorMessage();
 			} else {
-				this.addDocumentsSaved(1);
+				this.callObserver('onAddDocumentsSaved',1);
 			}
 		} else {
 			throw "pushDocument: no document";
@@ -168,87 +169,39 @@ offlineSynchronize.prototype.isEditable = function(config) {
 	}
 };
 
+
+
 /**
  * 
  * @param config
- *            global, detail, label
+ *      onDetailPercent : function(p) 
+		onGlobalPercent : function (p)
+		onDetailLabel : function(t)
+		onAddDocumentsToRecord : function(n)
+		onAddDocumentsRecorded : function(n)
+		onAddFilesToRecord : function(n)
+		onAddFilesRecorded : function(n)
+		onAddDocumentsToSave : function(n) 
+		onAddDocumentsSaved : function(n) 
+		onAddFilesToSave : function(n) 
+		onAddFilesSaved : function(n) 
  */
-offlineSynchronize.prototype.setProgressElements = function(config) {
+offlineSynchronize.prototype.setObservers = function(config) {
 	if (config) {
-		this.progress = {};
+		this.observers = {};
 		for ( var i in config)
-			this.progress[i] = config[i];
-	}
-};
-offlineSynchronize.prototype.detailPercent = function(p) {
-	if (this.progress && this.progress.detail) {
-		this.progress.detail.value = p;
+			this.observers[i] = config[i];
 	}
 };
 
-offlineSynchronize.prototype.globalPercent = function(p) {
-	if (this.progress && this.progress.global) {
-		this.progress.global.value = p;
+offlineSynchronize.prototype.callObserver = function(fn, arg) {
+	if ((typeof this.observers == 'object') && this.observers[fn]) {
+		logTime('call:'+fn);
+		this.observers[fn](arg);
 	}
-};
-offlineSynchronize.prototype.detailLabel = function(t) {
-	if (this.progress && this.progress.label) {
-		this.progress.label.setAttribute('label', t);
-	}
-};
-offlineSynchronize.prototype.addDocumentsToRecord = function(delta) {
-	if (this.progress && this.progress.documentsToRecord) {
-		this.progress.documentsToRecord.value = parseInt(this.progress.documentsToRecord.value)
-				+ delta;
-	}
-};
+}
 
-offlineSynchronize.prototype.addDocumentsRecorded = function(delta) {
-	if (this.progress && this.progress.documentsRecorded) {
-		this.progress.documentsRecorded.value = parseInt(this.progress.documentsRecorded.value)
-				+ delta;
-	}
-};
-offlineSynchronize.prototype.addFilesToRecord = function(delta) {
-	if (this.progress && this.progress.filesToRecord) {
-		this.progress.filesToRecord.value = parseInt(this.progress.filesToRecord.value)
-				+ delta;
-	}
-};
 
-offlineSynchronize.prototype.addFilesRecorded = function(delta) {
-	if (this.progress && this.progress.filesRecorded) {
-		this.progress.filesRecorded.value = parseInt(this.progress.filesRecorded.value)
-				+ delta;
-	}
-};
-
-offlineSynchronize.prototype.addDocumentsToSave = function(delta) {
-	if (this.progress && this.progress.documentsToSave) {
-		this.progress.documentsToSave.value = parseInt(this.progress.documentsToSave.value)
-				+ delta;
-	}
-};
-
-offlineSynchronize.prototype.addDocumentsSaved = function(delta) {
-	if (this.progress && this.progress.documentsSaved) {
-		this.progress.documentsSaved.value = parseInt(this.progress.documentsSaved.value)
-				+ delta;
-	}
-};
-offlineSynchronize.prototype.addFilesToSave = function(delta) {
-	if (this.progress && this.progress.filesToSave) {
-		this.progress.filesToSave.value = parseInt(this.progress.filesToSave.value)
-				+ delta;
-	}
-};
-
-offlineSynchronize.prototype.addFilesSaved = function(delta) {
-	if (this.progress && this.progress.filesSaved) {
-		this.progress.filesSaved.value = parseInt(this.progress.filesSaved.value)
-				+ delta;
-	}
-};
 offlineSynchronize.prototype.pendingFiles = function(config) {
 	if (config && config.domain && config.document) {
 		var domain = config.domain;
@@ -290,7 +243,7 @@ offlineSynchronize.prototype.pendingFiles = function(config) {
 														.getProperty('initid'),
 												writable : writable
 											});
-									this.addFilesToRecord(1);
+									this.callObserver('onAddFilesToRecord',1);
 								}
 							}
 						}
@@ -309,7 +262,7 @@ offlineSynchronize.prototype.pendingFiles = function(config) {
 								initid : document.getProperty('initid'),
 								writable : writable
 							});
-							this.addFilesToRecord(1);
+							this.callObserver('onAddFilesToRecord',1);
 						}
 					}
 				}
@@ -332,7 +285,7 @@ offlineSynchronize.prototype.recordFiles = function() {
 			fileManager.downloadFiles({
 				files : this.filesToDownload,
 				acquitFileCallback : function() {
-					me.addFilesRecorded(1);
+					me.callObserver('onAddFilesRecorded',1);
 				},
 				completeFileCallback : function() {
 					logTime('end files', this.filesToDownload);
@@ -354,7 +307,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
 	if (config && config.domain && config.document) {
 		var domain = config.domain;
 		var document = config.document;
-		this.addDocumentsToRecord(1);
+		this.callObserver('onAddDocumentsToRecord',1);
 		var me = this;
 		storageManager
 				.saveDocumentValues({
@@ -377,7 +330,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
 										},
 										callback : {
 											handleCompletion : function() {
-												me.addDocumentsRecorded(1);
+												me.callObserver('onAddDocumentsRecorded',1);
 												me.updateSyncDate({document:document});
 											}
 										}
@@ -422,17 +375,17 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 			lock : true
 		});
 
-		this.detailPercent(0);
-		this.globalPercent(0);
-		this.detailLabel(domain.getTitle() + ':get shared documents');
+		this.callObserver('onDetailPercent',0);
+		this.callObserver('onGlobalPercent',0);
+		this.callObserver('onDetailLabel',(domain.getTitle() + ':get shared documents'));
 		var shared = domain.sync().getSharedDocuments({
 		// until : '2011-05-01 13:00'
 		});
-		this.globalPercent(10);
+		this.callObserver('onGlobalPercent',0);
 		var serverDate = shared.date.replace(" ", "T");
 		var clientDate = utils.toIso8601(now);
 
-		this.detailLabel('recording shared documents : ' + shared.length);
+		this.callObserver('onDetailLabel',('recording shared documents : ' + shared.length));
 		logTime('pull shared : ' + shared.length + ':' + serverDate + '--'
 				+ clientDate);
 		var onedoc = null;
@@ -444,20 +397,20 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 				document : onedoc
 			});
 			logTime('store : ' + onedoc.getTitle());
-			this.detailPercent((j + 1) / shared.length * 100);
+			this.callObserver('onDetailPercent',((j + 1) / shared.length * 100));
 		}
-		this.detailPercent(100);
-		this.globalPercent(50);
+		this.callObserver('onDetailPercent',100);
+		this.callObserver('onGlobalPercent',50);
 		// var dbcon=storageManager.getDbConnection();
 		// dbcon.executeSimpleSQL(docsDomainQuery);
 		// logTime('docsDomain : '+docsDomainQuery);
-		this.detailLabel(domain.getTitle() + ':get user documents');
+		this.callObserver('onDetailLabel',domain.getTitle() + ':get user documents');
 		var userd = domain.sync().getUserDocuments({
 		// until : '2011-05-01 13:00'
 		});
 
-		this.globalPercent(60);
-		this.detailLabel('recording user documents : ' + userd.length);
+		this.callObserver('onGlobalPercent',60);
+		this.callObserver('onDetailLabel','recording user documents : ' + userd.length);
 		logTime('pull users : ' + userd.length);
 		for (j = 0; j < userd.length; j++) {
 			onedoc = userd.getDocument(j);
@@ -465,9 +418,9 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 				domain : domain,
 				document : onedoc
 			});
-			this.detailPercent((j + 1) / userd.length * 100);
+			this.callObserver('onDetailPercent',(j + 1) / userd.length * 100);
 		}
-		this.globalPercent(90);
+		this.callObserver('onGlobalPercent',90);
 		storageManager
 				.execQuery({
 					query : "insert into synchrotimes (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid , :serverDate, :clientDate , :clientDate from documents",
@@ -484,7 +437,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 		});
 		// logTime('synchrotimes : ', this.filesToDownload);
 
-		this.globalPercent(100);
+		this.callObserver('onGlobalPercent',100);
 	} else {
 		throw new ArgException("isEditable need domain parameter");
 	}
@@ -538,7 +491,7 @@ offlineSynchronize.prototype.revertDocument = function(config) {
 offlineSynchronize.prototype.pushDocuments = function(config) {
 	if (config && config.domain) {
 		var domain = config.domain;
-	this.globalPercent(0);
+	this.callObserver('onGlobalPercent',0);
 	docManager.setActiveDomain({
 		domain : domain.id
 	});
@@ -551,8 +504,8 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
 		domain : domain
 	});
 	var ldoc;
-	this.addFilesToSave(modifiedFiles.length);
-	this.addDocumentsToSave(modifiedDocs.length);
+	this.callObserver('onAddFilesToSave',modifiedFiles.length);
+	this.callObserver('onAddDocumentsToSave',modifiedDocs.length);
 	var tid = domain.sync().beginTransaction();
 	if (tid) {
 		for ( var i = 0; i < modifiedDocs.length; i++) {
