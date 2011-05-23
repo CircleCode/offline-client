@@ -28,5 +28,15 @@ Protoutils.prototype.toIso8601 = function(now, withoutT) {
 
 };
 
+/**
+ * only date without hours
+ * @param Date now
+ * @returns {String}
+ */
+Protoutils.prototype.DateToIso8601 = function(now) {
+    return now.getFullYear() + '-' + this.twoDigits(now.getMonth() + 1) + '-'
+            + this.twoDigits(now.getDate());
+
+};
 var utils = new Protoutils();
 

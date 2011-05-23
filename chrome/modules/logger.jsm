@@ -1,27 +1,44 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
-var EXPORTED_SYMBOLS = ["log", "logError", "logTime"];
+
+Cu.import("resource://modules/logfile.jsm");
+
+var EXPORTED_SYMBOLS = ["logDebug", "logError", "logConsole", "log"];
 
 const debugOutput = true;
-debugMaxDepth = 2;
-log = function() {
-	
-}
+const debugMaxDepth = 2;
 
 var dinit=new Date().getTime();
 var dlast=dinit;
-logTime = function(msg, obj) {
-	var dloc=new Date().getTime();
-	var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
-	if (obj) _log(obj, prefix+msg);
-	else _log( prefix+msg);
-	dlast=dloc;
+
+function log(config) {
+    logFile.write(config);
+};
+
+function logError(aMessage){
+    logFile.write({message:aMessage, priority:log.ERR});
+    return Cu.reportError(aMessage);
+}
+
+function logDebug(msg) {
+    logFile.write({message:msg, priority:logFile.DEBUG});
+};
+
+function logConsole(msg, obj) {
+    var dloc=new Date().getTime();
+    var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
+    if (obj) {
+        _log(obj, prefix+msg);
+    }
+    else {
+        _log( prefix+msg);
+    }
 }
 
 _log = function() {
-   var consoleService = Cc["@mozilla.org/consoleservice;1"]
-            .getService(Ci.nsIConsoleService);
+    var consoleService = Cc["@mozilla.org/consoleservice;1"]
+    .getService(Ci.nsIConsoleService);
 
     var ddump = function(text, ret) {
         if (debugOutput)
@@ -43,20 +60,20 @@ _log = function() {
         for (prop in obj) {
             i++;
             try {
-            if (typeof (obj[prop]) == "object") {
-                if (obj[prop] && obj[prop].length != undefined)
-                    msg += indent + prop + "=[probably array, length "
-                            + obj[prop].length + "]";
-                else
-                    msg += indent + prop + "=[" + typeof (obj[prop]) + "]";
+                if (typeof (obj[prop]) == "object") {
+                    if (obj[prop] && obj[prop].length != undefined)
+                        msg += indent + prop + "=[probably array, length "
+                        + obj[prop].length + "]";
+                    else
+                        msg += indent + prop + "=[" + typeof (obj[prop]) + "]";
 
-                msg += indent
-                        + ddumpObject(obj[prop], prop, maxDepth, curDepth + 1,
-                                true);
-            } else if (typeof (obj[prop]) == "function")
-                msg += indent + prop + "=[function]", ret;
-            else
-                msg += indent + prop + "=" + obj[prop];
+                    msg += indent
+                    + ddumpObject(obj[prop], prop, maxDepth, curDepth + 1,
+                            true);
+                } else if (typeof (obj[prop]) == "function")
+                    msg += indent + prop + "=[function]", ret;
+                else
+                    msg += indent + prop + "=" + obj[prop];
             } catch (e) {}
         }
         if (!i)
@@ -74,18 +91,13 @@ _log = function() {
 
     return function(aMessage, name) {
         switch (typeof aMessage) {
-            case 'function' :
-            case 'object' :
-                ddumpObject(aMessage, name?name:'', debugMaxDepth);
-                break;
-            default :
-                ddump((name ? (name + ': ') : '') + aMessage);
+        case 'function' :
+        case 'object' :
+            ddumpObject(aMessage, name?name:'', debugMaxDepth);
+            break;
+        default :
+            ddump((name ? (name + ': ') : '') + aMessage);
         }
     };
 }();
 
-function logError(aMessage){
-    return Cu.reportError(aMessage);
-}
-
-log('logger loaded');

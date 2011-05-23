@@ -181,4 +181,3 @@ if (defaultDomain) {
 	});
 }
 
-log('DocManager loaded');
