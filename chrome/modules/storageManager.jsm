@@ -143,7 +143,7 @@ var storageManager = {
                     if (config.callback) {
                         stmt = dbCon.createStatement(config.query);
                         //stmt = dbCon.createAsyncStatement(config.query);
-                        //logTime("async" + config.query);
+                        //logConsole("async" + config.query);
                     } else {
                         stmt = dbCon.createStatement(config.query);
                     }
@@ -235,7 +235,7 @@ var storageManager = {
                 logError("storageManager::execQuery failed");
                 logError(e);
                 logError(config.query);
-                logTime('params',config.params);
+                logConsole('params',config.params);
                 log(e, "storageManager::execQuery failed");
             }
         }
@@ -531,7 +531,7 @@ var storageManager = {
     				params:{
     					initid:initid
     				}});
-    			//logTime("getdoc", r);
+    			//logConsole("getdoc", r);
     			if (r.length == 1) {
     				return r[0];
     			} else {
