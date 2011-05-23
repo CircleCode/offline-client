@@ -4,7 +4,7 @@ const Cu = Components.utils;
 
 Cu.import("resource://modules/logfile.jsm");
 
-var EXPORTED_SYMBOLS = ["logDebug", "logError", "logTime", "log"];
+var EXPORTED_SYMBOLS = ["logDebug", "logError", "logConsole", "log"];
 
 const debugOutput = true;
 const debugMaxDepth = 2;
@@ -12,26 +12,28 @@ const debugMaxDepth = 2;
 var dinit=new Date().getTime();
 var dlast=dinit;
 
-var log = function log(config) {
+function log(config) {
     logFile.write(config);
 };
 
-var logError = function logError(aMessage){
+function logError(aMessage){
     logFile.write({message:aMessage, priority:log.ERR});
     return Cu.reportError(aMessage);
 }
 
-var logDebug = function logDebug(msg) {
+function logDebug(msg) {
     logFile.write({message:msg, priority:logFile.DEBUG});
 };
 
-var logTime = function logTime(msg, obj) {
+function logConsole(msg, obj) {
     var dloc=new Date().getTime();
     var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
-    if (obj) _log(obj, prefix+msg);
-    else _log( prefix+msg);
-    dlast=dloc;
-    logFile.write({message:msg, priority:logFile.DEBUG});
+    if (obj) {
+        _log(obj, prefix+msg);
+    }
+    else {
+        _log( prefix+msg);
+    }
 }
 
 _log = function() {
