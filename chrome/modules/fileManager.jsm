@@ -54,7 +54,7 @@ var fileManager = {
 							logError(e);
 						}
 					}
-					//logTime('save in '+destDir.path);
+					//logConsole('save in '+destDir.path);
 					config.aFile.permissions = config.writable ? PERMISSIONS_WRITABLE
 							: PERMISSIONS_NOT_WRITABLE;
 					// set ref in database
@@ -67,7 +67,7 @@ var fileManager = {
 
 		} else {
 			logError('saveFile : missing parameters');
-			//logTime('error', config);
+			//logConsole('error', config);
 		}
 	},
 	
@@ -78,7 +78,7 @@ var fileManager = {
 		if (config && config.domain) {
 			var domainId=config.domain;
 			this.updateModificationDates();
-			logTime('domain'+domainId);
+			logConsole('domain'+domainId);
 			var r = storageManager
 			.execQuery({
 				query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and recorddate is not null and recorddate < modifydate',
@@ -89,7 +89,7 @@ var fileManager = {
 			return r;
 		}else {
 			logError('getModifiedFiles : missing domain parameters');
-			//logTime('error', config);
+			//logConsole('error', config);
 		}
 	},
 	/**
@@ -153,7 +153,7 @@ var fileManager = {
 				});
 				
 				localDoc=docManager.getLocalDocument({initid:r[i].initid});
-				//logTime('doclocal', localDoc);
+				//logConsole('doclocal', localDoc);
 				try {
 				localDoc.save(); // to change modification date
 				} catch (e) {
@@ -240,7 +240,7 @@ var fileManager = {
 		}
 
 		if (file) {
-			//logTime("downloading the " + file.url + ": " + file.name);
+			//logConsole("downloading the " + file.url + ": " + file.name);
 			// create file destination
 
 			 file.aFile = createTmpFile();
@@ -269,7 +269,7 @@ var fileManager = {
 						aStatus) {
 					/* var ele = document.getElementById("progress_element"); */
 					if (aStateFlags & STATE_STOP) {
-						//logTime(file.basename + 'downloaded');
+						//logConsole(file.basename + 'downloaded');
 
 						if (file.writable) {
 							file.aFile.permissions = 0444;
@@ -287,7 +287,7 @@ var fileManager = {
 						// refreshProgressBar()
 						if (typeof me.acquitFileCallback == "function") me.acquitFileCallback();
 						
-						logTime("file in queue: " + me.filesToDownLoad.length);
+						logConsole("file in queue: " + me.filesToDownLoad.length);
 						me.downloadFiles();
 					}
 				}

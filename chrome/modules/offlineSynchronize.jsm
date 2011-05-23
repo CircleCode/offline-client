@@ -84,12 +84,12 @@ offlineSynchronize.prototype.synchronizeDomain = function(config) {
 	}
 };
 offlineSynchronize.prototype.recordFamilies = function(config) {
-	logTime('recordFamilies ');
+	logConsole('recordFamilies ');
 
 	if (config && config.domain) {
 		var domain = config.domain;
 		var families = domain.getAvailableFamilies();
-		logTime('pull families : ');
+		logConsole('pull families : ');
 
 		var fam = null;
 		for ( var i = 0; i < families.length; i++) {
@@ -282,7 +282,7 @@ offlineSynchronize.prototype.log = function(msg) {
  */
 offlineSynchronize.prototype.recordFiles = function() {
 	if (!this.recordFilesInProgress) {
-		logTime('recordFilesInProgress');
+		logConsole('recordFilesInProgress');
 		if (this.filesToDownload.length > 0) {
 			var me = this;
 			this.recordFilesInProgress = true;
@@ -293,9 +293,9 @@ offlineSynchronize.prototype.recordFiles = function() {
 					me.callObserver('onAddFilesRecorded',1);
 				},
 				completeFileCallback : function() {
-					logTime('end files', this.filesToDownload);
+					logConsole('end files', this.filesToDownload);
 
-			        this.callObserver('onAllFilesRecorded');
+			        me.callObserver('onAllFilesRecorded', 1);
 			        me.log('all files recorded');
 					me.recordFilesInProgress = false;
 					fileManager.initModificationDates();
@@ -354,7 +354,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
 		 * initid : document.getProperty('initid'), domainid :
 		 * domain.getProperty('initid'), editable : this.isEditable(domain,
 		 * document) }, callback : { handleCompletion : function(result) {
-		 * logTime("return from a callback");
+		 * logConsole("return from a callback");
 		 * 
 		 * me.addDocumentsRecorded(1); } } });
 		 */
@@ -377,7 +377,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 		var domain = config.domain;
 		// TODO pull all documents and modifies files
 		var now = new Date();
-		logTime('pull : ');
+		logConsole('pull : ');
 
 		storageManager.lockDatabase({
 			lock : true
@@ -394,7 +394,7 @@ logDebug('testpullDocuments');
 		var clientDate = utils.toIso8601(now);
 
 		this.callObserver('onDetailLabel',('recording shared documents : ' + shared.length));
-		logTime('pull shared : ' + shared.length + ':' + serverDate + '--'
+		logConsole('pull shared : ' + shared.length + ':' + serverDate + '--'
 				+ clientDate);
 		var onedoc = null;
 		var j = 0;
@@ -404,7 +404,7 @@ logDebug('testpullDocuments');
 				domain : domain,
 				document : onedoc
 			});
-			logTime('store : ' + onedoc.getTitle());
+			logConsole('store : ' + onedoc.getTitle());
 			this.log('pull from share :'+ onedoc.getTitle());
 			this.callObserver('onDetailPercent',((j + 1) / shared.length * 100));
 		}
@@ -412,7 +412,7 @@ logDebug('testpullDocuments');
 		this.callObserver('onGlobalPercent',50);
 		// var dbcon=storageManager.getDbConnection();
 		// dbcon.executeSimpleSQL(docsDomainQuery);
-		// logTime('docsDomain : '+docsDomainQuery);
+		// logConsole('docsDomain : '+docsDomainQuery);
 		this.callObserver('onDetailLabel',domain.getTitle() + ':get user documents');
 		var userd = domain.sync().getUserDocuments({
 		// until : '2011-05-01 13:00'
@@ -420,7 +420,7 @@ logDebug('testpullDocuments');
 
 		this.callObserver('onGlobalPercent',60);
 		this.callObserver('onDetailLabel','recording user documents : ' + userd.length);
-		logTime('pull users : ' + userd.length);
+		logConsole('pull users : ' + userd.length);
 		for (j = 0; j < userd.length; j++) {
 			onedoc = userd.getDocument(j);
 			this.recordDocument({
@@ -445,7 +445,7 @@ logDebug('testpullDocuments');
 		storageManager.lockDatabase({
 			lock : false
 		});
-		// logTime('synchrotimes : ', this.filesToDownload);
+		// logConsole('synchrotimes : ', this.filesToDownload);
 
 		this.callObserver('onGlobalPercent',100);
 	} else {
@@ -505,7 +505,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
 	docManager.setActiveDomain({
 		domain : domain.id
 	});
-	logTime("active domain" + docManager.getActiveDomain());
+	logConsole("active domain" + docManager.getActiveDomain());
 	// update file modification date
 	var modifiedFiles = fileManager.getModifiedFiles({
 		domain : domain.id
@@ -520,7 +520,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
 	if (tid) {
 		for ( var i = 0; i < modifiedDocs.length; i++) {
 			ldoc = modifiedDocs.getLocalDocument(i);
-			logTime("mod doc:" + ldoc.getTitle());
+			logConsole("mod doc:" + ldoc.getTitle());
 			try {
 				this.pushDocument({
 					domain : domain,
@@ -534,7 +534,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
 		var thisIsTheEnd = domain.sync().endTransaction();
 		if (thisIsTheEnd) {
 			var results = domain.sync().getTransactionStatus();
-			logTime('final Results', results);
+			logConsole('final Results', results);
 			for ( var docid in results.detailStatus) {
 				if (results.detailStatus[docid].isValid) {
 					// update local document
@@ -548,7 +548,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
 	} else {
 		throw new SyncException("no transaction set");
 	}
-	logTime('mod files', modifiedFiles);
+	logConsole('mod files', modifiedFiles);
 	} else {
 		throw new ArgException("pushDocuments need domain parameter");
 	}
