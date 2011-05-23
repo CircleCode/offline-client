@@ -1,13 +1,20 @@
+Components.utils.import("resource://modules/logfile.jsm");
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
-var EXPORTED_SYMBOLS = ["log", "logError", "logTime"];
+var EXPORTED_SYMBOLS = ["logDebug", "logError", "logTime", "log"];
 
 const debugOutput = true;
 debugMaxDepth = 2;
-log = function() {
-	
-}
+logDebug = function(msg) {
+
+    logFile.write({message:msg, priority:logFile.DEBUG});
+};
+
+log = function (config) {
+    logFile.write(config);
+};
 
 var dinit=new Date().getTime();
 var dlast=dinit;
@@ -17,6 +24,7 @@ logTime = function(msg, obj) {
 	if (obj) _log(obj, prefix+msg);
 	else _log( prefix+msg);
 	dlast=dloc;
+    logFile.write({message:msg, priority:logFile.DEBUG});
 }
 
 _log = function() {
@@ -85,7 +93,7 @@ _log = function() {
 }();
 
 function logError(aMessage){
+    logFile.write({message:aMessage, priority:log.ERR});
     return Cu.reportError(aMessage);
 }
 
-log('logger loaded');

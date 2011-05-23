@@ -25,7 +25,7 @@ var file = Cc["@mozilla.org/file/directory_service;1"]
 log(file.path, "storage database dir");
 
 file.append('storage.sqlite');
-log(file.path, "storage database");
+log(file.path+":storage database");
 
 var storageService = Cc["@mozilla.org/storage/service;1"]
         .getService(Ci.mozIStorageService);

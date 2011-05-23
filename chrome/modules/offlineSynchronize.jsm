@@ -1,6 +1,5 @@
 Components.utils.import("resource://modules/logger.jsm");
 
-log('Synchro');
 
 Components.utils.import("resource://modules/docManager.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
@@ -374,7 +373,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 		storageManager.lockDatabase({
 			lock : true
 		});
-
+logDebug('testpullDocuments');
 		this.callObserver('onDetailPercent',0);
 		this.callObserver('onGlobalPercent',0);
 		this.callObserver('onDetailLabel',(domain.getTitle() + ':get shared documents'));
@@ -543,6 +542,5 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
 		throw new ArgException("pushDocuments need domain parameter");
 	}
 };
-log('End Synchro');
 
 var offlineSync = new offlineSynchronize();

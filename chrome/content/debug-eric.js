@@ -135,7 +135,6 @@ function myObservers() {
 		onDetailPercent : function(p) {
 			myDetailPercent(p);
 		},
-
 		onGlobalPercent : function(p) {
 			myGlobalPercent(p);
 		},
