@@ -1,14 +1,14 @@
 Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
-
 Components.utils.import("resource://modules/utils.jsm");
-var EXPORTED_SYMBOLS = [ "offlineLightDocument" ];
+
+var EXPORTED_SYMBOLS = [ "localDocument" ];
 
 var cc = cc;
 var ci = ci;
 
 var _propertyNames = null;
-function offlineLightDocument(config) {
+function localDocument(config) {
 	if (config) {
 		if (config.initid) {
 			// existing document
@@ -23,28 +23,33 @@ function offlineLightDocument(config) {
 
 	}
 }
-offlineLightDocument.prototype = {
+localDocument.prototype = {
 	_initid : null,
 	properties : {},
 	values : {},
 	domainId : 0, // set by manager
 	retrieve : function(config) {
 		try {
-			var doc = storageManager.getDocument({
-				initid : config.initid
-			});
-			var props = this.getPropertiesName(doc.fromid);
+			var docRecord = null;
+			if (config.docRecord) {
+				docRecord = config.docRecord;
+			} else {
+				docRecord = storageManager.getDocument({
+					initid : config.initid
+				});
+			}
+			var props = this.getPropertiesName(docRecord.fromid);
 			this.properties = {};
 			this.values = {};
 			var val;
-			for ( var id in doc) {
+			for ( var id in docRecord) {
 				try {
-					val=eval('('+doc[id]+')');
+					val = eval('(' + docRecord[id] + ')');
 				} catch (e) {
-					val=doc[id];
+					val = docRecord[id];
 				}
 				if (props[id]) {
-					this.properties[id] = val; 
+					this.properties[id] = val;
 				} else {
 					this.values[id] = val;
 				}
@@ -68,13 +73,16 @@ offlineLightDocument.prototype = {
 
 	getValue : function(id) {
 		if (id) {
-			return this.values[id];// not need it is do by storageManager (may be JSON.stringify )
+			return this.values[id];// not need it is do by storageManager (may
+									// be JSON.stringify )
 		} else {
 			// FIXME
 			throw "getValue :: missing arguments";
 		}
 	},
-
+	getTitle : function() {
+		return this.properties.title;
+	},
 	getProperty : function(id) {
 		if (id) {
 			return this.properties[id];
@@ -119,21 +127,21 @@ offlineLightDocument.prototype = {
 		if (this.isEditable() || (config && config.force)) {
 
 			var now = new Date();
-			this.properties.revdate=parseInt(now.getTime()/1000);
-			this.properties.mdate=utils.toIso8601(now,true);
+			this.properties.revdate = parseInt(now.getTime() / 1000);
+			this.properties.mdate = utils.toIso8601(now, true);
 			var saveConfig = {
-					attributes : this.values,
-					properties : this.properties
+				attributes : this.values,
+				properties : this.properties
 			};
 			storageManager.saveDocumentValues(saveConfig);
 			storageManager
-			.execQuery({
-				query : 'update synchrotimes set lastsavelocal=:mdate where initid=:initid',
-				params : {
-					mdate : utils.toIso8601(now),
-					initid : this._initid
-				}
-			});
+					.execQuery({
+						query : 'update synchrotimes set lastsavelocal=:mdate where initid=:initid',
+						params : {
+							mdate : utils.toIso8601(now),
+							initid : this._initid
+						}
+					});
 		} else {
 			throw "document " + this._initid + " is not editable";
 		}
@@ -143,7 +151,7 @@ offlineLightDocument.prototype = {
 		if (!this.domainId) {
 			throw "isEditable :: missing arguments";
 		}
-		logTime('editable ? '+ this._initid + this.domainId);
+		logTime('editable ? ' + this._initid + this.domainId);
 		var r = storageManager
 				.execQuery({
 					query : 'select docsbydomain.editable from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',

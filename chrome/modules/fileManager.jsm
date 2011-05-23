@@ -74,17 +74,23 @@ var fileManager = {
 	/**
 	 * return files modified
 	 */
-	getModifiedFiles : function (domainId) {
-		this.updateModificationDates();
-		logTime('domain'+domainId);
-		var r = storageManager
-		.execQuery({
-			query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and recorddate is not null and recorddate < modifydate',
-			params: {
-				domainid:domainId
-			}
-		});
-		return r;
+	getModifiedFiles : function (config) {
+		if (config && config.domain) {
+			var domainId=config.domain;
+			this.updateModificationDates();
+			logTime('domain'+domainId);
+			var r = storageManager
+			.execQuery({
+				query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and recorddate is not null and recorddate < modifydate',
+				params: {
+					domainid:domainId
+				}
+			});
+			return r;
+		}else {
+			logError('getModifiedFiles : missing domain parameters');
+			//logTime('error', config);
+		}
 	},
 	/**
 	 * init recorddate when files were downloaded
