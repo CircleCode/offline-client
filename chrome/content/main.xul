@@ -9,7 +9,7 @@
 
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="openLoginDialog();">
+    onload="openLoginDialog(); initListeners();">
     
     <stringbundleset id="stringbundleset">
         <stringbundle id="mainBundle"
@@ -27,10 +27,10 @@
                         <menuitem label="&main.newDocument;"
                             oncommand="openNewDocumentDialog();"/>
                         <menuseparator/>
-                        <menuitem id="preferences-button" label="&main.preference;"
-                            oncommand="openPreferences();"/>
                         <menuitem id="synchro-button" label="&main.synchro;"
                             oncommand="openSynchro();"/>
+                        <menuitem id="preferences-button" label="&main.preference;"
+                            oncommand="openPreferences();"/>
                         <menuseparator/>
                         <menuitem label="&main.close;"
                             oncommand="openCloseDialog();"/>
@@ -63,31 +63,44 @@
         </toolbar>
     </toolbox>
     <hbox flex="1">
-        <vbox width="200px">
-            <listbox datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
+        <vbox minwidth="62px">
+            <richlistbox id="familyList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                 <template>
-                    <query>
-                    <![CDATA[select name, famid from families ]]>
+                    <query><![CDATA[
+                        SELECT title, icon, famid 
+                        FROM families 
+                        WHERE famid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam)
+                        ORDER BY title]]>
+                        <param id="famDomainIdParam" name="domainIdParam" type="integer">0</param>
                     </query>
                     <action>
-                        <listitem uri="?" label="?name" onclick="selectFamily('?famid ');"/>
+                        <richlistitem uri="?"  onclick="selectFamily('?famid ');">
+                            <hbox >
+                                <image src="file://?icon" style="margin : 2px" tooltiptext="?title" width="48px" height="48px"/>
+                            </hbox >
+                        </richlistitem>
                     </action>
                 </template>
-            </listbox>
+            </richlistbox>
         </vbox>
         <vbox width="300px" persist="width">
             <vbox>
-                <textbox id="searchTitle" value="" />
-                <button label="&main.search;" onclick="updateAbstract()"/>
+                <button label="&main.newDocument;" onclick="openNewDocumentDialog()"/>
+                <hbox flex="1">
+                    <textbox type="search" id="searchTitle" value="" oncommand="updateAbstract()" placeholder="&main.abstract.search;" />
+                </hbox>
                 <label value="Current criteria"/>
                 <label id="currentCriteria" value=""/>
             </vbox>
             <vbox flex="1">
-                <richlistbox id="docAbstract" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
+                <richlistbox id="abstractList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
-                        <query>
-                        <![CDATA[ select title, initid from documents where fromid = :famid AND title LIKE :searchTitle ]]>
-                            <param id="famidParam" name="famid" type="integer">0</param>
+                        <query><![CDATA[ 
+                                SELECT title, initid 
+                                FROM documents 
+                                WHERE initid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam) AND fromid = :famId AND title LIKE :searchTitle ]]>
+                            <param id="abstractDomainIdParam" name="domainIdParam" type="integer">0</param>
+                            <param id="famIdParam" name="famId" type="integer">0</param>
                             <param id="searchTitleParam" name="searchTitle">%</param>
                         </query>
                         <action>
@@ -117,8 +130,19 @@
     </hbox>
     <statusbar>
         <hbox flex="1">
-            <statusbarpanel label="" flex="1" />
-            <progressmeter mode="determined" />
+            <spacer flex="1"/>
+            <menulist label="&main.domain.choose;" oncommand="changeDomain(this.value)">
+                <menupopup id='domainList' datasources="profile:storage.sqlite" ref="*" querytype="storage" >
+                    <template>
+                        <query>
+                        <![CDATA[ select description, id from domains]]>
+                        </query>
+                        <action>
+                            <menuitem uri="?" label="?description" value="?id"/>
+                        </action>
+                    </template>
+                </menupopup>
+            </menulist>
             <statusbarpanel label="Connection status" />
         </hbox>
     </statusbar>
