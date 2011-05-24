@@ -186,7 +186,7 @@ localDocument.prototype = {
 		case '':
 			return 'no id';
 		default:
-			return 'title of ' + config.attrid + ' for document ' + this.docid;
+			return 'title of ' + id + ' for document ' + this.getInitid();
 		}
 	}
 };

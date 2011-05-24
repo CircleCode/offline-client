@@ -8,11 +8,11 @@ Components.utils.import("resource://modules/fdl-data-debug.jsm");
 Components.utils.import("resource://modules/offlineSynchronize.jsm");
 
 function initEricContext() {
-	context.url = 'http://localhost/eric/';
+	context.url = 'http://dynacase.r2d2.paris.lan/dev/';
 
 	if (!context.isAuthenticated()) {
 		var u = context.setAuthentification({
-			login : 'nono',
+			login : 'admin',
 			password : 'anakeen'
 		});
 		if (!u)

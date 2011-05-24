@@ -9,5 +9,3 @@ var EXPORTED_SYMBOLS = [ "context" ];
 var context = new Fdl.Context({
   url: Preferences.get('dcpoffline.context.url')
 });
-
-
