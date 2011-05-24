@@ -213,10 +213,12 @@ offlineSynchronize.prototype.pendingPushFiles = function(config) {
         for ( var i = 0; i < config.files.length; i++) {
             var file = config.files[i];
             logConsole(config.localDocument.getInitid(), file);
-            logConsole("test:"+file.initid+'?='+config.localDocument.getInitid()+']');
+            logConsole("test:" + file.initid + '?='
+                    + config.localDocument.getInitid() + ']');
             if (file.initid == config.localDocument.getInitid()) {
 
-                logConsole("test success:"+file.initid+'?='+config.localDocument.getInitid());
+                logConsole("test success:" + file.initid + '?='
+                        + config.localDocument.getInitid());
                 this.filesToUpload.push({
                     path : file.path,
                     attrid : file.attrid,
@@ -237,19 +239,21 @@ offlineSynchronize.prototype.pushFiles = function(config) {
     if (config && config.domain && config.onEndPushFiles) {
         logConsole('file to push', this.filesToUpload);
         for ( var i = 0; i < this.filesToUpload.length; i++) {
-            var file=this.filesToUpload[i];
+            var file = this.filesToUpload[i];
             var attrid = file.attrid;
             if (file.index >= 0) {
                 attrid += '[' + file.index + ']';
             }
-            config.domain.sync().pushFile({path:file.path,
-                documentId:file.initid,
-                attributeId:attrid});
-            logConsole('pushfile',file );
-           // this.filesToUpload.splice(i, 1); // in asynchronous
+            config.domain.sync().pushFile({
+                path : file.path,
+                documentId : file.initid,
+                attributeId : attrid
+            });
+            logConsole('pushfile', file);
+            // this.filesToUpload.splice(i, 1); // in asynchronous
             this.callObserver('onAddFilesSaved', 1);
         }
-        this.filesToUpload=[]; // reset array
+        this.filesToUpload = []; // reset array
         config.onEndPushFiles();
     } else {
         throw new ArgException("pushFiles need domain onEndPushFiles parameter");
@@ -355,10 +359,18 @@ offlineSynchronize.prototype.recordFiles = function() {
                     me.log('all files recorded');
                     me.recordFilesInProgress = false;
                     fileManager.initModificationDates();
+                    me.updateWorkTables();
                 }
             });
         }
     }
+};
+offlineSynchronize.prototype.updateWorkTables = function() {
+ 
+    storageManager
+    .execQuery({
+        query : "insert into doctitles (famname, initid, title)  select fromname,  initid, title from documents"
+    });
 };
 /**
  * 
@@ -385,7 +397,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                                             initid : document
                                                     .getProperty('initid'),
                                             domainid : domain
-                                            .getProperty('initid'),
+                                                    .getProperty('initid'),
                                             editable : me.isEditable({
                                                 domain : domain,
                                                 document : document
@@ -393,13 +405,22 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                                         },
                                         callback : {
                                             handleCompletion : function() {
-                                                me.callObserver(
-                                                        'onAddDocumentsRecorded',
-                                                        1);
+                                                me
+                                                        .callObserver(
+                                                                'onAddDocumentsRecorded',
+                                                                1);
                                                 me.log('record document:'
                                                         + document.getTitle());
-                                                docManager.dropDocInstance({domain:domain.id,initid:document.getProperty('initid')})
+                                                docManager
+                                                        .dropDocInstance({
+                                                            domain : domain.id,
+                                                            initid : document
+                                                                    .getProperty('initid')
+                                                        })
                                                 me.updateSyncDate({
+                                                    document : document
+                                                });
+                                                me.updateTitles({
                                                     document : document
                                                 });
                                             }
@@ -498,6 +519,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
             this.callObserver('onDetailPercent', (j + 1) / userd.length * 100);
         }
         this.callObserver('onGlobalPercent', 90);
+        /*
         storageManager
                 .execQuery({
                     query : "insert into synchrotimes (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid , :serverDate, :clientDate , :clientDate from documents",
@@ -506,7 +528,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
                         serverDate : serverDate
                     }
                 });
-
+*/
         this.recordFiles();
 
         storageManager.lockDatabase({
@@ -527,7 +549,9 @@ offlineSynchronize.prototype.updateSyncDate = function(config) {
         var clientDate = utils.toIso8601(now);
         storageManager
                 .execQuery({
-                    query : "update synchrotimes set lastsyncremote=:serverDate, lastsynclocal=:clientDate, lastsavelocal=:clientDate where initid=:initid",
+                 //   query : "update synchrotimes set lastsyncremote=:serverDate, lastsynclocal=:clientDate, lastsavelocal=:clientDate where initid=:initid",
+                    query : "insert into synchrotimes (lastsyncremote, lastsynclocal,lastsavelocal,initid) values (:serverDate, :clientDate, :clientDate, :initid)",
+
                     params : {
                         clientDate : clientDate,
                         serverDate : serverDate,
@@ -536,6 +560,37 @@ offlineSynchronize.prototype.updateSyncDate = function(config) {
                 });
     } else {
         throw new ArgException("updateSyncDate need document parameter");
+    }
+};
+
+offlineSynchronize.prototype.updateTitles = function(config) {
+
+    if (config && config.document) {
+        var oas = config.document.getAttributes();
+        for ( var aid in oas) {
+            if (oas[aid].type == 'docid') {
+                var values=config.document.getValue(aid);
+                var titles=config.document.getDisplayValue(aid);
+                if (! Array.isArray(values)) { 
+                    values=[values];
+                    titles=[titles];
+                }
+                var famid=oas[aid].relationFamilyId;
+                for (var i=0;i<values.length;i++) {
+                storageManager
+                        .execQuery({
+                            query : "insert into doctitles (initid, famname, title) values (:initid, :famname, :title)",
+                            params : {
+                                famname : famid,
+                                title : titles[i],
+                                initid : values[i]
+                            }
+                        });
+                }
+            }
+        }
+    } else {
+        throw new ArgException("updateTitles need document parameter");
     }
 };
 offlineSynchronize.prototype.revertDocument = function(config) {
@@ -549,12 +604,10 @@ offlineSynchronize.prototype.revertDocument = function(config) {
             }
         });
         if (document) {
-
             this.recordDocument({
                 domain : domain,
                 document : document
             });
-
             this.recordFiles();
         } else {
             throw new SyncException("revertDocument failed");
@@ -583,7 +636,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
             domain : domain
         });
         var ldoc;
-        //this.callObserver('onAddFilesToSave', modifiedFiles.length);
+        // this.callObserver('onAddFilesToSave', modifiedFiles.length);
         this.callObserver('onAddDocumentsToSave', modifiedDocs.length);
         var tid = domain.sync().beginTransaction();
         if (tid) {
@@ -611,7 +664,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                     var thisIsTheEnd = domain.sync().endTransaction();
                     if (thisIsTheEnd) {
                         var results = domain.sync().getTransactionStatus();
-                        me.log('end transaction : '+results.status);
+                        me.log('end transaction : ' + results.status);
                         logConsole('final Results', results);
                         for ( var docid in results.detailStatus) {
                             if (results.detailStatus[docid].isValid) {
@@ -624,7 +677,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                         }
                     }
                 }
-            })
+            });
         } else {
             throw new SyncException("no transaction set");
         }
