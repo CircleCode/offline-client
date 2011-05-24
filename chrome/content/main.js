@@ -3,6 +3,7 @@ const Ci = Components.interfaces;
 const Cu = Components.utils;
 
 Cu.import("resource://modules/logger.jsm");
+Cu.import("resource://modules/storageManager.jsm");
 Cu.import("resource://modules/docManager.jsm");
 Cu.import("resource://modules/events.jsm");
 
@@ -19,32 +20,84 @@ function openLoginDialog() {
 
 function openNewDocumentDialog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/newDocument.xul", "",
-            "chrome,modal");
+    "chrome,modal");
 }
 
 function openCloseDialog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/close.xul", "",
-            "chrome,modal");
+    "chrome,modal");
 }
 
 function openPreferences() {
     window.openDialog("chrome://dcpoffline/content/dialogs/preferences.xul", "",
-            "chrome,modal");
+    "chrome,modal");
 }
 
 function openSynchro() {
     window.openDialog("chrome://dcpoffline/content/dialogs/synchro.xul", "",
-            "chrome,modal");
+    "chrome,modal");
 }
 
 function openLog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/log.xul", "",
-            "chrome,modal");
+    "chrome,modal");
 }
 
 function openAbout() {
     window.openDialog("chrome://dcpoffline/content/dialogs/about.xul", "",
-            "chrome,modal");
+    "chrome,modal");
+}
+
+function openDocument(initid, mode) {
+    if (initid) {
+        try {
+            var doc = docManager.getLocalDocument({
+                initid : initid
+            });
+            var templates = storageManager.execQuery({
+                query : "select * from templates where initid = :initid",
+                params : {
+                    initid : initid
+                }
+            });
+            var template = (mode === 'edit')
+            ? templates.edittemplate
+                    : templates.viewtemplate;
+            if (!template) {
+                logConsole("using [url(chrome://dcpoffline/content/templates/document-animal.xml#document-animal)] as default template");
+                template = "url(chrome://dcpoffline/content/templates/document-animal.xml#document-animal)";
+            }
+            if (template) {
+                var box = document.createElement('vbox');
+                box.setAttribute('flex', 1);
+                box.setAttribute('initid', initid);
+                box.style.MozBinding = template;
+
+                var tabPanel = document.createElement('tabpanel');
+                tabPanel.setAttribute('flex', 1);
+                tabPanel.appendChild(box);
+
+                var tabBox = document.getElementById('onefam-content-tabbox');
+
+                tabPanel = tabBox.tabpanels.appendChild(tabPanel);
+                tabBox.tabs.appendItem(doc.getTitle());
+                /*
+                logConsole(tabBox.tabs.getIndexOfItem(tabPanel));
+
+                tabBox.tabs.selectedIndex = tabBox.tabs.getIndexOfItem(tabPanel);
+                 */
+            } else {
+                throw new BindException(
+                        "openDocument :: no template for initid: " + initid);
+            }
+        } catch (e) {
+            alert(e.toString);
+            throw (e);
+        }
+    } else {
+        throw new ArgException("openDocument :: missing initid argument");
+    }
+    return tabPanel;
 }
 
 /* interface element */
@@ -64,6 +117,7 @@ function updateAbstract()
 function displayDoc(initid)
 {
     document.getElementById("document").value = JSON.stringify(docManager.getLocalDocument({initid : initid}));
+    openDocument(initid);
 }
 
 /* Listeners */
@@ -91,7 +145,7 @@ function changeDomain(value) {
         applicationEvent.publish("changeDomain", value);
         applicationEvent.publish("postChangeDomain", value);
     }
-    
+
 }
 
 /* debug stuff */

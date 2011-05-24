@@ -50,11 +50,6 @@
                     </menupopup>
                 </menu>
             </menubar>
-            <spacer flex="1"/>
-            <textbox type="search" searchbutton="true"/>
-            <hbox>
-                <menulist id='domain' label="&domain.choose;"/>
-            </hbox>
         </toolbar>
     </toolbox>
     
