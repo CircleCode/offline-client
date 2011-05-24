@@ -51,6 +51,24 @@ function openAbout() {
             "chrome,modal");
 }
 
+function selectFamily(famId)
+{
+    document.getElementById("famidParam").textContent = famId;
+    document.getElementById("docAbstract").builder.rebuild();
+}
+
+function updateAbstract()
+{
+    document.getElementById("searchTitleParam").textContent = '%'+document.getElementById('searchTitle').value+'%';
+    document.getElementById("currentCriteria").value = document.getElementById('searchTitle').value;
+    document.getElementById("docAbstract").builder.rebuild();
+}
+
+function displayDoc(initid)
+{
+    document.getElementById("document").value = JSON.stringify(docManager.getLocalDocument({initid : initid}));
+}
+
 /* some tests */
 function customDebug(level) {
     log("starting customDebug at level " + level);

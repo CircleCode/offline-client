@@ -27,14 +27,16 @@
                         <menuitem label="&main.newDocument;"
                             oncommand="openNewDocumentDialog();"/>
                         <menuseparator/>
+                        <menuitem id="preferences-button" label="&main.preference;"
+                            oncommand="openPreferences();"/>
+                        <menuitem id="synchro-button" label="&main.synchro;"
+                            oncommand="openSynchro();"/>
+                        <menuseparator/>
                         <menuitem label="&main.close;"
                             oncommand="openCloseDialog();"/>
                     </menupopup>
                 </menu>
-                <button id="preferences-button" label="&main.preference;"
-                    oncommand="openPreferences();"/>
-                <button id="synchro-button" label="&main.synchro;"
-                    oncommand="openSynchro();"/>
+                
                 <spacer flex="1" />
                 <textbox type="search" searchbutton="true" />
                 <menu id="help-menu" label="&main.helpmenu;">
@@ -54,33 +56,51 @@
                         <menuitem id="debug-launch-method" label="&menu.debug.eric;"
                             oncommand='window.open("chrome://dcpoffline/content/debug-eric.xul","Eric", "chrome,centerscreen");' />
                         <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
-                            oncommand='window.open("chrome://dcpoffline/content/debug-mat.xul","Mat", "chrome,centerscreen");' />
+                            oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
                     </menupopup>
                 </menu>
             </menubar>
         </toolbar>
     </toolbox>
     <hbox flex="1">
-        <listbox datasources="profile:storage.sqlite" ref="*" querytype="storage">
-            <template>
-                <query>
-                select name from families
-                </query>
-                <action>
-                    <listitem uri="?" label="?name" onclick="alert(this.label);"/>
-                </action>
-            </template>
-        </listbox>
-        <tabbox id="onefam-summaries" width="300px" persist="width">
-            <tabs>
-                <tab label="&welcome;" />
-            </tabs>
-            <tabpanels flex="1">
-                <tabpanel>
-                    <hbox />
-                </tabpanel>
-            </tabpanels>
-        </tabbox>
+        <vbox width="200px">
+            <listbox datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
+                <template>
+                    <query>
+                    <![CDATA[select name, famid from families ]]>
+                    </query>
+                    <action>
+                        <listitem uri="?" label="?name" onclick="selectFamily('?famid ');"/>
+                    </action>
+                </template>
+            </listbox>
+        </vbox>
+        <vbox width="300px" persist="width">
+            <vbox>
+                <textbox id="searchTitle" value="" />
+                <button label="&main.search;" onclick="updateAbstract()"/>
+                <label value="Current criteria"/>
+                <label id="currentCriteria" value=""/>
+            </vbox>
+            <vbox flex="1">
+                <richlistbox id="docAbstract" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
+                    <template>
+                        <query>
+                        <![CDATA[ select title, initid from documents where fromid = :famid AND title LIKE :searchTitle ]]>
+                            <param id="famidParam" name="famid" type="integer">0</param>
+                            <param id="searchTitleParam" name="searchTitle">%</param>
+                        </query>
+                        <action>
+                            <richlistitem uri="?" onclick='displayDoc(?initid );'>
+                                <vbox >
+                                    <label value="?title" />
+                                </vbox>
+                            </richlistitem>
+                        </action>
+                    </template>
+                </richlistbox>
+            </vbox>
+        </vbox>
         <splitter collapse="before">
             <grippy />
         </splitter>
@@ -89,8 +109,8 @@
                 <tab label="&welcome;" />
             </tabs>
             <tabpanels flex="1">
-                <tabpanel>
-                    <label value="&welcome.message;" />
+                <tabpanel flex="1">
+                    <textbox flex="1" multiline="true" id="document" value="" />
                 </tabpanel>
             </tabpanels>
         </tabbox>
