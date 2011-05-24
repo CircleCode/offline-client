@@ -92,6 +92,7 @@ docManagerSingleton.prototype = {
 			if (!config.domain) {
 				config.domain = this.getActiveDomain();
 			}
+			logConsole('local', config.localDocument.properties);
 			var doc=new Fdl.Document({context:config.context});
 			doc.affect({properties:config.localDocument.properties,
 				values:config.localDocument.values});

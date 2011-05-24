@@ -35,7 +35,7 @@ function doOk() {
     var remember = document.getElementById('remember').checked;
     logConsole('remember '+remember);
 
-    var authentSuccess = (Math.floor(Math.random()*11) < 5 ) ? true : false;
+    var authentSuccess = true;
 
     if (authentSuccess) {
 

@@ -17,7 +17,7 @@ function initEricContext() {
 		});
 		if (!u)
 			alert('error authent:' + context.getLastErrorMessage());
-		logTime(u.lastname + ' is log in');
+		logConsole(u.lastname + ' is log in');
 	}
 
 }
@@ -109,14 +109,16 @@ function clicGetDomains() {
 }
 
 function modifyAntilope() {
+    try {
 	var ldoc = docManager.getLocalDocument({
 		initid : 7589
 	});
 	if (ldoc) {
-		logTime("modify:" + ldoc.getTitle());
+		logConsole("modify:" + ldoc.getTitle());
 		ldoc.setValue('es_habitat', "from offine client");
 		ldoc.save();
 	}
+    } catch (e) {}
 }
 
 function myObservers() {
