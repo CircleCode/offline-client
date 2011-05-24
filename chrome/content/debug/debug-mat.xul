@@ -8,20 +8,23 @@
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dcpoffline/content/templates/attr-bindings.css" type="text/css"?>
 
 <window id="debug-ericDTD" 
     title="Mat's debug window"
     width="800px"
     height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="log('Mat's debug window');">
+    onload="log('Mats debug window');">
     
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js"/>
 
     <script type="application/javascript" 
-            src="chrome://dcpoffline/content/mat-debug.js"/>
+            src="chrome://dcpoffline/content/debug/debug-mat.js"/>
     <script type="application/javascript" 
             src="chrome://dcpoffline/content/fdl-data-debug.js"/>
+            
+    
         
     <toolbox id="main-toolbox">
         <toolbar>
@@ -32,6 +35,8 @@
                         <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(1);"/>
                         <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(2);"/>
                         <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(3);"/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(4);"/>
+                        <menuitem id="debug-launch-method" label="&menu.debug.launch.method;" oncommand="customDebug(5);"/>
                     </menupopup>
                 </menu>
                 <menu id="organize-menu" label="Organize" disabled="true">
@@ -53,6 +58,12 @@
         </toolbar>
     </toolbox>
     
+    <vbox>
+        <hbox><button label="test bindings" oncommand="testBinding();"/><button label="change tab" oncommand="changeTab();"/></hbox>
+        <hbox><timepicker type="popup" value="2011-05-05 08:18:38"/></hbox>
+        <hbox><timepicker type="popup" value="2011-05-05 08:18:38" readonly="true" disabled="true"/></hbox>
+    </vbox>
+    
     <hbox flex="1">
         <vbox id="onefam-icons" width="48px"/>
         <tabbox id="onefam-summaries" width="300px" persist="width">
@@ -68,7 +79,7 @@
         <splitter collapse="before">
             <grippy/>
         </splitter>
-        <tabbox id="onefam-content" flex="1">
+        <tabbox id="onefam-content-tabbox" flex="1">
             <tabs>
                 <tab label="&welcome;"/>
             </tabs>

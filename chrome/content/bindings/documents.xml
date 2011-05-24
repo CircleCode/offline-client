@@ -10,20 +10,20 @@
                 <stylesheet src="chrome://dcpoffline/skin/document.css"/>
             </ressources>-->
         
-        <content>
-            <xul:vbox flex="1" style="border: 3px solid white">
-                <children/>
-            </xul:vbox>
-        </content>
-        
         <implementation>
             <property
-                name="docid"
-                onget="return this.getAttribute('docid');"
-                onset="if (val) this.setAttribute('docid',val);"/>
-            <property name="fromName"
-                onget="return this.getAttribute('fromName');"
-                onset="if (val) this.setAttribute('fromName',val);"/>
+                name="initid"
+                readonly="true">
+                <getter><![CDATA[
+                    Components.utils.import("resource://modules/logger.jsm");
+                    logConsole("accessing initid for document ", this.tagName);
+                    if(this.doc){
+                        return this.doc.getProperty('initid');
+                    } else {
+                        return this.getAttribute('initid');
+                    }
+                ]]></getter>
+            </property>
             <!-- mode: "edit" or "view", default is "view" -->
             <property
                 name="mode"
@@ -33,38 +33,58 @@
                         var mode = this.getAttribute('mode');
                         if( (mode != 'view') && (mode != 'edit') ){
                             this.setAttribute('mode', 'view');
+                            mode = 'view';
                         }
                         return mode;
                     }
                     return 'view';
                 ]]></getter>
             </property>
+            <property
+                name="localDocument"
+                readonly="true">
+                <getter><![CDATA[
+                    return this.doc;
+                ]]></getter>
+            </property>
+            <method name="getValue">
+                <parameter name="attrid"/>
+                <body><![CDATA[
+                    return this.doc.getvalue({attrid: attrid});
+                ]]></body>
+            </method>
+            <method name="getProperty">
+                <parameter name="propertyid"/>
+                <body><![CDATA[
+                    return this.doc.getProperty({propertyid: propertyid});
+                ]]></body>
+            </method>
             <method name="save">
                 <body><![CDATA[
-                    //TODO
+                    //FIXME
                     return true;
                 ]]></body>
             </method>
             <constructor><![CDATA[
-                Components.utils.import("resource://modules/logger.jsm", dcpOffline);
-                log("<--------- entering document [" + this.docid + "] constructor");
+                Components.utils.import("resource://modules/logger.jsm");
+                logConsole("<--------- entering document [" + this.initid + "] constructor");
                 try{
-                    Components.utils.import("resource://modules/docManager.jsm", dcpOffline);
-                    docManager.initDocInstance({id : this.docid});
-                    //TODO: register as a render
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    this.doc = docManager.getLocalDocument({initid : this.initid});
+                    //XXX: register as a render
                     return true;
                 } catch(e){
-                    //TODO
-                    log("[document donstructor] " + e);
+                    logError(e, "document document [" + this.initid + "] constructor");
+                    throw(e);
                 }
-                log("leaving document [" + this.docid + "] constructor --------->");
+                logConsole("leaving document [" + this.initid + "] constructor --------->");
             ]]></constructor>
             <destructor><![CDATA[
                 try{
                     //TODO: unregister as a render
                     return true;
                 } catch(e){
-                    log(e);
+                    logConsole(e);
                 }
             ]]></destructor>
         </implementation>

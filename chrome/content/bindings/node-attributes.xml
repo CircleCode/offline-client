@@ -13,9 +13,6 @@
     
     <binding id="node-attr" extends="chrome://dcpoffline/content/bindings/base-attributes.xml#base-attr"/>
     
-    <binding id="tabbox" extends="chrome://dcpoffline/content/bindings/node-attributes.xml#node-attr">
-    </binding>
-    
     <binding id="tab" extends="chrome://dcpoffline/content/bindings/node-attributes.xml#node-attr">
         <content>
             <xul:tab anonid="label" label=""
@@ -34,7 +31,7 @@
     <binding id="frame" extends="chrome://dcpoffline/content/bindings/node-attributes.xml#node-attr">
         <content>
             <xul:groupbox>
-                <xul:caption anonid="label" class="dcplabel" label="debug"/>
+                <xul:caption anonid="label" class="dcplabel" label="__DEBUG__"/>
                 <children/>
             </xul:groupbox>
         </content>
@@ -46,10 +43,8 @@
                 <xul:caption anonid="value" value=""/>
                 <xul:label value="Not yet implemented"/>
             </xul:box>
-            <!--
-                <xul:grid>
-                -->
         </content>
+        <implementation></implementation>
     </binding>
     
 </bindings>

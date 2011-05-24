@@ -14,31 +14,29 @@
     <!--
         Anonymous implementation of base attributes.
         -->
+        
     <binding id="base-attr">
         <implementation>
             <property
-                name="docid"
-                onget="return this.getAttribute('docid');"
-                onset="if (val) this.setAttribute('docid',val);"/>
-            <property
                 name="type"
-                onget="return this.getAttribute('type');"
-                readonly="true"/>
+                readonly="true"
+                onget="return this.getAttribute('type');"/>
             <property
                 name="attrid"
-                onget="return this.getAttribute('attrid');"
-                readonly="true"/>
+                readonly="true"
+                onget="return this.getAttribute('attrid');"/>
+            <property
+                name="localDocument"
+                readonly="true"
+                onget="return this.doc;"/>
+            <property
+                name="label"
+                readonly="true"
+                onget="return this.doc.getLabel(this.attrid);"/>
             <method name="getDocument">
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/domUtils.jsm", dcpOffline);
+                    Components.utils.import("resource://modules/domUtils.jsm");
                     return domUtils.getParentByTagName(this, 'dcpDocument');
-                ]]></body>
-            </method>
-            <method name="getLabel">
-                <body><![CDATA[
-                    Components.utils.import("resource://modules/docManager.jsm", dcpOffline);
-                    return docManager.getDocInstance({docid: this.docid})
-                                     .getLabel({attrid : this.attrid});
                 ]]></body>
             </method>
             <method name="getChild">
@@ -48,13 +46,15 @@
                 ]]></body>
             </method>
             <constructor><![CDATA[
-                Components.utils.import("resource://modules/logger.jsm", dcpOffline);
-                log("<---- entering base-attribute constructor");
-                this.docid = this.getDocument().docid;
-                log(this.docid+':'+this.attrid);
-                this.getChild('label').setAttribute('label', this.getLabel());
-                this.getChild('label').setAttribute('value', this.getLabel());
-                log("leaving base-attribute constructor ---->");
+                Components.utils.import("resource://modules/logger.jsm");
+                logConsole("<---- entering base-attribute constructor for "+this.attrid);
+                this.doc = this.getDocument().localDocument;
+                logConsole(this.doc.getProperty('initid')+':'+this.attrid);
+                var labelValue = this.label;
+                var labelElmt = this.getChild('label');
+                labelElmt.setAttribute('label', label)
+                labelElmt.value = label;
+                logConsole("leaving base-attribute constructor for "+this.attrid+" ---->");
             ]]></constructor>
             <destructor><![CDATA[
             ]]></destructor>

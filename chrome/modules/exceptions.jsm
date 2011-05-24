@@ -56,3 +56,20 @@ StorageException.prototype = {
         return this.code;
     }
 };
+
+function BindException(message) {
+    this.message = message;
+    logFile.write({
+        message : message,
+        priority : logFile.ERR
+    });
+};
+BindException.prototype = {
+    code : 'binding',
+    toString : function() {
+        return this.message;
+    },
+    valueOf : function() {
+        return this.code;
+    }
+};
