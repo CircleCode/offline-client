@@ -1,3 +1,17 @@
+DROP TABLE IF EXISTS transactionpolicies;
+DROP TABLE IF EXISTS domainmodes;
+DROP TABLE IF EXISTS sharepolicies;
+DROP TABLE IF EXISTS domains;
+DROP TABLE IF EXISTS families;
+DROP TABLE IF EXISTS documents;
+DROP TABLE IF EXISTS templates;
+DROP TABLE IF EXISTS synchrotimes;
+DROP TABLE IF EXISTS docsbydomain;
+DROP TABLE IF EXISTS attrmappings;
+DROP TABLE IF EXISTS enums;
+DROP TABLE IF EXISTS doctitles;
+DROP TABLE IF EXISTS files;
+
 CREATE TABLE  IF NOT EXISTS "transactionpolicies" (
     "name"              TEXT NOT NULL,
     "description"       TEXT,
@@ -111,7 +125,8 @@ CREATE TABLE IF NOT EXISTS "enums" (
 );
 
 CREATE TABLE IF NOT EXISTS "doctitles" (
-    "famid"             INTEGER NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
+  --  "famid"             INTEGER, -- REFERENCES families("famid") ON UPDATE CASCADE
+    "famname"           TEXT,  
     "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "title"             TEXT NOT NULL,
     
