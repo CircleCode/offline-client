@@ -7,80 +7,99 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<window id="main" 
-    title="Dynacase offline"
-    width="800px"
-    height="600px"
+<window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="log('application loaded');">
+    onload="openLoginDialog();">
     
-    <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js"/>
-
-    <script type="application/javascript" 
-        src="chrome://dcpoffline/content/main.js"/>
-        
+    <stringbundleset id="stringbundleset">
+        <stringbundle id="mainBundle"
+            src="chrome://dcpoffline/locale/main.properties" />
+    </stringbundleset>
+    
+    <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
+    <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
+    
     <toolbox id="main-toolbox">
-        <toolbar>
-                <menu id="debug-menu" label="&debug;">
-                    <menupopup>
-                        <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;" oncommand="start_venkman()"/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.eric;" oncommand='window.open("chrome://dcpoffline/content/debug-eric.xul","Eric", "chrome,centerscreen");'/>
-                        <menuitem id="debug-launch-method" label="&menu.debug.matthieu;" oncommand='window.open("chrome://dcpoffline/content/debug-mat.xul","Mat", "chrome,centerscreen");'/>
+        <toolbar flex="1">
+            <menubar flex="1">
+                <menu id="main-menu" label="&main.actionmenu;">
+                    <menupopup >
+                        <menuitem label="&main.newDocument;"
+                            oncommand="openNewDocumentDialog();"/>
+                        <menuseparator/>
+                        <menuitem label="&main.close;"
+                            oncommand="openCloseDialog();"/>
                     </menupopup>
                 </menu>
-            <menubar id="main-menubar">
-                <menu id="organize-menu" label="Organize" disabled="true">
+                <button id="preferences-button" label="&main.preference;"
+                    oncommand="openPreferences();"/>
+                <button id="synchro-button" label="&main.synchro;"
+                    oncommand="openSynchro();"/>
+                <spacer flex="1" />
+                <textbox type="search" searchbutton="true" />
+                <menu id="help-menu" label="&main.helpmenu;">
+                    <menupopup >
+                        <menuitem label="&main.help;"/>
+                        <menuitem label="&main.log;"
+                            oncommand="openLog();"/>
+                        <menuseparator/>
+                        <menuitem label="&main.about;"
+                            oncommand="openAbout();"/>
+                    </menupopup >
+                </menu>
+                <menu id="debug-menu" label="&debug;">
                     <menupopup>
-                        <menu id="organize-menu-new-menu" label="New">
-                            <menupopup>
-                                <menuitem id="organize-menu-new-menu-folder" label="Folder"/>
-                                <menuitem id="organize-menu-new-menu-search" label="Search"/>
-                            </menupopup>
-                        </menu>
+                        <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;"
+                            oncommand="start_venkman()" />
+                        <menuitem id="debug-launch-method" label="&menu.debug.eric;"
+                            oncommand='window.open("chrome://dcpoffline/content/debug-eric.xul","Eric", "chrome,centerscreen");' />
+                        <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
+                            oncommand='window.open("chrome://dcpoffline/content/debug-mat.xul","Mat", "chrome,centerscreen");' />
                     </menupopup>
                 </menu>
             </menubar>
-            <spacer flex="1"/>
-            <textbox type="search" searchbutton="true"/>
-            <hbox>
-                <menulist id='domain' label="&domain.choose;"/>
-            </hbox>
         </toolbar>
     </toolbox>
-    
     <hbox flex="1">
-        <vbox id="onefam-icons" width="48px"/>
+        <listbox datasources="profile:storage.sqlite" ref="*" querytype="storage">
+            <template>
+                <query>
+                select name from families
+                </query>
+                <action>
+                    <listitem uri="?" label="?name" onclick="alert(this.label);"/>
+                </action>
+            </template>
+        </listbox>
         <tabbox id="onefam-summaries" width="300px" persist="width">
             <tabs>
-                <tab label="&welcome;"/>
+                <tab label="&welcome;" />
             </tabs>
             <tabpanels flex="1">
                 <tabpanel>
-                    <hbox/>
+                    <hbox />
                 </tabpanel>
             </tabpanels>
         </tabbox>
         <splitter collapse="before">
-            <grippy/>
+            <grippy />
         </splitter>
         <tabbox id="onefam-content" flex="1">
             <tabs>
-                <tab label="&welcome;"/>
+                <tab label="&welcome;" />
             </tabs>
             <tabpanels flex="1">
                 <tabpanel>
-                    <label value="&welcome.message;"/>
+                    <label value="&welcome.message;" />
                 </tabpanel>
             </tabpanels>
         </tabbox>
     </hbox>
-    
     <statusbar>
-        <hbox flex ="1">
-            <statusbarpanel label="" flex="1"/>
-            <progressmeter mode="determined"/>
-            <statusbarpanel label="Connection status"/>
+        <hbox flex="1">
+            <statusbarpanel label="" flex="1" />
+            <progressmeter mode="determined" />
+            <statusbarpanel label="Connection status" />
         </hbox>
     </statusbar>
-
 </window>

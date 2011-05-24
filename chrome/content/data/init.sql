@@ -37,7 +37,6 @@ CREATE TABLE  IF NOT EXISTS "domains" (
     "mode"              TEXT NOT NULL REFERENCES domainmodes("name"),
     "transactionpolicy" TEXT NOT NULL REFERENCES transactionpolicies("name"),
     "sharepolicy"       TEXT NOT NULL REFERENCES sharepolicies("name"),
-    "iamadmin"          BOOLEAN NOT NULL DEFAULT FALSE,
     "lastsyncremote"    DATETIME DEFAULT NULL,
 
     PRIMARY KEY ("id") ON CONFLICT REPLACE
@@ -46,6 +45,8 @@ CREATE TABLE  IF NOT EXISTS "domains" (
 CREATE TABLE IF NOT EXISTS "families" (
     "famid"             INTEGER NOT NULL,
     "name"              TEXT NOT NULL,
+    "title"             TEXT,
+    "icon"             TEXT,
     "json_object"       TEXT,
     "creatable"         BOOLEAN NOT NULL DEFAULT false,
 
@@ -91,6 +92,7 @@ CREATE TABLE IF NOT EXISTS "attrmappings" (
     "famid"             INTEGER NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
     "attrid"            TEXT NOT NULL,
     "columnid"          TEXT NOT NULL ,
+    "isabstract"        BOOLEAN NOT NULL DEFAULT FALSE,
     "ismultiple"        BOOLEAN NOT NULL DEFAULT FALSE,
     "isproperty"        BOOLEAN NOT NULL DEFAULT FALSE,
     "type"              TEXT NOT NULL,

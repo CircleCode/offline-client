@@ -147,7 +147,7 @@ docManagerSingleton.prototype = {
 	getModifiedDocuments : function (config) {
 		if (config && config.domain) {
 			var domainId=config.domain;
-			logTime('domain'+domainId);
+			logConsole('domain'+domainId);
 			var r = storageManager
 			.execQuery({
 				query : 'select documents.initid from documents, synchrotimes, docsbydomain ' +
@@ -158,14 +158,14 @@ docManagerSingleton.prototype = {
 				}
 			});
 
-			logTime('mod doc',r);
+			logConsole('mod doc',r);
 			var dl=new localDocumentList({
 				content:r
 			});
 			return dl;
 		} else {
 			logError('getModifiedDocuments : missing parameters');
-			//logTime('error', config);
+			//logConsole('error', config);
 		}
 		return null;
 	}

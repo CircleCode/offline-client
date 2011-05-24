@@ -54,7 +54,7 @@ localDocument.prototype = {
 					this.values[id] = val;
 				}
 			}
-			// logTime( "retrieved doc", this);
+			// logConsole( "retrieved doc", this);
 			this._initid = this.properties.initid;
 		} catch (e) {
 			log(e, "error when retrieving values");
@@ -151,7 +151,7 @@ localDocument.prototype = {
 		if (!this.domainId) {
 			throw "isEditable :: missing arguments";
 		}
-		logTime('editable ? ' + this._initid + this.domainId);
+		logConsole('editable ? ' + this._initid + this.domainId);
 		var r = storageManager
 				.execQuery({
 					query : 'select docsbydomain.editable from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',
@@ -160,7 +160,7 @@ localDocument.prototype = {
 						initid : this._initid
 					}
 				});
-		logTime('editable', r);
+		logConsole('editable', r);
 		if (r.length == 1) {
 			return (r[0].editable == 1);
 		}
