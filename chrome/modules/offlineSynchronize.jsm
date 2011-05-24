@@ -65,6 +65,7 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
                     // not necessary
                     }
                 });
+        
     }
     return domains;
 };
@@ -117,6 +118,16 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
                 attrid : 'icon',
                 initid : fam.getProperty('id'),
                 writable : false
+            });
+            
+            storageManager
+            .execQuery({
+                query : "insert into docsbydomain (initid, domainid, editable) values (:initid, :domainid, 0)",
+                params : {
+                    initid : fam.getProperty('id'),
+                    domainid : domain.getProperty('initid')
+                
+                }
             });
             this.callObserver('onAddFilesToRecord', 1);
             this.log("record family :" + fam.getTitle());
