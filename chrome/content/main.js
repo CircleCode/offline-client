@@ -4,21 +4,17 @@ const Cu = Components.utils;
 
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/docManager.jsm");
+Cu.import("resource://modules/events.jsm");
 
 /* enabling password manager */
 Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
-/* debug stuff */
 
-/* required for venkman */
-function toOpenWindowByType(inType, uri) {
-    var winopts = "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar";
-    window.open(uri, "_blank", winopts);
-}
+/* Dialog opener */
 
 function openLoginDialog() {
-    window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
-            "chrome,modal");
+    /*window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
+            "chrome,modal");*/
 }
 
 function openNewDocumentDialog() {
@@ -51,17 +47,18 @@ function openAbout() {
             "chrome,modal");
 }
 
+/* interface element */
 function selectFamily(famId)
 {
-    document.getElementById("famidParam").textContent = famId;
-    document.getElementById("docAbstract").builder.rebuild();
+    document.getElementById("famIdParam").textContent = famId;
+    document.getElementById("abstractList").builder.rebuild();
 }
 
 function updateAbstract()
 {
     document.getElementById("searchTitleParam").textContent = '%'+document.getElementById('searchTitle').value+'%';
     document.getElementById("currentCriteria").value = document.getElementById('searchTitle').value;
-    document.getElementById("docAbstract").builder.rebuild();
+    document.getElementById("abstractList").builder.rebuild();
 }
 
 function displayDoc(initid)
@@ -69,69 +66,38 @@ function displayDoc(initid)
     document.getElementById("document").value = JSON.stringify(docManager.getLocalDocument({initid : initid}));
 }
 
-/* some tests */
-function customDebug(level) {
-    log("starting customDebug at level " + level);
+/* Listeners */
+function updateFamilyList(domainId)
+{
+    document.getElementById("famDomainIdParam").textContent = domainId;
+    document.getElementById("familyList").builder.rebuild();
+}
 
-    Components.utils.import("resource://modules/storageManager.jsm");
+function updateAbstractList(domainId)
+{
+    document.getElementById("abstractDomainIdParam").textContent = domainId;
+    document.getElementById("abstractList").builder.rebuild();
+}
 
-    var C = new Fdl.Context({
-        // url : "http://dynacase.r2d2.paris.lan/dev/"
-        url : "http://localhost/eric/"
-    });
-    if (!C.isAuthenticated()) {
-        var u = C.setAuthentification({
-            login : 'nono',
-            password : 'anakeen'
-        });
-        if (!u)
-            alert('error authent:' + C.getLastErrorMessage());
+function initListeners() {
+    applicationEvent.subscribe("changeDomain", updateFamilyList);
+    applicationEvent.subscribe("changeDomain", updateAbstractList);
+}
+
+function changeDomain(value) {
+    if (!applicationEvent.publish("preChangeDomain", value)) {
+        alert("oupps i did it again");
+    }else {
+        applicationEvent.publish("changeDomain", value);
+        applicationEvent.publish("postChangeDomain", value);
     }
+    
+}
 
-    log("context is authenticated");
+/* debug stuff */
 
-    switch (level) {
-    case 1:
-
-        var fam = C.getDocument({
-            id : 'ZOO_ANIMAL'
-        });
-        var r1 = storageManager
-                .execQuery({
-                    query : "insert into families(famid, name, json_object) values(:famid, :famname, :fam)",
-                    params : {
-                        famid : fam.getProperty('id'),
-                        famname : fam.getProperty('name'),
-                        fam : JSON.stringify(fam)
-                    }
-                });
-
-        log(r1, "family is stored");
-
-        break;
-    case 2:
-
-        var fam = C.getDocument({
-            id : 'ZOO_ANIMAL'
-        });
-
-        var r2 = storageManager.initFamilyView(fam);
-
-        log(r2, "familyView is initialised");
-        break;
-    case 3:
-        for ( var i = 0; i < 10; i++) {
-
-            var animal = C.getDocument({
-                id : 1080 + i
-            });
-            var r3 = storageManager.saveDocumentValues({
-                properties : animal.getProperties(),
-                attributes : animal.getValues()
-            });
-
-            log(r3, "document is saved");
-        }
-    }
-
+/* required for venkman */
+function toOpenWindowByType(inType, uri) {
+    var winopts = "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar";
+    window.open(uri, "_blank", winopts);
 }
