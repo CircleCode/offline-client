@@ -571,8 +571,11 @@ var storageManager = {
                     var columns = [];
                     
                     for( let propertyId in properties ){
-                        var value = JSON.stringify(properties[propertyId]);
                         
+                        var value = properties[propertyId];
+                        if (Array.isArray(value)) {
+                            value = JSON.stringify(value);
+                        }
                         columns.push(propertyId);
                         params[propertyId] = value;
                     }
@@ -626,7 +629,7 @@ var storageManager = {
                             + "(" + columns.join(', ') + ")"
                             + " VALUES (:" + columns.join(', :') + ")";
                     config.params = params;
-                    
+                
                     
                     return this.execQuery(config);
                 } catch(e){

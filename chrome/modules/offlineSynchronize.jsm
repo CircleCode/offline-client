@@ -95,12 +95,13 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
 		    fam = families.getDocument(i);
 		    storageManager
 		    .execQuery({
-		        query : "insert into families(famid, name, title, json_object) values(:famid, :famname, :famtitle, :fam)",
+		        query : "insert into families(famid, name, title, json_object, creatable) values(:famid, :famname, :famtitle, :fam, :creatable)",
 		        params : {
 		            famid : fam.getProperty('id'),
 		            famtitle : fam.getTitle(),
 		            famname : fam.getProperty('name'),
-		            fam : JSON.stringify(fam)
+		            fam : JSON.stringify(fam),
+		            creatable:fam.control('icreate')
 		        }
 		    });
 		    // view generation
