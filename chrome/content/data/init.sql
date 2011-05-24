@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS "attrmappings" (
     "attrid"            TEXT NOT NULL,
     "columnid"          TEXT NOT NULL ,
     "isabstract"        BOOLEAN NOT NULL DEFAULT FALSE,
+    "istitle"           BOOLEAN NOT NULL DEFAULT FALSE,
     "ismultiple"        BOOLEAN NOT NULL DEFAULT FALSE,
     "isproperty"        BOOLEAN NOT NULL DEFAULT FALSE,
     "type"              TEXT NOT NULL,

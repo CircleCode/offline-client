@@ -72,11 +72,10 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
 offlineSynchronize.prototype.synchronizeDomain = function(config) {
 	if (config && config.domain) {
 		var domain = config.domain;
-		// TODO record suchro date in domain table
+		// TODO record synchro date in domain table
 		this.recordFamilies({
 			domain : domain
 		});
-		
 		//this.pushDocuments({domain:domain});
 		this.pullDocuments({domain:domain});
 	} else {
@@ -93,19 +92,30 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
 
 		var fam = null;
 		for ( var i = 0; i < families.length; i++) {
-			fam = families.getDocument(i);
-			storageManager
-					.execQuery({
-						query : "insert into families(famid, name, json_object) values(:famid, :famname, :fam)",
-						params : {
-							famid : fam.getProperty('id'),
-							famname : fam.getProperty('name'),
-							fam : JSON.stringify(fam)
-						}
-					});
-			// view generation
-			storageManager.initFamilyView(fam);
-			this.log("record family :" + fam.getTitle());
+		    fam = families.getDocument(i);
+		    storageManager
+		    .execQuery({
+		        query : "insert into families(famid, name, title, json_object) values(:famid, :famname, :famtitle, :fam)",
+		        params : {
+		            famid : fam.getProperty('id'),
+		            famtitle : fam.getTitle(),
+		            famname : fam.getProperty('name'),
+		            fam : JSON.stringify(fam)
+		        }
+		    });
+		    // view generation
+		    storageManager.initFamilyView(fam);
+		    this.filesToDownload
+		    .push({
+		        url : fam.getIcon({width:48}),
+		        basename : fam.getProperty('name')+'.png',
+		        index : -1,
+		        attrid : 'icon',
+		        initid : fam.getProperty('id'),
+		        writable : false
+		    });
+		    this.callObserver('onAddFilesToRecord',1);
+		    this.log("record family :" + fam.getTitle());
 		}
 	} else {
 		throw new ArgException("recordFamilies need domain parameter");

@@ -1,5 +1,7 @@
 Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://modules/preferences.jsm");
+
+Components.utils.import("resource://modules/exceptions.jsm");
 Components.utils.import("resource://gre/modules/ISO8601DateUtils.jsm");
 
 var EXPORTED_SYMBOLS = ["storageManager"];
@@ -313,6 +315,8 @@ var storageManager = {
                     propertiesMapping.push({
                         columnId    : columnId,
                         attrId      : columnId,
+                        istitle     : false,
+                        isabstract  : false,
                         ismultiple  : typeof(properties[columnId]) === 'object',
                         isproperty  : true,
                         type        : 'property'
@@ -335,6 +339,8 @@ var storageManager = {
                         attributesMapping.push({
                             columnId    : columnId,
                             attrId      : attribute.id,
+                            istitle     :  attribute.inTitle,
+                            isabstract  :  attribute.inAbstract,
                             ismultiple  : attribute.inArray() || (attribute.getOption('multiple')==='yes'),
                             isproperty  : false,
                             type        : attribute.type
@@ -458,8 +464,8 @@ var storageManager = {
 */
                 // at the end, we insert the mappings in TABLES_MAPPING
                 var mappingQuery = "INSERT INTO " + TABLES_MAPPING
-                        + " (famid, attrid, columnid, ismultiple, isproperty, type)"
-                        + " VALUES (:famid, :attrid, :columnid, :ismultiple, :isproperty, :type)";
+                        + " (famid, attrid, columnid, ismultiple, isabstract, istitle, isproperty, type)"
+                        + " VALUES (:famid, :attrid, :columnid, :ismultiple, :isabstract, :istitle, :isproperty, :type)";
                 try{
                     var mappingStmt = dbCon.createStatement(mappingQuery);
                     var mappingParams = mappingStmt.newBindingParamsArray();
@@ -469,6 +475,8 @@ var storageManager = {
                         bp.bindByName("attrid", mapping.attrId);
                         bp.bindByName("columnid", mapping.columnId);
                         bp.bindByName("ismultiple", mapping.ismultiple);
+                        bp.bindByName("istitle", mapping.istitle);
+                        bp.bindByName("isabstract", mapping.isabstract);
                         bp.bindByName("isproperty", mapping.isproperty);
                         bp.bindByName("type", mapping.type);
                         mappingParams.addParams(bp);
@@ -522,7 +530,7 @@ var storageManager = {
     	if( config ){
     		var initid = config.initid;
     		if(! initid ) {
-    			throw "getDocument :: missing initid argument";
+    			throw  new ArgException("getDocument :: missing initid argument");
     		}
     		var tableview=getDocumentView(initid);
     		if (tableview) {
@@ -535,11 +543,12 @@ var storageManager = {
     			if (r.length == 1) {
     				return r[0];
     			} else {
-    				throw "getDocument in view :: not found "+ initid;
+    				throw new StorageException("getDocument in view :: not found "+ initid);
     			}
 
     		} else {
-    			throw "getDocument :: not found "+ initid;
+    		    throw new StorageException("getDocument :: not found "+ initid);
+    			
     		}
     	}
     },
@@ -665,30 +674,7 @@ var storageManager = {
             return values;
         }
     },
-    saveFamilyValues : function(config){
-        var famid = config.values.properties.id;
-        var famname = config.values.properties.name;
-        if(famid && famname && config && config.values){
-            config.query = "INSERT INTO " + TABLES_FAMILIES
-                    + " (famid, name, json_object)"
-                    + " VALUES(:famid, :famname, :values)";
-            config.params = {
-                famid : famid,
-                famname : famname,
-                values : config.values
-            };
-            try{
-                this.execQuery(config);
-            } catch(e){
-                logError('storageManager::saveFamilyValues');
-                logError(e);
-                throw(e);
-            }
-        } else {
-            throw "storageManager::saveFamilyValues (missing parameters)";
-        }
-        return this;
-    },
+    
     
     getDomainValues : function(config){
         if(config){
