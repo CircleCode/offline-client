@@ -1,8 +1,6 @@
 Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://modules/preferences.jsm");
-
 Components.utils.import("resource://modules/exceptions.jsm");
-Components.utils.import("resource://gre/modules/ISO8601DateUtils.jsm");
 
 var EXPORTED_SYMBOLS = ["storageManager"];
 

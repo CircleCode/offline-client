@@ -44,7 +44,8 @@ localDocument.prototype = {
 			var val;
 			for ( var id in docRecord) {
 				try {
-					val = eval('(' + docRecord[id] + ')');
+				    val = JSON.parse(docRecord[id]);
+					//val = eval('(' + docRecord[id] + ')');
 				} catch (e) {
 					val = docRecord[id];
 				}
