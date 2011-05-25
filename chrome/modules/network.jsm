@@ -1,4 +1,8 @@
-Components.utils.import("resource://modules/logger.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://modules/logger.jsm");
 
 var EXPORTED_SYMBOLS = ["networkChecker"];
 
@@ -50,5 +54,4 @@ Components.classes["@mozilla.org/observer-service;1"]
 				false);
 
 log('network module loaded');
-log('network status is: ' + (networkChecker.isOffline() ? 'offline' : 'online'));
 log('network status is: ' + (networkChecker.isOffline() ? 'offline' : 'online'));
