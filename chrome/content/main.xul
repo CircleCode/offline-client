@@ -10,7 +10,7 @@
 
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="initListeners(); initValues(); openLoginDialog();">
+    onclose="launchClose();">
     
     <stringbundleset id="stringbundleset">
         <stringbundle id="mainBundle"
@@ -71,11 +71,12 @@
                         SELECT title, icon, famid 
                         FROM families 
                         WHERE famid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam)
-                        ORDER BY title]]>
+                        ORDER BY title
+                    ]]>
                         <param id="famDomainIdParam" name="domainIdParam" type="integer">0</param>
                     </query>
                     <action>
-                        <richlistitem uri="?"  onclick="selectFamily('?famid ');">
+                        <richlistitem uri="?" value="?famid" onclick="changeFamily(this.value);">
                             <hbox >
                                 <image src="file://?icon" style="margin : 2px" tooltiptext="?title" width="48px" height="48px"/>
                             </hbox >
@@ -84,11 +85,11 @@
                 </template>
             </richlistbox>
         </vbox>
-        <vbox width="300px" persist="width">
+        <vbox width="200px" persist="width">
             <vbox>
                 <button label="&main.newDocument;" onclick="openNewDocumentDialog()"/>
                 <hbox flex="1">
-                    <textbox type="search" id="searchTitle" value="" oncommand="updateAbstract()" placeholder="&main.abstract.search;" />
+                    <textbox type="search" id="searchTitle" value="" oncommand="updateAbstractList( { searchValue : this.value} );" placeholder="&main.abstract.search;" />
                 </hbox>
                 <label value="Current criteria"/>
                 <label id="currentCriteria" value=""/>
@@ -97,15 +98,16 @@
                 <richlistbox id="abstractList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
                         <query><![CDATA[ 
-                                SELECT title, initid 
-                                FROM documents 
-                                WHERE initid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam) AND fromid = :famId AND title LIKE :searchTitle ]]>
+                            SELECT title, initid 
+                            FROM documents 
+                            WHERE initid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam) AND fromid = :famId AND title LIKE :searchTitle 
+                        ]]>
                             <param id="abstractDomainIdParam" name="domainIdParam" type="integer">0</param>
                             <param id="famIdParam" name="famId" type="integer">0</param>
                             <param id="searchTitleParam" name="searchTitle">%</param>
                         </query>
                         <action>
-                            <richlistitem uri="?" onclick='displayDoc(?initid );'>
+                            <richlistitem uri="?" value="?initid" onclick='changeDocument(this.value );'>
                                 <vbox >
                                     <label value="?title" />
                                 </vbox>
@@ -132,14 +134,14 @@
     <statusbar>
         <hbox flex="1">
             <spacer flex="1"/>
-            <menulist id="domainList" label="&main.domain.choose;" oncommand="changeDomain(this.value)">
-                <menupopup id='domainPopupList' datasources="profile:storage.sqlite" ref="*" querytype="storage" >
+            <menulist id="domainList" label="&main.domain.choose;" oncommand="changeDomain(this.value)" >
+                <menupopup id='domainPopupList' datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
                         <query>
                         <![CDATA[ select description, id from domains]]>
                         </query>
                         <action>
-                            <menuitem uri="?" label="?description" value="?id"/>
+                            <menuitem uri="?" label="?description" value="?id" flex="1"/>
                         </action>
                     </template>
                 </menupopup>

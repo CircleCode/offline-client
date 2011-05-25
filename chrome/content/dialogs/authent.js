@@ -59,7 +59,9 @@ function doOk() {
 function doCancel() {
     logConsole('Authent : doCancel');
 
-    applicationEvent.publish("close", "");
+    if (applicationEvent.publish("preClose")) {
+        applicationEvent.publish("close");
+    }
 
     return false;
 }
