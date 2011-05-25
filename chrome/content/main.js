@@ -5,8 +5,13 @@ const Cu = Components.utils;
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/storageManager.jsm");
 Cu.import("resource://modules/docManager.jsm");
+Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/events.jsm");
 Cu.import("resource://modules/preferences.jsm");
+Cu.import("resource://modules/fdl-context.jsm");
+Cu.import("resource://modules/offlineSynchronize.jsm");
+Cu.import("resource://modules/StringBundle.jsm");
+Cu.import("resource://gre/modules/Services.jsm");
 
 /* enabling password manager */
 Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
@@ -15,8 +20,9 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 /* Add window binding onLoad and onClose*/
 window.onload = function() {
     initListeners();
+    initApplication();
+    initSession();
     initValues();
-    openLoginDialog();
 }
 
 /* Dialog opener */
@@ -43,7 +49,7 @@ function openPreferences() {
 }
 
 function openSynchro() {
-    window.openDialog("chrome://dcpoffline/content/dialogs/synchro.xul", "",
+    window.open("chrome://dcpoffline/content/dialogs/synchro.xul", "",
     "chrome,modal");
 }
 
@@ -55,6 +61,58 @@ function openLog() {
 function openAbout() {
     window.openDialog("chrome://dcpoffline/content/dialogs/about.xul", "",
     "chrome,modal");
+}
+
+/* init elements */
+
+function initApplication() 
+{
+    var firstRun = Preferences.get("offline.application.firstRun", false);
+    var fullyInitialised = Preferences.get("offline.application.fullyInitialised", false);
+}
+
+function initSession() 
+{
+    var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
+    var login = Preferences.get("offline.user.login", false);
+    var password = Preferences.get("offline.user.password", false);
+    var applicationURL = Preferences.get("offline.user.applicationURL", false);
+    if (!networkChecker.isOffline()) {
+        if (!(login && password && applicationURL)) {
+            openLoginDialog();
+        }else {
+            context.url = applicationURL;
+            if (context.isConnected()) {
+                logConsole(login);
+                logConsole(password);
+                var authent = context.setAuthentification({
+                    login : login,
+                    password : password
+                });
+                logConsole(authent);
+                if (authent) {
+                    offlineSync.recordOfflineDomains();
+                    return;
+                }else {
+                    Services.prompt.alert(window,"main.initSession.unableToLog.title", translate.get("main.initSession.unableToLog"));
+                    openLoginDialog();
+                    initSession();
+                    return;
+                }
+            }else {
+                Services.prompt.alert(window,"main.initSession.serverOffline.title", translate.get("main.initSession.serverOffline"));
+                openLoginDialog();
+                initSession();
+                return;
+            }
+        }
+        
+    }else {
+        if (!(login && password && applicationURL)) {
+            Services.prompt.alert(window,translate.get("main.initSession.offline.userPreferencesUnset.title"), translate.get("main.initSession.offline.userPreferencesUnset"));
+        }
+    }
+    applicationEvent.publish("close");
 }
 
 /* interface element */
@@ -71,7 +129,6 @@ function launchClose()
 
 function close()
 {
-    logConsole("Cia les amigos");
     Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
 }
 
@@ -265,6 +322,7 @@ function initListeners()
 function initValues()
 {
     logConsole("Init values");
+    document.getElementById("domainPopupList").builder.rebuild();
     setPrefCurrentSelectedDomain(true);
     setPrefCurrentSelectedFamily(true);
     setPrefCurrentSelectedDocument(true);

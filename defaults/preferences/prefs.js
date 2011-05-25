@@ -32,4 +32,7 @@ pref("dcpoffline.context.url", "http://dynacase.r2d2/dev/");
 
 pref("dcpoffline.online.url", "http://dynacase.r2d2/dev/");
 
+pref("offline.user.login", "toto");
+pref("offline.user.password", "password");
+pref("offline.user.applicationURL", "http://dynacase.r2d2.paris.lan/dev/");
 pref("dcpoffline.domain", "default");

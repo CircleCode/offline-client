@@ -12,11 +12,6 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     onclose="launchClose();">
     
-    <stringbundleset id="stringbundleset">
-        <stringbundle id="mainBundle"
-            src="chrome://dcpoffline/locale/main.properties" />
-    </stringbundleset>
-    
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
     
