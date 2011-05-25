@@ -12,11 +12,18 @@ Cu.import("resource://modules/preferences.jsm");
 Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
 
+/* Add window binding onLoad and onClose*/
+window.onload = function() {
+    initListeners();
+    initValues();
+    openLoginDialog();
+}
+
 /* Dialog opener */
 
 function openLoginDialog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
-            "chrome,modal");
+    "chrome,modal");
 }
 
 function openNewDocumentDialog() {
@@ -27,7 +34,7 @@ function openNewDocumentDialog() {
 function openCloseDialog() {
     /*window.openDialog("chrome://dcpoffline/content/dialogs/close.xul", "",
     "chrome,modal");*/
-    applicationEvent.publish("close");
+    launchClose();
 }
 
 function openPreferences() {
@@ -48,6 +55,24 @@ function openLog() {
 function openAbout() {
     window.openDialog("chrome://dcpoffline/content/dialogs/about.xul", "",
     "chrome,modal");
+}
+
+/* interface element */
+
+function launchClose()
+{
+    if (applicationEvent.publish("preClose")) {
+        applicationEvent.publish("close");
+    }else{
+        //TODO add alert message
+        alert("unable to close application");
+    }
+}
+
+function close()
+{
+    logConsole("Cia les amigos");
+    Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
 }
 
 function openDocument(initid, mode) {
@@ -87,19 +112,19 @@ function openDocument(initid, mode) {
                     box.setAttribute('flex', 1);
                     box.setAttribute('initid', initid);
                     box.style.MozBinding = template;
-        
+
                     tabPanel = document.createElement('tabpanel');
                     tabPanel.setAttribute('flex', 1);
                     tabPanel.appendChild(box);
                     tabPanel.id = tabPanelId;
-                    
+
                     tabBox.tabpanels.appendChild(tabPanel);
-                    
+
                     tab = tabBox.tabs.appendItem(doc.getTitle());
                     tab.id = tabId;
                     tab.linkedpanel = tabPanelId;
                 }
-                
+
                 tabBox.tabs.selectedItem = tab;
                 tabBox.tabpanels.selectedPanel = tabPanel;
             } else {
@@ -116,62 +141,110 @@ function openDocument(initid, mode) {
     return tabPanel;
 }
 
-/* interface element */
-function selectFamily(famId)
-{
-    document.getElementById("famIdParam").textContent = famId;
-    document.getElementById("abstractList").builder.rebuild();
-}
-
-function updateAbstract()
-{
-    document.getElementById("searchTitleParam").textContent = '%'+document.getElementById('searchTitle').value+'%';
-    document.getElementById("currentCriteria").value = document.getElementById('searchTitle').value;
-    document.getElementById("abstractList").builder.rebuild();
-}
-
-function displayDoc(initid)
-{
-    document.getElementById("document").value = JSON.stringify(docManager.getLocalDocument({initid : initid}));
-    openDocument(initid);
-}
-
 /* Listeners */
-function updateFamilyList(domainId)
+function updateFamilyList(config)
 {
     logConsole("update family list");
-    document.getElementById("famDomainIdParam").textContent = domainId;
+    if (config && config.domainId) {
+        document.getElementById("famDomainIdParam").textContent = config.domainId;
+    }
     document.getElementById("familyList").builder.rebuild();
 }
 
-function updateAbstractList(domainId)
+function updateAbstractList(config)
 {
     logConsole("update abstract list");
-    document.getElementById("abstractDomainIdParam").textContent = domainId;
+    if (config && config.domainId != undefined) {
+        document.getElementById("abstractDomainIdParam").textContent = config.domainId;
+    }
+    if (config && config.famId != undefined) {
+        document.getElementById("famIdParam").textContent = config.famId;
+    }
+    if (config && config.searchValue != undefined) {
+        document.getElementById("searchTitleParam").textContent = '%'+config.searchValue+'%';
+        document.getElementById("currentCriteria").value = config.searchValue;
+    }
     document.getElementById("abstractList").builder.rebuild();
 }
 
-function updateDomainPreference(domainId)
+function viewDocument(config) 
 {
-    Preferences.set("offline.user.currentDomain", domainId);
+    logConsole("add a document representation");
+    openDocument(config.documentId);
+    debugDisplayDoc(config.documentId);
 }
 
-function close()
+function updateDomainPreference(config)
 {
-    logConsole("Cia les amigos");
-    Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
+    if (config && config.domainId) {
+        Preferences.set("offline.user.currentSelectedDomain", config.domainId);
+    }
 }
 
-function initPrefDomain()
+function updateCurrentFamilyPreference(config)
 {
-    var domains = document.getElementById("domainList");
-    var nbDomains = domains.itemCount;
-    for(var i = 0; i < nbDomains; i++) {
-        var currentDomain = domains.getItemAtIndex(i);
-        if (Preferences.get("offline.user.currentDomain") == currentDomain.value) {
-            domains.selectedIndex = i;
-            changeDomain(currentDomain.value);
-            break;
+    if (config && config.famId) {
+        Preferences.set("offline.user.currentSelectedFamily", config.famId);
+    }
+}
+
+function updateCurrentDocumentPreference(config)
+{
+    if (config && config.documentId) {
+        Preferences.set("offline.user.currentSelectedDocument", config.documentId);
+    }
+}
+
+function setPrefCurrentSelectedDomain(propagEvent)
+{
+    if (!Preferences.get("offline.user.currentSelectedDomain", false) === false) {
+        var domains = document.getElementById("domainList");
+        var nbDomains = domains.itemCount;
+        for(var i = 0; i < nbDomains; i++) {
+            var currentDomain = domains.getItemAtIndex(i);
+            if (Preferences.get("offline.user.currentSelectedDomain") == currentDomain.value) {
+                domains.selectedIndex = i;
+                if (propagEvent) {
+                    changeDomain(currentDomain.value);
+                }
+                break;
+            }
+        }
+    }
+}
+
+function setPrefCurrentSelectedFamily(propagEvent)
+{
+    if (!Preferences.get("offline.user.currentSelectedFamily", false) === false) {
+        var families = document.getElementById("familyList");
+        var nbFamilies = families.itemCount;
+        for(var i = 0; i < nbFamilies; i++) {
+            var currentFamily = families.getItemAtIndex(i);
+            if (Preferences.get("offline.user.currentSelectedFamily") == currentFamily.value) {
+                families.selectedIndex = i;
+                if (propagEvent) {
+                    changeFamily(currentFamily.value);
+                }
+                break;
+            }
+        }
+    }
+}
+
+function setPrefCurrentSelectedDocument(propagEvent)
+{
+    if (!Preferences.get("offline.user.currentSelectedDocument", false) === false) {
+        var documents = document.getElementById("abstractList");
+        var nbDocuments = documents.itemCount;
+        for(var i = 0; i < nbDocuments; i++) {
+            var currentDocument = documents.getItemAtIndex(i);
+            if (Preferences.get("offline.user.currentSelectedDocument") == currentDocument.value) {
+                documents.selectedIndex = i;
+                if (propagEvent) {
+                    changeDocument(currentDocument.value);
+                }
+                break;
+            }
         }
     }
 }
@@ -179,28 +252,69 @@ function initPrefDomain()
 function initListeners()
 {
     logConsole("Init listener");
-    applicationEvent.subscribe("changeDomain", updateFamilyList);
-    applicationEvent.subscribe("changeDomain", updateAbstractList);
-    applicationEvent.subscribe("changeDomain", updateDomainPreference);
+    applicationEvent.subscribe("changeSelectedDomain", updateFamilyList);
+    applicationEvent.subscribe("changeSelectedDomain", updateAbstractList);
+    applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
+    applicationEvent.subscribe("changeSelectedFamily", updateAbstractList);
+    applicationEvent.subscribe("changeSelectedFamily", updateCurrentFamilyPreference);
+    applicationEvent.subscribe("changeSelectedDocument", viewDocument);
+    applicationEvent.subscribe("changeSelectedDocument", updateCurrentDocumentPreference);
     applicationEvent.subscribe("close", close);
 }
 
 function initValues()
 {
     logConsole("Init values");
-    initPrefDomain();
-    
+    setPrefCurrentSelectedDomain(true);
+    setPrefCurrentSelectedFamily(true);
+    setPrefCurrentSelectedDocument(true);
 }
 
 function changeDomain(value) {
-    logConsole("setDomain "+value);
-    if (!applicationEvent.publish("preChangeDomain", value)) {
-        alert("oupps i did it again");
+    logConsole("try to change Domain "+value);
+    var param = {
+            domainId : value
+    };
+    if (!applicationEvent.publish("preChangeSelectedDomain", param)) {
+        //TODO add alert message
+        alert("unable to change domain");
+        setPrefCurrentSelectedDomain();
     }else {
-        applicationEvent.publish("changeDomain", value);
-        applicationEvent.publish("postChangeDomain", value);
+        logConsole("change Domain "+value);
+        applicationEvent.publish("changeSelectedDomain", param);
+        applicationEvent.publish("postChangeSelectedDomain", param);
     }
 
+}
+
+function changeFamily(value) {
+    logConsole("try to change selected family "+value);
+    var param = {
+            famId : value
+    };
+    if (!applicationEvent.publish("preChangeSelectedFamily", param)) {
+        //TODO add alert message
+        alert("unable to change selected family");
+        setPrefCurrentSelectedFamily();
+    }else {
+        applicationEvent.publish("changeSelectedFamily", param);
+        applicationEvent.publish("postChangeSelectedFamily", param);
+    }
+}
+
+function changeDocument(value) {
+    logConsole("try to change selected document "+value);
+    var param = {
+            documentId : value
+    };
+    if (!applicationEvent.publish("preChangeSelectedDocument", param)) {
+        //TODO add alert message
+        alert("unable to change selected document");
+        setPrefCurrentSelectedDocument();
+    }else {
+        applicationEvent.publish("changeSelectedDocument", param);
+        applicationEvent.publish("postChangeSelectedDocument", param);
+    }
 }
 
 /* debug stuff */
@@ -209,4 +323,9 @@ function changeDomain(value) {
 function toOpenWindowByType(inType, uri) {
     var winopts = "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar";
     window.open(uri, "_blank", winopts);
+}
+
+function debugDisplayDoc(initid)
+{
+    document.getElementById("document").value = JSON.stringify(docManager.getLocalDocument({initid : initid}));
 }
