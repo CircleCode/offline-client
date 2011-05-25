@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bindings>
+<bindings id="document-ZOO_ENCLOS-Bindings"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="document-ZOO_ENCLOS-view">
+        
+        <content>
+            <xul:vbox flex="1">
+                <dcpDocument xbl:inherits="initid" style="border:3px solid blue;" mode="view">
+                </dcpDocument>
+            </xul:vbox>
+        </content>
+        
+    </binding>
+    
+</bindings>
