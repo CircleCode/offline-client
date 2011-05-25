@@ -10,7 +10,7 @@
 
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="openLoginDialog(); initListeners();">
+    onload="initListeners(); initValues(); openLoginDialog();">
     
     <stringbundleset id="stringbundleset">
         <stringbundle id="mainBundle"
@@ -132,8 +132,8 @@
     <statusbar>
         <hbox flex="1">
             <spacer flex="1"/>
-            <menulist label="&main.domain.choose;" oncommand="changeDomain(this.value)">
-                <menupopup id='domainList' datasources="profile:storage.sqlite" ref="*" querytype="storage" >
+            <menulist id="domainList" label="&main.domain.choose;" oncommand="changeDomain(this.value)">
+                <menupopup id='domainPopupList' datasources="profile:storage.sqlite" ref="*" querytype="storage" >
                     <template>
                         <query>
                         <![CDATA[ select description, id from domains]]>

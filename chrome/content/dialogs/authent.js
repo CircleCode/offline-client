@@ -5,6 +5,8 @@ const Cu = Components.utils;
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/authentifier.jsm");
 Cu.import("resource://modules/network.jsm");
+Cu.import("resource://modules/preferences.jsm");
+Cu.import("resource://modules/events.jsm");
 
 /**
  * Try to log with the information of the dialog
@@ -27,13 +29,15 @@ function doOk() {
      */
     // TODO use the form value to log
     var login = document.getElementById('login').value;
-    logConsole('login '+login);
     var password = document.getElementById('password').value;
-    logConsole('password '+password);
     var applicationURL = document.getElementById('applicationURL').value;
-    logConsole('applicationURL '+applicationURL);
     var remember = document.getElementById('remember').checked;
-    logConsole('remember '+remember);
+
+    if (remember) {
+        Preferences.set("offline.user.login", login);
+        Preferences.set("offline.user.password", password);
+        Preferences.set("offline.user.applicationURL", applicationURL);
+    }
 
     var authentSuccess = true;
 
@@ -53,11 +57,11 @@ function doOk() {
  * @returns {Boolean}
  */
 function doCancel() {
-    log('Authent : doCancel');
-    
-    Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
-    
-    return true;
+    logConsole('Authent : doCancel');
+
+    applicationEvent.publish("close", "");
+
+    return false;
 }
 
 /**
@@ -69,9 +73,9 @@ function doLoad() {
     logDebug('Authent  : doLoad');
 
     // TODO get real values from the application
-    document.getElementById('login').value = "logindfdfdf";
-    document.getElementById('password').value = "password";
-    document.getElementById('applicationURL').value = "applicationURL";
+    document.getElementById('login').value = Preferences.get("offline.user.login");
+    document.getElementById('password').value = Preferences.get("offline.user.password");
+    document.getElementById('applicationURL').value = Preferences.get("offline.user.applicationURL");
     document.getElementById('remember').checked = true;
 
     return true;
