@@ -1,4 +1,5 @@
 Components.utils.import("resource://modules/logger.jsm");
+Components.utils.import("resource://gre/modules/Services.jsm");
 
 Components.utils.import("resource://modules/docManager.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
@@ -65,7 +66,7 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
                     // not necessary
                     }
                 });
-        
+
     }
     return domains;
 };
@@ -77,6 +78,10 @@ offlineSynchronize.prototype.synchronizeDomain = function(config) {
         this.recordFamilies({
             domain : domain
         });
+        this.recordFamiliesBinding({
+            domain : domain
+        });
+
         // this.pushDocuments({domain:domain});
         this.pullDocuments({
             domain : domain
@@ -119,16 +124,16 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
                 initid : fam.getProperty('id'),
                 writable : false
             });
-            
+
             storageManager
-            .execQuery({
-                query : "insert into docsbydomain (initid, domainid, editable) values (:initid, :domainid, 0)",
-                params : {
-                    initid : fam.getProperty('id'),
-                    domainid : domain.getProperty('initid')
-                
-                }
-            });
+                    .execQuery({
+                        query : "insert into docsbydomain (initid, domainid, editable) values (:initid, :domainid, 0)",
+                        params : {
+                            initid : fam.getProperty('id'),
+                            domainid : domain.getProperty('initid')
+                        }
+                    });
+
             this.callObserver('onAddFilesToRecord', 1);
             this.log("record family :" + fam.getTitle());
         }
@@ -137,6 +142,54 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
     }
 };
 
+offlineSynchronize.prototype.recordFamiliesBinding = function(config) {
+
+    if (config && config.domain) {
+        var domain = config.domain;
+        var bindings = domain.view().getFamiliesBindings();
+        for ( var famname in bindings) {
+            this.writeFile({
+                content : bindings[famname],
+                dirname : "Bindings",
+                basename : famname + ".xml"
+            })
+        }
+    } else {
+        throw new ArgException("recordFamiliesBinding need domain parameter");
+    }
+};
+
+offlineSynchronize.prototype.writeFile = function(config) {
+    if (config && config.basename && config.content) {
+        var file = Services.dirsvc.get("ProfD",
+                Components.interfaces.nsILocalFile);
+        if (config.dirname) {
+            file.append(config.dirname);
+            if (!file.exists() || !file.isDirectory()) { // if
+                // it
+                // doesn't
+                // exist,
+                // create
+                file.create(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0750);
+            }
+        }
+        file.append(config.basename);
+        // file is nsIFile, data is a string
+        var foStream = Components.classes["@mozilla.org/network/file-output-stream;1"]
+                .createInstance(Components.interfaces.nsIFileOutputStream);
+
+        // use 0x02 | 0x20 to open file for create.
+        foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
+       
+        var converter = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
+                .createInstance(Components.interfaces.nsIConverterOutputStream);
+        converter.init(foStream, "UTF-8", 0, 0);
+        converter.writeString(config.content);
+        converter.close(); // this closes foStream
+    } else {
+        throw new ArgException("writeFile need path, content parameter");
+    }
+}
 offlineSynchronize.prototype.getModifiedDocs = function(config) {
     if (config && config.domain) {
         var domain = config.domain;
@@ -377,11 +430,11 @@ offlineSynchronize.prototype.recordFiles = function() {
     }
 };
 offlineSynchronize.prototype.updateWorkTables = function() {
- 
+
     storageManager
-    .execQuery({
-        query : "insert into doctitles (famname, initid, title)  select fromname,  initid, title from documents"
-    });
+            .execQuery({
+                query : "insert into doctitles (famname, initid, title)  select fromname,  initid, title from documents"
+            });
 };
 /**
  * 
@@ -531,15 +584,11 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
         }
         this.callObserver('onGlobalPercent', 90);
         /*
-        storageManager
-                .execQuery({
-                    query : "insert into synchrotimes (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid , :serverDate, :clientDate , :clientDate from documents",
-                    params : {
-                        clientDate : clientDate,
-                        serverDate : serverDate
-                    }
-                });
-*/
+         * storageManager .execQuery({ query : "insert into synchrotimes
+         * (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid ,
+         * :serverDate, :clientDate , :clientDate from documents", params : {
+         * clientDate : clientDate, serverDate : serverDate } });
+         */
         this.recordFiles();
 
         storageManager.lockDatabase({
@@ -560,7 +609,9 @@ offlineSynchronize.prototype.updateSyncDate = function(config) {
         var clientDate = utils.toIso8601(now);
         storageManager
                 .execQuery({
-                 //   query : "update synchrotimes set lastsyncremote=:serverDate, lastsynclocal=:clientDate, lastsavelocal=:clientDate where initid=:initid",
+                    // query : "update synchrotimes set
+                    // lastsyncremote=:serverDate, lastsynclocal=:clientDate,
+                    // lastsavelocal=:clientDate where initid=:initid",
                     query : "insert into synchrotimes (lastsyncremote, lastsynclocal,lastsavelocal,initid) values (:serverDate, :clientDate, :clientDate, :initid)",
 
                     params : {
@@ -580,23 +631,25 @@ offlineSynchronize.prototype.updateTitles = function(config) {
         var oas = config.document.getAttributes();
         for ( var aid in oas) {
             if (oas[aid].type == 'docid') {
-                var values=config.document.getValue(aid);
-                var titles=config.document.getDisplayValue(aid);
-                if (! Array.isArray(values)) { 
-                    values=[values];
-                    titles=[titles];
+                var values = config.document.getValue(aid);
+                var titles = config.document.getDisplayValue(aid);
+                if (!Array.isArray(values)) {
+                    values = [ values ];
+                    titles = [ titles ];
                 }
-                var famid=oas[aid].relationFamilyId;
-                for (var i=0;i<values.length;i++) {
-                storageManager
-                        .execQuery({
-                            query : "insert into doctitles (initid, famname, title) values (:initid, :famname, :title)",
-                            params : {
-                                famname : famid,
-                                title : titles[i],
-                                initid : values[i]
-                            }
-                        });
+                var famid = oas[aid].relationFamilyId;
+                for ( var i = 0; i < values.length; i++) {
+                    if (titles[i] && values[i]) {
+                        storageManager
+                                .execQuery({
+                                    query : "insert into doctitles (initid, famname, title) values (:initid, :famname, :title)",
+                                    params : {
+                                        famname : famid,
+                                        title : titles[i],
+                                        initid : values[i]
+                                    }
+                                });
+                    }
                 }
             }
         }

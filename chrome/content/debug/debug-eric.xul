@@ -10,7 +10,7 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" onload="initEricContext()"
 >
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
-    <script type="application/javascript" src="chrome://dcpoffline/content/debug-eric.js" />
+    <script type="application/javascript" src="chrome://dcpoffline/content/debug/debug-eric.js" />
     <hbox>
         <button label="get Domains" onclick="clicGetDomains()" />
         <html:select id="sdomains"></html:select>

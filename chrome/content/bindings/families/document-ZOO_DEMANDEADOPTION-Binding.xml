@@ -9,7 +9,7 @@
         
         <content>
             <xul:vbox flex="1">
-                <dcpDocument xbl:inherits="initid"mode="view">
+                <dcpDocument xbl:inherits="initid" mode="view">
                     <dcpAttribute type="frame" attrid="de_fr_reference">
                         <dcpAttribute type="text" attrid="de_reference"/>
                     </dcpAttribute>

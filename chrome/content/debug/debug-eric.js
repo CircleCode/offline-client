@@ -2,18 +2,19 @@
 Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://modules/docManager.jsm");
 
+Components.utils.import("resource://modules/preferences.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
 Components.utils.import("resource://modules/fdl-context.jsm");
 Components.utils.import("resource://modules/fdl-data-debug.jsm");
 Components.utils.import("resource://modules/offlineSynchronize.jsm");
 
 function initEricContext() {
-	context.url = 'http://dynacase.r2d2.paris.lan/dev/';
+	context.url = Preferences.get("offline.user.applicationURL");
 
 	if (!context.isAuthenticated()) {
 		var u = context.setAuthentification({
-			login : 'admin',
-			password : 'anakeen'
+			login : Preferences.get("offline.user.login"),
+			password : Preferences.get("offline.user.password")
 		});
 		if (!u)
 			alert('error authent:' + context.getLastErrorMessage());

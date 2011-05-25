@@ -55,7 +55,7 @@
                         <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;"
                             oncommand="start_venkman()" />
                         <menuitem id="debug-launch-method" label="&menu.debug.eric;"
-                            oncommand='window.open("chrome://dcpoffline/content/debug-eric.xul","Eric", "chrome,centerscreen");' />
+                            oncommand='window.open("chrome://dcpoffline/content/debug/debug-eric.xul","Eric", "chrome,centerscreen");' />
                         <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
                             oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
                     </menupopup>

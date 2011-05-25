@@ -573,7 +573,7 @@ var storageManager = {
                         var value = properties[propertyId];
                         if (Array.isArray(value)) {
                             value = JSON.stringify(value);
-                        }
+                        } 
                         columns.push(propertyId);
                         params[propertyId] = value;
                     }
