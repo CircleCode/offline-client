@@ -51,6 +51,8 @@ function openAbout() {
 }
 
 function openDocument(initid, mode) {
+    var template;
+    var box, tabPanel, tabBox, tab, tabId, tabPanelId;
     if (initid) {
         try {
             var doc = docManager.getLocalDocument({
@@ -62,38 +64,50 @@ function openDocument(initid, mode) {
                     initid : initid
                 }
             });
-            var template = (mode === 'edit')
-            ? templates.edittemplate
-                    : templates.viewtemplate;
+            if(! mode || (mode === 'view') ){
+                template = templates.viewtemplate;
+            } else if(mode === 'edit'){
+                template = templates.edittemplate;
+            } else {
+                throw new ArgException("openDocument :: mode must either be 'edit' or 'view'. ["+mode+"] is invalid");
+            }
             if (!template) {
                 logConsole("using [url(chrome://dcpoffline/content/templates/document-animal.xml#document-animal)] as default template");
                 template = "url(chrome://dcpoffline/content/templates/document-animal.xml#document-animal)";
             }
             if (template) {
-                var box = document.createElement('vbox');
-                box.setAttribute('flex', 1);
-                box.setAttribute('initid', initid);
-                box.style.MozBinding = template;
-
-                var tabPanel = document.createElement('tabpanel');
-                tabPanel.setAttribute('flex', 1);
-                tabPanel.appendChild(box);
-
-                var tabBox = document.getElementById('onefam-content-tabbox');
-
-                tabPanel = tabBox.tabpanels.appendChild(tabPanel);
-                tabBox.tabs.appendItem(doc.getTitle());
-                /*
-                logConsole(tabBox.tabs.getIndexOfItem(tabPanel));
-
-                tabBox.tabs.selectedIndex = tabBox.tabs.getIndexOfItem(tabPanel);
-                 */
+                tabBox = document.getElementById('onefam-content-tabbox');
+                tabId = 'tab-document-'+initid;
+                tabPanelId = 'tabPanel-document-'+initid;
+                tab = document.getElementById(tabId);
+                tabPanel = document.getElementById('tabPanel-document-'+initid);
+                if(! (tabPanel && tab) ){
+                    //TODO: clean tabpanels and tabs
+                    box = document.createElement('vbox');
+                    box.setAttribute('flex', 1);
+                    box.setAttribute('initid', initid);
+                    box.style.MozBinding = template;
+        
+                    tabPanel = document.createElement('tabpanel');
+                    tabPanel.setAttribute('flex', 1);
+                    tabPanel.appendChild(box);
+                    tabPanel.id = tabPanelId;
+                    
+                    tabBox.tabpanels.appendChild(tabPanel);
+                    
+                    tab = tabBox.tabs.appendItem(doc.getTitle());
+                    tab.id = tabId;
+                    tab.linkedpanel = tabPanelId;
+                }
+                
+                tabBox.tabs.selectedItem = tab;
+                tabBox.tabpanels.selectedPanel = tabPanel;
             } else {
                 throw new BindException(
                         "openDocument :: no template for initid: " + initid);
             }
         } catch (e) {
-            alert(e.toString);
+            alert(e.toString());
             throw (e);
         }
     } else {
