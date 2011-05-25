@@ -153,7 +153,9 @@ function updateAbstractList(domainId)
 
 function updateDomainPreference(domainId)
 {
-    Preferences.set("offline.user.currentDomain", domainId);
+    if (domainId) {
+        Preferences.set("offline.user.currentDomain", domainId);
+    }
 }
 
 function close()
