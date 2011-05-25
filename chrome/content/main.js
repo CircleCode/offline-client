@@ -21,7 +21,7 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 window.onload = function() {
     initListeners();
     initApplication();
-    initSession();
+    initSession(true);
     initValues();
 }
 
@@ -71,7 +71,7 @@ function initApplication()
     var fullyInitialised = Preferences.get("offline.application.fullyInitialised", false);
 }
 
-function initSession() 
+function initSession(firstLaunch) 
 {
     var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
     var login = Preferences.get("offline.user.login", false);
@@ -83,13 +83,10 @@ function initSession()
         }else {
             context.url = applicationURL;
             if (context.isConnected()) {
-                logConsole(login);
-                logConsole(password);
                 var authent = context.setAuthentification({
                     login : login,
                     password : password
                 });
-                logConsole(authent);
                 if (authent) {
                     offlineSync.recordOfflineDomains();
                     return;
@@ -100,6 +97,11 @@ function initSession()
                     return;
                 }
             }else {
+                if (firstLaunch) {
+                    logConsole("firstLaunch ?? relaunch");
+                    setTimeout(initSession, 15);
+                    return;
+                }
                 Services.prompt.alert(window,"main.initSession.serverOffline.title", translate.get("main.initSession.serverOffline"));
                 openLoginDialog();
                 initSession();
@@ -110,6 +112,8 @@ function initSession()
     }else {
         if (!(login && password && applicationURL)) {
             Services.prompt.alert(window,translate.get("main.initSession.offline.userPreferencesUnset.title"), translate.get("main.initSession.offline.userPreferencesUnset"));
+        }else{
+            return;
         }
     }
     applicationEvent.publish("close");
