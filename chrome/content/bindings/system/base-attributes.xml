@@ -52,8 +52,8 @@
                 logConsole(this.doc.getProperty('initid')+':'+this.attrid);
                 var labelValue = this.label;
                 var labelElmt = this.getChild('label');
-                labelElmt.setAttribute('label', label)
-                labelElmt.value = label;
+                labelElmt.setAttribute('label', labelValue)
+                labelElmt.value = labelValue;
                 logConsole("leaving base-attribute constructor for "+this.attrid+" ---->");
             ]]></constructor>
             <destructor><![CDATA[
