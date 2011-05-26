@@ -237,6 +237,15 @@ function updateDomainPreference(config)
     }
 }
 
+function updateDocManager(config) {
+    logConsole("update doc manager");
+    if (config && config.domainId) {
+        docManager.setActiveDomain({
+            domain : config.domainId
+        });
+    }
+}
+
 function updateCurrentFamilyPreference(config)
 {
     if (config && config.famId) {
@@ -311,6 +320,7 @@ function initListeners()
     applicationEvent.subscribe("changeSelectedDomain", updateFamilyList);
     applicationEvent.subscribe("changeSelectedDomain", updateAbstractList);
     applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
+    applicationEvent.subscribe("changeSelectedDomain", updateDocManager);
     applicationEvent.subscribe("changeSelectedFamily", updateAbstractList);
     applicationEvent.subscribe("changeSelectedFamily", updateCurrentFamilyPreference);
     applicationEvent.subscribe("changeSelectedDocument", viewDocument);
