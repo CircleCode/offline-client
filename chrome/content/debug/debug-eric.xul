@@ -19,6 +19,8 @@
         <hbox>
             <button style="background-color:lightgreen;-moz-appearance: none;" label="pull domain" onclick="clicPullDomain(document.getElementById('sdomains').value)" />
             <button style="background-color:lightblue;-moz-appearance: none;" label="push domain" onclick="clicPushDomain(document.getElementById('sdomains').value)" />
+                  <button style="" label="Misc test" onclick="clicMiscTest(document.getElementById('sdomains').value)" />
+      
         </hbox>
         <hbox>
             <label id='domain'>No domains</label><html:br/>

@@ -108,6 +108,13 @@ function clicGetDomains() {
 	boxDomain.style.visibility = 'visible';
 
 }
+function clicMiscTest(domainid) {
+    var ldoc=docManager.getLocalDocument({initid:1939});
+    if (ldoc) {
+        logConsole(ldoc.getBinding('view'));
+    }
+    
+}
 
 function modifyAntilope() {
     try {

@@ -63,6 +63,7 @@ docManagerSingleton.prototype = {
 	 * get document from local database
 	 * @access public
 	 * @param config
+	 *     initid 
 	 * @return localDocument
 	 */
 	getLocalDocument : function(config) {
