@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/leaf-attributes-binding.dtd" >
+      <!ENTITY separator "&#160;:&#160;" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+      %leaf-attributes-bindingDTD;
+]>
+
+<bindings id="leaf-attributes-binding"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="leaf-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
+        <implementation>
+            <method name="setValue">
+                <parameter name="value"/>
+                <body><![CDATA[
+                    this.doc.setValue(this.attrid, value);
+                ]]></body>
+            </method>
+            <method name="getValue">
+                <parameter name="defaultValue"/>
+                <body><![CDATA[
+                    return this.doc.getValue(this.attrid);
+                ]]></body>
+            </method>
+            <method name="getDisplayValue">
+                <body><![CDATA[
+                    return this.doc.getDisplayValue(this.attrid);
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+                //this.getChild('rawValue').setAttribute('value', this.getValue());
+                this.getChild('displayValue').value = this.getDisplayValue();
+            ]]></constructor>
+        </implementation>
+    </binding>
+    
+    <!-- Text attributes -->
+
+    <binding id="text-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
+                <xul:label anonid="label" class="dcplabel" value="__DEBUG__"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <binding id="longtext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
+                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:label anonid="displayValue" class="dcpValue"/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <binding id="htmltext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <!-- TODO htmltext -->
+    </binding>
+    
+    <!-- Numeric attributes -->
+    
+    <binding id="int-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric int">
+                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <binding id="double-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
+                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <binding id="money-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
+                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <!-- Date attributes -->
+    
+    <binding id="date-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
+                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:datepicker anonid="displayValue" class="dcpValue" value="" disabled="true" readonly="true"/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+</bindings>
