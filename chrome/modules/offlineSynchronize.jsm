@@ -180,7 +180,7 @@ offlineSynchronize.prototype.writeFile = function(config) {
 
         // use 0x02 | 0x20 to open file for create.
         foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
-       
+
         var converter = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
                 .createInstance(Components.interfaces.nsIConverterOutputStream);
         converter.init(foStream, "UTF-8", 0, 0);
@@ -268,9 +268,12 @@ offlineSynchronize.prototype.setObservers = function(config) {
 
 offlineSynchronize.prototype.callObserver = function(fn, arg) {
     if ((typeof this.observers == 'object') && this.observers[fn]) {
-        this.observers[fn](arg);
+        try {
+            this.observers[fn](arg);
+        } catch (e) {
+        }
     }
-}
+};
 
 offlineSynchronize.prototype.pendingPushFiles = function(config) {
     if (config && config.files && config.localDocument) {
@@ -638,19 +641,27 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                     titles = [ titles ];
                 }
                 var famid = oas[aid].relationFamilyId;
+                var dbCon = storageManager.getDbConnection();
+                var mappingQuery="insert into doctitles (initid, famname, title) values (:initid, :famname, :title)";
+                var mappingStmt = dbCon.createStatement(mappingQuery);
+                var mappingParams = mappingStmt.newBindingParamsArray();
                 for ( var i = 0; i < values.length; i++) {
                     if (titles[i] && values[i]) {
-                        storageManager
-                                .execQuery({
-                                    query : "insert into doctitles (initid, famname, title) values (:initid, :famname, :title)",
-                                    params : {
-                                        famname : famid,
-                                        title : titles[i],
-                                        initid : values[i]
-                                    }
-                                });
+                        var bp = mappingParams.newBindingParams();
+                        bp.bindByName("famname", famid);
+                        bp.bindByName("title", titles[i]);
+                        bp.bindByName("initid", values[i]);
+                        mappingParams.addParams(bp);
+               
                     }
                 }
+                mappingStmt.bindParameters(mappingParams);
+                mappingStmt.executeAsync({
+                    handleCompletion: function(reason){},
+                    handleError: function(reason){
+                        logError('updateTitles error:'+reason);
+                    }
+                });
             }
         }
     } else {
