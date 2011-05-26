@@ -8,8 +8,6 @@ domUtils = {
      */
 	getParentByTagName : function(obj, tag) {
 	    tag = tag.toLowerCase();
-	    if(obj)
-	        logConsole(obj.tagName);
 	    while( obj && (obj.tagName.toLowerCase() != tag) ){
 	        obj = obj.parentNode;
 	    }
