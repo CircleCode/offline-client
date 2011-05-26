@@ -422,7 +422,7 @@ offlineSynchronize.prototype.recordFiles = function() {
                 completeFileCallback : function() {
                     logConsole('end files', this.filesToDownload);
 
-                    me.callObserver('onAllFilesRecorded', 1);
+                    me.callObserver('onSuccess', 1);
                     me.log('all files recorded');
                     me.recordFilesInProgress = false;
                     fileManager.initModificationDates();
@@ -749,6 +749,9 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                                     initid : docid
                                 });
                             }
+                        }
+                        if (results.status == "successTransaction") {
+                        this.callObserver('onError', results);
                         }
                     }
                 }
