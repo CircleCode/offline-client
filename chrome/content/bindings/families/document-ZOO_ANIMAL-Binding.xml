@@ -8,8 +8,11 @@
     <binding id="document-ZOO_ANIMAL-view">
         
         <content>
-            <xul:vbox flex="1">
-                <dcpDocument xbl:inherits="initid" mode="view">
+            <xul:vbox flex="1" xbl:inherits="flex">
+                <dcpDocument xbl:inherits="initid" mode="view" flex="1">
+                    <dcpDocMenu>
+                        <xul:toolbarbutton label="custom button for animal"/>
+                    </dcpDocMenu>
                     <dcpAttribute type="frame" attrid="an_identification">
                         <dcpAttribute type="text" attrid="an_nom"/>
                         <dcpAttribute type="int" attrid="an_tatouage"/>

@@ -8,13 +8,16 @@
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://dcpoffline/content/templates/attr-bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dcpoffline/content/bindings/system/system-bindings.css" type="text/css"?>
+
+<?xml-stylesheet href="chrome://dcpoffline/content/bindings/ckeditor/ckeditor-binding.css" type="text/css"?>
 
 <window id="debug-ericDTD" 
     title="Mat's debug window"
     width="800px"
     height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     onload="log('Mats debug window');">
     
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js"/>
@@ -23,8 +26,6 @@
             src="chrome://dcpoffline/content/debug/debug-mat.js"/>
     <script type="application/javascript" 
             src="chrome://dcpoffline/content/fdl-data-debug.js"/>
-            
-    
         
     <toolbox id="main-toolbox">
         <toolbar>
@@ -55,8 +56,7 @@
     
     <vbox>
         <hbox><button label="test bindings" oncommand="testBinding();"/><button label="change tab" oncommand="changeTab();"/></hbox>
-        <hbox><timepicker type="popup" value="2011-05-05 08:18:38"/></hbox>
-        <hbox><timepicker type="popup" value="2011-05-05 08:18:38" readonly="true" disabled="true"/></hbox>
+        <hbox flex="1"><box id="ckeditortest" flex="1"/></hbox>
     </vbox>
     
     <hbox flex="1">

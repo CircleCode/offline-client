@@ -2,6 +2,7 @@
 
 <!DOCTYPE bindings [
       <!ENTITY % base-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/base-attributes-binding.dtd" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       <!ENTITY separator "&#160;:&#160;" >
       %base-attributes-bindingDTD;
 ]>

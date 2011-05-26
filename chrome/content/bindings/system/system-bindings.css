@@ -1,8 +1,14 @@
 dcpDocument {
-	-moz-binding:
-		url("chrome://dcpoffline/content/bindings/documents.xml#document");
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/documents.xml#document");
     display: -moz-box;
     -moz-box-orient: vertical;
+}
+
+dcpDocument dcpDocMenu{
+    display: -moz-box;
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#doc-main-menu");
 }
 
 dcpDocument dcpAttribute {
@@ -12,20 +18,20 @@ dcpDocument dcpAttribute {
 
 dcpDocument dcpAttribute[type=frame] {
 	-moz-binding:
-		url("chrome://dcpoffline/content/bindings/node-attributes.xml#frame");
+		url("chrome://dcpoffline/content/bindings/system/node-attributes.xml#frame");
 }
 
 dcpDocument dcpAttribute[type=text] {
 	-moz-binding:
-		url("chrome://dcpoffline/content/bindings/leaf-attributes.xml#text");
+		url("chrome://dcpoffline/content/bindings/system/leaf-attributes.xml#text");
 }
 
 dcpDocument dcpAttribute[type=int] {
 	-moz-binding:
-		url("chrome://dcpoffline/content/bindings/leaf-attributes.xml#int");
+		url("chrome://dcpoffline/content/bindings/system/leaf-attributes.xml#int");
 }
 
 dcpDocument dcpAttribute[type=date] {
 	-moz-binding:
-		url("chrome://dcpoffline/content/bindings/leaf-attributes.xml#date");
+		url("chrome://dcpoffline/content/bindings/system/leaf-attributes.xml#date");
 }

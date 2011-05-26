@@ -189,8 +189,14 @@ localDocument.prototype = {
             var file= Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
             file.append('Bindings');
             file.append(famName+'.xml');
-
-            return file.path+'#document-'+famName+'-'+mode;
+            
+            logConsole(file.path);
+            
+            if(file.exists()){
+                return file.path+'#document-'+famName+'-'+mode;
+            } else {
+                return null;
+            }
         },
         getLabel : function(id) {
             // TODO: getLabel

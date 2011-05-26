@@ -3,6 +3,7 @@
 <!DOCTYPE bindings [
       <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/leaf-attributes-binding.dtd" >
       <!ENTITY separator "&#160;:&#160;" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       %leaf-attributes-bindingDTD;
 ]>
 
@@ -11,7 +12,7 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
     
-    <binding id="leaf-attr" extends="chrome://dcpoffline/content/bindings/base-attributes.xml#base-attr">
+    <binding id="leaf-attr" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
             <method name="setValue">
                 <parameter name="value"/>
@@ -39,9 +40,9 @@
     
     <!-- Text attributes -->
     
-    <binding id="text-abstract" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#leaf-attr"/>
+    <binding id="text-abstract" extends="&systemBindingsDirPath;/leaf-attributes.xml#leaf-attr"/>
 
-    <binding id="text" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#text-abstract">
+    <binding id="text" extends="&systemBindingsDirPath;/leaf-attributes.xml#text-abstract">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
                 <xul:label anonid="label" class="dcplabel" value="__DEBUG__"/>
@@ -51,7 +52,7 @@
         </content>
     </binding>
     
-    <binding id="text-edit" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#text">
+    <binding id="text-edit" extends="&systemBindingsDirPath;/leaf-attributes.xml#text">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -61,7 +62,7 @@
         </content>
     </binding>
     
-    <binding id="longtext" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#text-abstract">
+    <binding id="longtext" extends="&systemBindingsDirPath;/leaf-attributes.xml#text-abstract">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -71,7 +72,7 @@
         </content>
     </binding>
     
-    <binding id="longtext-edit" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#longtext">
+    <binding id="longtext-edit" extends="&systemBindingsDirPath;/leaf-attributes.xml#longtext">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -82,16 +83,16 @@
     </binding>
     
     <!-- TODO htmltext -->
-    <binding id="htmltext" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#text-abstract"/>
+    <binding id="htmltext" extends="&systemBindingsDirPath;/leaf-attributes.xml#text-abstract"/>
     
     <!-- TODO htmltext-edit -->
-    <binding id="htmltext-edit" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#htmltext"/>
+    <binding id="htmltext-edit" extends="&systemBindingsDirPath;/leaf-attributes.xml#htmltext"/>
     
     <!-- Numeric attributes -->
     
-    <binding id="numeric-abstract" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#leaf-attr"/>
+    <binding id="numeric-abstract" extends="&systemBindingsDirPath;/leaf-attributes.xml#leaf-attr"/>
     
-    <binding id="int" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#numeric-abstract">
+    <binding id="int" extends="&systemBindingsDirPath;/leaf-attributes.xml#numeric-abstract">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric int">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -101,7 +102,7 @@
         </content>
     </binding>
     
-    <binding id="int-edit" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#int">
+    <binding id="int-edit" extends="&systemBindingsDirPath;/leaf-attributes.xml#int">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric int">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -113,7 +114,7 @@
         </content>
     </binding>
     
-    <binding id="double" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#numeric-abstract">
+    <binding id="double" extends="&systemBindingsDirPath;/leaf-attributes.xml#numeric-abstract">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -123,7 +124,7 @@
         </content>
     </binding>
     
-    <binding id="double-edit" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#double">
+    <binding id="double-edit" extends="&systemBindingsDirPath;/leaf-attributes.xml#double">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -136,7 +137,7 @@
         </content>
     </binding>
     
-    <binding id="money" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#numeric-abstract">
+    <binding id="money" extends="&systemBindingsDirPath;/leaf-attributes.xml#numeric-abstract">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -146,7 +147,7 @@
         </content>
     </binding>
     
-    <binding id="money-edit" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#money">
+    <binding id="money-edit" extends="&systemBindingsDirPath;/leaf-attributes.xml#money">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -161,7 +162,7 @@
     
     <!-- Date attributes -->
     
-    <binding id="date" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#leaf-attr">
+    <binding id="date" extends="&systemBindingsDirPath;/leaf-attributes.xml#leaf-attr">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
                 <xul:label anonid="label" class="dcplabel" value=""/>
@@ -171,7 +172,7 @@
         </content>
     </binding>
     
-    <binding id="date-edit" extends="chrome://dcpoffline/content/bindings/leaf-attributes.xml#date">
+    <binding id="date-edit" extends="&systemBindingsDirPath;/leaf-attributes.xml#date">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
                 <xul:label anonid="label" class="dcplabel" value=""/>
