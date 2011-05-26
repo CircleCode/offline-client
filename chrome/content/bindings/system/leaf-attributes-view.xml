@@ -10,31 +10,52 @@
 <bindings id="leaf-attributes-binding"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl">
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml">
     
     <binding id="leaf-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
+            
+            <property name="value"
+                onget="this.getValue();"
+                onset="this.setValue(val);">
+            </property>
+            
             <method name="setValue">
                 <parameter name="value"/>
                 <body><![CDATA[
                     this.doc.setValue(this.attrid, value);
+                    this.reloadDisplayValue();
                 ]]></body>
             </method>
+            
+            <method name="reloadDisplayValue">
+                <body><![CDATA[
+                    var valueNode = this.getChild('displayValue');
+                    if(valueNode){
+                        valueNode.value = this.getDisplayValue();
+                    } else {
+                        throw new BindingException("no displayValue chil for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                    }
+                ]]></body>
+            </method>
+            
             <method name="getValue">
-                <parameter name="defaultValue"/>
                 <body><![CDATA[
                     return this.doc.getValue(this.attrid);
                 ]]></body>
             </method>
+            
             <method name="getDisplayValue">
                 <body><![CDATA[
                     return this.doc.getDisplayValue(this.attrid);
                 ]]></body>
             </method>
+            
             <constructor><![CDATA[
-                //this.getChild('rawValue').setAttribute('value', this.getValue());
-                this.getChild('displayValue').value = this.getDisplayValue();
+                this.reloadDisplayValue();
             ]]></constructor>
+            
         </implementation>
     </binding>
     
@@ -43,9 +64,9 @@
     <binding id="text-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
-                <xul:label anonid="label" class="dcplabel" value="__DEBUG__"/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+                <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
         </content>
     </binding>
@@ -53,45 +74,58 @@
     <binding id="longtext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:label anonid="displayValue" class="dcpValue"/>
+                <xul:textbox anonid="displayValue" class="dcpValue plain" multiline="true" style="white-space:pre-line;"/>
             </xul:hbox>
         </content>
     </binding>
     
     <binding id="htmltext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
-        <!-- TODO htmltext -->
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <html:div anonid="displayValue" class="dcpValue plain">NOT YET IMPLEMENTED</html:div>
+            </xul:hbox>
+        </content>
+        <implementation>
+            <method name="reloadDisplayValue">
+                <body><![CDATA[
+                    alert('FIXME: htmltext-attr-view');
+                ]]></body>
+            </method>
+        </implementation>
     </binding>
     
     <!-- Numeric attributes -->
     
     <binding id="int-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric int">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute int">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+                <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
         </content>
     </binding>
     
     <binding id="double-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute double">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+                <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
         </content>
     </binding>
     
     <binding id="money-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute money">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:label anonid="displayValue" class="dcpValue" value=""/>
+                <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
         </content>
     </binding>
@@ -101,9 +135,21 @@
     <binding id="date-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:datepicker anonid="displayValue" class="dcpValue" value="" disabled="true" readonly="true"/>
+                <xul:textbox anonid="displayValue" class="dcpValue plain"/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <!-- Relation attributes -->
+    
+    <binding id="docid-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:textbox anonid="displayValue" class="dcpValue plain" value="NOT YET IMPLEMENTED"/>
             </xul:hbox>
         </content>
     </binding>

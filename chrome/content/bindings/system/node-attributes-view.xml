@@ -31,8 +31,8 @@
     
     <binding id="frame-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
-            <xul:groupbox>
-                <xul:caption anonid="label" class="dcplabel" label="__DEBUG__"/>
+            <xul:groupbox flex="1">
+                <xul:caption anonid="label" class="dcplabel" xbl:inherits="label"/>
                 <children/>
             </xul:groupbox>
         </content>

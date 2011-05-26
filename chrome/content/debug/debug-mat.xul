@@ -56,7 +56,21 @@
     
     <vbox>
         <hbox><button label="test bindings" oncommand="testBinding();"/><button label="change tab" oncommand="changeTab();"/></hbox>
-        <hbox flex="1"><box id="ckeditortest" flex="1"/></hbox>
+        <!--<hbox flex="1"><box id="ckeditortest" flex="1"/></hbox>-->
+        <hbox flex="1"><description style="white-space:pre-line;">description
+        is
+        Multiline
+        Label
+        </description></hbox>
+        <hbox flex="1"><textbox 
+            multiline="true" 
+            readonly="true" 
+            class="plain" 
+            style="white-space:pre-line;" 
+            value="textbox
+            is 
+            Multiline
+            Label"/></hbox>
     </vbox>
     
     <hbox flex="1">
