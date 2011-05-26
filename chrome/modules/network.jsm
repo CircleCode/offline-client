@@ -6,7 +6,7 @@ Cu.import("resource://modules/logger.jsm");
 
 var EXPORTED_SYMBOLS = ["networkChecker"];
 
-networkChecker = {
+var networkChecker = {
         isOffline : function() {
             try {
                 var linkService = Components.classes["@mozilla.org/network/network-link-service;1"]
