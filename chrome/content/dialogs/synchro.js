@@ -140,12 +140,14 @@ function tryToSynchronize() {
 
 function endSynchronize() {
     applicationEvent.publish("postSynchronize");
-    document.getElementById("cancelButton").value = "&synchronize.endOfSynchronization;";
+    var translate = new StringBundle(
+    "chrome://dcpoffline/locale/main.properties");
+    document.getElementById("cancelButton").label = translate.get("synchronize.endOfSynchronization");
     document.getElementById("cancelButton").disabled = false;
 }
 
 function canBeClosed(event) {
-    if (document.getElementById("synchronizeButton").disabled) {
+    if (document.getElementById("cancelButton").disabled) {
         event.preventDefault();
     }
     else {
