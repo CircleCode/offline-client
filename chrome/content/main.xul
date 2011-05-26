@@ -67,7 +67,10 @@
                     <query><![CDATA[
                         SELECT title, icon, famid 
                         FROM families 
-                        WHERE famid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam)
+                        WHERE famid IN 
+                            (SELECT initid
+                            FROM docsbydomain
+                            WHERE domainid = :domainIdParam)
                         ORDER BY title
                     ]]>
                         <param id="famDomainIdParam" name="domainIdParam" type="integer">0</param>
