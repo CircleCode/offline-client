@@ -680,14 +680,14 @@ var storageManager = {
     getDomainValues : function(config){
         if(config){
             if(config.domainid){
-                var where = "domainid = :domainid";
+                var where = "id = :domainid";
                 var params = {
-                    domainid : domainid
+                    domainid : config.domainid
                 };
             } else if (config.name){
                 var where = "name = :domainname";
                 var params = {
-                        name: domainname
+                        name: config.name
                 };
             } else {
                 throw "storageManager::getDomainValues (missing parameters)";
@@ -697,7 +697,7 @@ var storageManager = {
                     + " WHERE " + where;
             config.params = params;
             try{
-                var value = this.execQuery(config);
+                var values = this.execQuery(config);
             } catch(e){
                 logError('storageManager::getDomainValues');
                 logError(e);
@@ -706,7 +706,12 @@ var storageManager = {
         } else {
             throw "storageManager::getDomainValues (missing parameters)";
         }
-        return values;
+        if (values.length == 1) {
+            return values[0];
+        } else {
+            throw "storageManager::no domain find";
+        }
+        
     },
     saveDomainValues : function(config){
         if(config){
