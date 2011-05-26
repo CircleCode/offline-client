@@ -9,19 +9,32 @@ Cu.import("resource://modules/events.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
+Cu.import("resource://modules/storageManager.jsm");
 Cu.import("resource://modules/offlineSynchronize.jsm");
-
-Components.utils.import("resource://modules/docManager.jsm");
+Cu.import("resource://modules/docManager.jsm");
 
 /* Add window binding onLoad and onClose */
 window.onload = function() {
-    isServerAvalaible();
+    isServerOK();
     addObserver();
-    addListener();
+    initPage();
+    initListeners();
 }
 
-function addListener() {
-    applicationEvent.subscribe("synchronize", synchronize);
+function initPage() {
+    var domainId = Preferences.get("offline.user.currentSelectedDomain", false);
+    if (domainId) {
+        updateDomain({domainId : domainId});
+    }else {
+        Services.prompt.alert(window, "synchronize.unable.title", translate
+                .get("synchronize.unable"));
+    }
+}
+
+function initListeners() {
+    applicationEvent.subscribe("synchronize", synchronize, {caller : this});
+    applicationEvent.subscribe("changeSelectedDomain", updateDomain, {caller : this});
+    window.addEventListener("close", canBeClosed, false);
 }
 
 function addObserver() {
@@ -34,31 +47,34 @@ function addObserver() {
         },
         onDetailLabel : function(t) {
             appendText(t);
-        }
-        /*onAddDocumentsToRecord : function(t) {
-            appendText(t);
+        },
+        onAddDocumentsToRecord : function(t) {
+            myAddDocumentsToRecord(t);
         },
         onAddDocumentsRecorded : function(t) {
-            appendText(t);
+            myAddDocumentsRecorded(t);
         },
         onAddFilesToRecord : function(t) {
-            appendText(t);
+            myAddFilesToRecord(t);
         },
         onAddFilesRecorded : function(t) {
-            appendText(t);
+            myAddFilesRecorded(t);
         },
         onAddDocumentsToSave : function(t) {
-            appendText(t);
+            myAddDocumentsToSave(t);
         },
         onAddDocumentsSaved : function(t) {
-            appendText(t);
+            myAddDocumentsSaved(t);
         },
         onAddFilesToSave : function(t) {
-            appendText(t);
+            myAddFilesToSave(t);
         },
         onAddFilesSaved : function(t) {
-            appendText(t);
-        }*/
+            myAddFilesSaved(t);
+        },
+        onAllFilesRecorded : function() {
+            endSynchronize();
+        }
     });
 }
 
@@ -66,7 +82,7 @@ function appendText(text) {
     document.getElementById('progressMessages').value += text + "\n";
 }
 
-function isServerAvalaible() {
+function isServerOK() {
     var translate = new StringBundle(
             "chrome://dcpoffline/locale/main.properties");
     if (!networkChecker.isOffline() && context.isAuthenticated()) {
@@ -79,36 +95,109 @@ function isServerAvalaible() {
 }
 
 function synchronize() {
-    logConsole("Synchronize let's go !!");
     var translate = new StringBundle(
     "chrome://dcpoffline/locale/main.properties");
     if (Preferences.get("offline.user.currentSelectedDomain", false)) {
-        logConsole("Synchronize let's go !! go ! go !");
-        logConsole(docManager.getActiveDomain());
         var domain = context.getDocument({
             id : Preferences.get("offline.user.currentSelectedDomain")
         });
         offlineSync.synchronizeDomain({
             domain : domain
         });
-        logConsole("Synchronize OK !");
     } else {
         Services.prompt.alert(window, "synchronize.domain", translate
                 .get("synchronize.unable"));
         return false;
     }
+}
 
+function updateDomain(config) {
+    if (config && config.domainId) {
+        var currentDomain = storageManager.getDomainValues({domainid : config.domainId});
+        try {
+            document.getElementById('currentLabelId').value = currentDomain.description;
+        } catch(e) {
+            Services.prompt.alert(window, "synchronize.domain", e);
+        }
+    }
 }
 
 function tryToSynchronize() {
+    document.getElementById("synchronizeButton").disabled = true;
+    document.getElementById("cancelButton").disabled = true;
     if (!applicationEvent.publish("preSynchronize")) {
         // TODO add alert message
         alert("unable to synchronize");
     } else {
         if (applicationEvent.publish("synchronize")) {
-            applicationEvent.publish("postSynchronize");
+            
         } else {
             //TODO add log
         }
     }
+    
 }
+
+function endSynchronize() {
+    applicationEvent.publish("postSynchronize");
+    document.getElementById("cancelButton").value = "&synchronize.endOfSynchronization;";
+    document.getElementById("cancelButton").disabled = false;
+}
+
+function canBeClosed(event) {
+    if (document.getElementById("synchronizeButton").disabled) {
+        event.preventDefault();
+    }
+    else {
+        letClose();
+    }
+}
+
+function letClose() {
+    applicationEvent.unsubscribe("synchronize", synchronize);
+    applicationEvent.unsubscribe("synchronize", updateDomain);
+    window.close();
+}
+
+/*Update IHM*/
+function myAddDocumentsToRecord(delta) {
+    var r = document.getElementById('documentsToRecord');
+    r.value = parseInt(r.value) + delta;
+};
+
+function myAddDocumentsRecorded(delta) {
+    var r = document.getElementById('documentsRecorded');
+    r.value = parseInt(r.value) + delta;
+
+};
+function myAddFilesToRecord(delta) {
+
+    var r = document.getElementById('filesToRecord');
+    r.value = parseInt(r.value) + delta;
+};
+
+function myAddFilesRecorded(delta) {
+
+    var r = document.getElementById('filesRecorded');
+    r.value = parseInt(r.value) + delta;
+};
+
+function myAddDocumentsToSave(delta) {
+    var r = document.getElementById('documentsToSave')
+    r.value = parseInt(r.value) + delta;
+};
+
+function myAddDocumentsSaved(delta) {
+    var r = document.getElementById('documentsSaved');
+    r.value = parseInt(r.value) + delta;
+};
+function myAddFilesToSave(delta) {
+    var r = document.getElementById('filesToSave');
+    r.value = parseInt(r.value) + delta;
+};
+
+function myAddFilesSaved(delta) {
+
+    var r = document.getElementById('filesSaved');
+    r.value = parseInt(r.value) + delta;
+};
