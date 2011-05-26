@@ -26,6 +26,16 @@ dcpDocument dcpAttribute {
     width: 100%;
 }
 
+dcpDocument dcpDocHeader {
+    display: -moz-box;
+    width: 100%;
+}
+
+dcpDocument dcpDocFooter {
+    display: -moz-box;
+    width: 100%;
+}
+
 /***********************************************************
         Document
 ************************************************************/
@@ -43,6 +53,24 @@ dcpDocument dcpDocMenu {
     display: -moz-box;
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/menus.xml#doc-main-menu");
+}
+
+/***********************************************************
+        Header
+************************************************************/
+dcpDocument dcpDocHeader {
+    display: -moz-box;
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docHeader.xml#doc-header");
+}
+
+/***********************************************************
+        Footer
+************************************************************/
+dcpDocument dcpDocFooter {
+    display: -moz-box;
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docFooter.xml#doc-footer");
 }
 
 /***********************************************************
