@@ -114,6 +114,14 @@ function clicMiscTest(domainid) {
         logConsole(ldoc.getBinding('view'));
         logConsole(ldoc.getIcon());
     }
+    window.setTimeout( function () {clicPullDomain(domainid);}, 4000);
+    /*
+    var workerFactory = Components.classes["@mozilla.org/threads/workerfactory;1"]
+                                     .createInstance(Components.interfaces.nsIWorkerFactory);
+        
+      var worker = workerFactory.newChromeWorker('chrome://dcpoffline/content/debug/debug-work-eric.js');
+    //var myWorker = new Worker('chrome://dcpoffline/content/debug/debug-work-eric.js');
+    */
     
 }
 

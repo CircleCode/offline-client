@@ -152,7 +152,7 @@ offlineSynchronize.prototype.recordFamiliesBinding = function(config) {
                 content : bindings[famname],
                 dirname : "Bindings",
                 basename : famname + ".xml"
-            })
+            });
         }
     } else {
         throw new ArgException("recordFamiliesBinding need domain parameter");
@@ -189,7 +189,7 @@ offlineSynchronize.prototype.writeFile = function(config) {
     } else {
         throw new ArgException("writeFile need path, content parameter");
     }
-}
+};
 offlineSynchronize.prototype.getModifiedDocs = function(config) {
     if (config && config.domain) {
         var domain = config.domain;
@@ -490,7 +490,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                                                             domain : domain.id,
                                                             initid : document
                                                                     .getProperty('initid')
-                                                        })
+                                                        });
                                                 me.updateSyncDate({
                                                     document : document
                                                 });
@@ -652,6 +652,7 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                 var mappingQuery="insert into doctitles (initid, famname, title) values (:initid, :famname, :title)";
                 var mappingStmt = dbCon.createStatement(mappingQuery);
                 var mappingParams = mappingStmt.newBindingParamsArray();
+                var oneTitle=false;
                 for ( var i = 0; i < values.length; i++) {
                     if (titles[i] && values[i]) {
                         var bp = mappingParams.newBindingParams();
@@ -659,9 +660,10 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                         bp.bindByName("title", titles[i]);
                         bp.bindByName("initid", values[i]);
                         mappingParams.addParams(bp);
-               
+                        oneTitle=true;
                     }
                 }
+                if (oneTitle) {
                 mappingStmt.bindParameters(mappingParams);
                 mappingStmt.executeAsync({
                     handleCompletion: function(reason){},
@@ -669,6 +671,7 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                         logError('updateTitles error:'+reason);
                     }
                 });
+                }
             }
         }
     } else {
@@ -697,7 +700,7 @@ offlineSynchronize.prototype.revertDocument = function(config) {
     } else {
         throw new ArgException("revertDocument need domain, initid parameter");
     }
-}
+};
 /**
  * 
  * @param domain
