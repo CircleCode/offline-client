@@ -9,8 +9,7 @@
         <!--<ressources/>-->
         
         <content>
-            <xul:toolbox>
-                <xul:toolbar anonid="document-toolbar">
+                <xul:hbox anonid="document-toolbar" flex="1">
                     <xul:toolbarbutton anonid="document-toolbar-system-save"
                         label="Sauver"
                         tooltiptext="Sauver"
@@ -26,8 +25,7 @@
                         oncommand="alert('open properties');"/>
                     <xul:splitter/>
                     <children/>
-                </xul:toolbar>
-            </xul:toolbox>
+                </xul:hbox>
         </content>
         
         <implementation>
@@ -53,13 +51,13 @@
             </method>
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
+                var flex = this.getAttribute('flex') || 1;
+                this.setAttribute('flex', flex);
                 
                 Components.utils.import("resource://modules/logger.jsm");
                 logConsole("<---- entering menu constructor for "+this.doc.getInitid());
                 
                 var toolbar = this.getChild('document-toolbar');
-                
-                
                 
                 logConsole("leaving menu constructor for "+this.doc.getInitid());
             ]]></constructor>

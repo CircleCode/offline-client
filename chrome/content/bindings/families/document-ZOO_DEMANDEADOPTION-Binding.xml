@@ -13,6 +13,7 @@
                     <dcpAttribute type="frame" attrid="de_fr_reference">
                         <dcpAttribute type="text" attrid="de_reference"/>
                     </dcpAttribute>
+                    
                     <dcpAttribute type="tab" attrid="de_tab_ident">
                         <dcpAttribute type="frame" attrid="de_fr_identification">
                             <dcpAttribute type="relation" attrid="de_idredac" relationFamily="IUSER"/>
