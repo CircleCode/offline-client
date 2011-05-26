@@ -7,13 +7,34 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    title="&login.dialogTitle;"
-    buttons="accept,cancel">
+<window id="dialogSynchronize" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&synchronize.dialogTitle;">
     
-    <stringbundleset id="stringbundleset">
-        <stringbundle id="mainBundle" src="chrome://dcpoffline/locale/main.properties"/>
-    </stringbundleset>
+    <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/synchro.js" />
     
-    
-</dialog>
+    <vbox flex="1">
+        <groupbox>
+            <caption> 
+                <label value="&synchro.progress;"/>
+            </caption>
+            <vbox>
+                <label value="&synchro.progressGlobal;"/>
+                <progressmeter id="progressGlobal" mode="determined" value="0" flex="1"/>
+                <label value="&synchro.progressDetail;"/>
+                <progressmeter id="progressDetail" mode="determined" value="0" flex="1"/>
+            </vbox>
+        </groupbox>
+        <groupbox flex="1">
+            <caption> 
+                <label value="&synchro.progressMessages;"/>
+            </caption>
+            <textbox id="progressMessages" multiline="true" rows="10" value="" flex="1"/>
+        </groupbox>
+        <hbox>
+            <button label="&synchronize.cancel;" accesskey=""/>
+            <spacer flex="1" />
+            <button id="synchronizeButton" label="&synchronize.synchronize;" onclick="tryToSynchronize();"/>
+            <button label="close" onclick="applicationEvent.publish('close')"/>
+        </hbox>
+    </vbox>
+</window>
