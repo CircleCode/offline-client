@@ -12,20 +12,20 @@ const debugMaxDepth = 2;
 var dinit=new Date().getTime();
 var dlast=dinit;
 
-function log(config) {
+var log = function log(config) {
     logFile.write(config);
 };
 
-function logError(aMessage){
+var logError = function logError(aMessage){
     logFile.write({message:aMessage, priority:log.ERR});
     return Cu.reportError(aMessage);
 }
 
-function logDebug(msg) {
+var logDebug = function logDebug(msg) {
     logFile.write({message:msg, priority:logFile.DEBUG});
 };
 
-function logConsole(msg, obj) {
+var logConsole = function logConsole(msg, obj) {
     var dloc=new Date().getTime();
     var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
     if (obj) {
@@ -36,7 +36,7 @@ function logConsole(msg, obj) {
     }
 }
 
-_log = function() {
+var _log = function() {
     var consoleService = Cc["@mozilla.org/consoleservice;1"]
     .getService(Ci.nsIConsoleService);
 
