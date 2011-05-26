@@ -112,6 +112,7 @@ function clicMiscTest(domainid) {
     var ldoc=docManager.getLocalDocument({initid:1939});
     if (ldoc) {
         logConsole(ldoc.getBinding('view'));
+        logConsole(ldoc.getIcon());
     }
     
 }

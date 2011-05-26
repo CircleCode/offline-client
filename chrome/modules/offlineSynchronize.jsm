@@ -251,12 +251,19 @@ offlineSynchronize.prototype.isEditable = function(config) {
 /**
  * 
  * @param config
- *            onDetailPercent : function(p) onGlobalPercent : function (p)
- *            onDetailLabel : function(t) onAddDocumentsToRecord : function(n)
- *            onAddDocumentsRecorded : function(n) onAddFilesToRecord :
- *            function(n) onAddFilesRecorded : function(n) onAddDocumentsToSave :
- *            function(n) onAddDocumentsSaved : function(n) onAddFilesToSave :
- *            function(n) onAddFilesSaved : function(n)
+ *            onDetailPercent : function(p) 
+ *            onGlobalPercent : function (p)
+ *            onDetailLabel : function(t) 
+ *            onAddDocumentsToRecord : function(n)
+ *            onAddDocumentsRecorded : function(n) 
+ *            onAddFilesToRecord :function(n) 
+ *            onAddFilesRecorded : function(n) 
+ *            onAddDocumentsToSave :function(n)
+ *            onAddDocumentsSaved : function(n)
+ *            onAddFilesToSave :function(n)
+ *            onAddFilesSaved : function(n)
+ *            onSuccess : function()
+ *            onError : function(status)
  */
 offlineSynchronize.prototype.setObservers = function(config) {
     if (config) {
