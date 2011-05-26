@@ -251,12 +251,19 @@ offlineSynchronize.prototype.isEditable = function(config) {
 /**
  * 
  * @param config
- *            onDetailPercent : function(p) onGlobalPercent : function (p)
- *            onDetailLabel : function(t) onAddDocumentsToRecord : function(n)
- *            onAddDocumentsRecorded : function(n) onAddFilesToRecord :
- *            function(n) onAddFilesRecorded : function(n) onAddDocumentsToSave :
- *            function(n) onAddDocumentsSaved : function(n) onAddFilesToSave :
- *            function(n) onAddFilesSaved : function(n)
+ *            onDetailPercent : function(p) 
+ *            onGlobalPercent : function (p)
+ *            onDetailLabel : function(t) 
+ *            onAddDocumentsToRecord : function(n)
+ *            onAddDocumentsRecorded : function(n) 
+ *            onAddFilesToRecord :function(n) 
+ *            onAddFilesRecorded : function(n) 
+ *            onAddDocumentsToSave :function(n)
+ *            onAddDocumentsSaved : function(n)
+ *            onAddFilesToSave :function(n)
+ *            onAddFilesSaved : function(n)
+ *            onSuccess : function()
+ *            onError : function(status)
  */
 offlineSynchronize.prototype.setObservers = function(config) {
     if (config) {
@@ -422,7 +429,7 @@ offlineSynchronize.prototype.recordFiles = function() {
                 completeFileCallback : function() {
                     logConsole('end files', this.filesToDownload);
 
-                    me.callObserver('onAllFilesRecorded', 1);
+                    me.callObserver('onSuccess', 1);
                     me.log('all files recorded');
                     me.recordFilesInProgress = false;
                     fileManager.initModificationDates();
@@ -749,6 +756,9 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                                     initid : docid
                                 });
                             }
+                        }
+                        if (results.status == "successTransaction") {
+                        this.callObserver('onError', results);
                         }
                     }
                 }

@@ -199,6 +199,25 @@ localDocument.prototype = {
                 return null;
             }
         },
+
+        /**
+         * get icon path
+         * @return string path the absolute path to the file
+         */
+        getIcon : function () {
+            var famName=this.getProperty('fromname');
+
+            var r = storageManager.execQuery({
+                query : 'select icon from families where name=:famname',
+                params : {
+                    famname : famName
+                }
+            });
+            if (r.length==1) {
+                return r[0].icon;
+            }
+            return null;
+        },
         getLabel : function(id) {
             if (! id) return "no id";
             if (! this.labels) {

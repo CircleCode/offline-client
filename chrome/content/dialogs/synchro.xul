@@ -26,6 +26,8 @@
                 <label value="&synchro.progress;"/>
             </caption>
             <vbox>
+                <label value="&synchro.progress;"/>
+                <progressmeter id="progress" mode="determined" value="0" flex="1"/>
                 <label value="&synchro.progressGlobal;"/>
                 <progressmeter id="progressGlobal" mode="determined" value="0" flex="1"/>
                 <label value="&synchro.progressDetail;"/>
@@ -85,8 +87,8 @@
                 </grid>
         </groupbox>
         <hbox>
-            <button id="cancelButton" label="&synchronize.cancel;" onclick="letClose();" />
             <spacer flex="1" />
+            <button id="cancelButton" label="&synchronize.cancel;" onclick="letClose();" />
             <button id="synchronizeButton" label="&synchronize.synchronize;" onclick="tryToSynchronize();"/>
         </hbox>
     </vbox>

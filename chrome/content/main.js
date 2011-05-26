@@ -325,6 +325,8 @@ function initListeners()
     applicationEvent.subscribe("changeSelectedFamily", updateCurrentFamilyPreference);
     applicationEvent.subscribe("changeSelectedDocument", viewDocument);
     applicationEvent.subscribe("changeSelectedDocument", updateCurrentDocumentPreference);
+    applicationEvent.subscribe("postSynchronize", updateFamilyList);
+    applicationEvent.subscribe("postSynchronize", updateAbstractList);
     applicationEvent.subscribe("close", close);
 }
 

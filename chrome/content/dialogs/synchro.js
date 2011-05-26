@@ -72,7 +72,10 @@ function addObserver() {
         onAddFilesSaved : function(t) {
             myAddFilesSaved(t);
         },
-        onAllFilesRecorded : function() {
+        onSuccess : function() {
+            endSynchronize();
+        },
+        onError : function() {
             endSynchronize();
         }
     });
@@ -101,6 +104,7 @@ function synchronize() {
         var domain = context.getDocument({
             id : Preferences.get("offline.user.currentSelectedDomain")
         });
+        document.getElementById('progress').mode = 'undetermined';
         offlineSync.synchronizeDomain({
             domain : domain
         });
@@ -139,6 +143,8 @@ function tryToSynchronize() {
 }
 
 function endSynchronize() {
+    document.getElementById('progress').value = 100;
+    document.getElementById('progress').mode = 'determined';
     applicationEvent.publish("postSynchronize");
     var translate = new StringBundle(
     "chrome://dcpoffline/locale/main.properties");
