@@ -16,7 +16,6 @@
                 readonly="true">
                 <getter><![CDATA[
                     Components.utils.import("resource://modules/logger.jsm");
-                    logConsole("accessing initid for document ", this.tagName);
                     if(this.doc){
                         return this.doc.getProperty('initid');
                     } else {
@@ -71,6 +70,10 @@
                 try{
                     Components.utils.import("resource://modules/docManager.jsm");
                     this.doc = docManager.getLocalDocument({initid : this.initid});
+                    
+                    var flex = this.getAttribute('flex') || 1;
+                    this.setAttribute('flex', flex);
+                    
                     //XXX: register as a render
                     return true;
                 } catch(e){

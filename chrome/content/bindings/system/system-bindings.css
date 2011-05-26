@@ -12,7 +12,7 @@ dcpAttribute[type=htmltext],dcpAttribute[type=docid],dcpTabBox,dcpAttribute[type
 dcpDocument {
     display: -moz-box;
     -moz-box-orient: vertical;
-    width: 100%;
+    overflow-y: auto;
 }
 
 dcpDocument dcpDocMenu {
@@ -23,6 +23,16 @@ dcpDocument dcpDocMenu {
 dcpDocument dcpAttribute {
     display: -moz-box;
     -moz-box-orient: horizontal;
+    width: 100%;
+}
+
+dcpDocument dcpDocHeader {
+    display: -moz-box;
+    width: 100%;
+}
+
+dcpDocument dcpDocFooter {
+    display: -moz-box;
     width: 100%;
 }
 
@@ -43,6 +53,24 @@ dcpDocument dcpDocMenu {
     display: -moz-box;
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/menus.xml#doc-main-menu");
+}
+
+/***********************************************************
+        Header
+************************************************************/
+dcpDocument dcpDocHeader {
+    display: -moz-box;
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docHeader.xml#doc-header");
+}
+
+/***********************************************************
+        Footer
+************************************************************/
+dcpDocument dcpDocFooter {
+    display: -moz-box;
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docFooter.xml#doc-footer");
 }
 
 /***********************************************************

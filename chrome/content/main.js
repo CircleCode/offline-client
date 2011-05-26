@@ -150,12 +150,7 @@ function openDocument(initid, mode) {
             template = doc.getBinding(mode);
             if (template) {
                 template = 'url(file://' + template + ')';
-            } else {
-                //FIXME throw an exception
-                logConsole("using [file:///media/Data/Workspaces/xul/offline-client/chrome/content/bindings/families/document-ZOO_ANIMAL-Binding.xml#document-ZOO_ANIMAL-view)] as default template");
-                template = "url(file:///media/Data/Workspaces/xul/offline-client/chrome/content/bindings/families/document-ZOO_ANIMAL-Binding.xml#document-ZOO_ANIMAL-view)";
-            }
-            if (template) {
+                
                 tabBox = document.getElementById('onefam-content-tabbox');
                 tabId = 'tab-document-'+initid;
                 tabPanelId = 'tabPanel-document-'+initid;
@@ -166,7 +161,6 @@ function openDocument(initid, mode) {
                     box = document.createElement('vbox');
                     box.setAttribute('flex', 1);
                     box.setAttribute('initid', initid);
-                    logConsole("binding box to " + template);
                     box.style.MozBinding = template;
         
                     tabPanel = document.createElement('tabpanel');

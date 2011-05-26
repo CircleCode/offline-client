@@ -1,38 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE bindings>
-<bindings id="menuBindings"
+<bindings id="docHeaderBindings"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
     
-    <binding id="doc-main-menu">
+    <binding id="doc-header">
         <!--<ressources/>-->
         
         <content>
-                <xul:hbox anonid="document-toolbar" flex="1">
-                    <xul:toolbarbutton anonid="document-toolbar-system-save"
-                        label="Sauver"
-                        tooltiptext="Sauver"
-                        oncommand="alert('TODO: call save')"/>
-                    <xul:toolbarbutton
-                        anonid="document-toolbar-system-edit"
-                        label="Modifier"
-                        tooltiptext="Modifier"
-                        oncommand="alert('TODO: switch in edit mode')"/>
-                    <xul:splitter anonid="document-toolbar-system-splitter"/>
-                    <xul:toolbarbutton
-                        label="document.toolbar.properties;"
-                        oncommand="alert('open properties');"/>
-                    <xul:splitter/>
+                <xul:vbox anonid="document-header">
+                    <xul:hbox>
+                        <xul:image anonid="document-icon"/>
+                        <xul:label anonid="document-title"/>
+                    </xul:hbox>
                     <children/>
-                </xul:hbox>
+                </xul:vbox>
         </content>
         
         <implementation>
+            
             <property
                 name="localDocument"
                 readonly="true"
-                onget="return this.doc;"/>
+                onget="return this.doc;">
+            </property>
+                
             <method name="getDocumentNode">
                 <body><![CDATA[
                     if(this.documentNode){
@@ -43,19 +36,31 @@
                     }
                 ]]></body>
             </method>
+            
             <method name="getChild">
                 <parameter name="aChildName"/>
                 <body><![CDATA[
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
+            
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
                 var flex = this.getAttribute('flex') || 1;
                 this.setAttribute('flex', flex);
                 
-                var toolbar = this.getChild('document-toolbar');
-                //FIXME
+                var icon = this.doc.getIcon();
+                
+                if( icon ){
+                    icon = "file://" + icon;
+                    logConsole("icon for "+this.doc.getInitid()+": "+icon)
+                } else {
+                    logConsole("no icon for " + this.doc.getInitid());
+                }
+                
+                this.getChild('document-icon').src = icon;
+                this.getChild('document-title').value = this.doc.getTitle();
+                
             ]]></constructor>
         </implementation>
         
