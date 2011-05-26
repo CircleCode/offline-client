@@ -28,6 +28,7 @@ localDocument.prototype = {
         _initid : null,
         properties : {},
         values : {},
+        labels : null,
         domainId : 0, // set by manager
         retrieve : function(config) {
             try {
@@ -199,13 +200,20 @@ localDocument.prototype = {
             }
         },
         getLabel : function(id) {
-            // TODO: getLabel
-            // XXX: should be internationalized
-            switch (id) {
-            case '':
-                return 'no id';
-            default:
-                return 'title of ' + id + ' for document ' + this.getInitid();
+            if (! id) return "no id";
+            if (! this.labels) {
+                var r = storageManager.execQuery({
+                    query : 'select attrid, label from attrmappings where famid=:fromid',
+                    params : {
+                        fromid : this.getProperty('fromid')
+                    }
+                });
+                this.labels={};
+                for (var i=0;i<r.length;i++) {
+                    this.labels[r[i].attrid]=r[i].label;
+                }
             }
+            if (this.labels[id]) return this.labels[id];
+            return "no label "+id;
         }
 };

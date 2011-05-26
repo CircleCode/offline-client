@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS "attrmappings" (
     "famid"             INTEGER NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
     "attrid"            TEXT NOT NULL,
     "columnid"          TEXT NOT NULL ,
+    "label"             TEXT,
     "isabstract"        BOOLEAN NOT NULL DEFAULT FALSE,
     "istitle"           BOOLEAN NOT NULL DEFAULT FALSE,
     "ismultiple"        BOOLEAN NOT NULL DEFAULT FALSE,
