@@ -54,12 +54,8 @@
                 var flex = this.getAttribute('flex') || 1;
                 this.setAttribute('flex', flex);
                 
-                Components.utils.import("resource://modules/logger.jsm");
-                logConsole("<---- entering menu constructor for "+this.doc.getInitid());
-                
                 var toolbar = this.getChild('document-toolbar');
-                
-                logConsole("leaving menu constructor for "+this.doc.getInitid());
+                //FIXME
             ]]></constructor>
         </implementation>
         
