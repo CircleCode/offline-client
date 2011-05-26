@@ -20,19 +20,23 @@
 <!ENTITY login.dialogTitle              "login">
 
 <!-- main -->
-<!ENTITY main.actionmenu            "main.actionmenu">
-<!ENTITY main.newDocument           "main.newDocument...">
-<!ENTITY main.close                 "main.close...">
-<!ENTITY main.preference            "main.preference...">
-<!ENTITY main.synchro               "main.synchro...">
-<!ENTITY main.helpmenu              "main.helpmenu">
-<!ENTITY main.help                  "main.help...">
-<!ENTITY main.log                   "main.log...">
-<!ENTITY main.about                 "main.about...">
-<!ENTITY main.abstract.search       "main.abstract.search">
-<!ENTITY main.domain.choose         "main.domain.choose">
+<!ENTITY main.actionmenu                "main.actionmenu">
+<!ENTITY main.newDocument               "main.newDocument...">
+<!ENTITY main.close                     "main.close...">
+<!ENTITY main.preference                "main.preference...">
+<!ENTITY main.synchro                   "main.synchro...">
+<!ENTITY main.helpmenu                  "main.helpmenu">
+<!ENTITY main.help                      "main.help...">
+<!ENTITY main.log                       "main.log...">
+<!ENTITY main.about                     "main.about...">
+<!ENTITY main.abstract.search           "main.abstract.search">
+<!ENTITY main.domain.choose             "main.domain.choose">
 
 <!-- synchronize -->
-<!ENTITY synchronize.dialogTitle    "synchronize.dialogTitle">
-<!ENTITY synchronize.cancel         "synchronize.cancel">
-<!ENTITY synchronize.synchronize    "synchronize.synchronize">
+<!ENTITY synchronize.dialogTitle        "synchronize.dialogTitle">
+<!ENTITY synchronize.cancel             "synchronize.cancel">
+<!ENTITY synchronize.synchronize        "synchronize.synchronize">
+<!ENTITY synchro.progress               "synchro.progress">
+<!ENTITY synchro.progressGlobal         "synchro.progressGlobal">
+<!ENTITY synchro.progressDetail         "synchro.progressDetail">
+<!ENTITY synchro.progressMessages       "synchro.progressMessages">
