@@ -75,9 +75,9 @@ function doLoad() {
     logDebug('Authent  : doLoad');
 
     // TODO get real values from the application
-    document.getElementById('login').value = Preferences.get("offline.user.login");
-    document.getElementById('password').value = Preferences.get("offline.user.password");
-    document.getElementById('applicationURL').value = Preferences.get("offline.user.applicationURL");
+    document.getElementById('login').value = Preferences.get("offline.user.login", "");
+    document.getElementById('password').value = Preferences.get("offline.user.password", "");
+    document.getElementById('applicationURL').value = Preferences.get("offline.user.applicationURL", "");
     document.getElementById('remember').checked = true;
 
     return true;

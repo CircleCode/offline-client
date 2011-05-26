@@ -31,3 +31,8 @@
 <!ENTITY main.about                 "main.about...">
 <!ENTITY main.abstract.search       "main.abstract.search">
 <!ENTITY main.domain.choose         "main.domain.choose">
+
+<!-- synchronize -->
+<!ENTITY synchronize.dialogTitle    "synchronize.dialogTitle">
+<!ENTITY synchronize.cancel         "synchronize.cancel">
+<!ENTITY synchronize.synchronize    "synchronize.synchronize">
