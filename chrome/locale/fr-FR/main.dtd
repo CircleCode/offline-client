@@ -40,3 +40,16 @@
 <!ENTITY synchro.progressGlobal         "synchro.progressGlobal">
 <!ENTITY synchro.progressDetail         "synchro.progressDetail">
 <!ENTITY synchro.progressMessages       "synchro.progressMessages">
+<!ENTITY synchro.domain                 "synchro.domain">
+<!ENTITY synchro.detail                 "synchro.detail">
+<!ENTITY synchro.documents.record       "synchro.documents.record">
+<!ENTITY synchro.documents.recorded     "synchro.documents.recorded">
+<!ENTITY synchro.files.record           "synchro.files.record">
+<!ENTITY synchro.files.recorded         "synchro.files.recorded">
+<!ENTITY synchro.documents.save         "synchro.documents.save">
+<!ENTITY synchro.documents.saved        "synchro.documents.saved">
+<!ENTITY synchro.files.save             "synchro.files.save">
+<!ENTITY synchro.files.saved            "synchro.files.saved">
+<!ENTITY synchro.client.server          "synchro.client.server">
+<!ENTITY synchro.server.client          "synchro.server.client">
+<!ENTITY synchronize.endOfSynchronization "synchronize.endOfSynchronization">
