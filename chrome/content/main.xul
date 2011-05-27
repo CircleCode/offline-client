@@ -87,7 +87,7 @@
         </vbox>
         <vbox width="200px" persist="width">
             <vbox>
-                <menulist id="openDocumentList">
+                <menulist id="openDocumentList" oncommand='tryToOpenDocument(this.value );'>
                     <menupopup>
                         
                     </menupopup>
@@ -110,7 +110,7 @@
                             <param id="searchTitleParam" name="searchTitle">%</param>
                         </query>
                         <action>
-                            <richlistitem uri="?" value="?initid" onclick='openDocument(this.value );'>
+                            <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument(this.value );'>
                                 <vbox >
                                     <label value="?title" />
                                 </vbox>
@@ -123,16 +123,10 @@
         <splitter collapse="before">
             <grippy />
         </splitter>
-        <tabbox id="onefam-content-tabbox" flex="1">
-            <tabs>
-                <tab label="&welcome;" />
-            </tabs>
-            <tabpanels flex="1">
-                <tabpanel flex="1">
-                    <textbox flex="1" multiline="true" id="document" value="" />
-                </tabpanel>
-            </tabpanels>
-        </tabbox>
+        <deck id="documentsDeck">
+            <vbox id="vboxDocument-void">
+            </vbox>
+        </deck>
     </hbox>
     <statusbar>
         <hbox flex="1">
