@@ -10,21 +10,36 @@
         
         <content>
                 <xul:hbox anonid="document-toolbar" flex="1">
-                    <xul:toolbarbutton anonid="document-toolbar-system-save"
+                    
+                    <xul:button anonid="document-toolbar-system-save"
                         label="Sauver"
-                        tooltiptext="Sauver"
-                        oncommand="alert('TODO: call save')"/>
-                    <xul:toolbarbutton
+                        tooltiptext="Sauver">
+                    </xul:button>
+                    
+                    <xul:button
                         anonid="document-toolbar-system-edit"
                         label="Modifier"
-                        tooltiptext="Modifier"
-                        oncommand="alert('TODO: switch in edit mode')"/>
+                        tooltiptext="Modifier">
+                    </xul:button>
+                    
                     <xul:splitter anonid="document-toolbar-system-splitter"/>
-                    <xul:toolbarbutton
+                    
+                    <xul:button
                         label="document.toolbar.properties;"
-                        oncommand="alert('open properties');"/>
+                        oncommand="alert('open properties');">
+                    </xul:button>
+                    
                     <xul:splitter/>
+                    
                     <children/>
+                    
+                    <xul:spacer flex="1"/>
+                    
+                    <xul:button
+                        label="close"
+                        icon="close">
+                    </xul:button>
+                    
                 </xul:hbox>
         </content>
         
@@ -33,16 +48,17 @@
                 name="localDocument"
                 readonly="true"
                 onget="return this.doc;"/>
+                
             <method name="getDocumentNode">
                 <body><![CDATA[
-                    if(this.documentNode){
-                        return this.documentNode;
-                    } else {
+                    if(! this.documentNode){
                         Components.utils.import("resource://modules/domUtils.jsm");
-                        return domUtils.getParentByTagName(this, 'dcpDocument');
+                        this.documentNode = domUtils.getParentByTagName(this, 'dcpDocument');
                     }
+                    return this.documentNode
                 ]]></body>
             </method>
+            
             <method name="getChild">
                 <parameter name="aChildName"/>
                 <body><![CDATA[
@@ -54,12 +70,31 @@
                 var flex = this.getAttribute('flex') || 1;
                 this.setAttribute('flex', flex);
                 
-                var toolbar = this.getChild('document-toolbar');
-                //FIXME
+                var mode = documentNode.mode;
+                
+                if(mode === 'edit'){
+                    this.getChild('document-toolbar-system-edit').collapsed = true;
+                } else {
+                    this.getChild('document-toolbar-system-save').collapsed = true;
+                }
             ]]></constructor>
         </implementation>
         
-        <!--<handlers/> -->
+        <handlers>
+            <handler event="click"  button="0"><![CDATA[
+            switch(event.originalTarget){
+                case this.getChild('document-toolbar-system-edit') :
+                    this.documentNode.switchMode('edit');
+                    break;
+                case this.getChild('document-toolbar-system-close') :
+                    this.getDocumentNode().close();
+                    break;
+                case this.getChild('document-toolbar-system-close') :
+                    this.getDocumentNode().save();
+                    break;
+            }
+            ]]></handler>
+        </handlers>
     </binding>
     
 </bindings>

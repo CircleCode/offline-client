@@ -11,34 +11,29 @@
             </ressources>-->
         
         <implementation>
+
             <property
                 name="initid"
                 readonly="true">
                 <getter><![CDATA[
                     Components.utils.import("resource://modules/logger.jsm");
                     if(this.doc){
-                        return this.doc.getProperty('initid');
+                        return this.doc.getInitid();
                     } else {
                         return this.getAttribute('initid');
                     }
                 ]]></getter>
             </property>
+
             <!-- mode: "edit" or "view", default is "view" -->
             <property
                 name="mode"
                 readonly="true">
                 <getter><![CDATA[
-                    if(this.hasAttribute('mode')){
-                        var mode = this.getAttribute('mode');
-                        if( (mode != 'view') && (mode != 'edit') ){
-                            this.setAttribute('mode', 'view');
-                            mode = 'view';
-                        }
-                        return mode;
-                    }
-                    return 'view';
+                    return this.getAttribute('mode');
                 ]]></getter>
             </property>
+
             <property
                 name="localDocument"
                 readonly="true">
@@ -46,24 +41,69 @@
                     return this.doc;
                 ]]></getter>
             </property>
+
+            <method
+                name="switchMode">
+                <parameter name="mode"/>
+                <body><![CDATA[
+                if(mode){
+                    var currentMode = this.getAttribute('mode');
+                    if( mode !== currentMode ) {
+                        if( (mode !== 'view') && (mode !== 'edit') ){
+                            throw new BindException("invalid mode provided; only 'view' and 'edit' are valid");
+                        }
+                        else{
+                            Components.utils.import("resource://modules/events.jsm");
+                            logConsole("document " + this.initid + " asked to switch in " + mode + " mode");
+                            var param = {
+                                documentId : this.initid,
+                                mode : mode
+                            };
+                            applicationEvent.publish("askForSwitchDocumentMode", param);
+                        }
+                    }
+                }
+                ]]></body>
+            </method>
+
             <method name="getValue">
                 <parameter name="attrid"/>
                 <body><![CDATA[
                     return this.doc.getvalue({attrid: attrid});
                 ]]></body>
             </method>
+
             <method name="getProperty">
                 <parameter name="propertyid"/>
                 <body><![CDATA[
                     return this.doc.getProperty({propertyid: propertyid});
                 ]]></body>
             </method>
+
             <method name="save">
                 <body><![CDATA[
-                    //FIXME
-                    return true;
+                    try {
+                        this.doc.save();
+                        this.mode="view";
+                    } catch(e) {
+                        logConsole("error on document save");
+                        throw(e);
+                    }
                 ]]></body>
             </method>
+
+            <method name="close">
+                <!-- FIXME: pre-close -->
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/events.jsm");
+                    logConsole("document " + this.initid + " asked to be closed");
+                    var param = {
+                        documentId : this.initid
+                    };
+                    applicationEvent.publish("askForCloseDocument", param);
+                ]]></body>
+            </method>
+
             <constructor><![CDATA[
                 Components.utils.import("resource://modules/logger.jsm");
                 logConsole("<--------- entering document [" + this.initid + "] constructor");
@@ -74,14 +114,25 @@
                     var flex = this.getAttribute('flex') || 1;
                     this.setAttribute('flex', flex);
                     
+                    var hasMode = this.hasAttribute('mode');
+                    if(! hasMode ){
+                        this.setAttribute('mode', 'view');
+                    } else {
+                        var mode = this.getAttribute('mode');
+                        if( (mode !== 'view') && (mode !== 'edit') ){
+                            this.setAttribute('mode', 'view');
+                        }
+                    }
+
                     //XXX: register as a render
-                    return true;
                 } catch(e){
                     logError(e, "document document [" + this.initid + "] constructor");
                     throw(e);
                 }
                 logConsole("leaving document [" + this.initid + "] constructor --------->");
+                return true;
             ]]></constructor>
+
             <destructor><![CDATA[
                 try{
                     //TODO: unregister as a render

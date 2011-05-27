@@ -53,9 +53,6 @@
                 
                 if( icon ){
                     icon = "file://" + icon;
-                    logConsole("icon for "+this.doc.getInitid()+": "+icon)
-                } else {
-                    logConsole("no icon for " + this.doc.getInitid());
                 }
                 
                 this.getChild('document-icon').src = icon;
