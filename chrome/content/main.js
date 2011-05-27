@@ -135,7 +135,7 @@ function close()
     Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
 }
 
-function openDocument(initid, mode) {
+/*function openDocument(initid, mode) {
     mode = mode || 'view';
     
     var doc;
@@ -189,21 +189,22 @@ function openDocument(initid, mode) {
         throw new ArgException("openDocument :: missing initid argument");
     }
     return tabPanel;
-}
+}*/
 
 /* Listeners */
 function updateFamilyList(config)
 {
-    logConsole("update family list");
+    logIHM("updateFamilyList");
     if (config && config.domainId) {
         document.getElementById("famDomainIdParam").textContent = config.domainId;
     }
     document.getElementById("familyList").builder.rebuild();
+    applicationEvent.publish("postUpdateFamilyList");
 }
 
 function updateAbstractList(config)
 {
-    logConsole("update abstract list");
+    logIHM("updateAbstractList");
     if (config && config.domainId != undefined) {
         document.getElementById("abstractDomainIdParam").textContent = config.domainId;
     }
@@ -212,27 +213,63 @@ function updateAbstractList(config)
     }
     if (config && config.searchValue != undefined) {
         document.getElementById("searchTitleParam").textContent = '%'+config.searchValue+'%';
-        document.getElementById("currentCriteria").value = config.searchValue;
     }
     document.getElementById("abstractList").builder.rebuild();
+    applicationEvent.publish("postUpdateAbstractList");
+}
+
+function updateOpenDocumentList() 
+{
+    logIHM("updateOpenDocumentList");
+    var documentList = document.getElementById("openDocumentList");
+    documentList.removeAllItems();
+    documentList.selectedIndex = -1;
+    if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
+        var currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
+        var currentDocId;
+        
+        for (currentDocId in currentDocs) {
+            var currentListItem = documentList.appendItem(currentDocs[currentDocId], currentDocId);
+            if (currentDocId == Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument")) {
+                logIHM(currentDocId);
+                documentList.selectedItem = currentListItem;
+            }
+        }
+    }
 }
 
 function viewDocument(config) 
 {
-    logConsole("add a document representation");
+    logIHM("viewDocument");
     openDocument(config.documentId);
     debugDisplayDoc(config.documentId);
 }
 
+function addDocumentToOpenList(config) 
+{
+    logIHM("addDocumentToOpenList");
+    var currentDocs = {};
+    if (config && config.documentId) {
+        if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
+            currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
+        }
+        var title = docManager.getLocalDocument({initid : config.documentId}).getTitle();
+        currentDocs[config.documentId] = title;
+        Preferences.set("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments",JSON.stringify(currentDocs));
+        applicationEvent.publish("postUpdateOpenDocumentsPreference");
+    }
+}
+
 function updateDomainPreference(config)
 {
+    logIHM("updateDomainPreference");
     if (config && config.domainId) {
         Preferences.set("offline.user.currentSelectedDomain", config.domainId);
     }
 }
 
 function updateDocManager(config) {
-    logConsole("update doc manager");
+    logIHM("updateDocManager");
     if (config && config.domainId) {
         docManager.setActiveDomain({
             domain : config.domainId
@@ -242,22 +279,25 @@ function updateDocManager(config) {
 
 function updateCurrentFamilyPreference(config)
 {
+    logIHM("updateCurrentFamilyPreference");
     if (config && config.famId) {
-        Preferences.set("offline.user.currentSelectedFamily", config.famId);
+        Preferences.set("offline.user."+getCurrentDomain()+".currentSelectedFamily", config.famId);
     }
 }
 
-function updateCurrentDocumentPreference(config)
+function updateCurrentOpenDocumentPreference(config)
 {
+    logIHM("updateCurrentOpenDocumentPreference");
     if (config && config.documentId) {
-        Preferences.set("offline.user.currentSelectedDocument", config.documentId);
+        Preferences.set("offline.user."+getCurrentDomain()+".currentOpenDocument", config.documentId);
     }
 }
 
 function setPrefCurrentSelectedDomain(propagEvent)
 {
+    logIHM("setPrefCurrentSelectedDomain");
+    var domains = document.getElementById("domainList");
     if (!Preferences.get("offline.user.currentSelectedDomain", false) === false) {
-        var domains = document.getElementById("domainList");
         var nbDomains = domains.itemCount;
         for(var i = 0; i < nbDomains; i++) {
             var currentDomain = domains.getItemAtIndex(i);
@@ -266,71 +306,99 @@ function setPrefCurrentSelectedDomain(propagEvent)
                 if (propagEvent) {
                     changeDomain(currentDomain.value);
                 }
-                break;
+                return;
             }
         }
+    }
+    domains.selectedIndex = -1;
+    Preferences.reset("offline.user.currentSelectedDomain");
+    if (propagEvent) {
+        changeDomain(null);
     }
 }
 
 function setPrefCurrentSelectedFamily(propagEvent)
 {
-    if (!Preferences.get("offline.user.currentSelectedFamily", false) === false) {
-        var families = document.getElementById("familyList");
+    logIHM("setPrefCurrentSelectedFamily");
+    logIHM(Preferences.get("offline.user."+getCurrentDomain()+".currentSelectedFamily", false));
+    var families = document.getElementById("familyList");
+    if (!Preferences.get("offline.user."+getCurrentDomain()+".currentSelectedFamily", false) === false) {
         var nbFamilies = families.itemCount;
         for(var i = 0; i < nbFamilies; i++) {
             var currentFamily = families.getItemAtIndex(i);
-            if (Preferences.get("offline.user.currentSelectedFamily") == currentFamily.value) {
+            if (Preferences.get("offline.user."+getCurrentDomain()+".currentSelectedFamily") == currentFamily.value) {
+                logIHM(i);
                 families.selectedIndex = i;
                 if (propagEvent) {
                     changeFamily(currentFamily.value);
                 }
-                break;
+                return;
             }
         }
     }
+    families.selectedIndex = -1;
+    Preferences.reset("offline.user."+getCurrentDomain()+".currentSelectedFamily");
+    if (propagEvent) {
+        changeFamily(null);
+    }
 }
 
-function setPrefCurrentSelectedDocument(propagEvent)
+function setPrefCurrentOpenDocument(propagEvent)
 {
-    if (!Preferences.get("offline.user.currentSelectedDocument", false) === false) {
-        var documents = document.getElementById("abstractList");
+    logIHM("setPrefCurrentOpenDocument "+Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument"));
+    var documents = document.getElementById("openDocumentList");
+    if (!Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument", false) === false) {
         var nbDocuments = documents.itemCount;
         for(var i = 0; i < nbDocuments; i++) {
             var currentDocument = documents.getItemAtIndex(i);
-            if (Preferences.get("offline.user.currentSelectedDocument") == currentDocument.value) {
+            if (Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument") == currentDocument.value) {
                 documents.selectedIndex = i;
                 if (propagEvent) {
-                    changeDocument(currentDocument.value);
+                    openDocument(currentDocument.value);
                 }
-                break;
+                return;
             }
         }
+    }
+    documents.selectedIndex = -1;
+    Preferences.reset("offline.user."+getCurrentDomain()+".currentOpenDocument");
+    if (propagEvent) {
+        openDocument(null);
     }
 }
 
 function initListeners()
 {
-    logConsole("Init listener");
-    applicationEvent.subscribe("changeSelectedDomain", updateFamilyList);
-    applicationEvent.subscribe("changeSelectedDomain", updateAbstractList);
+    logIHM("initListeners");
+    
     applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
-    applicationEvent.subscribe("changeSelectedDomain", updateDocManager);
-    applicationEvent.subscribe("changeSelectedFamily", updateAbstractList);
-    applicationEvent.subscribe("changeSelectedFamily", updateCurrentFamilyPreference);
-    applicationEvent.subscribe("changeSelectedDocument", viewDocument);
-    applicationEvent.subscribe("changeSelectedDocument", updateCurrentDocumentPreference);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateFamilyList);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateAbstractList);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateOpenDocumentList);
+    
+    applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
+    applicationEvent.subscribe("postChangeSelectedFamily", updateCurrentFamilyPreference);
+    
+    applicationEvent.subscribe("changeOpenDocument", updateCurrentOpenDocumentPreference);
+    applicationEvent.subscribe("changeOpenDocument", addDocumentToOpenList);
+    
     applicationEvent.subscribe("postSynchronize", updateFamilyList);
     applicationEvent.subscribe("postSynchronize", updateAbstractList);
+    
+    applicationEvent.subscribe("postUpdateFamilyList", setPrefCurrentSelectedFamily, true);
+    
+    applicationEvent.subscribe("postUpdateOpenDocumentsPreference", updateOpenDocumentList);
+    
     applicationEvent.subscribe("close", close);
 }
 
 function initValues()
 {
-    logConsole("Init values");
+    logIHM("initValues");
     document.getElementById("domainPopupList").builder.rebuild();
     setPrefCurrentSelectedDomain(true);
     setPrefCurrentSelectedFamily(true);
-    setPrefCurrentSelectedDocument(true);
+    setPrefCurrentOpenDocument(true);
 }
 
 function changeDomain(value) {
@@ -365,19 +433,29 @@ function changeFamily(value) {
     }
 }
 
-function changeDocument(value) {
-    logConsole("try to change selected document "+value);
+function openDocument(value) {
+    logConsole("try to change open document "+value);
     var param = {
             documentId : value
     };
-    if (!applicationEvent.publish("preChangeSelectedDocument", param)) {
+    if (!applicationEvent.publish("preChangeOpenDocument", param)) {
         //TODO add alert message
         alert("unable to change selected document");
-        setPrefCurrentSelectedDocument();
+        setPrefCurrentOpenDocument();
     }else {
-        applicationEvent.publish("changeSelectedDocument", param);
-        applicationEvent.publish("postChangeSelectedDocument", param);
+        applicationEvent.publish("changeOpenDocument", param);
+        applicationEvent.publish("postChangeOpenDocument", param);
     }
+}
+
+//shortcut
+
+function getCurrentDomain() {
+    return Preferences.get("offline.user.currentSelectedDomain", "");
+}
+
+function logIHM(message) {
+    logConsole(message);
 }
 
 /* debug stuff */
