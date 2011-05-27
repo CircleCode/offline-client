@@ -25,6 +25,7 @@
                     <xul:splitter anonid="document-toolbar-system-splitter"/>
                     
                     <xul:button
+                        anonid="document-toolbar-system-properties"
                         label="document.toolbar.properties;"
                         oncommand="alert('open properties');">
                     </xul:button>
@@ -36,6 +37,7 @@
                     <xul:spacer flex="1"/>
                     
                     <xul:button
+                        anonid="document-toolbar-system-close"
                         label="close"
                         icon="close">
                     </xul:button>
@@ -84,14 +86,16 @@
             <handler event="click"  button="0"><![CDATA[
             switch(event.originalTarget){
                 case this.getChild('document-toolbar-system-edit') :
-                    this.documentNode.switchMode('edit');
+                    this.getDocumentNode().switchMode('edit');
                     break;
                 case this.getChild('document-toolbar-system-close') :
                     this.getDocumentNode().close();
                     break;
-                case this.getChild('document-toolbar-system-close') :
+                case this.getChild('document-toolbar-system-save') :
                     this.getDocumentNode().save();
                     break;
+                default:
+                    logConsole("pouet");
             }
             ]]></handler>
         </handlers>
