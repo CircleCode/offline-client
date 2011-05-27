@@ -138,7 +138,7 @@ function close()
 
 function openDocument(config) {
     
-    logIHM("openDocument");
+    logIHM("openDocument "+config.documentId);
     
     var doc;
     var template;
@@ -193,11 +193,11 @@ function closeDocument(config) {
         deck = document.getElementById('documentsDeck');
         documentRepresentationId = 'vboxDocument-'+config.documentId;
         documentRepresentation= document.getElementById(documentRepresentationId);
-        if(! documentRepresentation ){
+        if(documentRepresentation ){
             deck.removeChild(documentRepresentation);
         } else {
-            throw new Exception(
-                    "closeDocument :: document is not open");
+            logConsole(
+                    "closeDocument :: document "+config.documentId+" is not open");
         }
     }
 }
@@ -244,7 +244,6 @@ function updateOpenDocumentList()
         for (currentDocId in currentDocs) {
             var currentListItem = documentList.appendItem(currentDocs[currentDocId], currentDocId);
             if (currentDocId == Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument")) {
-                logIHM(currentDocId);
                 documentList.selectedItem = currentListItem;
             }
         }
@@ -269,13 +268,13 @@ function addDocumentToOpenList(config)
         var title = docManager.getLocalDocument({initid : config.documentId}).getTitle();
         currentDocs[config.documentId] = title;
         Preferences.set("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments",JSON.stringify(currentDocs));
-        applicationEvent.publish("postUpdateOpenDocumentsPreference");
+        applicationEvent.publish("postUpdateListOfOpenDocumentsPreference");
     }
 }
 
 function removeDocumentFromOpenList(config) 
 {
-    logIHM("addDocumentToOpenList");
+    logIHM("removeDocumentFromOpenList");
     var currentDocs = {};
     if (config && config.documentId) {
         if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
@@ -348,14 +347,12 @@ function setPrefCurrentSelectedDomain(propagEvent)
 function setPrefCurrentSelectedFamily(propagEvent)
 {
     logIHM("setPrefCurrentSelectedFamily");
-    logIHM(Preferences.get("offline.user."+getCurrentDomain()+".currentSelectedFamily", false));
     var families = document.getElementById("familyList");
     if (!Preferences.get("offline.user."+getCurrentDomain()+".currentSelectedFamily", false) === false) {
         var nbFamilies = families.itemCount;
         for(var i = 0; i < nbFamilies; i++) {
             var currentFamily = families.getItemAtIndex(i);
             if (Preferences.get("offline.user."+getCurrentDomain()+".currentSelectedFamily") == currentFamily.value) {
-                logIHM(i);
                 families.selectedIndex = i;
                 if (propagEvent) {
                     changeFamily(currentFamily.value);
@@ -381,7 +378,7 @@ function setPrefCurrentOpenDocument(propagEvent)
             var currentDocument = documents.getItemAtIndex(i);
             if (Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument") == currentDocument.value) {
                 documents.selectedIndex = i;
-                if (propagEvent) {
+                if (propagEvent === true) {
                     tryToOpenDocument(currentDocument.value);
                 }
                 return;
@@ -390,8 +387,8 @@ function setPrefCurrentOpenDocument(propagEvent)
     }
     documents.selectedIndex = -1;
     Preferences.reset("offline.user."+getCurrentDomain()+".currentOpenDocument");
-    if (propagEvent) {
-        tryToOpenDocument(null);
+    if (propagEvent === true) {
+       tryToOpenDocument(null);
     }
 }
 
@@ -409,6 +406,7 @@ function initListeners()
     
     applicationEvent.subscribe("openDocument", updateCurrentOpenDocumentPreference);
     applicationEvent.subscribe("openDocument", addDocumentToOpenList);
+    applicationEvent.subscribe("postOpenDocument", setPrefCurrentOpenDocument);
     applicationEvent.subscribe("postOpenDocument", openDocument);
     
     applicationEvent.subscribe("postSynchronize", updateFamilyList);
@@ -419,8 +417,6 @@ function initListeners()
     //applicationEvent.subscribe("postUpdateAbstractList", setPrefCurrentSelectedFamily, true);
     
     applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference", updateOpenDocumentList);
-    
-    
     
     applicationEvent.subscribe("askForCloseDocument", tryToCloseDocument);
     
