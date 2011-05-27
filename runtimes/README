@@ -1,0 +1,9 @@
+Fetch and unpack the platforms runtimes into their corresponding
+sub-dir.
+
+Overall structure should looks like:
+- runtimes/linux/i686/xulrunner/{libxul.so, etc.}
+- runtimes/linux/x86_64/xulrunner/{libxul.so, etc.}
+- runtimes/mac/universal/XUL.framework/{libxpcom.dylib, etc.}
+- runtimes/win/32/xulrunner/{xul.dll, etc.}
+
