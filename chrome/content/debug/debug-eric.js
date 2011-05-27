@@ -8,6 +8,8 @@ Components.utils.import("resource://modules/fdl-context.jsm");
 Components.utils.import("resource://modules/fdl-data-debug.jsm");
 Components.utils.import("resource://modules/offlineSynchronize.jsm");
 
+Components.utils.import("resource://modules/formater.jsm");
+
 function initEricContext() {
 	context.url = Preferences.get("offline.user.applicationURL");
 
@@ -114,6 +116,9 @@ function clicMiscTest(domainid) {
         logConsole(ldoc.getBinding('view'));
         logConsole(ldoc.getIcon());
         logConsole(ldoc.canEdit());
+        logConsole(formater.getEnumLabel({attrid:'an_sexe',famid:1112,key:'M'}));
+        logConsole(formater.getDocumentTitle({initid:1128}));
+
     }
     //window.setTimeout( function () {clicPullDomain(domainid);}, 4000);
     /*
