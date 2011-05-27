@@ -2,6 +2,7 @@ Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
 Components.utils.import("resource://modules/utils.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
+Components.utils.import("resource://modules/exceptions.jsm");
 
 var EXPORTED_SYMBOLS = [ "localDocument" ];
 
@@ -80,7 +81,7 @@ localDocument.prototype = {
                 // be JSON.stringify )
             } else {
                 // FIXME
-                throw "getValue :: missing arguments";
+                throw new ArgException("getValue :: missing arguments");
             }
         },
         getTitle : function() {
@@ -91,7 +92,7 @@ localDocument.prototype = {
                 return this.properties[id];
             } else {
                 // FIXME
-                throw "getValue :: missing arguments";
+                throw new ArgException("getValue :: missing arguments");
             }
         },
 
@@ -111,7 +112,7 @@ localDocument.prototype = {
                     }
 
                 } else {
-                    throw " getPropertiesName:: missing arguments";
+                    throw new ArgException(" getPropertiesName:: missing arguments");
                 }
             }
             return _propertyNames;
@@ -121,7 +122,7 @@ localDocument.prototype = {
                 this.values[id] = value;
             } else {
                 // FIXME
-                throw "setValue :: missing arguments";
+                throw new ArgException("setValue :: missing arguments");
             }
             return this;
         },
@@ -154,7 +155,7 @@ localDocument.prototype = {
          */
         canEdit : function() {
             if (!this.domainId) {
-                throw "canEdit :: missing arguments";
+                throw new ArgException("canEdit :: missing arguments");
             }
             logConsole('editable ? ' + this._initid + this.domainId);
             var r = storageManager
@@ -184,7 +185,7 @@ localDocument.prototype = {
                 return this.getValue(id);
             } else {
                 // FIXME
-                throw "getDisplayValue :: missing arguments";
+                throw new ArgException("getDisplayValue :: missing arguments");
             }
         },
      
@@ -199,8 +200,6 @@ localDocument.prototype = {
             var file= Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
             file.append('Bindings');
             file.append(famName+'.xml');
-            
-            logConsole(file.path);
             
             if(file.exists()){
                 return file.path+'#document-'+famName+'-'+mode;

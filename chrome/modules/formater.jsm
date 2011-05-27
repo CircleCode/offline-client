@@ -1,5 +1,7 @@
 var EXPORTED_SYMBOLS = [ "formater" ];
 
+Components.utils.import("resource://modules/exceptions.jsm");
+Components.utils.import("resource://modules/storageManager.jsm");
 function ProtoFormater(config) {
 
 };
@@ -17,8 +19,20 @@ ProtoFormater.prototype = {
  */
 ProtoFormater.prototype.getEnumLabel = function(config) {
     if (config && config.key && config.attrid && config.famid) {
-
-        return "label" + config.key;
+        
+        var r = storageManager
+        .execQuery({
+            query : 'select label from enums where famid=:famid and attrid = :attrid and key=:key',
+            params : {
+                famid : config.famid,
+                key:config.key,
+                attrid:config.attrid
+            }
+        });
+        if (r.length == 1) {
+            return (r[0].label);
+        }
+        return config.key;
     } else {
         throw new ArgException("getEnumLabel need key, attrid, famid");
     }
@@ -29,7 +43,17 @@ ProtoFormater.prototype.getEnumLabel = function(config) {
  */
 ProtoFormater.prototype.getDocumentTitle = function(config) {
     if (config && config.initid) {
-        return "title" + config.initid;
+        var r = storageManager
+        .execQuery({
+            query : 'select title from doctitles where initid=:initid',
+            params : {
+                initid : config.initid
+            }
+        });
+        if (r.length == 1) {
+            return (r[0].title);
+        }
+        return "no title:" + config.initid;
     } else {
         throw new ArgException("getDocumentTitle need initid");
     }
