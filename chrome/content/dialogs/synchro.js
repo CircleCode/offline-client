@@ -22,6 +22,8 @@ window.onload = function() {
 }
 
 function initPage() {
+    var translate = new StringBundle(
+    "chrome://dcpoffline/locale/main.properties");
     var domainId = Preferences.get("offline.user.currentSelectedDomain", false);
     if (domainId) {
         updateDomain({domainId : domainId});
@@ -32,8 +34,8 @@ function initPage() {
 }
 
 function initListeners() {
-    applicationEvent.subscribe("synchronize", synchronize, {caller : this});
-    applicationEvent.subscribe("changeSelectedDomain", updateDomain, {caller : this});
+    applicationEvent.subscribe("synchronize", synchronize, {onError : endSynchronize});
+    applicationEvent.subscribe("changeSelectedDomain", updateDomain);
     window.addEventListener("close", canBeClosed, false);
 }
 
@@ -109,8 +111,7 @@ function synchronize() {
             domain : domain
         });
     } else {
-        Services.prompt.alert(window, "synchronize.domain", translate
-                .get("synchronize.unable"));
+        Services.prompt.alert(window, "synchronize.domain", translate.get("synchronize.unable"));
         return false;
     }
 }
@@ -163,7 +164,7 @@ function canBeClosed(event) {
 
 function letClose() {
     applicationEvent.unsubscribe("synchronize", synchronize);
-    applicationEvent.unsubscribe("synchronize", updateDomain);
+    applicationEvent.unsubscribe("changeSelectedDomain", updateDomain);
     window.close();
 }
 
