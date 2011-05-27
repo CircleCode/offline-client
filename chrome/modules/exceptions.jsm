@@ -1,6 +1,6 @@
 Components.utils.import("resource://modules/logfile.jsm");
 
-var EXPORTED_SYMBOLS = [ "ArgException", "SyncException" , "StorageException"];
+var EXPORTED_SYMBOLS = [ "ArgException", "SyncException" , "StorageException", "IHMException"];
 function ArgException(message) {
     this.message = message;
     logFile.write({
@@ -66,6 +66,23 @@ function BindException(message) {
 };
 BindException.prototype = {
     code : 'binding',
+    toString : function() {
+        return this.message;
+    },
+    valueOf : function() {
+        return this.code;
+    }
+};
+
+function IHMException(message) {
+    this.message = message;
+    logFile.write({
+        message : message,
+        priority : logFile.ERR
+    });
+};
+BindException.prototype = {
+    code : 'IHM',
     toString : function() {
         return this.message;
     },
