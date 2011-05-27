@@ -11,7 +11,7 @@
             </ressources>-->
         
         <implementation>
-
+            
             <property
                 name="initid"
                 readonly="true">
@@ -24,7 +24,7 @@
                     }
                 ]]></getter>
             </property>
-
+            
             <!-- mode: "edit" or "view", default is "view" -->
             <property
                 name="mode"
@@ -33,7 +33,7 @@
                     return this.getAttribute('mode');
                 ]]></getter>
             </property>
-
+            
             <property
                 name="localDocument"
                 readonly="true">
@@ -41,7 +41,7 @@
                     return this.doc;
                 ]]></getter>
             </property>
-
+            
             <method
                 name="switchMode">
                 <parameter name="mode"/>
@@ -65,21 +65,21 @@
                 }
                 ]]></body>
             </method>
-
+            
             <method name="getValue">
                 <parameter name="attrid"/>
                 <body><![CDATA[
                     return this.doc.getvalue({attrid: attrid});
                 ]]></body>
             </method>
-
+            
             <method name="getProperty">
                 <parameter name="propertyid"/>
                 <body><![CDATA[
                     return this.doc.getProperty({propertyid: propertyid});
                 ]]></body>
             </method>
-
+            
             <method name="save">
                 <body><![CDATA[
                     try {
@@ -91,7 +91,7 @@
                     }
                 ]]></body>
             </method>
-
+            
             <method name="close">
                 <!-- FIXME: pre-close -->
                 <body><![CDATA[
@@ -103,7 +103,7 @@
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
             </method>
-
+            
             <constructor><![CDATA[
                 Components.utils.import("resource://modules/logger.jsm");
                 logConsole("<--------- entering document [" + this.initid + "] constructor");
@@ -123,7 +123,7 @@
                             this.setAttribute('mode', 'view');
                         }
                     }
-
+                    
                     //XXX: register as a render
                 } catch(e){
                     logError(e, "document document [" + this.initid + "] constructor");
@@ -132,7 +132,7 @@
                 logConsole("leaving document [" + this.initid + "] constructor --------->");
                 return true;
             ]]></constructor>
-
+            
             <destructor><![CDATA[
                 try{
                     //TODO: unregister as a render
@@ -141,6 +141,7 @@
                     logConsole(e);
                 }
             ]]></destructor>
+            
         </implementation>
         <!--
             <handlers>
