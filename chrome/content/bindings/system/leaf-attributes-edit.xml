@@ -37,8 +37,28 @@
         </content>
     </binding>
     
-    <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
-        <!-- TODO htmltext-edit -->
+    <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:iframe anonid="displayValue" src="chrome://dcpoffline/content/bindings/ckeditor/ckeditor.html" flex="1"/>
+            </xul:hbox>
+        </content>
+        <implementation>
+            <method name="reloadDisplayValue">
+                <body><![CDATA[
+                    var oeditor = this.getChild('displayValue').contentWindow.editorInstance;
+                    
+                    if(oeditor){
+                        oeditor.setData(this.getDisplayValue());
+                    } else {
+                        alert('FIXME: htmltext-attr-view: the code is too fast...');
+                        throw new BindException("no displayValue chil for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                    }
+                ]]></body>
+            </method>
+        </implementation>
     </binding>
     
     <!-- Numeric attributes -->
