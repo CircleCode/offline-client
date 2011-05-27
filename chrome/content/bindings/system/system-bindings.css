@@ -1,9 +1,18 @@
 /***********************************************************
         Not yet implemented
 ************************************************************/
-dcpAttribute[type=htmltext],dcpAttribute[type=docid],dcpTabBox,dcpAttribute[type=tab],dcpAttribute[type=array]
+dcpAttribute[type=htmltext],
+dcpAttribute[type=file],
+dcpAttribute[type=enum],
+dcpAttribute[type=color],
+dcpAttribute[type=file],
+dcpAttribute[type=image],
+dcpAttribute[type=docid],
+dcpTabBox,dcpAttribute[type=tab],
+dcpAttribute[type=array]
     {
     border: 1px solid red;
+    min-height: 24px;
 }
 
 /***********************************************************
@@ -13,6 +22,7 @@ dcpDocument {
     display: -moz-box;
     -moz-box-orient: vertical;
     overflow-y: auto;
+    width: 100%;
 }
 
 dcpDocument dcpDocMenu {
@@ -24,6 +34,10 @@ dcpDocument dcpAttribute {
     display: -moz-box;
     -moz-box-orient: horizontal;
     width: 100%;
+}
+
+dcpDocument dcpAttribute .dcpValue {
+    -moz-box-flex: 1;
 }
 
 dcpDocument dcpDocHeader {
@@ -150,6 +164,12 @@ dcpDocument dcpAttribute[type=docid],dcpDocument[mode=view] dcpAttribute[type=do
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#docid-attr-view");
 }
 
+dcpDocument dcpAttribute[type=file],dcpDocument[mode=view] dcpAttribute[type=file]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#file-attr-view");
+}
+
 /***********************************************************
         Attributes (edit)
 ************************************************************/
@@ -171,4 +191,10 @@ dcpDocument[mode=edit] dcpAttribute[type=int] {
 dcpDocument[mode=edit] dcpAttribute[type=date] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#date-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=file]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#file-attr-view");
 }
