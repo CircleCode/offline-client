@@ -127,7 +127,7 @@ localDocument.prototype = {
         },
 
         save : function(config) {
-            if (this.isEditable() || (config && config.force)) {
+            if (this.canEdit() || (config && config.force)) {
 
                 var now = new Date();
                 this.properties.revdate = parseInt(now.getTime() / 1000);
@@ -149,15 +149,17 @@ localDocument.prototype = {
                 throw "document " + this._initid + " is not editable";
             }
         },
-
-        isEditable : function() {
+        /**
+         * @return boolean true if can
+         */
+        canEdit : function() {
             if (!this.domainId) {
-                throw "isEditable :: missing arguments";
+                throw "canEdit :: missing arguments";
             }
             logConsole('editable ? ' + this._initid + this.domainId);
             var r = storageManager
             .execQuery({
-                query : 'select docsbydomain.editable from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',
+                query : 'select docsbydomain.editable from documents, docsbydomain where docsbydomain.initid = documents.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',
                 params : {
                     domainid : this.domainId,
                     initid : this._initid
@@ -171,6 +173,11 @@ localDocument.prototype = {
             // search in docsbydomain
             return false;
         },
+        /**
+         * @deprecated
+         * @param id
+         * @returns
+         */
         getDisplayValue : function(id) {
             // TODO: getDisplayValue
             if (id) {
@@ -180,6 +187,8 @@ localDocument.prototype = {
                 throw "getDisplayValue :: missing arguments";
             }
         },
+     
+    
         /**
          * @param string
          *            mode view|edit

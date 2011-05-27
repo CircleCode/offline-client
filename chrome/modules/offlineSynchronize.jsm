@@ -101,6 +101,9 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
         var fam = null;
         for ( var i = 0; i < families.length; i++) {
             fam = families.getDocument(i);
+
+            logConsole('pull families : ' + fam.getTitle());
+            this.log('pull families : ' + fam.getTitle());
             storageManager
                     .execQuery({
                         query : "insert into families(famid, name, title, json_object, creatable) values(:famid, :famname, :famtitle, :fam, :creatable)",
@@ -124,16 +127,24 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
                 initid : fam.getProperty('id'),
                 writable : false
             });
-
             storageManager
                     .execQuery({
                         query : "insert into docsbydomain (initid, domainid, editable) values (:initid, :domainid, 0)",
                         params : {
                             initid : fam.getProperty('id'),
                             domainid : domain.getProperty('initid')
+                        },
+                        callback : {
+                            handleCompletion : function() {
+                            },
+                            handleError : function(reason) {
+                                logError('recordFamilies error:' + reason);
+                            }
                         }
                     });
-
+            this.updateEnumItems({
+                document : fam
+            });
             this.callObserver('onAddFilesToRecord', 1);
             this.log("record family :" + fam.getTitle());
         }
@@ -251,18 +262,12 @@ offlineSynchronize.prototype.isEditable = function(config) {
 /**
  * 
  * @param config
- *            onDetailPercent : function(p) 
- *            onGlobalPercent : function (p)
- *            onDetailLabel : function(t) 
- *            onAddDocumentsToRecord : function(n)
- *            onAddDocumentsRecorded : function(n) 
- *            onAddFilesToRecord :function(n) 
- *            onAddFilesRecorded : function(n) 
- *            onAddDocumentsToSave :function(n)
- *            onAddDocumentsSaved : function(n)
- *            onAddFilesToSave :function(n)
- *            onAddFilesSaved : function(n)
- *            onSuccess : function()
+ *            onDetailPercent : function(p) onGlobalPercent : function (p)
+ *            onDetailLabel : function(t) onAddDocumentsToRecord : function(n)
+ *            onAddDocumentsRecorded : function(n) onAddFilesToRecord
+ *            :function(n) onAddFilesRecorded : function(n) onAddDocumentsToSave
+ *            :function(n) onAddDocumentsSaved : function(n) onAddFilesToSave
+ *            :function(n) onAddFilesSaved : function(n) onSuccess : function()
  *            onError : function(status)
  */
 offlineSynchronize.prototype.setObservers = function(config) {
@@ -649,10 +654,10 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                 }
                 var famid = oas[aid].relationFamilyId;
                 var dbCon = storageManager.getDbConnection();
-                var mappingQuery="insert into doctitles (initid, famname, title) values (:initid, :famname, :title)";
+                var mappingQuery = "insert into doctitles (initid, famname, title) values (:initid, :famname, :title)";
                 var mappingStmt = dbCon.createStatement(mappingQuery);
                 var mappingParams = mappingStmt.newBindingParamsArray();
-                var oneTitle=false;
+                var oneTitle = false;
                 for ( var i = 0; i < values.length; i++) {
                     if (titles[i] && values[i]) {
                         var bp = mappingParams.newBindingParams();
@@ -660,17 +665,66 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                         bp.bindByName("title", titles[i]);
                         bp.bindByName("initid", values[i]);
                         mappingParams.addParams(bp);
-                        oneTitle=true;
+                        oneTitle = true;
                     }
                 }
                 if (oneTitle) {
-                mappingStmt.bindParameters(mappingParams);
-                mappingStmt.executeAsync({
-                    handleCompletion: function(reason){},
-                    handleError: function(reason){
-                        logError('updateTitles error:'+reason);
+                    mappingStmt.bindParameters(mappingParams);
+                    mappingStmt.executeAsync({
+                        handleCompletion : function(reason) {
+                        },
+                        handleError : function(reason) {
+                            logError('updateTitles error:' + reason);
+                        }
+                    });
+                }
+            }
+        }
+    } else {
+        throw new ArgException("updateTitles need document parameter");
+    }
+};
+
+offlineSynchronize.prototype.updateEnumItems = function(config) {
+
+    if (config && config.document) {
+        var oas = config.document.getAttributes();
+        logConsole('enum:' + config.document.id);
+        for ( var aid in oas) {
+
+            if (oas[aid].type == 'enum') {
+
+                var dbCon = storageManager.getDbConnection();
+                var mappingQuery = "insert into enums (famid, attrid, key, label) values (:famid, :attrid, :key, :label)";
+                var mappingStmt = dbCon.createStatement(mappingQuery);
+                var mappingParams = mappingStmt.newBindingParamsArray();
+
+                var enums = oas[aid].getEnumItems();
+                var oneTitle = false;
+                for ( var i = 0; i < enums.length; i++) {
+                    var key = enums[i].key;
+                    var label = enums[i].label;
+                    logConsole('enum:' + config.document.id + '-' + key + ':'
+                            + label);
+                    if (key && label) {
+                        var bp = mappingParams.newBindingParams();
+                        bp.bindByName("famid", config.document.id);
+                        bp.bindByName("attrid", aid);
+                        bp.bindByName("key", key);
+                        bp.bindByName("label", label);
+                        mappingParams.addParams(bp);
+                        oneTitle = true;
                     }
-                });
+                }
+                if (oneTitle) {
+                    mappingStmt.bindParameters(mappingParams);
+                    mappingStmt.executeAsync({
+                        handleCompletion : function(reason) {
+                        },
+                        handleError : function(reason) {
+                            logError('updateTitles error:' + reason);
+                        }
+                    });
                 }
             }
         }
@@ -761,7 +815,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                             }
                         }
                         if (results.status == "successTransaction") {
-                        this.callObserver('onError', results);
+                            this.callObserver('onError', results);
                         }
                     }
                 }

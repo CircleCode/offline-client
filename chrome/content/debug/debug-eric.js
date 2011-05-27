@@ -109,12 +109,13 @@ function clicGetDomains() {
 
 }
 function clicMiscTest(domainid) {
-    var ldoc=docManager.getLocalDocument({initid:1939});
+    var ldoc=docManager.getLocalDocument({initid:1170});
     if (ldoc) {
         logConsole(ldoc.getBinding('view'));
         logConsole(ldoc.getIcon());
+        logConsole(ldoc.canEdit());
     }
-    window.setTimeout( function () {clicPullDomain(domainid);}, 4000);
+    //window.setTimeout( function () {clicPullDomain(domainid);}, 4000);
     /*
     var workerFactory = Components.classes["@mozilla.org/threads/workerfactory;1"]
                                      .createInstance(Components.interfaces.nsIWorkerFactory);
