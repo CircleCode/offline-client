@@ -87,12 +87,15 @@
         </vbox>
         <vbox width="200px" persist="width">
             <vbox>
+                <menulist id="openDocumentList">
+                    <menupopup>
+                        
+                    </menupopup>
+                </menulist>
                 <button label="&main.newDocument;" onclick="openNewDocumentDialog()"/>
                 <hbox flex="1">
                     <textbox type="search" id="searchTitle" value="" oncommand="updateAbstractList( { searchValue : this.value} );" placeholder="&main.abstract.search;" />
                 </hbox>
-                <label value="Current criteria"/>
-                <label id="currentCriteria" value=""/>
             </vbox>
             <vbox flex="1">
                 <richlistbox id="abstractList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
@@ -107,7 +110,7 @@
                             <param id="searchTitleParam" name="searchTitle">%</param>
                         </query>
                         <action>
-                            <richlistitem uri="?" value="?initid" onclick='changeDocument(this.value );'>
+                            <richlistitem uri="?" value="?initid" onclick='openDocument(this.value );'>
                                 <vbox >
                                     <label value="?title" />
                                 </vbox>
@@ -133,7 +136,6 @@
     </hbox>
     <statusbar>
         <hbox flex="1">
-            <spacer flex="1"/>
             <menulist id="domainList" label="&main.domain.choose;" oncommand="changeDomain(this.value)" >
                 <menupopup id='domainPopupList' datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
@@ -146,6 +148,7 @@
                     </template>
                 </menupopup>
             </menulist>
+            <spacer flex="1"/>
             <statusbarpanel label="Connection status" />
         </hbox>
     </statusbar>
