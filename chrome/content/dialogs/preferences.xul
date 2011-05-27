@@ -19,7 +19,8 @@
     
     <vbox>
         
-        <button label="vas y swipe mes préférences comme un sauvage" onclick="destuctionTotal()" />
+        <button label="suppress all user pref" onclick="deleteUserPref()" />
+        <button label="suppress current select doc" onclick="deleteCurrentSelectedDocPref()" />
         
     </vbox>
     
