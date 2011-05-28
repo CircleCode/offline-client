@@ -53,3 +53,6 @@
 <!ENTITY synchro.client.server          "synchro.client.server">
 <!ENTITY synchro.server.client          "synchro.server.client">
 <!ENTITY synchro.progress               "synchro.progress">
+
+<!-- init wizard -->
+<!ENTITY wizard.initialization.title    "wizard.initialization.title">
