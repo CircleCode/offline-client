@@ -13,6 +13,20 @@
     xmlns:xbl="http://www.mozilla.org/xbl">
     
     <binding id="leaf-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <implementation>
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue').inputField;
+            ]]></field>
+        </implementation>
+        <handlers>
+            <handler event="blur" id="blur"><![CDATA[
+                logConsole('blur');
+                if(event.originalTarget == this.inputField){
+                    logConsole('blur from displayValue');
+                    this.setValue(this.inputField.value);
+            }
+            ]]></handler>
+        </handlers>
     </binding>
     
     <!-- Text attributes -->
@@ -20,7 +34,7 @@
     <binding id="text-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="false"/>
             </xul:hbox>
@@ -30,7 +44,7 @@
     <binding id="longtext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="true"/>
             </xul:hbox>
@@ -46,7 +60,7 @@
             </xul:hbox>
         </content>
         <implementation>
-            <method name="reloadDisplayValue">
+            <method name="reloadValue">
                 <body><![CDATA[
                     var oeditor = this.getChild('displayValue').contentWindow.editorInstance;
                     
@@ -66,7 +80,7 @@
     <binding id="int-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric int">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" value=""
                     type="number" hidespinbutton="true"
@@ -78,7 +92,7 @@
     <binding id="double-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" value=""
                     type="number" hidespinbutton="true" decimalplaces="Infinity"
@@ -91,7 +105,7 @@
     <binding id="money-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" value=""
                     type="number" hidespinbutton="true" decimalplaces="2"
@@ -106,7 +120,7 @@
     <binding id="date-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <xul:label anonid="label" class="dcplabel" value=""/>
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:datepicker anonid="displayValue" class="dcpValue" value=""/>
             </xul:hbox>
