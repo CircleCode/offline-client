@@ -492,7 +492,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                                                         + document.getTitle());
                                                 docManager
                                                         .dropDocInstance({
-                                                            domain : domain.id,
+                                                            domain : domain.getProperty('initid'),
                                                             initid : document
                                                                     .getProperty('initid')
                                                         });
