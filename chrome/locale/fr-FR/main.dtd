@@ -18,6 +18,8 @@
 <!ENTITY authent.remember.login.mdp             "login.remember">
 <!ENTITY authent.dialog                         "login">
 <!ENTITY authent.login.progress                 "authent.login.progress">
+<!ENTITY authent.work.offline                   "authent.work.offline">
+<!ENTITY authent.error.label                    "authent.error.label">
 
 <!-- main -->
 <!ENTITY main.actionmenu                "main.actionmenu">
@@ -53,3 +55,6 @@
 <!ENTITY synchro.client.server          "synchro.client.server">
 <!ENTITY synchro.server.client          "synchro.server.client">
 <!ENTITY synchro.progress               "synchro.progress">
+
+<!-- preference -->
+<!ENTITY preference.dialogTitle         "preference.dialogTitle">
