@@ -692,9 +692,11 @@ Fdl.OfflineSync.prototype.getSharedDocuments = function(config) {
 	if (config && config.until) {
 		until = config.until;
 	}
+	
 	var data = this.callSyncMethod({
 		method : 'getSharedDocuments',
-		until : until
+		until : until,
+		stillRecorded : config.stillRecorded
 	});
 	if (data) {
 		data.acknowledgement=this.callSyncMethod({
@@ -723,7 +725,8 @@ Fdl.OfflineSync.prototype.getUserDocuments = function(config) {
 		until = config.until;
 	}
 	var data = this.callSyncMethod({
-		method : 'getUserDocuments',until:until
+		method : 'getUserDocuments',until:until,
+        stillRecorded : config.stillRecorded
 	});
 	if (data) {
 		data.acknowledgement=this.callSyncMethod({
