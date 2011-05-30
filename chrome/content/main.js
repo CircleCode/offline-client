@@ -237,6 +237,8 @@ function updateOpenDocumentList()
     var documentList = document.getElementById("openDocumentList");
 
     var currentOpenDocument = getCurrentDocument();
+    var currentDocs = getListOfOpenDocuments();
+    var currentDocId;
 
     if (currentOpenDocument) {
         currentOpenDocument =  currentOpenDocument.documentId;
@@ -244,9 +246,7 @@ function updateOpenDocumentList()
 
     documentList.removeAllItems();
     documentList.selectedIndex = -1;
-    if (getListOfOpenDocuments()) {
-        var currentDocs = getListOfOpenDocuments();
-        var currentDocId;
+    if (currentDocs) {
 
         for (currentDocId in currentDocs) {
             var currentListItem = documentList.appendItem(currentDocs[currentDocId].title, currentDocId);
@@ -381,7 +381,7 @@ function setPrefCurrentOpenDocument(propagEvent)
             if (currentDocument.documentId == currentListElement.value) {
                 documents.selectedIndex = i;
                 if (propagEvent === true) {
-                    tryToOpenDocument(currentDocument.documentId, currentDocument.mode);
+                    tryToOpenDocument(currentDocument);
                 }
                 return;
             }
@@ -394,6 +394,31 @@ function setPrefCurrentOpenDocument(propagEvent)
     }
 }
 
+function prepareDoc(param) {
+    logIHM("prepareDoc");
+    var currentDocs = getListOfOpenDocuments();
+    var currentDocId;
+    var closeResult;
+    
+
+    
+    for (currentDocId in currentDocs) {
+        if (currentDocId == param.documentId) {
+            if (!param.mode){
+                param.mode = currentDocs[currentDocId].mode;
+            }
+            if (currentDocs[currentDocId].mode != param.mode){
+                return tryToCloseDocument(param);
+            }
+        }
+    }
+    
+    if (!param.mode){
+        param.mode = 'view';
+    }
+    
+    return true;
+}
 
 function initListeners()
 {
@@ -408,6 +433,7 @@ function initListeners()
     applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
     applicationEvent.subscribe("postChangeSelectedFamily", updateCurrentFamilyPreference);
 
+    applicationEvent.subscribe("preOpenDocument", prepareDoc);
     applicationEvent.subscribe("openDocument", updateCurrentOpenDocumentPreference);
     applicationEvent.subscribe("openDocument", addDocumentToOpenList);
     applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
@@ -424,6 +450,8 @@ function initListeners()
     applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference", updateOpenDocumentList);
 
     applicationEvent.subscribe("askForCloseDocument", tryToCloseDocument);
+    
+    applicationEvent.subscribe("askForOpenDocument", tryToOpenDocument);
 
     applicationEvent.subscribe("closeDocument",removeDocumentFromOpenList);
     applicationEvent.subscribe("postCloseDocument", closeDocument);
@@ -474,9 +502,7 @@ function changeFamily(value) {
 
 function tryToOpenDocument(param) {
     logIHM("try to change open document");
-    if (param && param.documentId) {
-        param.mode = param.mode || '';
-    }else{
+    if (!(param && param.documentId)) {
         return false;
     }
     if (!applicationEvent.publish("preOpenDocument", param)) {
@@ -487,10 +513,14 @@ function tryToOpenDocument(param) {
         applicationEvent.publish("openDocument", param);
         applicationEvent.publish("postOpenDocument", param);
     }
+    return true;
 }
 
 function tryToCloseDocument(param) {
     logConsole("try to close document "+param.documentId);
+    if (!(param && param.documentId)) {
+        return false;
+    }
     if (!applicationEvent.publish("preCloseDocument", param)) {
         //TODO add alert message
         alert("unable to close selected document");
@@ -499,6 +529,7 @@ function tryToCloseDocument(param) {
         applicationEvent.publish("closeDocument", param);
         applicationEvent.publish("postCloseDocument", param);
     }
+    return true;
 }
 
 //shortcut
