@@ -163,6 +163,8 @@ function openDocument(config) {
                     documentRepresentation = document.createElement('vbox');
                     documentRepresentation.setAttribute('flex', 1);
                     documentRepresentation.setAttribute('initid', config.documentId);
+                    documentRepresentation.setAttribute('fromid', doc.getProperty('fromid'));
+                    documentRepresentation.setAttribute('fromname', doc.getProperty('fromname'));
                     documentRepresentation.id = documentRepresentationId;
                     documentRepresentation.style.MozBinding = template;
                     documentRepresentation = deck.appendChild(documentRepresentation);
