@@ -9,7 +9,6 @@ Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/events.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
-Cu.import("resource://modules/offlineSynchronize.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
@@ -22,12 +21,16 @@ window.onload = function() {
     initNetworkCheck();
     initListeners();
     initApplication();
-    initSession(true);
+    initSession();
     initValues();
 }
 
-/* Dialog opener */
+function initNetworkCheck() {
+    networkChecker.isOffline();
+    setTimeout(initNetworkCheck, 15);
+}
 
+/* Dialog opener */
 function openLoginDialog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
     "chrome,modal");

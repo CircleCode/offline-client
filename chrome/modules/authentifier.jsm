@@ -6,7 +6,9 @@ Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/fdl-data-debug.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
+Cu.import("resource://modules/offlineSynchronize.jsm");
 Cu.import("resource://modules/preferences.jsm");
+Cu.import("resource://modules/StringBundle.jsm");
 
 var EXPORTED_SYMBOLS = ["authentificator"];
 
@@ -22,6 +24,7 @@ var authentificator = function() {
             currentPassword : "",
             currentAppURL : "",
             result : {},
+            translate : new StringBundle("chrome://dcpoffline/locale/main.properties"),
             //profileService : Cc["@mozilla.org/toolkit/profile-service;1"].createInstance(Ci.nsIToolkitProfileService),            
 
             authentifier : function(modeOffline, currentLogin, currentPassword, currentAppURL) {
@@ -29,7 +32,7 @@ var authentificator = function() {
 
                 logConsole("try to authent");
                 if (! (currentLogin && currentPassword && currentAppURL)) {
-                    return {result : null , reason : "authent.logInfoIncomplete"};
+                    return {result : null , reason : this.translate.get("authent.logInfoIncomplete")};
                 }
 
                 this.modeOffline = modeOffline;
@@ -38,14 +41,11 @@ var authentificator = function() {
                 this.currentAppURL = currentAppURL;
 
                 if (this.modeOffline) {
-                    logConsole("mode offline");
                     this.authentOffline();
                 }else {
                     if (this.guessNetworkState()) {
-                        logConsole("try to authent online");
                         this.authentOnline();
                     }else {
-                        logConsole("no network");
                         this.authentOffline();
                     }
 
@@ -57,9 +57,7 @@ var authentificator = function() {
                 var isAuthentified;
                 var currentProfile;
                 context.url = this.currentAppURL;
-                logConsole("try to connect");
                 if (context.isConnected()) {
-                    logConsole("try to authent");
                     isAuthentified = context.setAuthentification({
                         login : this.currentLogin,
                         password : this.currentPassword
@@ -72,29 +70,30 @@ var authentificator = function() {
                         }
                         this.profileService.selectedProfile = currentProfile;
                         this.profileService.flush();*/
+                        offlineSync.recordOfflineDomains();
                         this.result = {result : true};
                     }else {
-                        this.result = {result : false, reason : "authent.serverDisagree"};
+                        this.result = {result : false, reason : this.translate.get("authent.serverDisagree")};
                     }
                 }else {
-                    this.result = {result : false, reason : "authent.serverUnreachable"};
+                    this.result = {result : false, reason : this.translate.get("authent.serverUnreachable")};
                 }
             },
 
             authentOffline : function() {
-                var currentProfile;
+                /*var currentProfile;
                 try {
-                    /*currentProfile = this.profileService.getProfileByName(this.getProfileName());
+                    currentProfile = this.profileService.getProfileByName(this.getProfileName());
                     this.profileService.selectedProfile = currentProfile;*/
                     if (this.checkPassword()) {
                         this.result = {result : true};
                     }else {
-                        this.result = {result : false, reason : "authent.badPassword"};
+                        this.result = {result : false, reason : this.translate.get("authent.badPassword")};
                     }
-                }
+                /*}
                 catch(NS_ERROR_FAILURE) {
-                    this.result = {result : false, reason : "authent.nonExistentProfilOffline"};
-                }
+                    this.result = {result : false, reason : translate.get("authent.nonExistentProfilOffline")};
+                }*/
             },
 
             getProfileName : function() {
@@ -102,7 +101,7 @@ var authentificator = function() {
             },
 
             checkPassword : function() {
-                if (Preferences.get("offline.user.password") == currentPassword) {
+                if (Preferences.get("offline.user.password") == this.currentPassword) {
                     return true;
                 }
                 return false;

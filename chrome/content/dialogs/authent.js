@@ -15,16 +15,13 @@ Cu.import("resource://modules/events.jsm");
 function doOk() {
     logIHM('Authent : doOk');
 
-    var login = document.getElementById('login').value;
-    var password = document.getElementById('password').value;
-    var remember = document.getElementById('remember').checked;
-
-    if (remember) {
-        Preferences.set("offline.user.login", login);
-        Preferences.set("offline.user.password", password);
+    if (document.getElementById('remember').checked) {
+        Preferences.set("offline.user.login", document.getElementById('login').value);
+        Preferences.set("offline.user.password", document.getElementById('password').value);
+        Preferences.set("offline.application.modeOffline", document.getElementById('modeOffline').checked);
     }
 
-    tryToAuthent();
+    this.tryToAuthent();
     return false;
 }
 /**
@@ -48,16 +45,17 @@ function tryToAuthent() {
     document.getElementById('login').disabled = true;
     document.getElementById('password').disabled = true;
     document.getElementById('remember').disabled = true;
+    document.getElementById('modeOffline').disabled = true;
     
     document.getElementById('progressGroup').hidden = false;
+    document.getElementById('errorGroup').hidden = true;
     
   //get last value
     var currentLogin = document.getElementById('login').value;
     var currentPassword = document.getElementById('password').value;
     var currentApplicationURl = Preferences.get("offline.user.applicationURL", "");
     
-    //var modeOffline = Preferences.get("offline.application.modeOffline", false);
-    var modeOffline = false;
+    var modeOffline = document.getElementById('modeOffline').checked;
     var authentReturn ;
     
     authentReturn = authentificator.authent(modeOffline, currentLogin, currentPassword, currentApplicationURl);
@@ -68,9 +66,15 @@ function tryToAuthent() {
         window.close();
     }else {
         logIHM(authentReturn.reason);
+        if (authentReturn.reason) {
+            document.getElementById('errorLabel').value = authentReturn.reason;
+            document.getElementById('errorGroup').hidden = false;
+        }
+        
         document.getElementById('login').disabled = false;
         document.getElementById('password').disabled = false;
         document.getElementById('remember').disabled = false;
+        document.getElementById('modeOffline').disabled = false;
         document.getElementById('progressGroup').hidden = true;
     }
 }
@@ -82,6 +86,7 @@ function doLoad() {
     
     document.getElementById('login').value = Preferences.get("offline.user.login", "");
     document.getElementById('password').value = Preferences.get("offline.user.password", "");
+    document.getElementById('modeOffline').checked = Preferences.get("offline.application.modeOffline", false);
     document.getElementById('applicationURL').value = Preferences.get("offline.user.applicationURL", "");
     
     setTimeout(tryToAuthent, 10);
