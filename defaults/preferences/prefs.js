@@ -24,15 +24,15 @@ pref("dom.report_all_js_exceptions", true);
 pref("general.useragent.locale", "fr-FR");
 
 /* application prefs */
-//pref("dcpoffline.storage.location", "chrome://content/db/storage.sqlite");
+// TODO all notations to update and merge with recent
 pref("dcpoffline.storage.fileName", "storage.sqlite");
 pref("dcpoffline.storage.location", "ProfD");
-
+pref("dcpoffline.domain", "default");
 pref("dcpoffline.context.url", "http://dynacase.r2d2/dev/");
-
 pref("dcpoffline.online.url", "http://dynacase.r2d2/dev/");
 
 pref("offline.user.login", "");
 pref("offline.user.password", "");
 pref("offline.user.applicationURL", "http://dynacase.r2d2.paris.lan/dev/");
-pref("dcpoffline.domain", "default");
+
+pref("offline.application.modeOffline", false);

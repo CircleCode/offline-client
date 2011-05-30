@@ -123,7 +123,7 @@
         <splitter collapse="before">
             <grippy />
         </splitter>
-        <deck id="documentsDeck">
+        <deck id="documentsDeck" flex="1">
             <vbox id="vboxDocument-void">
             </vbox>
         </deck>
