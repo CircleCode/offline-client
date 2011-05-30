@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS "attrmappings" (
     "famid"             INTEGER NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
     "attrid"            TEXT NOT NULL,
     "columnid"          TEXT NOT NULL ,
+    "label"             TEXT,
     "isabstract"        BOOLEAN NOT NULL DEFAULT FALSE,
     "istitle"           BOOLEAN NOT NULL DEFAULT FALSE,
     "ismultiple"        BOOLEAN NOT NULL DEFAULT FALSE,
@@ -119,9 +120,9 @@ CREATE TABLE IF NOT EXISTS "enums" (
     "famid"             INTEGER NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
     "attrid"            TEXT NOT NULL REFERENCES attrmappings("attrid") ON UPDATE CASCADE,
     "key"               TEXT NOT NULL,
-    "value"             TEXT NOT NULL,
+    "label"             TEXT NOT NULL,
 
-    PRIMARY KEY ("famid", "attrid") ON CONFLICT REPLACE
+    PRIMARY KEY ("famid", "attrid", "key") ON CONFLICT REPLACE
 );
 
 CREATE TABLE IF NOT EXISTS "doctitles" (

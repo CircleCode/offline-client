@@ -6,16 +6,13 @@
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://dcpoffline/content/templates/attr-bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://dcpoffline/content/bindings/system/system-bindings.css" type="text/css"?>
+
+<?xml-stylesheet href="chrome://dcpoffline/content/bindings/ckeditor/ckeditor-binding.css" type="text/css"?>
 
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="openLoginDialog(); initListeners();">
-    
-    <stringbundleset id="stringbundleset">
-        <stringbundle id="mainBundle"
-            src="chrome://dcpoffline/locale/main.properties" />
-    </stringbundleset>
+    onclose="launchClose();">
     
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
@@ -55,7 +52,7 @@
                         <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;"
                             oncommand="start_venkman()" />
                         <menuitem id="debug-launch-method" label="&menu.debug.eric;"
-                            oncommand='window.open("chrome://dcpoffline/content/debug-eric.xul","Eric", "chrome,centerscreen");' />
+                            oncommand='window.open("chrome://dcpoffline/content/debug/debug-eric.xul","Eric", "chrome,centerscreen");' />
                         <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
                             oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
                     </menupopup>
@@ -70,12 +67,16 @@
                     <query><![CDATA[
                         SELECT title, icon, famid 
                         FROM families 
-                        WHERE famid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam)
-                        ORDER BY title]]>
+                        WHERE famid IN 
+                            (SELECT initid
+                            FROM docsbydomain
+                            WHERE domainid = :domainIdParam)
+                        ORDER BY title
+                    ]]>
                         <param id="famDomainIdParam" name="domainIdParam" type="integer">0</param>
                     </query>
                     <action>
-                        <richlistitem uri="?"  onclick="selectFamily('?famid ');">
+                        <richlistitem uri="?" value="?famid" onclick="changeFamily(this.value);">
                             <hbox >
                                 <image src="file://?icon" style="margin : 2px" tooltiptext="?title" width="48px" height="48px"/>
                             </hbox >
@@ -84,28 +85,32 @@
                 </template>
             </richlistbox>
         </vbox>
-        <vbox width="300px" persist="width">
+        <vbox width="200px" persist="width">
             <vbox>
+                <menulist id="openDocumentList" oncommand='tryToOpenDocument({documentId : this.value});'>
+                    <menupopup>
+                        
+                    </menupopup>
+                </menulist>
                 <button label="&main.newDocument;" onclick="openNewDocumentDialog()"/>
                 <hbox flex="1">
-                    <textbox type="search" id="searchTitle" value="" oncommand="updateAbstract()" placeholder="&main.abstract.search;" />
+                    <textbox type="search" id="searchTitle" value="" oncommand="updateAbstractList( { searchValue : this.value} );" placeholder="&main.abstract.search;" />
                 </hbox>
-                <label value="Current criteria"/>
-                <label id="currentCriteria" value=""/>
             </vbox>
             <vbox flex="1">
                 <richlistbox id="abstractList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
                         <query><![CDATA[ 
-                                SELECT title, initid 
-                                FROM documents 
-                                WHERE initid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam) AND fromid = :famId AND title LIKE :searchTitle ]]>
+                            SELECT title, initid 
+                            FROM documents 
+                            WHERE initid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam) AND fromid = :famId AND title LIKE :searchTitle 
+                        ]]>
                             <param id="abstractDomainIdParam" name="domainIdParam" type="integer">0</param>
                             <param id="famIdParam" name="famId" type="integer">0</param>
                             <param id="searchTitleParam" name="searchTitle">%</param>
                         </query>
                         <action>
-                            <richlistitem uri="?" onclick='displayDoc(?initid );'>
+                            <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument({documentId : this.value});'>
                                 <vbox >
                                     <label value="?title" />
                                 </vbox>
@@ -118,32 +123,26 @@
         <splitter collapse="before">
             <grippy />
         </splitter>
-        <tabbox id="onefam-content-tabbox" flex="1">
-            <tabs>
-                <tab label="&welcome;" />
-            </tabs>
-            <tabpanels flex="1">
-                <tabpanel flex="1">
-                    <textbox flex="1" multiline="true" id="document" value="" />
-                </tabpanel>
-            </tabpanels>
-        </tabbox>
+        <deck id="documentsDeck" flex="1">
+            <vbox id="vboxDocument-void">
+            </vbox>
+        </deck>
     </hbox>
     <statusbar>
         <hbox flex="1">
-            <spacer flex="1"/>
-            <menulist label="&main.domain.choose;" oncommand="changeDomain(this.value)">
-                <menupopup id='domainList' datasources="profile:storage.sqlite" ref="*" querytype="storage" >
+            <menulist id="domainList" label="&main.domain.choose;" oncommand="changeDomain(this.value)" >
+                <menupopup id='domainPopupList' datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
                         <query>
                         <![CDATA[ select description, id from domains]]>
                         </query>
                         <action>
-                            <menuitem uri="?" label="?description" value="?id"/>
+                            <menuitem uri="?" label="?description" value="?id" flex="1"/>
                         </action>
                     </template>
                 </menupopup>
             </menulist>
+            <spacer flex="1"/>
             <statusbarpanel label="Connection status" />
         </hbox>
     </statusbar>

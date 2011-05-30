@@ -58,7 +58,7 @@ function getAttrMapping(config){
                          properties: {}
                     };
                     var r = storageManager.execQuery({
-                        query : "SELECT famid, attrid, columnid, ismultiple, isproperty, type"
+                        query : "SELECT famid, attrid, columnid, ismultiple, isproperty, type, label"
                                 + " FROM " + TABLES_MAPPING
                                 + " WHERE famid = :fromid",
                         params : {
@@ -315,6 +315,7 @@ var storageManager = {
                         attrId      : columnId,
                         istitle     : false,
                         isabstract  : false,
+                        label       : '',
                         ismultiple  : typeof(properties[columnId]) === 'object',
                         isproperty  : true,
                         type        : 'property'
@@ -341,6 +342,7 @@ var storageManager = {
                             isabstract  :  attribute.inAbstract,
                             ismultiple  : attribute.inArray() || (attribute.getOption('multiple')==='yes'),
                             isproperty  : false,
+                            label       : attribute.getLabel(),
                             type        : attribute.type
                         });
                         virtualColumnRang++;
@@ -462,8 +464,8 @@ var storageManager = {
 */
                 // at the end, we insert the mappings in TABLES_MAPPING
                 var mappingQuery = "INSERT INTO " + TABLES_MAPPING
-                        + " (famid, attrid, columnid, ismultiple, isabstract, istitle, isproperty, type)"
-                        + " VALUES (:famid, :attrid, :columnid, :ismultiple, :isabstract, :istitle, :isproperty, :type)";
+                        + " (famid, attrid, columnid, ismultiple, isabstract, istitle, isproperty, type, label)"
+                        + " VALUES (:famid, :attrid, :columnid, :ismultiple, :isabstract, :istitle, :isproperty, :type, :label)";
                 try{
                     var mappingStmt = dbCon.createStatement(mappingQuery);
                     var mappingParams = mappingStmt.newBindingParamsArray();
@@ -476,6 +478,7 @@ var storageManager = {
                         bp.bindByName("istitle", mapping.istitle);
                         bp.bindByName("isabstract", mapping.isabstract);
                         bp.bindByName("isproperty", mapping.isproperty);
+                        bp.bindByName("label", mapping.label);
                         bp.bindByName("type", mapping.type);
                         mappingParams.addParams(bp);
                     }
@@ -573,7 +576,7 @@ var storageManager = {
                         var value = properties[propertyId];
                         if (Array.isArray(value)) {
                             value = JSON.stringify(value);
-                        }
+                        } 
                         columns.push(propertyId);
                         params[propertyId] = value;
                     }
@@ -680,14 +683,14 @@ var storageManager = {
     getDomainValues : function(config){
         if(config){
             if(config.domainid){
-                var where = "domainid = :domainid";
+                var where = "id = :domainid";
                 var params = {
-                    domainid : domainid
+                    domainid : config.domainid
                 };
             } else if (config.name){
                 var where = "name = :domainname";
                 var params = {
-                        name: domainname
+                        name: config.name
                 };
             } else {
                 throw "storageManager::getDomainValues (missing parameters)";
@@ -697,7 +700,7 @@ var storageManager = {
                     + " WHERE " + where;
             config.params = params;
             try{
-                var value = this.execQuery(config);
+                var values = this.execQuery(config);
             } catch(e){
                 logError('storageManager::getDomainValues');
                 logError(e);
@@ -706,7 +709,12 @@ var storageManager = {
         } else {
             throw "storageManager::getDomainValues (missing parameters)";
         }
-        return values;
+        if (values.length == 1) {
+            return values[0];
+        } else {
+            throw "storageManager::no domain find";
+        }
+        
     },
     saveDomainValues : function(config){
         if(config){

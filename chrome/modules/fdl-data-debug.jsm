@@ -553,7 +553,7 @@ Fdl.print_r = function(obj, maxlevel) {
 	if (!maxlevel)
 		maxlevel = 1;
 	var names = Fdl._print_r(obj, 0, maxlevel);
-	alert(names);
+	throw(names);
 };
 /**
  * to record url to access to freedom server
@@ -694,7 +694,7 @@ Fdl.retrieveData = function(urldata, parameters, anonymousmode) {
 	var ANAKEENBOUNDARY = '--------Anakeen www.anakeen.com 2009';
 	
 	/*
-	 * if ((!anonymousmode) && ! Fdl.isAuthenticated()) { alert('not
+	 * if ((!anonymousmode) && ! Fdl.isAuthenticated()) { throw('not
 	 * authenticate'); return null; }
 	 */
 	var xreq=null;
@@ -763,8 +763,8 @@ Fdl.retrieveData = function(urldata, parameters, anonymousmode) {
 				if (r.error)
 					Fdl.setErrorMessage(r.error);
 			} catch (ex) {
-				alert('error on serveur data');
-				alert(xreq.responseText);
+				throw('error on serveur data');
+				throw(xreq.responseText);
 			}
 			return r;
 		} else {
@@ -1120,13 +1120,13 @@ Fdl.createDocument = function(config) {
  * <pre><code>
   var C=new Fdl.Context({url:'http://my.freedom/'});
   if (! C.isConnected()) {   
-    alert('error connect:'+C.getLastErrorMessage());
+    throw('error connect:'+C.getLastErrorMessage());
     return;
   }
   
   if (! C.isAuthenticated()) {
     var u=C.setAuthentification({login:'admin',password:'anakeen'});
-    if (!u)  alert('error authent:'+C.getLastErrorMessage());    
+    if (!u)  throw('error authent:'+C.getLastErrorMessage());    
   }
   &lt;core&gt;
  * </pre>
@@ -1291,8 +1291,11 @@ Fdl.Context.prototype.connect = function(config) {
  *            config
  *            <p>
  *            <ul>
- *            <li><b>reset:</b> Boolean (Optional) set to true to force a new
- *            ping
+ *            <li><b>reset:</b> Boolean (Optional) set to true to force a new ping</li>
+ *            <li><b>timeout:</b> Number (Optional) millisecond to wait connection/ need to have callback</li>
+  *           <li><b>onConnect:</b> Function (Optional) callback call when connection is ok</li>
+  *           <li><b>onFail:</b> Function (Optional) callback call when connection has failed</li>
+
  *            </ul>
  *            </p>
  * @return {Boolean} true if connected
@@ -1300,11 +1303,43 @@ Fdl.Context.prototype.connect = function(config) {
 Fdl.Context.prototype.isConnected = function(config) {
 	if (typeof config == 'object' && config.reset) this._isConnected = null;
 	if (this._isConnected === null && this.url) {
+	    var lconfig={};
+	    var me=this;
+	    if (config && config.onConnect && config.onFail) {
+	        lconfig.onComplete=function () {
+	            me._isConnected=true;
+	            if (me._connectTimeId) {
+	                clearTimeout(me._connectTimeId);
+	                me._connectTimeId=0;
+	            }
+	            config.onConnect();
+	        };
+            lconfig.onError=function (x) {
+                if (me._isConnected === null) {
+                    me._isConnected=false;
+                    if (me._connectTimeId) {
+                        clearTimeout(me._connectTimeId);
+                        me._connectTimeId=0;
+                    }
+                    config.onFail();
+                }
+            };
+            
+            if (config.timeout > 0) {
+                me._connectTimeId=setTimeout(function () {
+                    if (me._isConnected === null) {
+                        me._isConnected=false;
+                        me._connectTimeId=0;
+                        config.onFail();
+                    }
+                },config.timeout);
+            }
+	    }
 		var data = this.retrieveData( {
 			app : 'DATA',
 			action : 'USER',
 			method : 'ping'
-		}, config, true);
+		}, lconfig, true);
 		this._serverTime = null;
 		if (data) {
 			if (data.error) {
@@ -1502,6 +1537,21 @@ Fdl.Context.prototype.retrieveData = function(urldata, parameters,
 	var sync = true;
 
 	if (xreq) {
+	    if (parameters && parameters.onComplete) {
+	        sync=false;
+	        xreq.onreadystatechange=function () {
+	            if (xreq.readyState == 4) {
+	                if (xreq.status == 200) {
+	                    parameters.onComplete(xreq);
+	                } else {
+	                    if (parameters.onError) {
+	                        parameters.onError(xreq);
+	                    }
+	                }
+	            }
+	           
+	        }
+	    }
 		var url = this.url;
 		if (!url)
 			url = '/';
@@ -1547,41 +1597,43 @@ Fdl.Context.prototype.retrieveData = function(urldata, parameters,
 			}
 		}
 		try {
-			if (bsend.length == 0)
-				xreq.send('');
-			else
-				xreq.send(bsend);
+		    if (bsend.length == 0)
+		        xreq.send('');
+		    else
+		        xreq.send(bsend);
 		} catch (e) {
-			this.setErrorMessage('HTTP status: unable to send request');
+		    this.setErrorMessage('HTTP status: unable to send request');
 		}
-		if (xreq.status == 200) {
-			var r = false;
-			try {
-				var db1=new Date().getTime();
-				if (parameters && parameters.plainfile) {
-					r =  xreq.responseText;
-				} else {
-				r = eval('(' + xreq.responseText + ')');
-				if (this.debug) r["evalDebugTime"]=(new Date().getTime())-db1;
-				if (r.error) this.setErrorMessage(r.error);
-                if (r.log) {
-                	console.log('datalog:',r.log);
-                	delete r.log;
-                }
-				if (r.spentTime)
-					console.log( {
-						time : r.spentTime
-					});
-            	    delete r.spentTime;
-				}
-			} catch (ex) {
-				alert('error on serveur data');
-				alert(xreq.responseText);
-			}
-			return r;
-		} else {
-			if (xreq)
-				this.setErrorMessage('HTTP status:' + xreq.status);
+		if (sync) {
+		    if (xreq.status == 200) {
+		        var r = false;
+		        try {
+		            var db1=new Date().getTime();
+		            if (parameters && parameters.plainfile) {
+		                r =  xreq.responseText;
+		            } else {
+		                r = eval('(' + xreq.responseText + ')');
+		                if (this.debug) r["evalDebugTime"]=(new Date().getTime())-db1;
+		                if (r.error) this.setErrorMessage(r.error);
+		                if (r.log) {
+		                    console.log('datalog:',r.log);
+		                    delete r.log;
+		                }
+		                if (r.spentTime)
+		                    console.log( {
+		                        time : r.spentTime
+		                    });
+		                delete r.spentTime;
+		            }
+		        } catch (ex) {
+		            throw('error on serveur data');
+		            throw(xreq.responseText);
+		        }
+		        return r;
+		    } else {
+		        if (xreq)
+		            this.setErrorMessage('HTTP status:' + xreq.status);
+		    }
 		}
 	}
 	return false;
@@ -2069,7 +2121,7 @@ Fdl.Context.prototype.getParameter = function (config) {
 var C=new Fdl.Context({url:'http://my.freedom/'});
 var d=C.getDocument({id:9});
 d.fireEvent=function (code,args) {
-      alert("fireevent"+code+args);
+      throw("fireevent"+code+args);
 }
 
 var n=C.getNotifier();
@@ -2117,7 +2169,7 @@ Fdl.Notifier.prototype.toString= function() {
 var C=new Fdl.Context({url:'http://my.freedom/'});
 var d=C.getDocument({id:9});
 d.fireEvent=function (code,args) {
-      alert("fireevent"+code+args);
+      throw("fireevent"+code+args);
 }
 
 var n=C.getNotifier();
@@ -2215,7 +2267,7 @@ Fdl.Notifier.prototype.loop = function(config) {
 						try {
 							this.subscribeItems[j].object[this.subscribeItems[j].callback](r[i].code,r[i]);
 						} catch(exception) {
-							//alert(exception);
+							//throw(exception);
 						}
 					}
 				}
@@ -2325,7 +2377,7 @@ var C=new Fdl.Context({url:'http://my.freedom/'});
   
 var d=C.getDocument({id:9});
 if (d && d.isAlive()) {
-    alert(d.getTitle());
+    throw(d.getTitle());
 }
  * </code></pre>
  * @namespace Fdl.Document
@@ -2386,7 +2438,7 @@ Fdl.Document.prototype = {
 		    if (data.requestDate) this.requestDate=data.requestDate;
 		    return true;
 		} else {
-		    alert('error no properties');
+		    throw('error no properties');
 		}
 	    } else {
 		this.context.setErrorMessage(data.error);
@@ -2904,12 +2956,12 @@ Fdl.Document.prototype.save = function(config) {
  var doc=context.getDocument({id:6790});
  if (! doc.save({form:document.getElementById('myform'),callback:mycallback })) {    
     var t='ERROR:'+Fdl.getLastErrorMessage();
-    alert(t);
+    throw(t);
   }
   
 function mycallback(doc) {
   // I am after saved
-  alert(doc.getValue('ba_desc'));
+  throw(doc.getValue('ba_desc'));
 }
 
  * </code><pre>
@@ -2943,7 +2995,7 @@ Fdl.Document.prototype.savefromform = function(config) {
 			} catch (ex) {
 			}
 		}
-		//	if (t.contentDocument.body.firstChild) alert(t.contentDocument.body.firstChild.innerHTML);
+		//	if (t.contentDocument.body.firstChild) throw(t.contentDocument.body.firstChild.innerHTML);
 
 		//	console.log(document.getElementById(f.target));
 		f.action=oriaction;
@@ -3509,7 +3561,7 @@ Fdl.DocumentList.prototype = {
 					data : this.content[i]
 				}));
 			} else
-				alert('FdlDocuments: error in returned');
+				throw('FdlDocuments: error in returned');
 		}
 		return out;
 	},
@@ -4714,18 +4766,18 @@ var C=new Fdl.Context({url:'http://my.freedom/'});
 var user;
 if (! C.isAuthenticated()) {
   user=C.setAuthentification({login:'admin',password:'anakeen'});
-  if (!user)  alert('error authent:'+C.getLastErrorMessage());    
+  if (!user)  throw('error authent:'+C.getLastErrorMessage());    
 } else {
   user=C.getUser();
 }
 if (user) {
-  alert(user.getDisplayName());
+  throw(user.getDisplayName());
   var duid=u.getUserDocumentIdentificator();
     if (duid) {
       var d=C.getDocument({id:duid});
       if (d && d.isAlive()) {
           var phone=d.getValue("us_phone");
-	  alert('Phone:'+phone);
+	  throw('Phone:'+phone);
       }
     }
 }
@@ -5267,7 +5319,7 @@ Fdl.RelationAttribute.prototype.toString = function() {
  * @return string the title of the document linked
  */
 Fdl.RelationAttribute.prototype.getTitle = function() {
-	alert('do not use relationAttribut::getTitle');
+	throw('do not use relationAttribut::getTitle');
 	return this._family.getValue(this.id + '_title');
 };
 /**
@@ -6476,20 +6528,20 @@ Fdl.Workflow.prototype.removeTransitionType = function(config) {
   var r=g.submit();
   // the result is :
   var mydoc=r.get('d');
-  if (r.get('l')) alert('the doc '+mydoc.getTitle()+ 'is locked by me');
-  else alert(r.getError('l'));
+  if (r.get('l')) throw('the doc '+mydoc.getTitle()+ 'is locked by me');
+  else throw(r.getError('l'));
   var content=r.get('c');
   
   for (var ic=0;ic&lt;content.length;ic++) {
-  	alert((ic+1)+') '+content[ic].getTitle());
+  	throw((ic+1)+') '+content[ic].getTitle());
   }
   var iter=r.get('z');
-  alert('testing lock of content');
+  throw('testing lock of content');
   for (var ic=0;ic&lt;iter.length;ic++) {
   	if (iter[ic].error) {
-  	    alert((ic+1)+') lock failed for '+iter[ic].document.getTitle()+ ': &lt;span style="color:red"&gt;'+iter[ic].error+'&lt;/span&gt;');
+  	    throw((ic+1)+') lock failed for '+iter[ic].document.getTitle()+ ': &lt;span style="color:red"&gt;'+iter[ic].error+'&lt;/span&gt;');
   	} else {
-  	    alert((ic+1)+') lock succeded for '+iter[ic].document.getTitle());
+  	    throw((ic+1)+') lock succeded for '+iter[ic].document.getTitle());
   	}
    }
  * </code></pre>
@@ -6502,12 +6554,12 @@ Fdl.Workflow.prototype.removeTransitionType = function(config) {
 	g.addRequest({locks:g.foreach('s').callMethod('lock')});
 	var r=g.submit();
 	var iter=r.get('locks');
-    alert('testing lock of selection');
+    throw('testing lock of selection');
     for (var ic=0;ic&lt;iter.length;ic++) {
   	  if (iter[ic].error) {
-  	    alert((ic+1)+') lock failed for '+iter[ic].document.getTitle()+ ': &lt;span style="color:red"&gt;'+iter[ic].error+'&lt;/span&gt;');
+  	    throw((ic+1)+') lock failed for '+iter[ic].document.getTitle()+ ': &lt;span style="color:red"&gt;'+iter[ic].error+'&lt;/span&gt;');
   	  } else {
-  	    alert((ic+1)+') lock succeded for '+iter[ic].document.getTitle());
+  	    throw((ic+1)+') lock succeded for '+iter[ic].document.getTitle());
   	  }
     }
  * </code></pre>
