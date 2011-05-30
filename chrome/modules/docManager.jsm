@@ -36,11 +36,10 @@ docManagerSingleton.prototype = {
 	initDomain : function(config) {
 		if (config && config.domain) {
 			if (config.force || (this._docInstances[config.domain] === undefined)) {
+			    log("init domain " + config.domain + " at {}");
 				this._docInstances[config.domain] = {};
-				/*
-				 * this.retrieveDomain({ force: config.force, domain:
-				 * config.domain });
-				 */
+			} else {
+			    log("domain " + config.domain + " si already initialised");
 			}
 		}
 		return this;
@@ -51,6 +50,7 @@ docManagerSingleton.prototype = {
 	setActiveDomain : function(config) {
 		if (config) {
 			if (config.domain != this.getActiveDomain()) {
+	            log("switch ActiveDomain from: " + this.getActiveDomain() + " to " + config.domain);
 				if (!this._docInstances.hasOwnProperty(config.domain)) {
 					this.initDomain(config);
 				}
@@ -63,6 +63,7 @@ docManagerSingleton.prototype = {
 	 * get document from local database
 	 * @access public
 	 * @param config
+	 *     initid 
 	 * @return localDocument
 	 */
 	getLocalDocument : function(config) {
@@ -137,6 +138,7 @@ docManagerSingleton.prototype = {
 	 */
 	dropDocInstance : function(config) {
 		if (config && config.initid) {
+	        logConsole("config.domain: "+config.domain+" VS "+this.getActiveDomain());
 			if (!config.domain) {
 				config.domain = this.getActiveDomain();
 			}
@@ -172,7 +174,7 @@ docManagerSingleton.prototype = {
 	}
 };
 
-var docManager = new docManagerSingleton();
+var docManager = new docManagerSingleton();/*
 
 let defaultDomain = Preferences.get('dcpoffline.domain');
 log('default domain is [' + defaultDomain + ']');
@@ -180,5 +182,5 @@ if (defaultDomain) {
 	docManager.setActiveDomain({
 		domain : defaultDomain
 	});
-}
+}*/
 

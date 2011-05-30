@@ -33,30 +33,25 @@ function changeTab(){
 }
 
 function openDocument(initid, mode) {
+    mode = mode || 'view';
+    
+    var doc;
     var template;
     var box, tabPanel, tabBox, tab, tabId, tabPanelId;
+    
     if (initid) {
         try {
-            var doc = docManager.getLocalDocument({
+            doc = docManager.getLocalDocument({
                 initid : initid
             });
-            var templates = storageManager.execQuery({
-                query : "select * from templates where initid = :initid",
-                params : {
-                    initid : initid
-                }
-            });
-            if(! mode || (mode === 'view') ){
-                template = templates.viewtemplate;
-            } else if(mode === 'edit'){
-                template = templates.edittemplate;
+            template = doc.getBinding(mode);
+            if (template) {
+                template = 'url(file://' + template + ')';
             } else {
-                throw new ArgException("openDocument :: mode must either be 'edit' or 'view'. ["+mode+"] is invalid");
+                logConsole("using [file:///media/Data/Workspaces/xul/offline-client/chrome/content/bindings/families/document-ZOO_ANIMAL-Binding.xml#document-ZOO_ANIMAL-view)] as default template");
+                template = "url(file:///media/Data/Workspaces/xul/offline-client/chrome/content/bindings/families/document-ZOO_ANIMAL-Binding.xml#document-ZOO_ANIMAL-view)";
             }
-            if (!template) {
-                logConsole("using [url(chrome://dcpoffline/content/templates/document-animal.xml#document-animal)] as default template");
-                template = "url(chrome://dcpoffline/content/templates/document-animal.xml#document-animal)";
-            }
+            logConsole(template);
             if (template) {
                 tabBox = document.getElementById('onefam-content-tabbox');
                 tabId = 'tab-document-'+initid;
