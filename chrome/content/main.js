@@ -244,8 +244,8 @@ function updateOpenDocumentList()
 
     documentList.removeAllItems();
     documentList.selectedIndex = -1;
-    if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
-        var currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
+    if (getListOfOpenDocuments()) {
+        var currentDocs = getListOfOpenDocuments();
         var currentDocId;
 
         for (currentDocId in currentDocs) {
@@ -262,8 +262,8 @@ function addDocumentToOpenList(config)
     logIHM("addDocumentToOpenList");
     var currentDocs = {};
     if (config && config.documentId) {
-        if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
-            currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
+        if (getListOfOpenDocuments()) {
+            currentDocs = getListOfOpenDocuments();
         }
         var title = docManager.getLocalDocument({initid : config.documentId}).getTitle();
         currentDocs[config.documentId] = { title : title, mode : config.mode};
@@ -277,8 +277,8 @@ function removeDocumentFromOpenList(config)
     logIHM("removeDocumentFromOpenList");
     var currentDocs = {};
     if (config && config.documentId) {
-        if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
-            currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
+        if (getListOfOpenDocuments()) {
+            currentDocs = getListOfOpenDocuments();
         }
         delete currentDocs[config.documentId];
         Preferences.set("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments",JSON.stringify(currentDocs));
@@ -522,7 +522,7 @@ function getCurrentDocument() {
     return currentOpenDocument;
 }
 
-function getOpenListOfOpenDocuments() {
+function getListOfOpenDocuments() {
     var openList = {};
     try {    
         openList = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", "{}"));
