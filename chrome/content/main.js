@@ -19,6 +19,7 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
 /* Add window binding onLoad and onClose*/
 window.onload = function() {
+    initNetworkCheck();
     initListeners();
     initApplication();
     initSession(true);
@@ -73,7 +74,7 @@ function initApplication()
 
 function initSession(firstLaunch) 
 {
-    var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
+    /*var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
     var login = Preferences.get("offline.user.login", false);
     var password = Preferences.get("offline.user.password", false);
     var applicationURL = Preferences.get("offline.user.applicationURL", false);
@@ -116,7 +117,8 @@ function initSession(firstLaunch)
             return;
         }
     }
-    applicationEvent.publish("close");
+    applicationEvent.publish("close");*/
+    this.openLoginDialog();
 }
 
 /* interface element */
@@ -136,11 +138,16 @@ function close()
     Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
 }
 
+function reload()
+{
+    Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit|Ci.nsIAppStartup.eRestart);
+}
+
 function openDocument(config) {
     
     logIHM("openDocument "+config.documentId);
     
-    var doc;
+    var doc, mode;
     var template;
     var deck;
     var documentRepresentationId, documentRepresentation;
@@ -163,6 +170,8 @@ function openDocument(config) {
                         documentRepresentation = document.createElement('vbox');
                         documentRepresentation.setAttribute('flex', 1);
                         documentRepresentation.setAttribute('initid', config.documentId);
+                        documentRepresentation.setAttribute('fromid', doc.getProperty("fromid"));
+                        documentRepresentation.setAttribute('fromname', doc.getProperty("fromname"));
                         documentRepresentation.id = documentRepresentationId;
                         documentRepresentation.style.MozBinding = template;
                         documentRepresentation = deck.appendChild(documentRepresentation);
@@ -390,6 +399,12 @@ function setPrefCurrentOpenDocument(propagEvent)
     if (propagEvent === true) {
        tryToOpenDocument(null);
     }
+}
+
+function initNetworkCheck() 
+{
+    networkChecker.isOffline();
+    window.setInterval(initNetworkCheck, 60000);
 }
 
 function initListeners()

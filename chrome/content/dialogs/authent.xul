@@ -6,53 +6,54 @@
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    id="authent-dialog"
-    title="&login.dialogTitle;"
-    buttons="accept,cancel"
-    ondialogaccept="return doOk();"
-    ondialogcancel="return doCancel();"
-    onload ="doLoad()">
-    
+    id="authent-dialog" title="&authent.dialog;" buttons="accept,cancel"
+    ondialogaccept="return doOk();" ondialogcancel="return doCancel();"
+    onload="doLoad()">
     <stringbundleset id="stringbundleset">
-        <stringbundle id="mainBundle" src="chrome://dcpoffline/locale/main.properties"/>
+        <stringbundle id="mainBundle"
+            src="chrome://dcpoffline/locale/main.properties" />
     </stringbundleset>
-    
-    <script type="application/javascript" 
-        src="chrome://dcpoffline/content/dialogs/authent.js"/>
-
+    <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/authent.js" />
     <vbox flex="1">
+        <groupbox id="progressGroup" flex="1">
+            <caption>
+                <label value="&authent.login.progress;" />
+            </caption>
+            <progressmeter id="progress" mode="undetermined" value="0" flex="1"/>
+        </groupbox>
         <groupbox flex="1">
-            <caption> 
-                <label value="&login.login;"/>
+            <caption>
+                <label value="&authent.login.groupbox;" />
             </caption>
             <grid flex="1">
                 <rows>
                     <row>
-                        <label value="&login;"/>
-                        <textbox id="login" value=""/> 
+                        <label value="&authent.login;" />
+                        <textbox id="login" value="" disabled="true" />
                     </row>
                     <row>
-                        <label value="&password;" />
-                        <textbox type="password" id="password" value=""/> 
+                        <label value="&authent.password;" />
+                        <textbox type="password" id="password"
+                            value="" disabled="true" />
+                    </row>
+                    <row>
+                        <label value="&authent.applicationURL;" />
+                        <textbox id="applicationURL" disabled="true" />
                     </row>
                 </rows>
             </grid>
         </groupbox>
-        <groupbox flex="1">
-            <caption> 
-                <label value="&login.option;"/>
+        <groupbox id="optionGroup" flex="1">
+            <caption>
+                <label value="&authent.login.option;" />
             </caption>
             <grid flex="1">
                 <rows>
                     <row>
-                        <label value="&applicationURL;"/>
-                        <textbox id="applicationURL"/>
-                    </row>
-                    <row>
-                        <label value="&login.remember;"/>
-                        <checkbox id="remember" checked="false"/>
+                        <label value="&authent.remember.login.mdp;" />
+                        <checkbox id="remember" checked="true"
+                            disabled="true" />
                     </row>
                 </rows>
             </grid>
