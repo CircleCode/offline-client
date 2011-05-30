@@ -9,7 +9,6 @@ Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/events.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
-Cu.import("resource://modules/offlineSynchronize.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
@@ -19,14 +18,19 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
 /* Add window binding onLoad and onClose*/
 window.onload = function() {
+    initNetworkCheck();
     initListeners();
     initApplication();
-    initSession(true);
+    initSession();
     initValues();
 }
 
-/* Dialog opener */
+function initNetworkCheck() {
+    networkChecker.isOffline();
+    setTimeout(initNetworkCheck, 15);
+}
 
+/* Dialog opener */
 function openLoginDialog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
     "chrome,modal");
@@ -73,7 +77,7 @@ function initApplication()
 
 function initSession(firstLaunch) 
 {
-    var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
+    /*var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
     var login = Preferences.get("offline.user.login", false);
     var password = Preferences.get("offline.user.password", false);
     var applicationURL = Preferences.get("offline.user.applicationURL", false);
@@ -116,7 +120,8 @@ function initSession(firstLaunch)
             return;
         }
     }
-    applicationEvent.publish("close");
+    applicationEvent.publish("close");*/
+    this.openLoginDialog();
 }
 
 /* interface element */
@@ -134,6 +139,11 @@ function launchClose()
 function close()
 {
     Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
+}
+
+function reload()
+{
+    Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit|Ci.nsIAppStartup.eRestart);
 }
 
 function openDocument(config) {
