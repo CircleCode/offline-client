@@ -54,15 +54,15 @@ var authentificator = function() {
             },
 
             authentOnline : function() {
-                var isAuthentified;
                 var currentProfile;
+                var user;
                 context.url = this.currentAppURL;
                 if (context.isConnected()) {
-                    isAuthentified = context.setAuthentification({
+                    user = context.setAuthentification({
                         login : this.currentLogin,
                         password : this.currentPassword
                     });
-                    if (isAuthentified) {
+                    if (user) {
                         /*try {
                             currentProfile = this.profileService.getProfileByName(getProfileName());
                         } catch(NS_ERROR_FAILURE) {
@@ -71,6 +71,18 @@ var authentificator = function() {
                         this.profileService.selectedProfile = currentProfile;
                         this.profileService.flush();*/
                         offlineSync.recordOfflineDomains();
+                        if (user.id) {
+                            Preferences.set("offline.user.id", user.id);
+                        }
+                        if (user.firstname){
+                            Preferences.set("offline.user.firstName", user.firstname);
+                        }
+                        if (user.lastname) {
+                            Preferences.set("offline.user.lastName", user.lastname);
+                        }
+                        if (user.getLocaleFormat()){
+                            Preferences.set("offline.user.locale", JSON.stringify(user.getLocaleFormat()));
+                        }
                         this.result = {result : true};
                     }else {
                         this.result = {result : false, reason : this.translate.get("authent.serverDisagree")};
@@ -85,11 +97,11 @@ var authentificator = function() {
                 try {
                     currentProfile = this.profileService.getProfileByName(this.getProfileName());
                     this.profileService.selectedProfile = currentProfile;*/
-                    if (this.checkPassword()) {
-                        this.result = {result : true};
-                    }else {
-                        this.result = {result : false, reason : this.translate.get("authent.badPassword")};
-                    }
+                if (this.checkPassword()) {
+                    this.result = {result : true};
+                }else {
+                    this.result = {result : false, reason : this.translate.get("authent.badPassword")};
+                }
                 /*}
                 catch(NS_ERROR_FAILURE) {
                     this.result = {result : false, reason : translate.get("authent.nonExistentProfilOffline")};
@@ -106,7 +118,7 @@ var authentificator = function() {
                 }
                 return false;
             },
-            
+
             guessNetworkState : function() {
                 return !(networkChecker.isOffline());
             }

@@ -16,23 +16,23 @@
     </stringbundleset>
     <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/authent.js" />
     <vbox flex="1">
-        <groupbox id="progressGroup" flex="1">
+        <groupbox id="progressGroup">
             <caption>
                 <label value="&authent.login.progress;" />
             </caption>
             <progressmeter id="progress" mode="undetermined" value="0" flex="1"/>
         </groupbox>
-        <groupbox id="errorGroup" flex="1">
+        <groupbox id="errorGroup">
             <caption>
                 <label value="&authent.error.label;" />
             </caption>
             <label id="errorLabel"/>
         </groupbox>
-        <groupbox flex="1">
+        <groupbox >
             <caption>
                 <label value="&authent.login.groupbox;" />
             </caption>
-            <grid flex="1">
+            <grid>
                 <rows>
                     <row>
                         <label value="&authent.login;" />
@@ -50,11 +50,11 @@
                 </rows>
             </grid>
         </groupbox>
-        <groupbox id="optionGroup" flex="1">
+        <groupbox id="optionGroup">
             <caption>
                 <label value="&authent.login.option;" />
             </caption>
-            <grid flex="1">
+            <grid>
                 <rows>
                     <row>
                         <label value="&authent.remember.login.mdp;" />
