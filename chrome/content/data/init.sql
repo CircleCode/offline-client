@@ -98,6 +98,8 @@ CREATE TABLE IF NOT EXISTS "docsbydomain" (
     "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "domainid"          INTEGER NOT NULL REFERENCES domains("id") ON UPDATE CASCADE,
     "editable"          BOOLEAN NOT NULL DEFAULT false,
+    "isshared"          BOOLEAN ,
+    "isusered"          BOOLEAN ,
 
     PRIMARY KEY ("initid", "domainid") ON CONFLICT REPLACE
 );

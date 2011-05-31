@@ -1626,8 +1626,7 @@ Fdl.Context.prototype.retrieveData = function(urldata, parameters,
 		                delete r.spentTime;
 		            }
 		        } catch (ex) {
-		            throw('error on serveur data');
-		            throw(xreq.responseText);
+		            throw('error on serveur data:'+xreq.responseText);
 		        }
 		        return r;
 		    } else {
