@@ -4,30 +4,34 @@
 <!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
 %mainDTD;
 ]>
-
 <overlay id="toverlay"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <script type="application/javascript" src="chrome://dcpoffline/content/overlays/authent.js" />
+    <script type="application/javascript"
+        src="chrome://dcpoffline/content/overlays/authent.js" />
     <vbox id="authent.mainBox">
         <groupbox>
             <caption>
                 <label value="&authent.login.groupbox;" />
             </caption>
             <grid>
+                <columns>
+                    <column />
+                    <column flex="1"/>
+                </columns>
                 <rows>
                     <row>
                         <label value="&authent.login;" />
-                        <textbox id="authent.login" value="" flex="1" />
+                        <textbox id="authent.login" value="" />
                     </row>
                     <row>
                         <label value="&authent.password;" />
                         <textbox type="password" id="authent.password"
-                            value="" flex="1" />
+                            value="" />
                     </row>
                     <row>
                         <label value="&authent.applicationURL;" />
-                        <textbox id="authent.applicationURL" disabled="true"
-                            flex="1" />
+                        <textbox id="authent.applicationURL"
+                            disabled="true" />
                     </row>
                 </rows>
             </grid>
@@ -37,14 +41,20 @@
                 <label value="&authent.login.option;" />
             </caption>
             <grid>
+                <columns>
+                    <column />
+                    <column flex="1"/>
+                </columns>
                 <rows>
                     <row>
                         <label value="&authent.remember.login.mdp;" />
-                        <checkbox id="authent.remember" checked="true" />
+                        <checkbox id="authent.remember"
+                            checked="true" />
                     </row>
                     <row>
                         <label value="&authent.work.offline;" />
-                        <checkbox id="authent.modeOffline" checked="true" />
+                        <checkbox id="authent.modeOffline"
+                            checked="true" />
                     </row>
                     <row>
                         <label value="&authent.autologin;" />
