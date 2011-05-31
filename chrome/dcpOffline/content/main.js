@@ -19,10 +19,7 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 /* Add window binding onLoad and onClose*/
 window.onload = function() {
     initNetworkCheck();
-    initListeners();
     initApplication();
-    initSession();
-    initValues();
 }
 
 function initNetworkCheck() {
@@ -71,56 +68,22 @@ function openAbout() {
 
 function initApplication() 
 {
-    var firstRun = Preferences.get("offline.application.firstRun", false);
+    var firstRun = Preferences.get("offline.application.firstRun", true);
     var fullyInitialised = Preferences.get("offline.application.fullyInitialised", false);
+    
+    initListeners();
+    
+    if (firstRun) {
+        window.openDialog("chrome://dcpoffline/content/wizards/initialization.xul", "","chrome,modal");
+    }
+    else {
+        initSession();
+        initValues();
+    }
 }
 
-function initSession(firstLaunch) 
+function initSession() 
 {
-    /*var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
-    var login = Preferences.get("offline.user.login", false);
-    var password = Preferences.get("offline.user.password", false);
-    var applicationURL = Preferences.get("offline.user.applicationURL", false);
-    if (!networkChecker.isOffline()) {
-        if (!(login && password && applicationURL)) {
-            openLoginDialog();
-        }else {
-            context.url = applicationURL;
-            if (context.isConnected()) {
-                var authent = context.setAuthentification({
-                    login : login,
-                    password : password
-                });
-                if (authent) {
-                    offlineSync.recordOfflineDomains();
-                    return;
-                }else {
-                    Services.prompt.alert(window,"main.initSession.unableToLog.title", translate.get("main.initSession.unableToLog"));
-                    openLoginDialog();
-                    initSession();
-                    return;
-                }
-            }else {
-                if (firstLaunch) {
-                    logConsole("firstLaunch ?? relaunch");
-                    setTimeout(initSession, 15);
-                    return;
-                }
-                Services.prompt.alert(window,"main.initSession.serverOffline.title", translate.get("main.initSession.serverOffline"));
-                openLoginDialog();
-                initSession();
-                return;
-            }
-        }
-
-    }else {
-        if (!(login && password && applicationURL)) {
-            Services.prompt.alert(window,translate.get("main.initSession.offline.userPreferencesUnset.title"), translate.get("main.initSession.offline.userPreferencesUnset"));
-        }else{
-            return;
-        }
-    }
-    applicationEvent.publish("close");*/
     this.openLoginDialog();
 }
 
@@ -259,7 +222,6 @@ function updateOpenDocumentList()
     documentList.removeAllItems();
     documentList.selectedIndex = -1;
     if (currentDocs) {
-
         for (currentDocId in currentDocs) {
             var currentListItem = documentList.appendItem(currentDocs[currentDocId].title, currentDocId);
             if (currentDocId == currentOpenDocument) {
@@ -436,6 +398,8 @@ function initListeners()
 {
     logIHM("initListeners");
 
+    applicationEvent.subscribe("initializationWizardEnd", initValues);
+    
     applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
     applicationEvent.subscribe("postChangeSelectedDomain", updateFamilyList, true);
     applicationEvent.subscribe("postChangeSelectedDomain", updateAbstractList);
