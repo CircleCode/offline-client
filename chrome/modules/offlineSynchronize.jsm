@@ -483,7 +483,7 @@ offlineSynchronize.prototype.updateDomainSyncDate = function(config) {
                         }
                 });
     } else {
-        throw new ArgException("isEditable need domain parameter");
+        throw new ArgException("updateDomainSyncDate need domain parameter");
     }
 };
 
@@ -505,7 +505,7 @@ offlineSynchronize.prototype.getDomainSyncDate = function(config) {
             throw new SyncException("getDomainSyncDate : domain not found");
         }
     } else {
-        throw new ArgException("isEditable need domain parameter");
+        throw new ArgException("getDomainSyncDate need domain parameter");
     }
 };
 
@@ -729,7 +729,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 
         this.callObserver('onGlobalPercent', 100);
     } else {
-        throw new ArgException("isEditable need domain parameter");
+        throw new ArgException("pullDocuments need domain parameter");
     }
 };
 offlineSynchronize.prototype.deleteDocuments = function(config) {
@@ -901,7 +901,7 @@ offlineSynchronize.prototype.revertDocument = function(config) {
                 domain : domain,
                 document : document
             });
-            this.recordFiles();
+            this.recordFiles({domain:domain});
         } else {
             throw new SyncException("revertDocument failed");
         }
