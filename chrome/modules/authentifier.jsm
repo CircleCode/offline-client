@@ -8,6 +8,7 @@ Cu.import("resource://modules/fdl-data-debug.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
 Cu.import("resource://modules/offlineSynchronize.jsm");
 Cu.import("resource://modules/preferences.jsm");
+Cu.import("resource://modules/passwordManager.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
 
 var EXPORTED_SYMBOLS = ["authentificator"];
@@ -25,12 +26,10 @@ var authentificator = function() {
             currentAppURL : "",
             result : {},
             translate : new StringBundle("chrome://dcpoffline/locale/main.properties"),
-            //profileService : Cc["@mozilla.org/toolkit/profile-service;1"].createInstance(Ci.nsIToolkitProfileService),            
 
             authentifier : function(modeOffline, currentLogin, currentPassword, currentAppURL) {
                 var networkState;
 
-                logConsole("try to authent");
                 if (! (currentLogin && currentPassword && currentAppURL)) {
                     return {result : null , reason : this.translate.get("authent.logInfoIncomplete")};
                 }
@@ -63,13 +62,6 @@ var authentificator = function() {
                         password : this.currentPassword
                     });
                     if (user) {
-                        /*try {
-                            currentProfile = this.profileService.getProfileByName(getProfileName());
-                        } catch(NS_ERROR_FAILURE) {
-                            currentProfile = this.profileService.createProfile(null, null, this.getProfileName());
-                        }
-                        this.profileService.selectedProfile = currentProfile;
-                        this.profileService.flush();*/
                         offlineSync.recordOfflineDomains();
                         if (user.id) {
                             Preferences.set("offline.user.id", user.id);
@@ -83,6 +75,7 @@ var authentificator = function() {
                         if (user.getLocaleFormat()){
                             Preferences.set("offline.user.locale", JSON.stringify(user.getLocaleFormat()));
                         }
+                        passwordManager.updatePassword(this.currentLogin, this.currentPassword);
                         this.result = {result : true};
                     }else {
                         this.result = {result : false, reason : this.translate.get("authent.serverDisagree")};
@@ -93,30 +86,7 @@ var authentificator = function() {
             },
 
             authentOffline : function() {
-                /*var currentProfile;
-                try {
-                    currentProfile = this.profileService.getProfileByName(this.getProfileName());
-                    this.profileService.selectedProfile = currentProfile;*/
-                if (this.checkPassword()) {
-                    this.result = {result : true};
-                }else {
-                    this.result = {result : false, reason : this.translate.get("authent.badPassword")};
-                }
-                /*}
-                catch(NS_ERROR_FAILURE) {
-                    this.result = {result : false, reason : translate.get("authent.nonExistentProfilOffline")};
-                }*/
-            },
-
-            getProfileName : function() {
-                return this.currentAppURL+"_"+this.currentLogin;
-            },
-
-            checkPassword : function() {
-                if (Preferences.get("offline.user.password") == this.currentPassword) {
-                    return true;
-                }
-                return false;
+                this.result = passwordManager.checkPassword(this.currentLogin, this.currentPassword);
             },
 
             guessNetworkState : function() {
