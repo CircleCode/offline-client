@@ -239,6 +239,7 @@ offlineSynchronize.prototype.pushDocument = function(config) {
         if (document) {
             // put document and modifies files
             logConsole('push', document);
+            this.callObserver('onDetailLabel',"pushing document :"+document.getTitle());
             var updateDocument = domain.sync().pushDocument({
                 context : domain.context,
                 document : document
@@ -554,6 +555,8 @@ offlineSynchronize.prototype.recordDocument = function(config) {
         var domain = config.domain;
         var document = config.document;
         this.callObserver('onAddDocumentsToRecord', 1);
+        this.callObserver('onDetailLabel',"pulling document :"+document.getTitle());
+
         var me = this;
         storageManager
                 .saveDocumentValues({
@@ -680,6 +683,10 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 
             this.callObserver('onDetailPercent', 100);
         }
+        
+        //delete detached document
+        this.deleteDocuments({origin:'shared', domain:domain, deleteList:domain.sync().getSharedDocumentsToDelete()});
+        
         this.callObserver('onGlobalPercent', 50);
         // var dbcon=storageManager.getDbConnection();
         // dbcon.executeSimpleSQL(docsDomainQuery);
@@ -705,6 +712,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
             this.callObserver('onDetailPercent', (j + 1) / userd.length * 100);
         }
         this.callObserver('onGlobalPercent', 90);
+        
         /*
          * storageManager .execQuery({ query : "insert into synchrotimes
          * (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid ,
@@ -713,6 +721,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
          */
         this.recordFiles({domain:domain});
 
+        this.deleteDocuments({origin:'user', domain:domain, deleteList:domain.sync().getUserDocumentsToDelete()});
         storageManager.lockDatabase({
             lock : false
         });
@@ -723,7 +732,47 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
         throw new ArgException("isEditable need domain parameter");
     }
 };
+offlineSynchronize.prototype.deleteDocuments = function(config) {
 
+    if (config && config.domain && config.origin && config.deleteList && (config.origin == 'user' || config.origin == 'shared')) {
+
+        if (config.deleteList.length > 0) {
+            var sinitids=config.deleteList.join(',');
+            this.log("delete documents :"+sinitids);
+            var callback={
+                    handleCompletion : function() {
+                        // clean database
+                        storageManager.execQuery({
+                            query :"delete from docsbydomain where not docsbydomain.isshared and not docsbydomain.isusered"});
+                        storageManager.execQuery({
+                            query :"delete from documents where initid not in (select initid from docsbydomain)"});
+                    }
+            };
+
+            if (config.origin == "shared") {
+                storageManager.execQuery({
+                    query : "update docsbydomain set isshared=0 where isshared and domainid=:domainid and initid in ("+sinitids+")",
+                    params : {
+                        domainid:config.domain.id
+                    },
+                    callback:callback});
+            } else if (config.origin == "user"){
+                storageManager.execQuery({
+                    query : "update docsbydomain set isusered=0 where isusered and domainid=:domainid and initid in ("+sinitids+")",
+                    params : {
+                        domainid:config.domain.id
+                    },
+                    callback:callback});
+            }
+
+
+            logConsole("deleteDocuments", config.deleteList );
+        }
+
+    } else {
+        throw new ArgException("deleteDocuments need domain, deleteList, origin parameter");
+    }
+};
 offlineSynchronize.prototype.updateSyncDate = function(config) {
     var now = new Date();
     if (config && config.document) {
