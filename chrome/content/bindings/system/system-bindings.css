@@ -66,6 +66,23 @@ dcpDocument dcpDocFooter {
 }
 
 /***********************************************************
+        Validity
+************************************************************/
+/*
+span.validator {
+   width: 16px;
+   height: 16px;
+   display: inline-block;
+   background-size: 100%, 100%;
+ }
+ :-moz-ui-valid + span {
+   background-image: url("images/valid.png");
+ }
+ :-moz-ui-invalid + span {
+   background-image: url("images/invalid.png");
+ }
+*/
+/***********************************************************
         Document
 ************************************************************/
 dcpDocument {

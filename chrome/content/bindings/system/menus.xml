@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE bindings>
+
+<!DOCTYPE bindings [
+      <!ENTITY % menu-bindingDTD SYSTEM "chrome://dcpoffline/locale/menu-binding.dtd" >
+      <!ENTITY separator "&#160;:&#160;" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+      %menu-bindingDTD;
+]>
+
 <bindings id="menuBindings"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -12,33 +19,47 @@
                 <xul:hbox anonid="document-toolbar" flex="1">
                     
                     <xul:button anonid="document-toolbar-system-save"
-                        label="Sauver"
-                        tooltiptext="Sauver">
+                        label="&document.toolbar.button.save;"
+                        tooltiptext="&document.toolbar.button.save.tooltip;"
+                        icon="save"
+                        mode="edit">
+                    </xul:button>
+                    
+                    <xul:button anonid="document-toolbar-system-cancel"
+                        label="&document.toolbar.button.cancel;"
+                        tooltiptext="&document.toolbar.button.cancel.tooltip;"
+                        icon="cancel"
+                        mode="edit"
+                        oncommand="alert('(FIXME) do cancel');">
                     </xul:button>
                     
                     <xul:button
                         anonid="document-toolbar-system-edit"
-                        label="Modifier"
-                        tooltiptext="Modifier">
+                        label="&document.toolbar.button.modify;"
+                        tooltiptext="&document.toolbar.button.modify.tooltip;"
+                        mode="view">
                     </xul:button>
                     
                     <xul:splitter anonid="document-toolbar-system-splitter"/>
                     
+                    <xul:spacer flex="1"/>
+                    
+                    <children/>
+                    
                     <xul:button
                         anonid="document-toolbar-system-properties"
-                        label="document.toolbar.properties;"
-                        oncommand="alert('open properties');">
+                        label="&document.toolbar.button.properties;"
+                        tooltiptext="&document.toolbar.button.properties.tooltip;"
+                        icon="properties"
+                        oncommand="alert('(FIXME) open properties');">
                     </xul:button>
                     
                     <xul:splitter/>
                     
-                    <children/>
-                    
-                    <xul:spacer flex="1"/>
-                    
                     <xul:button
                         anonid="document-toolbar-system-close"
-                        label="close"
+                        label="&document.toolbar.button.close;"
+                        tooltiptext="&document.toolbar.button.close.tooltip;"
                         icon="close">
                     </xul:button>
                     
@@ -68,14 +89,34 @@
                 ]]></body>
             </method>
             <constructor><![CDATA[
+            
                 this.doc = this.getDocumentNode().localDocument;
                 
                 var mode = documentNode.mode;
                 
-                if(mode === 'edit'){
-                    this.getChild('document-toolbar-system-edit').collapsed = true;
-                } else {
-                    this.getChild('document-toolbar-system-save').collapsed = true;
+                var children = this.getChild("document-toolbar").children;
+                if (children)
+                {
+                    for (var i = 0; i < children.length; i++)
+                    {
+                        var childMode = children[i].getAttribute('mode');
+                        if (childMode){
+                            if(childMode == mode) {
+                                children[i].collapsed = false;
+                            } else {
+                                children[i].collapsed = true;
+                            }
+                        }
+                    }
+                }
+                
+                if( (mode !== 'edit') && (!this.doc.canEdit()) ){
+                
+                    Components.utils.import("resource://modules/StringBundle.jsm");
+                    var translate = new StringBundle("chrome://dcpoffline/locale/menu-binding.properties");
+            
+                    this.getChild('document-toolbar-system-edit').disabled = true;
+                    this.getChild('document-toolbar-system-edit').tooltipText = translate.get("document.toolbar.button.modify.disabled.tooltip");
                 }
             ]]></constructor>
         </implementation>

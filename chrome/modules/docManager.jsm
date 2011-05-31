@@ -138,7 +138,6 @@ docManagerSingleton.prototype = {
 	 */
 	dropDocInstance : function(config) {
 		if (config && config.initid) {
-	        logConsole("config.domain: "+config.domain+" VS "+this.getActiveDomain());
 			if (!config.domain) {
 				config.domain = this.getActiveDomain();
 			}
