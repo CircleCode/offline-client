@@ -59,7 +59,7 @@
                                 documentId : this.initid,
                                 mode : mode
                             };
-                            applicationEvent.publish("askForSwitchDocumentMode", param);
+                            applicationEvent.publish("askForOpenDocument", param);
                         }
                     }
                 }
@@ -83,11 +83,11 @@
             <method name="save">
                 <body><![CDATA[
                     try {
-                        this.doc.save();
-                        this.mode="view";
+                        var err = this.doc.save();
+                        this.switchMode("view");
                     } catch(e) {
                         logConsole("error on document save");
-                        throw(e);
+                        alert('(FIXME) ' + e);
                     }
                 ]]></body>
             </method>

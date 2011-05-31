@@ -129,7 +129,6 @@ localDocument.prototype = {
 
         save : function(config) {
             if (this.canEdit() || (config && config.force)) {
-
                 var now = new Date();
                 this.properties.revdate = parseInt(now.getTime() / 1000);
                 this.properties.mdate = utils.toIso8601(now, true);

@@ -1,6 +1,13 @@
 /***********************************************************
         Not yet implemented
 ************************************************************/
+dcpAttribute[type=menu]
+    {
+    border: 1px solid red;
+    background: yellow;
+    min-height: 24px;
+}
+
 dcpAttribute[type=htmltext],
 dcpAttribute[type=file],
 dcpAttribute[type=enum],
@@ -36,6 +43,14 @@ dcpDocument dcpAttribute {
     width: 100%;
 }
 
+dcpDocument dcpAttribute[type=frame] {
+    -moz-box-orient: vertical;
+}
+
+dcpDocument dcpAttribute[type=frame] groupbox {
+    width: 100%;
+}
+
 dcpDocument dcpAttribute .dcpValue {
     -moz-box-flex: 1;
 }
@@ -51,20 +66,34 @@ dcpDocument dcpDocFooter {
 }
 
 /***********************************************************
+        Validity
+************************************************************/
+/*
+span.validator {
+   width: 16px;
+   height: 16px;
+   display: inline-block;
+   background-size: 100%, 100%;
+ }
+ :-moz-ui-valid + span {
+   background-image: url("images/valid.png");
+ }
+ :-moz-ui-invalid + span {
+   background-image: url("images/invalid.png");
+ }
+*/
+/***********************************************************
         Document
 ************************************************************/
 dcpDocument {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/documents.xml#document");
-    display: -moz-box;
-    -moz-box-orient: vertical;
 }
 
 /***********************************************************
         Menu
 ************************************************************/
 dcpDocument dcpDocMenu {
-    display: -moz-box;
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/menus.xml#doc-main-menu");
 }
@@ -73,7 +102,6 @@ dcpDocument dcpDocMenu {
         Header
 ************************************************************/
 dcpDocument dcpDocHeader {
-    display: -moz-box;
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/docHeader.xml#doc-header");
 }
@@ -82,7 +110,6 @@ dcpDocument dcpDocHeader {
         Footer
 ************************************************************/
 dcpDocument dcpDocFooter {
-    display: -moz-box;
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/docFooter.xml#doc-footer");
 }

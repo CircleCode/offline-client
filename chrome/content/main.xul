@@ -89,7 +89,7 @@
         </vbox>
         <vbox width="200px" persist="width">
             <vbox>
-                <menulist id="openDocumentList" oncommand='tryToOpenDocument(this.value );'>
+                <menulist id="openDocumentList" oncommand='tryToOpenDocument({documentId : this.value});'>
                     <menupopup>
                         
                     </menupopup>
@@ -112,7 +112,7 @@
                             <param id="searchTitleParam" name="searchTitle">%</param>
                         </query>
                         <action>
-                            <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument(this.value );'>
+                            <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument({documentId : this.value});'>
                                 <vbox >
                                     <label value="?title" />
                                 </vbox>
@@ -125,7 +125,7 @@
         <splitter collapse="before">
             <grippy />
         </splitter>
-        <deck id="documentsDeck">
+        <deck id="documentsDeck" flex="1">
             <vbox id="vboxDocument-void">
             </vbox>
         </deck>

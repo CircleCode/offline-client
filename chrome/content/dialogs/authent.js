@@ -4,9 +4,9 @@ const Cu = Components.utils;
 
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/authentifier.jsm");
-Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/events.jsm");
+Cu.import("resource://modules/passwordManager.jsm");
 
 /**
  * Try to log with the information of the dialog
@@ -14,42 +14,25 @@ Cu.import("resource://modules/events.jsm");
  * @returns {Boolean}
  */
 function doOk() {
-    log('Authent : doOk');
-
-    /*
-     * var authentInfo = { login : document.getElementById('login').value,
-     * password : document.getElementById('password').value };
-     * 
-     * var authentSuccess = authentificator.authentify(authentInfo);
-     * 
-     * if (authentSuccess) { log('authentication for [' + authentInfo.login +
-     * '@' + authentInfo.dynacaseUrl + ' suceeded'); } else {
-     * log('authentication for [' + authentInfo.login + '@' +
-     * authentInfo.dynacaseUrl + ' failed'); return false; }
-     */
-    // TODO use the form value to log
-    var login = document.getElementById('login').value;
-    var password = document.getElementById('password').value;
-    var applicationURL = document.getElementById('applicationURL').value;
-    var remember = document.getElementById('remember').checked;
-
-    if (remember) {
-        Preferences.set("offline.user.login", login);
-        Preferences.set("offline.user.password", password);
-        Preferences.set("offline.user.applicationURL", applicationURL);
+    logIHM('Authent : doOk');
+    
+    try{
+        if (document.getElementById('remember').checked) {
+            Preferences.set("offline.user.login", document.getElementById('login').value);
+        }
+        
+        Preferences.set("offline.application.rememberLogin", document.getElementById('remember').checked);
+        Preferences.set("offline.application.modeOffline", document.getElementById('modeOffline').checked);
+        Preferences.set("offline.application.autoLogin", document.getElementById('autoLogin').checked);
+    
+        this.tryToAuthent();
+    }catch (error){
+        onLogError(error);
+        logConsole('Authent : doOk '+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
+        logDebug('Authent : doOk '+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
     }
 
-    var authentSuccess = true;
-
-    if (authentSuccess) {
-
-        return true;
-    }else {
-
-        return false;
-    }
-
-
+    return false;
 }
 /**
  * Quit the application
@@ -57,7 +40,7 @@ function doOk() {
  * @returns {Boolean}
  */
 function doCancel() {
-    logConsole('Authent : doCancel');
+    logIHM('Authent : doCancel');
 
     if (applicationEvent.publish("preClose")) {
         applicationEvent.publish("close");
@@ -66,19 +49,83 @@ function doCancel() {
     return false;
 }
 
-/**
- * Init the dialog
- * 
- * @returns {Boolean}
- */
+function tryToAuthent() {
+    logIHM("Authent : try to authent");
+    
+    var param = {};
+    param.currentLogin = document.getElementById('login').value;
+    param.currentPassword = document.getElementById('password').value;
+    param.currentApplicationURL = Preferences.get("offline.user.applicationURL", "");
+    param.modeOffline = document.getElementById('modeOffline').checked;
+    
+    document.getElementById('login').disabled = true;
+    document.getElementById('password').disabled = true;
+    document.getElementById('remember').disabled = true;
+    document.getElementById('modeOffline').disabled = true;
+    document.getElementById('autoLogin').disabled = true;
+    
+    document.getElementById('progressGroup').style.visibility = "visible";
+    document.getElementById('progressGroup').hidden = false;
+    document.getElementById('errorGroup').style.visibility = "hidden";
+    
+    authentificator.authent(param, onLogSuccess, onLogError);
+
+}
+
+function onLogSuccess() {
+    window.close();
+}
+
+function onLogError(reason) {
+    logIHM("onLogError "+reason);
+
+    if (reason) {
+        document.getElementById('errorLabel').value = reason;
+        document.getElementById('errorGroup').style.visibility = "visible";
+        document.getElementById('progressGroup').hidden = true;
+    }
+    
+    document.getElementById('login').disabled = false;
+    document.getElementById('password').disabled = false;
+    document.getElementById('remember').disabled = false;
+    document.getElementById('modeOffline').disabled = false;
+    document.getElementById('autoLogin').disabled = false;
+    document.getElementById('progressGroup').style.visibility = "hidden";
+}
+
 function doLoad() {
-    logDebug('Authent  : doLoad');
-
-    // TODO get real values from the application
-    document.getElementById('login').value = Preferences.get("offline.user.login", "");
-    document.getElementById('password').value = Preferences.get("offline.user.password", "");
+    logIHM('Authent  : doLoad');
+    
+    //Update IHM
+    
+    var currentPassword;
+    var login = Preferences.get("offline.user.login", "");
+    var autologin = Preferences.get("offline.application.autoLogin", false);
+    
+    document.getElementById('progressGroup').style.visibility = "hidden";
+    document.getElementById('errorGroup').style.visibility = "hidden";
+    
+    
+    if (Preferences.get("offline.application.rememberLogin", false)) {
+        document.getElementById('login').value = login;
+        currentPassword = passwordManager.getPassword(login);
+        if (currentPassword) {
+            document.getElementById('password').value = currentPassword;
+        }else{
+            document.getElementById('password').value = "";
+        }
+    }
+    document.getElementById('remember').checked = Preferences.get("offline.application.rememberLogin", false);
+    document.getElementById('modeOffline').checked = Preferences.get("offline.application.modeOffline", false);
     document.getElementById('applicationURL').value = Preferences.get("offline.user.applicationURL", "");
-    document.getElementById('remember').checked = true;
+    document.getElementById('autoLogin').checked = autologin;
+    
+    if (false){
+        setTimeout(tryToAuthent, 10);
+    }
+    
+}
 
-    return true;
+function logIHM(message, obj) {
+    logConsole(message, obj);
 }

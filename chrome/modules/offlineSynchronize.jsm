@@ -1,6 +1,7 @@
 Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 
+Components.utils.import("resource://modules/preferences.jsm");
 Components.utils.import("resource://modules/docManager.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
 Components.utils.import("resource://modules/fileManager.jsm");
@@ -23,8 +24,10 @@ offlineSynchronize.prototype = {
     filesToDownload : [],
     filesToUpload : [],
     offlineCore : null,
+    synchroResults : null,
     recordFilesInProgress : false,
     observers : null,
+    _login:null, // to optimize access
     toString : function() {
         return 'offlineSynchronize';
     }
@@ -46,15 +49,27 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
     var domains = this.getCore().getOfflineDomains();
     // TODO record in database
     var domain = null;
-    storageManager.execQuery({
+
+    var lastsyncremote = '';
+    /*storageManager.execQuery({
         query : "delete from domains"
-    });
+    });*/
     for ( var i = 0; i < domains.length; i++) {
         domain = domains.getDocument(i);
         this.log('record domain :' + domain.getTitle());
-        storageManager
-                .execQuery({
-                    query : "insert into domains(id, name, description, mode,  transactionpolicy, sharepolicy) values(:initid, :name, :description, :mode,  :transactionPolicies, :sharePolicies)",
+        var r=storageManager.execQuery({
+            query : "select lastsyncremote from domains where id=:initid",
+            params : {
+                initid : domain.getProperty('initid')
+            }});
+        if (r.length == 1) {
+            lastsyncremote=r[0].lastsyncremote;
+        } else {
+            lastsyncremote='';
+        }
+           
+        storageManager.execQuery({
+                    query : "insert into domains(id, name, description, mode,  transactionpolicy, sharepolicy, lastsyncremote) values(:initid, :name, :description, :mode,  :transactionPolicies, :sharePolicies, :lastsyncremote)",
                     params : {
                         initid : domain.getProperty('initid'),
                         name : domain.getProperty('initid'),
@@ -62,8 +77,8 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
                         mode : 'mode',
                         transactionPolicies : domain
                                 .getValue('off_transactionpolicy'),
-                        sharePolicies : domain.getValue('off_sharepolicy')
-                    // not necessary
+                        sharePolicies : domain.getValue('off_sharepolicy'),
+                        lastsyncremote : lastsyncremote
                     }
                 });
 
@@ -82,7 +97,9 @@ offlineSynchronize.prototype.synchronizeDomain = function(config) {
             domain : domain
         });
 
-        // this.pushDocuments({domain:domain});
+        this.pushDocuments({
+            domain : domain
+        });
         this.pullDocuments({
             domain : domain
         });
@@ -222,6 +239,7 @@ offlineSynchronize.prototype.pushDocument = function(config) {
         if (document) {
             // put document and modifies files
             logConsole('push', document);
+            this.callObserver('onDetailLabel',"pushing document :"+document.getTitle());
             var updateDocument = domain.sync().pushDocument({
                 context : domain.context,
                 document : document
@@ -314,6 +332,11 @@ offlineSynchronize.prototype.pendingPushFiles = function(config) {
                 "pendingPushFiles need files, localDocument parameter");
     }
 };
+/**
+ * 
+ * @param config
+ * @returns boolean true if push is ok
+ */
 offlineSynchronize.prototype.pushFiles = function(config) {
     if (config && config.domain && config.onEndPushFiles) {
         logConsole('file to push', this.filesToUpload);
@@ -333,7 +356,7 @@ offlineSynchronize.prototype.pushFiles = function(config) {
             this.callObserver('onAddFilesSaved', 1);
         }
         this.filesToUpload = []; // reset array
-        config.onEndPushFiles();
+        return config.onEndPushFiles();
     } else {
         throw new ArgException("pushFiles need domain onEndPushFiles parameter");
     }
@@ -419,7 +442,7 @@ offlineSynchronize.prototype.log = function(msg) {
 /**
  * 
  */
-offlineSynchronize.prototype.recordFiles = function() {
+offlineSynchronize.prototype.recordFiles = function(config) {
     if (!this.recordFilesInProgress) {
         logConsole('recordFilesInProgress');
         if (this.filesToDownload.length > 0) {
@@ -439,11 +462,53 @@ offlineSynchronize.prototype.recordFiles = function() {
                     me.recordFilesInProgress = false;
                     fileManager.initModificationDates();
                     me.updateWorkTables();
+                    me.updateDomainSyncDate(config);
                 }
             });
         }
     }
 };
+
+offlineSynchronize.prototype.updateDomainSyncDate = function(config) {
+
+    if (config && config.domain) {
+        var domain = config.domain;
+        var syncDate=utils.toIso8601(this.pullBeginDate);
+        storageManager
+                .execQuery({
+                    query : "update domains set lastsyncremote=:pulldate where id=:domainid",
+                        params:{
+                            pulldate:syncDate,
+                            domainid:domain.id
+                        }
+                });
+    } else {
+        throw new ArgException("updateDomainSyncDate need domain parameter");
+    }
+};
+
+
+offlineSynchronize.prototype.getDomainSyncDate = function(config) {
+
+    if (config && config.domain) {
+        var domain = config.domain;
+        var r=storageManager
+                .execQuery({
+                    query : "select * from domains where id=:domainid",
+                        params:{
+                            domainid:domain.id
+                        }
+                });
+        if (r.length == 1) {
+            return r[0].lastsyncremote;
+        } else {
+            throw new SyncException("getDomainSyncDate : domain not found");
+        }
+    } else {
+        throw new ArgException("getDomainSyncDate need domain parameter");
+    }
+};
+
 offlineSynchronize.prototype.updateWorkTables = function() {
 
     storageManager
@@ -451,6 +516,34 @@ offlineSynchronize.prototype.updateWorkTables = function() {
                 query : "insert into doctitles (famname, initid, title)  select fromname,  initid, title from documents"
             });
 };
+
+/**
+ * @param object config
+ *    origin : user or shared
+ *    domain.id  : domain id
+ */
+offlineSynchronize.prototype.getRecordedDocuments = function(config) {
+    if (config && config.domain && config.origin && (config.origin == 'user' || config.origin == 'shared')) {
+        var query="select documents.initid, documents.revdate from documents, docsbydomain ";
+        query += "where documents.initid = docsbydomain.initid and docsbydomain.domainid=:domainid";
+        if (config.origin == 'user' ) {
+            query += " and docsbydomain.isusered ";
+        } else {
+            query += " and docsbydomain.isshared ";
+        }
+        var r=storageManager.execQuery({
+            query : query,
+            params: {
+                domainid:config.domain.id
+            }
+        });
+        logConsole("getRecordedDocuments", r);
+        return r;
+    } else {
+        throw new ArgException("getRecordedDocuments need domain, origin parameter");
+    }
+};
+
 /**
  * 
  * @param domain
@@ -462,6 +555,8 @@ offlineSynchronize.prototype.recordDocument = function(config) {
         var domain = config.domain;
         var document = config.document;
         this.callObserver('onAddDocumentsToRecord', 1);
+        this.callObserver('onDetailLabel',"pulling document :"+document.getTitle());
+
         var me = this;
         storageManager
                 .saveDocumentValues({
@@ -469,9 +564,19 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                     attributes : document.getValues(),
                     callback : {
                         handleCompletion : function() {
+                            var domainRef=domain.getValue("off_ref");
+                            var domainFolders=document.getProperty("domainid");
+                            var isShared=false;
+                            var isUsered=false;
+                            if (domainFolders.indexOf('offshared_'+domainRef) >=0) {
+                                isShared=true;
+                            }
+                            if (domainFolders.indexOf('offuser_'+domainRef+'_'+me._login) >=0) {
+                                isUsered=true;
+                            }
                             storageManager
                                     .execQuery({
-                                        query : "insert into docsbydomain(initid, domainid, editable) values (:initid, :domainid, :editable)",
+                                        query : "insert into docsbydomain(initid, domainid, editable, isshared, isusered) values (:initid, :domainid, :editable, :isshared, :isusered)",
                                         params : {
                                             initid : document
                                                     .getProperty('initid'),
@@ -480,19 +585,20 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                                             editable : me.isEditable({
                                                 domain : domain,
                                                 document : document
-                                            })
+                                            }),
+                                            isshared:isShared,
+                                            isusered:isUsered
                                         },
                                         callback : {
                                             handleCompletion : function() {
-                                                me
-                                                        .callObserver(
+                                                me.callObserver(
                                                                 'onAddDocumentsRecorded',
                                                                 1);
                                                 me.log('record document:'
                                                         + document.getTitle());
                                                 docManager
                                                         .dropDocInstance({
-                                                            domain : domain.id,
+                                                            domain : domain.getProperty('initid'),
                                                             initid : document
                                                                     .getProperty('initid')
                                                         });
@@ -530,17 +636,20 @@ offlineSynchronize.prototype.recordDocument = function(config) {
     }
 };
 
+
+
+
 /**
  * 
  * @param domain
  */
 offlineSynchronize.prototype.pullDocuments = function(config) {
     if (config && config.domain) {
+        this._login=Preferences.get("offline.user.login"); // to optimize access
         var domain = config.domain;
         // TODO pull all documents and modifies files
-        var now = new Date();
         logConsole('pull : ');
-
+        this.pullBeginDate=new Date();
         storageManager.lockDatabase({
             lock : true
         });
@@ -549,31 +658,35 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
         this.callObserver('onGlobalPercent', 0);
         this.callObserver('onDetailLabel',
                 (domain.getTitle() + ':get shared documents'));
+        
         var shared = domain.sync().getSharedDocuments({
-        // until : '2011-05-01 13:00'
+         //until : this.getDomainSyncDate({domain:config.domain})
+            stillRecorded:this.getRecordedDocuments({domain:domain,origin:'shared'})
         });
         this.callObserver('onGlobalPercent', 0);
-        var serverDate = shared.date.replace(" ", "T");
-        var clientDate = utils.toIso8601(now);
+        if (shared) {
+            this.callObserver('onDetailLabel',
+                    ('recording shared documents : ' + shared.length));
+            var onedoc = null;
+            var j = 0;
+            for (j = 0; j < shared.length; j++) {
+                onedoc = shared.getDocument(j);
+                this.recordDocument({
+                    domain : domain,
+                    document : onedoc
+                });
+                logConsole('store : ' + onedoc.getTitle());
+                this.log('pull from share :' + onedoc.getTitle());
+                this.callObserver('onDetailPercent',
+                        ((j + 1) / shared.length * 100));
+            }
 
-        this.callObserver('onDetailLabel',
-                ('recording shared documents : ' + shared.length));
-        logConsole('pull shared : ' + shared.length + ':' + serverDate + '--'
-                + clientDate);
-        var onedoc = null;
-        var j = 0;
-        for (j = 0; j < shared.length; j++) {
-            onedoc = shared.getDocument(j);
-            this.recordDocument({
-                domain : domain,
-                document : onedoc
-            });
-            logConsole('store : ' + onedoc.getTitle());
-            this.log('pull from share :' + onedoc.getTitle());
-            this.callObserver('onDetailPercent',
-                    ((j + 1) / shared.length * 100));
+            this.callObserver('onDetailPercent', 100);
         }
-        this.callObserver('onDetailPercent', 100);
+        
+        //delete detached document
+        this.deleteDocuments({origin:'shared', domain:domain, deleteList:domain.sync().getSharedDocumentsToDelete()});
+        
         this.callObserver('onGlobalPercent', 50);
         // var dbcon=storageManager.getDbConnection();
         // dbcon.executeSimpleSQL(docsDomainQuery);
@@ -581,7 +694,8 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
         this.callObserver('onDetailLabel', domain.getTitle()
                 + ':get user documents');
         var userd = domain.sync().getUserDocuments({
-        // until : '2011-05-01 13:00'
+            //until : this.getDomainSyncDate({domain:config.domain})
+            stillRecorded:this.getRecordedDocuments({domain:domain,origin:'user'})
         });
 
         this.callObserver('onGlobalPercent', 60);
@@ -598,14 +712,16 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
             this.callObserver('onDetailPercent', (j + 1) / userd.length * 100);
         }
         this.callObserver('onGlobalPercent', 90);
+        
         /*
          * storageManager .execQuery({ query : "insert into synchrotimes
          * (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid ,
          * :serverDate, :clientDate , :clientDate from documents", params : {
          * clientDate : clientDate, serverDate : serverDate } });
          */
-        this.recordFiles();
+        this.recordFiles({domain:domain});
 
+        this.deleteDocuments({origin:'user', domain:domain, deleteList:domain.sync().getUserDocumentsToDelete()});
         storageManager.lockDatabase({
             lock : false
         });
@@ -613,10 +729,50 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
 
         this.callObserver('onGlobalPercent', 100);
     } else {
-        throw new ArgException("isEditable need domain parameter");
+        throw new ArgException("pullDocuments need domain parameter");
     }
 };
+offlineSynchronize.prototype.deleteDocuments = function(config) {
 
+    if (config && config.domain && config.origin && config.deleteList && (config.origin == 'user' || config.origin == 'shared')) {
+
+        if (config.deleteList.length > 0) {
+            var sinitids=config.deleteList.join(',');
+            this.log("delete documents :"+sinitids);
+            var callback={
+                    handleCompletion : function() {
+                        // clean database
+                        storageManager.execQuery({
+                            query :"delete from docsbydomain where not docsbydomain.isshared and not docsbydomain.isusered"});
+                        storageManager.execQuery({
+                            query :"delete from documents where initid not in (select initid from docsbydomain)"});
+                    }
+            };
+
+            if (config.origin == "shared") {
+                storageManager.execQuery({
+                    query : "update docsbydomain set isshared=0 where isshared and domainid=:domainid and initid in ("+sinitids+")",
+                    params : {
+                        domainid:config.domain.id
+                    },
+                    callback:callback});
+            } else if (config.origin == "user"){
+                storageManager.execQuery({
+                    query : "update docsbydomain set isusered=0 where isusered and domainid=:domainid and initid in ("+sinitids+")",
+                    params : {
+                        domainid:config.domain.id
+                    },
+                    callback:callback});
+            }
+
+
+            logConsole("deleteDocuments", config.deleteList );
+        }
+
+    } else {
+        throw new ArgException("deleteDocuments need domain, deleteList, origin parameter");
+    }
+};
 offlineSynchronize.prototype.updateSyncDate = function(config) {
     var now = new Date();
     if (config && config.document) {
@@ -689,9 +845,7 @@ offlineSynchronize.prototype.updateEnumItems = function(config) {
 
     if (config && config.document) {
         var oas = config.document.getAttributes();
-        logConsole('enum:' + config.document.id);
         for ( var aid in oas) {
-
             if (oas[aid].type == 'enum') {
 
                 var dbCon = storageManager.getDbConnection();
@@ -704,8 +858,8 @@ offlineSynchronize.prototype.updateEnumItems = function(config) {
                 for ( var i = 0; i < enums.length; i++) {
                     var key = enums[i].key;
                     var label = enums[i].label;
-                    logConsole('enum:' + config.document.id + '-' + key + ':'
-                            + label);
+                  //  logConsole('enum:' + config.document.id + '-' + key + ':'
+                    //        + label);
                     if (key && label) {
                         var bp = mappingParams.newBindingParams();
                         bp.bindByName("famid", config.document.id);
@@ -747,7 +901,7 @@ offlineSynchronize.prototype.revertDocument = function(config) {
                 domain : domain,
                 document : document
             });
-            this.recordFiles();
+            this.recordFiles({domain:domain});
         } else {
             throw new SyncException("revertDocument failed");
         }
@@ -766,7 +920,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
         docManager.setActiveDomain({
             domain : domain.id
         });
-        logConsole("active domain" + docManager.getActiveDomain());
+        //logConsole("active domain" + docManager.getActiveDomain());
         // update file modification date
         var modifiedFiles = fileManager.getModifiedFiles({
             domain : domain.id
@@ -802,11 +956,11 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                 onEndPushFiles : function() {
                     var thisIsTheEnd = domain.sync().endTransaction();
                     if (thisIsTheEnd) {
-                        var results = domain.sync().getTransactionStatus();
-                        me.log('end transaction : ' + results.status);
-                        logConsole('final Results', results);
-                        for ( var docid in results.detailStatus) {
-                            if (results.detailStatus[docid].isValid) {
+                        me.synchroResults = domain.sync().getTransactionStatus();
+                        me.log('end transaction : ' + me.synchroResults.status);
+                        logConsole('final Results', me.synchroResults);
+                        for ( var docid in me.synchroResults.detailStatus) {
+                            if (me.synchroResults.detailStatus[docid].isValid) {
                                 // update local document
                                 me.revertDocument({
                                     domain : domain,
@@ -814,16 +968,20 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                                 });
                             }
                         }
-                        if (results.status == "successTransaction") {
-                            this.callObserver('onError', results);
+                        if (me.synchroResults.status != "successTransaction") {
+                            me.callObserver('onError', this.synchroResults);
+                            return false;
                         }
+                        return true;
+                    } else {
+                        throw new SyncException("end transaction error");
                     }
                 }
             });
         } else {
             throw new SyncException("no transaction set");
         }
-        logConsole('mod files', modifiedFiles);
+        //logConsole('mod files', modifiedFiles);
     } else {
         throw new ArgException("pushDocuments need domain parameter");
     }

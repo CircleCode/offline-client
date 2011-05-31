@@ -32,7 +32,7 @@
     <binding id="frame-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
         <content>
             <xul:groupbox>
-                <xul:caption anonid="label" class="dcplabel" label="__DEBUG__"/>
+                <xul:caption anonid="label" class="dcplabel" xbl:inherits="label"/>
                 <children/>
             </xul:groupbox>
         </content>

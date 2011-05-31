@@ -42,7 +42,7 @@ MicroEvent.prototype = {
             }
             for(var i = 0; i < this._events[event].length; i++){
                 var currentSubscriber = this._events[event][i];
-                if (!this.doIt(event, currentSubscriber.fct, Array.prototype.slice.call(arguments, 1), currentSubscriber.config)) {
+                if (this.doIt(event, currentSubscriber.fct, Array.prototype.slice.call(arguments, 1), currentSubscriber.config) === false) {
                     returnValue = false;
                 }
             }
@@ -63,7 +63,7 @@ MicroEvent.prototype = {
                     return this.doIt(currentEvent, config.onError, [error], {scope : scope});
                 } else {
                     logConsole("Events.jsm : for the event "+currentEvent+" "+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
-                    logDebug("Events.jsm : for the event "+currentEvent+" "+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
+                    logError("Events.jsm : for the event "+currentEvent+" "+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
                 }
                 return true;
             }

@@ -9,7 +9,6 @@ Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/events.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
-Cu.import("resource://modules/offlineSynchronize.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
@@ -19,14 +18,19 @@ Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
 /* Add window binding onLoad and onClose*/
 window.onload = function() {
+    initNetworkCheck();
     initListeners();
     initApplication();
-    initSession(true);
+    initSession();
     initValues();
 }
 
-/* Dialog opener */
+function initNetworkCheck() {
+    networkChecker.isOffline();
+    setTimeout(initNetworkCheck, 15);
+}
 
+/* Dialog opener */
 function openLoginDialog() {
     window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
     "chrome,modal");
@@ -73,7 +77,7 @@ function initApplication()
 
 function initSession(firstLaunch) 
 {
-    var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
+    /*var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
     var login = Preferences.get("offline.user.login", false);
     var password = Preferences.get("offline.user.password", false);
     var applicationURL = Preferences.get("offline.user.applicationURL", false);
@@ -108,7 +112,7 @@ function initSession(firstLaunch)
                 return;
             }
         }
-        
+
     }else {
         if (!(login && password && applicationURL)) {
             Services.prompt.alert(window,translate.get("main.initSession.offline.userPreferencesUnset.title"), translate.get("main.initSession.offline.userPreferencesUnset"));
@@ -116,7 +120,8 @@ function initSession(firstLaunch)
             return;
         }
     }
-    applicationEvent.publish("close");
+    applicationEvent.publish("close");*/
+    this.openLoginDialog();
 }
 
 /* interface element */
@@ -136,46 +141,53 @@ function close()
     Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
 }
 
+function reload()
+{
+    Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit|Ci.nsIAppStartup.eRestart);
+}
+
 function openDocument(config) {
-    
+
     logIHM("openDocument "+config.documentId);
-    
+
     var doc;
-    var template;
+    var template, mode;
     var deck;
     var documentRepresentationId, documentRepresentation;
-    
-    deck = document.getElementById('documentsDeck');
-    
-    if (config && config.documentId) {
-        mode = config.mode || 'view';
 
-            try {
-                doc = docManager.getLocalDocument({
-                    initid : config.documentId
-                });
-                template = doc.getBinding(mode);
-                if (template) {
-                    template = 'url(file://' + template + ')';
-                    documentRepresentationId = 'vboxDocument-'+config.documentId;
-                    documentRepresentation= document.getElementById(documentRepresentationId);
-                    if(! documentRepresentation ){
-                        documentRepresentation = document.createElement('vbox');
-                        documentRepresentation.setAttribute('flex', 1);
-                        documentRepresentation.setAttribute('initid', config.documentId);
-                        documentRepresentation.id = documentRepresentationId;
-                        documentRepresentation.style.MozBinding = template;
-                        documentRepresentation = deck.appendChild(documentRepresentation);
-                    }
-                    deck.selectedPanel = documentRepresentation;
-                } else {
-                    throw new BindException(
-                            "openDocument :: no template for initid: " + config.documentId);
+    deck = document.getElementById('documentsDeck');
+
+    if (config && config.documentId) {
+
+        mode = config.mode || 'view';
+        try {
+            doc = docManager.getLocalDocument({
+                initid : config.documentId
+            });
+            template = doc.getBinding(mode);
+            if (template) {
+                template = 'url(file://' + template + ')';
+                documentRepresentationId = 'vboxDocument-'+config.documentId;
+                documentRepresentation= document.getElementById(documentRepresentationId);
+                if(! documentRepresentation ){
+                    documentRepresentation = document.createElement('vbox');
+                    documentRepresentation.setAttribute('flex', 1);
+                    documentRepresentation.setAttribute('initid', config.documentId);
+                    documentRepresentation.setAttribute('fromid', doc.getProperty('fromid'));
+                    documentRepresentation.setAttribute('fromname', doc.getProperty('fromname'));
+                    documentRepresentation.id = documentRepresentationId;
+                    documentRepresentation.style.MozBinding = template;
+                    documentRepresentation = deck.appendChild(documentRepresentation);
                 }
-            } catch (e) {
-                alert(e.toString());
-                throw (e);
+                deck.selectedPanel = documentRepresentation;
+            } else {
+                throw new BindException(
+                        "openDocument :: no template for initid: " + config.documentId);
             }
+        } catch (e) {
+            alert(e.toString());
+            throw (e);
+        }
     }else {
         deck.selectedPanel = document.getElementById("vboxDocument-void");
     }
@@ -183,12 +195,12 @@ function openDocument(config) {
 }
 
 function closeDocument(config) {
-    
+
     logIHM("closeDocument "+config.documentId);
-    
+
     var deck;
     var documentRepresentationId, documentRepresentation;
-    
+
     if (config && config.documentId) {
         deck = document.getElementById('documentsDeck');
         documentRepresentationId = 'vboxDocument-'+config.documentId;
@@ -235,26 +247,26 @@ function updateOpenDocumentList()
 {
     logIHM("updateOpenDocumentList");
     var documentList = document.getElementById("openDocumentList");
+
+    var currentOpenDocument = getCurrentDocument();
+    var currentDocs = getListOfOpenDocuments();
+    var currentDocId;
+
+    if (currentOpenDocument) {
+        currentOpenDocument =  currentOpenDocument.documentId;
+    }
+
     documentList.removeAllItems();
     documentList.selectedIndex = -1;
-    if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
-        var currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
-        var currentDocId;
-        
+    if (currentDocs) {
+
         for (currentDocId in currentDocs) {
-            var currentListItem = documentList.appendItem(currentDocs[currentDocId], currentDocId);
-            if (currentDocId == Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument")) {
+            var currentListItem = documentList.appendItem(currentDocs[currentDocId].title, currentDocId);
+            if (currentDocId == currentOpenDocument) {
                 documentList.selectedItem = currentListItem;
             }
         }
     }
-}
-
-function viewDocument(config) 
-{
-    logIHM("viewDocument");
-    openDocument(config.documentId);
-    debugDisplayDoc(config.documentId);
 }
 
 function addDocumentToOpenList(config) 
@@ -262,11 +274,11 @@ function addDocumentToOpenList(config)
     logIHM("addDocumentToOpenList");
     var currentDocs = {};
     if (config && config.documentId) {
-        if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
-            currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
+        if (getListOfOpenDocuments()) {
+            currentDocs = getListOfOpenDocuments();
         }
         var title = docManager.getLocalDocument({initid : config.documentId}).getTitle();
-        currentDocs[config.documentId] = title;
+        currentDocs[config.documentId] = { title : title, mode : config.mode};
         Preferences.set("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments",JSON.stringify(currentDocs));
         applicationEvent.publish("postUpdateListOfOpenDocumentsPreference");
     }
@@ -277,12 +289,11 @@ function removeDocumentFromOpenList(config)
     logIHM("removeDocumentFromOpenList");
     var currentDocs = {};
     if (config && config.documentId) {
-        if (Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", false)) {
-            currentDocs = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments"));
+        if (getListOfOpenDocuments()) {
+            currentDocs = getListOfOpenDocuments();
         }
         delete currentDocs[config.documentId];
         Preferences.set("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments",JSON.stringify(currentDocs));
-        logIHM(JSON.stringify(currentDocs));
         applicationEvent.publish("postUpdateListOfOpenDocumentsPreference");
     }
 }
@@ -314,9 +325,9 @@ function updateCurrentFamilyPreference(config)
 
 function updateCurrentOpenDocumentPreference(config)
 {
-    logIHM("updateCurrentOpenDocumentPreference");
+    logIHM("updateCurrentOpenDocumentPreference "+config.documentId);
     if (config && config.documentId) {
-        Preferences.set("offline.user."+getCurrentDomain()+".currentOpenDocument", config.documentId);
+        Preferences.set("offline.user."+getCurrentDomain()+".currentOpenDocument", JSON.stringify(config));
     }
 }
 
@@ -370,16 +381,19 @@ function setPrefCurrentSelectedFamily(propagEvent)
 
 function setPrefCurrentOpenDocument(propagEvent)
 {
-    logIHM("setPrefCurrentOpenDocument "+Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument"));
+    logIHM("setPrefCurrentOpenDocument "+getCurrentDocument());
     var documents = document.getElementById("openDocumentList");
-    if (!Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument", false) === false) {
-        var nbDocuments = documents.itemCount;
-        for(var i = 0; i < nbDocuments; i++) {
-            var currentDocument = documents.getItemAtIndex(i);
-            if (Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument") == currentDocument.value) {
+    var currentDocument = getCurrentDocument();
+    var currentListElement, i;
+    var nbDocuments;
+    if (!currentDocument === false) {
+        nbDocuments = documents.itemCount;
+        for(i = 0; i < nbDocuments; i++) {
+            currentListElement = documents.getItemAtIndex(i);
+            if (currentDocument.documentId == currentListElement.value) {
                 documents.selectedIndex = i;
                 if (propagEvent === true) {
-                    tryToOpenDocument(currentDocument.value);
+                    tryToOpenDocument(currentDocument);
                 }
                 return;
             }
@@ -388,41 +402,72 @@ function setPrefCurrentOpenDocument(propagEvent)
     documents.selectedIndex = -1;
     Preferences.reset("offline.user."+getCurrentDomain()+".currentOpenDocument");
     if (propagEvent === true) {
-       tryToOpenDocument(null);
+        tryToOpenDocument(null);
     }
+}
+
+function prepareDoc(param) {
+    logIHM("prepareDoc");
+    var currentDocs = getListOfOpenDocuments();
+    var currentDocId;
+    var closeResult;
+    
+
+    
+    for (currentDocId in currentDocs) {
+        if (currentDocId == param.documentId) {
+            if (!param.mode){
+                param.mode = currentDocs[currentDocId].mode;
+            }
+            if (currentDocs[currentDocId].mode != param.mode){
+                return tryToCloseDocument(param);
+            }
+        }
+    }
+    
+    if (!param.mode){
+        param.mode = 'view';
+    }
+    
+    return true;
 }
 
 function initListeners()
 {
     logIHM("initListeners");
-    
+
     applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
     applicationEvent.subscribe("postChangeSelectedDomain", updateFamilyList, true);
     applicationEvent.subscribe("postChangeSelectedDomain", updateAbstractList);
     applicationEvent.subscribe("postChangeSelectedDomain", updateOpenDocumentList);
-    
+    applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
+
     applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
     applicationEvent.subscribe("postChangeSelectedFamily", updateCurrentFamilyPreference);
-    
+
+    applicationEvent.subscribe("preOpenDocument", prepareDoc);
     applicationEvent.subscribe("openDocument", updateCurrentOpenDocumentPreference);
     applicationEvent.subscribe("openDocument", addDocumentToOpenList);
-    applicationEvent.subscribe("postOpenDocument", setPrefCurrentOpenDocument);
+    applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
     applicationEvent.subscribe("postOpenDocument", openDocument);
-    
+
     applicationEvent.subscribe("postSynchronize", updateFamilyList);
     applicationEvent.subscribe("postSynchronize", updateAbstractList);
-    
+
     applicationEvent.subscribe("postUpdateFamilyList", setPrefCurrentSelectedFamily, true);
-    
+
+
     //applicationEvent.subscribe("postUpdateAbstractList", setPrefCurrentSelectedFamily, true);
-    
+
     applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference", updateOpenDocumentList);
-    
+
     applicationEvent.subscribe("askForCloseDocument", tryToCloseDocument);
     
+    applicationEvent.subscribe("askForOpenDocument", tryToOpenDocument);
+
     applicationEvent.subscribe("closeDocument",removeDocumentFromOpenList);
     applicationEvent.subscribe("postCloseDocument", closeDocument);
-    
+
     applicationEvent.subscribe("close", close);
 }
 
@@ -436,7 +481,7 @@ function initValues()
 }
 
 function changeDomain(value) {
-    logConsole("try to change Domain "+value);
+    logIHM("try to change Domain "+value);
     var param = {
             domainId : value
     };
@@ -467,11 +512,11 @@ function changeFamily(value) {
     }
 }
 
-function tryToOpenDocument(value) {
-    logConsole("try to change open document "+value);
-    var param = {
-            documentId : value
-    };
+function tryToOpenDocument(param) {
+    logIHM("try to change open document");
+    if (!(param && param.documentId)) {
+        return false;
+    }
     if (!applicationEvent.publish("preOpenDocument", param)) {
         //TODO add alert message
         alert("unable to change selected document");
@@ -480,23 +525,54 @@ function tryToOpenDocument(value) {
         applicationEvent.publish("openDocument", param);
         applicationEvent.publish("postOpenDocument", param);
     }
+    return true;
 }
 
 function tryToCloseDocument(param) {
     logConsole("try to close document "+param.documentId);
+    if (!(param && param.documentId)) {
+        return false;
+    }
     if (!applicationEvent.publish("preCloseDocument", param)) {
-      //TODO add alert message
-        alert("unable to change selected document");
+        //TODO add alert message
+        alert("unable to close selected document");
+        return false;
     }else {
         applicationEvent.publish("closeDocument", param);
         applicationEvent.publish("postCloseDocument", param);
     }
+    return true;
 }
 
 //shortcut
 
 function getCurrentDomain() {
     return Preferences.get("offline.user.currentSelectedDomain", "");
+}
+
+function getCurrentDocument() {
+    var currentOpenDocument = {};
+    try {    
+        currentOpenDocument = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentOpenDocument", "{}"));
+    } catch (e) {
+        logConsole("getCurrentDocument "+e+" "+e.message+" "+e.fileName+" "+e.lineNumber+" "+e);
+    }
+    if (currentOpenDocument && currentOpenDocument.documentId) {
+        currentOpenDocument = currentOpenDocument;
+    }else {
+        currentOpenDocument = false;
+    }
+    return currentOpenDocument;
+}
+
+function getListOfOpenDocuments() {
+    var openList = {};
+    try {    
+        openList = JSON.parse(Preferences.get("offline.user."+getCurrentDomain()+".currentListOfOpenDocuments", "{}"));
+    } catch (e) {
+        logConsole("getCurrentDocument "+e+" "+e.message+" "+e.fileName+" "+e.lineNumber+" "+e);
+    }
+    return openList;
 }
 
 function logIHM(message) {

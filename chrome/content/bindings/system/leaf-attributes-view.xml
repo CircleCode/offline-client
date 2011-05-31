@@ -21,21 +21,33 @@
                 onset="this.setValue(val);">
             </property>
             
-            <method name="setValue">
+            <method name="checkValue">
                 <parameter name="value"/>
                 <body><![CDATA[
-                    this.doc.setValue(this.attrid, value);
-                    this.reloadDisplayValue();
+                    return true;
                 ]]></body>
             </method>
             
-            <method name="reloadDisplayValue">
+            <method name="setValue">
+                <parameter name="value"/>
+                <body><![CDATA[
+                    var isValidValue = this.checkValue(value);
+                    if(isValidValue){
+                        this.doc.setValue(this.attrid, value);
+                        this.reloadValue();
+                    }
+                    return isValidValue;
+                ]]></body>
+            </method>
+            
+            <method name="reloadValue">
                 <body><![CDATA[
                     var valueNode = this.getChild('displayValue');
                     if(valueNode){
-                        valueNode.value = this.getDisplayValue();
+                        valueNode.value = this.getValue();
                     } else {
-                        throw new BindingException("no displayValue chil for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                        Components.utils.import("resource://modules/exceptions.jsm");
+                        throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
                     }
                 ]]></body>
             </method>
@@ -46,14 +58,8 @@
                 ]]></body>
             </method>
             
-            <method name="getDisplayValue">
-                <body><![CDATA[
-                    return this.doc.getDisplayValue(this.attrid);
-                ]]></body>
-            </method>
-            
             <constructor><![CDATA[
-                this.reloadDisplayValue();
+                this.reloadValue();
             ]]></constructor>
             
         </implementation>
@@ -91,7 +97,7 @@
         </content>
         
         <implementation>
-            <method name="reloadDisplayValue">
+            <method name="reloadValue">
                 <body><![CDATA[
                     var Cc = Components.classes;
                     var Ci = Components.interfaces;
@@ -102,7 +108,7 @@
                                 Cc["@mozilla.org/feed-unescapehtml;1"]
                                         .getService(
                                                 Ci.nsIScriptableUnescapeHTML)
-                                        .parseFragment(this.getDisplayValue(),
+                                        .parseFragment(this.getValue(),
                                                 false,
                                                 null,
                                                 valueNode));

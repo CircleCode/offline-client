@@ -48,8 +48,6 @@
             
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
-                var flex = this.getAttribute('flex') || 1;
-                this.setAttribute('flex', flex);
                 
                 this.getChild('document-initid').value = this.doc.getInitid();
                 
