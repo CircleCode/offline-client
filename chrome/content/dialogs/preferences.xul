@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<!DOCTYPE dialog [
+<!DOCTYPE window [
 <!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
 %mainDTD;
 ]>
@@ -8,12 +8,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    title="&login.dialogTitle;"
+    title="&preference.dialogTitle;"
     buttons="accept,cancel">
-    
-    <stringbundleset id="stringbundleset">
-        <stringbundle id="mainBundle" src="chrome://dcpoffline/locale/main.properties"/>
-    </stringbundleset>
     
     <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/preferences.js" />
     
