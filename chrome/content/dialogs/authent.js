@@ -51,8 +51,9 @@ function tryToAuthent() {
     document.getElementById('modeOffline').disabled = true;
     document.getElementById('autoLogin').disabled = true;
     
+    document.getElementById('progressGroup').style.visibility = "visible";
     document.getElementById('progressGroup').hidden = false;
-    document.getElementById('errorGroup').hidden = true;
+    document.getElementById('errorGroup').style.visibility = "hidden";
     
   //get last value
     var currentLogin = document.getElementById('login').value;
@@ -70,7 +71,8 @@ function tryToAuthent() {
         logIHM(authentReturn.reason);
         if (authentReturn.reason) {
             document.getElementById('errorLabel').value = authentReturn.reason;
-            document.getElementById('errorGroup').hidden = false;
+            document.getElementById('errorGroup').style.visibility = "visible";
+            document.getElementById('progressGroup').hidden = true;
         }
         
         document.getElementById('login').disabled = false;
@@ -78,7 +80,7 @@ function tryToAuthent() {
         document.getElementById('remember').disabled = false;
         document.getElementById('modeOffline').disabled = false;
         document.getElementById('autoLogin').disabled = false;
-        document.getElementById('progressGroup').hidden = true;
+        document.getElementById('progressGroup').style.visibility = "hidden";
     }
 }
 
@@ -90,6 +92,10 @@ function doLoad() {
     var currentPassword;
     var login = Preferences.get("offline.user.login", "");
     var autologin = Preferences.get("offline.application.autoLogin", false);
+    
+    document.getElementById('progressGroup').style.visibility = "hidden";
+    document.getElementById('errorGroup').style.visibility = "hidden";
+    
     
     if (Preferences.get("offline.application.rememberLogin", false)) {
         document.getElementById('login').value = login;
@@ -105,7 +111,7 @@ function doLoad() {
     document.getElementById('applicationURL').value = Preferences.get("offline.user.applicationURL", "");
     document.getElementById('autoLogin').checked = autologin;
     
-    if (autologin){
+    if (false){
         setTimeout(tryToAuthent, 10);
     }
     
