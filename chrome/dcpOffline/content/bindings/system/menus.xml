@@ -123,19 +123,19 @@
         
         <handlers>
             <handler event="click"  button="0" id="click"><![CDATA[
-            switch(event.originalTarget){
-                case this.getChild('document-toolbar-system-edit') :
-                    this.getDocumentNode().switchMode('edit');
-                    break;
-                case this.getChild('document-toolbar-system-close') :
-                    this.getDocumentNode().close();
-                    break;
-                case this.getChild('document-toolbar-system-save') :
-                    this.getDocumentNode().save();
-                    break;
-                default:
-                    logConsole("pouet");
-            }
+                switch(event.originalTarget){
+                    case this.getChild('document-toolbar-system-edit') :
+                        this.getDocumentNode().switchMode('edit');
+                        break;
+                    case this.getChild('document-toolbar-system-close') :
+                        this.getDocumentNode().close();
+                        break;
+                    case this.getChild('document-toolbar-system-save') :
+                        this.getDocumentNode().save();
+                        break;
+                    default:
+                        logConsole("pouet");
+                }
             ]]></handler>
         </handlers>
     </binding>

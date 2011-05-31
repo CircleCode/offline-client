@@ -24,6 +24,8 @@
             <method name="checkValue">
                 <parameter name="value"/>
                 <body><![CDATA[
+                    Components.utils.import("resource://modules/logger.jsm");
+                    logConsole("check value " + value);
                     return true;
                 ]]></body>
             </method>
@@ -31,8 +33,11 @@
             <method name="setValue">
                 <parameter name="value"/>
                 <body><![CDATA[
+                    Components.utils.import("resource://modules/logger.jsm");
+                    logConsole("ask to set value " + value);
                     var isValidValue = this.checkValue(value);
                     if(isValidValue){
+                        logConsole("value " + value + " is valid");
                         this.doc.setValue(this.attrid, value);
                         this.reloadValue();
                     }
