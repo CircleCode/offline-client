@@ -15,57 +15,26 @@ Cu.import("resource://gre/modules/Services.jsm");
 /* enabling password manager */
 Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
 
-
+/* init elements */
 /* Add window binding onLoad and onClose*/
 window.onload = function() {
     initNetworkCheck();
     initApplication();
 }
-
+/**
+ * Init the network check
+ * Private method : you should never use it
+ * @private
+ */
 function initNetworkCheck() {
     networkChecker.isOffline();
     setTimeout(initNetworkCheck, 15);
 }
-
-/* Dialog opener */
-function openLoginDialog() {
-    window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
-    "chrome,modal");
-}
-
-function openNewDocumentDialog() {
-    window.openDialog("chrome://dcpoffline/content/dialogs/newDocument.xul", "",
-    "chrome,modal");
-}
-
-function openCloseDialog() {
-    /*window.openDialog("chrome://dcpoffline/content/dialogs/close.xul", "",
-    "chrome,modal");*/
-    launchClose();
-}
-
-function openPreferences() {
-    window.openDialog("chrome://dcpoffline/content/dialogs/preferences.xul", "",
-    "chrome,modal");
-}
-
-function openSynchro() {
-    window.open("chrome://dcpoffline/content/dialogs/synchro.xul", "",
-    "chrome,modal");
-}
-
-function openLog() {
-    window.openDialog("chrome://dcpoffline/content/dialogs/log.xul", "",
-    "chrome,modal");
-}
-
-function openAbout() {
-    window.openDialog("chrome://dcpoffline/content/dialogs/about.xul", "",
-    "chrome,modal");
-}
-
-/* init elements */
-
+/**
+ * Init the application
+ * Private method : you should never use it
+ * @private
+ */
 function initApplication() 
 {
     var firstRun = Preferences.get("offline.application.firstRun", true);
@@ -77,19 +46,222 @@ function initApplication()
         window.openDialog("chrome://dcpoffline/content/wizards/initialization.xul", "","chrome,modal");
     }
     else {
-        initSession();
+        this.openLoginDialog();
         initValues();
     }
 }
-
-function initSession() 
+/**
+ * init all the listener
+ * Private method : you should never use it
+ * Launch it first : beware this method handle all the behaviour of the application
+ * if you break it you break the IHM
+ * @private
+ */
+function initListeners()
 {
-    this.openLoginDialog();
+    logIHM("initListeners");
+
+    applicationEvent.subscribe("initializationWizardEnd", initValues);
+    
+    applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateFamilyList, true);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateAbstractList);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateOpenDocumentList);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
+
+    applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
+    applicationEvent.subscribe("postChangeSelectedFamily", updateCurrentFamilyPreference);
+
+    applicationEvent.subscribe("preOpenDocument", prepareDoc);
+    applicationEvent.subscribe("openDocument", updateCurrentOpenDocumentPreference);
+    applicationEvent.subscribe("openDocument", addDocumentToOpenList);
+    applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
+    applicationEvent.subscribe("postOpenDocument", openDocument);
+
+    applicationEvent.subscribe("postSynchronize", updateFamilyList);
+    applicationEvent.subscribe("postSynchronize", updateAbstractList);
+
+    applicationEvent.subscribe("postUpdateFamilyList", setPrefCurrentSelectedFamily, true);
+
+    applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference", updateOpenDocumentList);
+
+    applicationEvent.subscribe("askForCloseDocument", tryToCloseDocument);
+    
+    applicationEvent.subscribe("askForOpenDocument", tryToOpenDocument);
+
+    applicationEvent.subscribe("closeDocument",removeDocumentFromOpenList);
+    applicationEvent.subscribe("postCloseDocument", closeDocument);
+
+    applicationEvent.subscribe("close", close);
+}
+/**
+ * Init the values of the IHM
+ * Private method : you should never use it
+ * @private
+ */
+function initValues()
+{
+    logIHM("initValues");
+    document.getElementById("domainPopupList").builder.rebuild();
+    setPrefCurrentSelectedDomain(true);
+    setPrefCurrentSelectedFamily(true);
+    setPrefCurrentOpenDocument(true);
 }
 
-/* interface element */
+/* Dialog opener */
 
-function launchClose()
+/**
+ * Open the login dialog
+ * Private method : you should never use it
+ * @private
+ */
+function openLoginDialog() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/authent.xul", "",
+    "chrome,modal");
+}
+/**
+ * Open the new document dialog
+ * Private method : you should never use it
+ * @private
+ */
+function openNewDocumentDialog() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/newDocument.xul", "",
+    "chrome,modal");
+}
+/**
+ * Open the close dialog
+ * Private method : you should never use it
+ * @private
+ */
+function openCloseDialog() {
+    /*window.openDialog("chrome://dcpoffline/content/dialogs/close.xul", "",
+    "chrome,modal");*/
+    launchClose();
+}
+/**
+ * Open the preferences dialog
+ * Private method : you should never use it
+ * @private
+ */
+function openPreferences() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/preferences.xul", "",
+    "chrome,modal");
+}
+/**
+ * Open the synchro dialog
+ * Private method : you should never use it
+ * @private
+ */
+function openSynchro() {
+    window.open("chrome://dcpoffline/content/dialogs/synchro.xul", "",
+    "chrome,modal");
+}
+/**
+ * Open the log dialog
+ * Private method : you should never use it
+ * @private
+ */
+function openLog() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/log.xul", "",
+    "chrome,modal");
+}
+/**
+ * Open the about dialog
+ * Private method : you should never use it
+ * @private
+ */
+function openAbout() {
+    window.openDialog("chrome://dcpoffline/content/dialogs/about.xul", "",
+    "chrome,modal");
+}
+
+//Public Methods
+/**
+ * Try to change the current selected domain
+ * 
+ * @param value
+ */
+function tryToChangeDomain(value) {
+    logIHM("try to change Domain "+value);
+    var param = {
+            domainId : value
+    };
+    if (!applicationEvent.publish("preChangeSelectedDomain", param)) {
+        //TODO add alert message
+        alert("unable to change domain");
+        setPrefCurrentSelectedDomain();
+    }else {
+        logConsole("change Domain "+value);
+        applicationEvent.publish("changeSelectedDomain", param);
+        applicationEvent.publish("postChangeSelectedDomain", param);
+    }
+
+}
+/**
+ * Try to change the current selected family
+ * 
+ * @param value
+ */
+function tryToChangeFamily(value) {
+    logConsole("try to change selected family "+value);
+    var param = {
+            famId : value
+    };
+    if (!applicationEvent.publish("preChangeSelectedFamily", param)) {
+        //TODO add alert message
+        alert("unable to change selected family");
+        setPrefCurrentSelectedFamily();
+    }else {
+        applicationEvent.publish("changeSelectedFamily", param);
+        applicationEvent.publish("postChangeSelectedFamily", param);
+    }
+}
+/**
+ * Try to change to open a document
+ * this method should also be used to change the state of a document
+ * 
+ * @param param
+ */
+function tryToOpenDocument(param) {
+    logIHM("try to change open document");
+    if (!(param && param.documentId)) {
+        return false;
+    }
+    if (!applicationEvent.publish("preOpenDocument", param)) {
+        //TODO add alert message
+        alert("unable to change selected document");
+        setPrefCurrentOpenDocument();
+    }else {
+        applicationEvent.publish("openDocument", param);
+        applicationEvent.publish("postOpenDocument", param);
+    }
+    return true;
+}
+/**
+ * Try to change to close a document
+ * 
+ * @param param
+ */
+function tryToCloseDocument(param) {
+    logConsole("try to close document "+param.documentId);
+    if (!(param && param.documentId)) {
+        return false;
+    }
+    if (!applicationEvent.publish("preCloseDocument", param)) {
+        //TODO add alert message
+        alert("unable to close selected document");
+        return false;
+    }else {
+        applicationEvent.publish("closeDocument", param);
+        applicationEvent.publish("postCloseDocument", param);
+    }
+    return true;
+}
+/**
+ * Try to close the application
+ * 
+ */
+function tryToClose()
 {
     if (applicationEvent.publish("preClose")) {
         applicationEvent.publish("close");
@@ -99,16 +271,25 @@ function launchClose()
     }
 }
 
+//IHM methods
+
+/**
+ * Close the application
+ * Private method : you should never use it
+ * @private
+ */
 function close()
 {
     Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
 }
 
-function reload()
-{
-    Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit|Ci.nsIAppStartup.eRestart);
-}
-
+/**
+ * openDocument in main IHM 
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function openDocument(config) {
 
     logIHM("openDocument "+config.documentId);
@@ -156,7 +337,13 @@ function openDocument(config) {
     }
 
 }
-
+/**
+ * Close a document
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function closeDocument(config) {
 
     logIHM("closeDocument "+config.documentId);
@@ -177,8 +364,12 @@ function closeDocument(config) {
     }
 }
 
-
-/* Listeners */
+/**
+ * update interface family list
+ * 
+ * Private method : you should never use it
+ * @private
+ */
 function updateFamilyList(config)
 {
     logIHM("updateFamilyList");
@@ -188,7 +379,13 @@ function updateFamilyList(config)
     document.getElementById("familyList").builder.rebuild();
     applicationEvent.publish("postUpdateFamilyList");
 }
-
+/**
+ * update abstract list
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function updateAbstractList(config)
 {
     logIHM("updateAbstractList");
@@ -205,7 +402,13 @@ function updateAbstractList(config)
     document.getElementById("abstractList").selectedIndex =  -1;
     applicationEvent.publish("postUpdateAbstractList");
 }
-
+/**
+ * Update documentList IHM
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function updateOpenDocumentList() 
 {
     logIHM("updateOpenDocumentList");
@@ -230,7 +433,13 @@ function updateOpenDocumentList()
         }
     }
 }
-
+/**
+ * Update documentList pref
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function addDocumentToOpenList(config) 
 {
     logIHM("addDocumentToOpenList");
@@ -245,7 +454,13 @@ function addDocumentToOpenList(config)
         applicationEvent.publish("postUpdateListOfOpenDocumentsPreference");
     }
 }
-
+/**
+ * Remove a document from the open list
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function removeDocumentFromOpenList(config) 
 {
     logIHM("removeDocumentFromOpenList");
@@ -259,7 +474,13 @@ function removeDocumentFromOpenList(config)
         applicationEvent.publish("postUpdateListOfOpenDocumentsPreference");
     }
 }
-
+/**
+ * Update the selected domain pref
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function updateDomainPreference(config)
 {
     logIHM("updateDomainPreference");
@@ -267,7 +488,13 @@ function updateDomainPreference(config)
         Preferences.set("offline.user.currentSelectedDomain", config.domainId);
     }
 }
-
+/**
+ * Update the doc manager
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function updateDocManager(config) {
     logIHM("updateDocManager");
     if (config && config.domainId) {
@@ -276,7 +503,13 @@ function updateDocManager(config) {
         });
     }
 }
-
+/**
+ * Update the selected family pref
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function updateCurrentFamilyPreference(config)
 {
     logIHM("updateCurrentFamilyPreference");
@@ -284,7 +517,13 @@ function updateCurrentFamilyPreference(config)
         Preferences.set("offline.user."+getCurrentDomain()+".currentSelectedFamily", config.famId);
     }
 }
-
+/**
+ * Update the current open doc pref
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param config
+ */
 function updateCurrentOpenDocumentPreference(config)
 {
     logIHM("updateCurrentOpenDocumentPreference "+config.documentId);
@@ -292,7 +531,13 @@ function updateCurrentOpenDocumentPreference(config)
         Preferences.set("offline.user."+getCurrentDomain()+".currentOpenDocument", JSON.stringify(config));
     }
 }
-
+/**
+ * Update the IHM with the current selected domain
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param propagEvent true if you want to propag the event
+ */
 function setPrefCurrentSelectedDomain(propagEvent)
 {
     logIHM("setPrefCurrentSelectedDomain");
@@ -304,7 +549,7 @@ function setPrefCurrentSelectedDomain(propagEvent)
             if (Preferences.get("offline.user.currentSelectedDomain") == currentDomain.value) {
                 domains.selectedIndex = i;
                 if (propagEvent) {
-                    changeDomain(currentDomain.value);
+                    tryToChangeDomain(currentDomain.value);
                 }
                 return;
             }
@@ -313,10 +558,16 @@ function setPrefCurrentSelectedDomain(propagEvent)
     domains.selectedIndex = -1;
     Preferences.reset("offline.user.currentSelectedDomain");
     if (propagEvent) {
-        changeDomain(null);
+        tryToChangeDomain(null);
     }
 }
-
+/**
+ * Update the IHM with the current selected family of the domain
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param propagEvent
+ */
 function setPrefCurrentSelectedFamily(propagEvent)
 {
     logIHM("setPrefCurrentSelectedFamily");
@@ -328,7 +579,7 @@ function setPrefCurrentSelectedFamily(propagEvent)
             if (Preferences.get("offline.user."+getCurrentDomain()+".currentSelectedFamily") == currentFamily.value) {
                 families.selectedIndex = i;
                 if (propagEvent) {
-                    changeFamily(currentFamily.value);
+                    tryToChangeFamily(currentFamily.value);
                 }
                 return;
             }
@@ -337,10 +588,16 @@ function setPrefCurrentSelectedFamily(propagEvent)
     families.selectedIndex = -1;
     Preferences.reset("offline.user."+getCurrentDomain()+".currentSelectedFamily");
     if (propagEvent) {
-        changeFamily(null);
+        tryToChangeFamily(null);
     }
 }
-
+/**
+ * Update the IHM with the current open document
+ * Private method : you should never use it
+ * @private
+ * 
+ * @param propagEvent
+ */
 function setPrefCurrentOpenDocument(propagEvent)
 {
     logIHM("setPrefCurrentOpenDocument "+getCurrentDocument());
@@ -367,14 +624,20 @@ function setPrefCurrentOpenDocument(propagEvent)
         tryToOpenDocument(null);
     }
 }
-
+/**
+ * Try to prepare the doc to be displayed
+ * Private method : you should never use it
+ * Can cancel the display if the document is not ready to be display (in edition...)
+ * @private
+ * 
+ * @param param
+ * @returns {Boolean}
+ */
 function prepareDoc(param) {
     logIHM("prepareDoc");
     var currentDocs = getListOfOpenDocuments();
     var currentDocId;
     var closeResult;
-    
-
     
     for (currentDocId in currentDocs) {
         if (currentDocId == param.documentId) {
@@ -393,127 +656,22 @@ function prepareDoc(param) {
     
     return true;
 }
-
-function initListeners()
-{
-    logIHM("initListeners");
-
-    applicationEvent.subscribe("initializationWizardEnd", initValues);
-    
-    applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
-    applicationEvent.subscribe("postChangeSelectedDomain", updateFamilyList, true);
-    applicationEvent.subscribe("postChangeSelectedDomain", updateAbstractList);
-    applicationEvent.subscribe("postChangeSelectedDomain", updateOpenDocumentList);
-    applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
-
-    applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
-    applicationEvent.subscribe("postChangeSelectedFamily", updateCurrentFamilyPreference);
-
-    applicationEvent.subscribe("preOpenDocument", prepareDoc);
-    applicationEvent.subscribe("openDocument", updateCurrentOpenDocumentPreference);
-    applicationEvent.subscribe("openDocument", addDocumentToOpenList);
-    applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
-    applicationEvent.subscribe("postOpenDocument", openDocument);
-
-    applicationEvent.subscribe("postSynchronize", updateFamilyList);
-    applicationEvent.subscribe("postSynchronize", updateAbstractList);
-
-    applicationEvent.subscribe("postUpdateFamilyList", setPrefCurrentSelectedFamily, true);
-
-
-    //applicationEvent.subscribe("postUpdateAbstractList", setPrefCurrentSelectedFamily, true);
-
-    applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference", updateOpenDocumentList);
-
-    applicationEvent.subscribe("askForCloseDocument", tryToCloseDocument);
-    
-    applicationEvent.subscribe("askForOpenDocument", tryToOpenDocument);
-
-    applicationEvent.subscribe("closeDocument",removeDocumentFromOpenList);
-    applicationEvent.subscribe("postCloseDocument", closeDocument);
-
-    applicationEvent.subscribe("close", close);
-}
-
-function initValues()
-{
-    logIHM("initValues");
-    document.getElementById("domainPopupList").builder.rebuild();
-    setPrefCurrentSelectedDomain(true);
-    setPrefCurrentSelectedFamily(true);
-    setPrefCurrentOpenDocument(true);
-}
-
-function changeDomain(value) {
-    logIHM("try to change Domain "+value);
-    var param = {
-            domainId : value
-    };
-    if (!applicationEvent.publish("preChangeSelectedDomain", param)) {
-        //TODO add alert message
-        alert("unable to change domain");
-        setPrefCurrentSelectedDomain();
-    }else {
-        logConsole("change Domain "+value);
-        applicationEvent.publish("changeSelectedDomain", param);
-        applicationEvent.publish("postChangeSelectedDomain", param);
-    }
-
-}
-
-function changeFamily(value) {
-    logConsole("try to change selected family "+value);
-    var param = {
-            famId : value
-    };
-    if (!applicationEvent.publish("preChangeSelectedFamily", param)) {
-        //TODO add alert message
-        alert("unable to change selected family");
-        setPrefCurrentSelectedFamily();
-    }else {
-        applicationEvent.publish("changeSelectedFamily", param);
-        applicationEvent.publish("postChangeSelectedFamily", param);
-    }
-}
-
-function tryToOpenDocument(param) {
-    logIHM("try to change open document");
-    if (!(param && param.documentId)) {
-        return false;
-    }
-    if (!applicationEvent.publish("preOpenDocument", param)) {
-        //TODO add alert message
-        alert("unable to change selected document");
-        setPrefCurrentOpenDocument();
-    }else {
-        applicationEvent.publish("openDocument", param);
-        applicationEvent.publish("postOpenDocument", param);
-    }
-    return true;
-}
-
-function tryToCloseDocument(param) {
-    logConsole("try to close document "+param.documentId);
-    if (!(param && param.documentId)) {
-        return false;
-    }
-    if (!applicationEvent.publish("preCloseDocument", param)) {
-        //TODO add alert message
-        alert("unable to close selected document");
-        return false;
-    }else {
-        applicationEvent.publish("closeDocument", param);
-        applicationEvent.publish("postCloseDocument", param);
-    }
-    return true;
-}
-
 //shortcut
-
+/**
+ * Get the current selected domain
+ * 
+ * Private method : you should never use it
+ * @private
+ */
 function getCurrentDomain() {
     return Preferences.get("offline.user.currentSelectedDomain", "");
 }
-
+/**
+ * Get the current open document
+ * 
+ * Private method : you should never use it
+ * @private
+ */
 function getCurrentDocument() {
     var currentOpenDocument = {};
     try {    
@@ -528,7 +686,12 @@ function getCurrentDocument() {
     }
     return currentOpenDocument;
 }
-
+/**
+ * Get the current list of open documents
+ * 
+ * Private method : you should never use it
+ * @private
+ */
 function getListOfOpenDocuments() {
     var openList = {};
     try {    
@@ -538,7 +701,10 @@ function getListOfOpenDocuments() {
     }
     return openList;
 }
-
+/**
+ * Shortcut to the logConsole
+ * 
+ */
 function logIHM(message) {
     logConsole(message);
 }
