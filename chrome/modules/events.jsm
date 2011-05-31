@@ -63,7 +63,7 @@ MicroEvent.prototype = {
                     return this.doIt(currentEvent, config.onError, [error], {scope : scope});
                 } else {
                     logConsole("Events.jsm : for the event "+currentEvent+" "+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
-                    logDebug("Events.jsm : for the event "+currentEvent+" "+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
+                    logError("Events.jsm : for the event "+currentEvent+" "+error.message+" "+error.fileName+" "+error.lineNumber+" "+error);
                 }
                 return true;
             }
