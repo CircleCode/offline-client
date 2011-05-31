@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE wizard [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/wizard.dtd" >
+%mainDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xul-overlay href="chrome://dcpoffline/content/overlays/authent.xul" ?>
+
+<wizard id="theWizard" title="&wizard.initialization.title;"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    onwizardcancel="tryToClose();"
+    onwizardback="wizardRewind();"
+    onwizardfinish="wizardEnd()"
+    >
+    <script type="application/javascript"
+        src="chrome://dcpoffline/content/wizards/initialization.js" />
+    <wizardpage id="welcome">
+        <label value="&wizard.initialization.welcome;" />
+    </wizardpage>
+    <wizardpage pageid="firstAuthent" onpageshow="initFirstAuthent();">
+        <label value="&wizard.first.login;" />
+        <button id="wizardTryToAuthent" label="&wizard.try.authent;" onclick="wizardAuthent();"/>
+        <vbox id="authent.mainBox">
+        </vbox>
+    </wizardpage>
+    <wizardpage pageid="firstSynchro">
+        <label value="&wizard.initialization.domain;" />
+    </wizardpage>
+</wizard>
