@@ -56,8 +56,6 @@ var authentificator = function() {
                         configOnConnect.reset = true;
                         configOnConnect.onConnect = this.authentOnline();
                         configOnConnect.onFail = this.authentOnlineFail();
-                        logConsole("authentifier", configOnConnect);
-                        logConsole("context", context);
                         context.isConnected(configOnConnect);
                         return;
                     }else {
