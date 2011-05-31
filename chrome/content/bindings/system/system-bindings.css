@@ -114,6 +114,13 @@ dcpDocument dcpDocFooter {
         url("chrome://dcpoffline/content/bindings/system/docFooter.xml#doc-footer");
 }
 
+
+/***********************************************************
+        Global (view)
+************************************************************/
+dcpDocument[mode=view] .dcpLabel {
+	width:30%;
+}
 /***********************************************************
         Node Attributes (view)
 ************************************************************/

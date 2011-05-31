@@ -70,9 +70,9 @@
     <binding id="text-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:textbox anonid="displayValue" class="dcpValue plain"/>
+                <xul:label anonid="displayValue" class="dcpValue"/>
             </xul:hbox>
         </content>
     </binding>
@@ -80,7 +80,7 @@
     <binding id="longtext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain" multiline="true" style="white-space:pre-line;"/>
             </xul:hbox>
@@ -90,7 +90,7 @@
     <binding id="htmltext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <html:div anonid="displayValue" class="dcpValue"/>
             </xul:hbox>
@@ -125,7 +125,7 @@
     <binding id="int-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute int">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
@@ -135,7 +135,7 @@
     <binding id="double-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute double">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
@@ -145,7 +145,7 @@
     <binding id="money-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute money">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
@@ -157,7 +157,7 @@
     <binding id="date-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain"/>
             </xul:hbox>
@@ -169,7 +169,7 @@
     <binding id="docid-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain" value="NOT YET IMPLEMENTED"/>
             </xul:hbox>
@@ -181,7 +181,7 @@
     <binding id="file-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain" value="NOT YET IMPLEMENTED"/>
             </xul:hbox>
@@ -191,7 +191,7 @@
     <binding id="image-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue plain" value="NOT YET IMPLEMENTED"/>
             </xul:hbox>
