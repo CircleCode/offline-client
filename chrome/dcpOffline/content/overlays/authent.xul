@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
+%mainDTD;
+]>
+
+<overlay id="toverlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <script type="application/javascript" src="chrome://dcpoffline/content/overlays/authent.js" />
+    <vbox id="authent.mainBox">
+        <groupbox>
+            <caption>
+                <label value="&authent.login.groupbox;" />
+            </caption>
+            <grid>
+                <rows>
+                    <row>
+                        <label value="&authent.login;" />
+                        <textbox id="authent.login" value="" flex="1" />
+                    </row>
+                    <row>
+                        <label value="&authent.password;" />
+                        <textbox type="password" id="authent.password"
+                            value="" flex="1" />
+                    </row>
+                    <row>
+                        <label value="&authent.applicationURL;" />
+                        <textbox id="authent.applicationURL" disabled="true"
+                            flex="1" />
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+        <groupbox id="authent.optionGroup">
+            <caption>
+                <label value="&authent.login.option;" />
+            </caption>
+            <grid>
+                <rows>
+                    <row>
+                        <label value="&authent.remember.login.mdp;" />
+                        <checkbox id="authent.remember" checked="true" />
+                    </row>
+                    <row>
+                        <label value="&authent.work.offline;" />
+                        <checkbox id="authent.modeOffline" checked="true" />
+                    </row>
+                    <row>
+                        <label value="&authent.autologin;" />
+                        <checkbox id="authent.autoLogin" />
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+        <groupbox id="authent.progressGroup">
+            <caption>
+                <label value="&authent.login.progress;" />
+            </caption>
+            <progressmeter id="authent.progress" mode="undetermined"
+                value="0" />
+        </groupbox>
+        <groupbox id="authent.errorGroup">
+            <caption>
+                <label value="&authent.error.label;" />
+            </caption>
+            <label id="authent.errorLabel" />
+        </groupbox>
+    </vbox>
+</overlay>
