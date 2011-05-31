@@ -24,43 +24,64 @@ var authentificator = function() {
             currentLogin : "",
             currentPassword : "",
             currentAppURL : "",
-            result : {},
+            onSuccess : function() {},
+            onError : function() {},
             translate : new StringBundle("chrome://dcpoffline/locale/main.properties"),
 
-            authentifier : function(modeOffline, currentLogin, currentPassword, currentAppURL) {
-                var networkState;
-
-                if (! (currentLogin && currentPassword && currentAppURL)) {
-                    return {result : null , reason : this.translate.get("authent.logInfoIncomplete")};
-                }
+            authentifier : function(modeOffline, currentLogin, currentPassword, currentAppURL, onSuccess, onError) {
+                logConsole("authentifier");
+                var currentTimeout = Preferences.get("offline.application.isConnectedTimeOut", false);
+                var configOnConnect = {};
 
                 this.modeOffline = modeOffline;
                 this.currentLogin = currentLogin;
                 this.currentPassword = currentPassword;
                 this.currentAppURL = currentAppURL;
+                this.onSuccess = onSuccess;
+                this.onError = onError;
 
+                if (! (currentLogin && currentPassword && currentAppURL)) {
+                    this.onError(this.translate.get("authent.logInfoIncomplete"));
+                    return;
+                }
+                
                 if (this.modeOffline) {
                     this.authentOffline();
                 }else {
                     if (this.guessNetworkState()) {
-                        this.authentOnline();
+                        context.url = this.currentAppURL;
+                        if (currentTimeout) {
+                            configOnConnect.timeout = currentTimeout;
+                        }
+                        configOnConnect.reset = true;
+                        configOnConnect.onConnect = this.authentOnline();
+                        configOnConnect.onFail = this.authentOnlineFail();
+                        logConsole("authentifier", configOnConnect);
+                        logConsole("context", context);
+                        context.isConnected(configOnConnect);
+                        return;
                     }else {
                         this.authentOffline();
                     }
 
                 }
-                return this.result;
             },
 
             authentOnline : function() {
-                var currentProfile;
-                var user;
-                context.url = this.currentAppURL;
-                if (context.isConnected()) {
+
+                var that = this;
+                
+                return function(){
+                    var currentProfile;
+                    var user;
+                    
+                    logConsole("authentOnline");
+                    
                     user = context.setAuthentification({
-                        login : this.currentLogin,
-                        password : this.currentPassword
+                        login : that.currentLogin,
+                        password : that.currentPassword
                     });
+                    
                     if (user) {
                         offlineSync.recordOfflineDomains();
                         if (user.id) {
@@ -75,29 +96,44 @@ var authentificator = function() {
                         if (user.getLocaleFormat()){
                             Preferences.set("offline.user.locale", JSON.stringify(user.getLocaleFormat()));
                         }
-                        passwordManager.updatePassword(this.currentLogin, this.currentPassword);
-                        this.result = {result : true};
+                        passwordManager.updatePassword(that.currentLogin, that.currentPassword);
+                        that.onSuccess();
                     }else {
-                        this.result = {result : false, reason : this.translate.get("authent.serverDisagree")};
+                        that.onError(that.translate.get("authent.serverDisagree"));
                     }
-                }else {
-                    this.result = {result : false, reason : this.translate.get("authent.serverUnreachable")};
+                };
+            },
+
+            authentOnlineFail: function() {
+                
+                var that = this;
+                
+                return function(){
+                    logConsole("authentOnlineFail");
+                    that.onError(that.translate.get("authent.serverUnreachable"));
                 }
             },
 
             authentOffline : function() {
-                this.result = passwordManager.checkPassword(this.currentLogin, this.currentPassword);
+                logConsole("authentOffline");
+                var result = passwordManager.checkPassword(this.currentLogin, this.currentPassword);
+                if (result.result) {
+                    this.onSuccess();
+                }else {
+                    this.onError(result.reason);
+                }
             },
 
             guessNetworkState : function() {
+                logConsole("guessNetworkState");
                 return !(networkChecker.isOffline());
             }
     };
 
     return ( {
-        authent: function(modeOffline, currentLogin, currentPassword, currentAppURL) {
+        authent: function(param, onSuccess, onError) {
             var authent = new Authentifier();
-            return authent.authentifier(modeOffline, currentLogin, currentPassword, currentAppURL);
+                authent.authentifier(param.modeOffline, param.currentLogin, param.currentPassword, param.currentApplicationURL, onSuccess, onError);
         }
     }
     )
