@@ -6,6 +6,7 @@ Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/authentifier.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/events.jsm");
+Cu.import("resource://modules/passwordManager.jsm");
 
 /**
  * Try to log with the information of the dialog
@@ -17,9 +18,11 @@ function doOk() {
 
     if (document.getElementById('remember').checked) {
         Preferences.set("offline.user.login", document.getElementById('login').value);
-        Preferences.set("offline.user.password", document.getElementById('password').value);
-        Preferences.set("offline.application.modeOffline", document.getElementById('modeOffline').checked);
     }
+    
+    Preferences.set("offline.application.rememberLogin", document.getElementById('remember').checked);
+    Preferences.set("offline.application.modeOffline", document.getElementById('modeOffline').checked);
+    Preferences.set("offline.application.autoLogin", document.getElementById('autoLogin').checked);
 
     this.tryToAuthent();
     return false;
@@ -46,6 +49,7 @@ function tryToAuthent() {
     document.getElementById('password').disabled = true;
     document.getElementById('remember').disabled = true;
     document.getElementById('modeOffline').disabled = true;
+    document.getElementById('autoLogin').disabled = true;
     
     document.getElementById('progressGroup').hidden = false;
     document.getElementById('errorGroup').hidden = true;
@@ -60,8 +64,6 @@ function tryToAuthent() {
     
     authentReturn = authentificator.authent(modeOffline, currentLogin, currentPassword, currentApplicationURl);
     
-    logIHM(authentReturn.result);
-    
     if (authentReturn.result) {
         window.close();
     }else {
@@ -75,6 +77,7 @@ function tryToAuthent() {
         document.getElementById('password').disabled = false;
         document.getElementById('remember').disabled = false;
         document.getElementById('modeOffline').disabled = false;
+        document.getElementById('autoLogin').disabled = false;
         document.getElementById('progressGroup').hidden = true;
     }
 }
@@ -84,15 +87,30 @@ function doLoad() {
     
     //Update IHM
     
-    document.getElementById('login').value = Preferences.get("offline.user.login", "");
-    document.getElementById('password').value = Preferences.get("offline.user.password", "");
+    var currentPassword;
+    var login = Preferences.get("offline.user.login", "");
+    var autologin = Preferences.get("offline.application.autoLogin", false);
+    
+    if (Preferences.get("offline.application.rememberLogin", false)) {
+        document.getElementById('login').value = login;
+        currentPassword = passwordManager.getPassword(login);
+        if (currentPassword) {
+            document.getElementById('password').value = currentPassword;
+        }else{
+            document.getElementById('password').value = "";
+        }
+    }
+    document.getElementById('remember').checked = Preferences.get("offline.application.rememberLogin", false);
     document.getElementById('modeOffline').checked = Preferences.get("offline.application.modeOffline", false);
     document.getElementById('applicationURL').value = Preferences.get("offline.user.applicationURL", "");
+    document.getElementById('autoLogin').checked = autologin;
     
-    setTimeout(tryToAuthent, 10);
+    if (autologin){
+        setTimeout(tryToAuthent, 10);
+    }
     
 }
 
-function logIHM(message) {
-    logConsole(message);
+function logIHM(message, obj) {
+    logConsole(message, obj);
 }
