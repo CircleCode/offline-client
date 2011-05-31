@@ -15,19 +15,7 @@
             src="chrome://dcpoffline/locale/main.properties" />
     </stringbundleset>
     <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/authent.js" />
-    <vbox flex="1">
-        <groupbox id="progressGroup" hidden="true">
-            <caption>
-                <label value="&authent.login.progress;" />
-            </caption>
-            <progressmeter id="progress" mode="undetermined" value="0" flex="1"/>
-        </groupbox>
-        <groupbox id="errorGroup" hidden="true">
-            <caption>
-                <label value="&authent.error.label;" />
-            </caption>
-            <label id="errorLabel"/>
-        </groupbox>
+    <vbox>
         <groupbox >
             <caption>
                 <label value="&authent.login.groupbox;" />
@@ -36,16 +24,16 @@
                 <rows>
                     <row>
                         <label value="&authent.login;" />
-                        <textbox id="login" value="" />
+                        <textbox id="login" value="" flex="1"/>
                     </row>
                     <row>
                         <label value="&authent.password;" />
                         <textbox type="password" id="password"
-                            value=""  />
+                            value="" flex="1"/>
                     </row>
                     <row>
                         <label value="&authent.applicationURL;" />
-                        <textbox id="applicationURL" disabled="true"/>
+                        <textbox id="applicationURL" disabled="true" flex="1"/>
                     </row>
                 </rows>
             </grid>
@@ -68,11 +56,23 @@
                     </row>
                     <row>
                         <label value="&authent.autologin;" />
-                        <checkbox id="autoLogin" checked="true"
+                        <checkbox id="autoLogin" 
                              />
                     </row>
                 </rows>
             </grid>
+        </groupbox>
+        <groupbox id="progressGroup" >
+            <caption>
+                <label value="&authent.login.progress;" />
+            </caption>
+            <progressmeter id="progress" mode="undetermined" value="0"/>
+        </groupbox>
+        <groupbox id="errorGroup">
+            <caption>
+                <label value="&authent.error.label;" />
+            </caption>
+            <label id="errorLabel"/>
         </groupbox>
     </vbox>
 </dialog>
