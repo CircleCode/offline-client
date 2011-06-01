@@ -16,7 +16,7 @@
 
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onclose="launchClose();">
+    onclose="tryToClose();">
     
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
@@ -59,6 +59,8 @@
                             oncommand='window.open("chrome://dcpoffline/content/debug/debug-eric.xul","Eric", "chrome,centerscreen");' />
                         <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
                             oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
+                            <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
+                            oncommand='window.open("chrome://dcpoffline/content/wizard/initialization.xul","Init", "chrome,centerscreen");' />
                     </menupopup>
                 </menu>
             </menubar>
@@ -80,7 +82,7 @@
                         <param id="famDomainIdParam" name="domainIdParam" type="integer">0</param>
                     </query>
                     <action>
-                        <richlistitem uri="?" value="?famid" onclick="changeFamily(this.value);">
+                        <richlistitem uri="?" value="?famid" onclick="tryToChangeFamily(this.value);">
                             <hbox >
                                 <image src="file://?icon" style="margin : 2px" tooltiptext="?title" width="48px" height="48px"/>
                             </hbox >
@@ -134,7 +136,7 @@
     </hbox>
     <statusbar>
         <hbox flex="1">
-            <menulist id="domainList" label="&main.domain.choose;" oncommand="changeDomain(this.value)" >
+            <menulist id="domainList" label="&main.domain.choose;" oncommand="tryToChangeDomain(this.value)" >
                 <menupopup id='domainPopupList' datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
                         <query>
