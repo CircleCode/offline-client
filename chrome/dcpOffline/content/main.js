@@ -136,7 +136,7 @@ function openNewDocumentDialog() {
 function openCloseDialog() {
     /*window.openDialog("chrome://dcpoffline/content/dialogs/close.xul", "",
     "chrome,modal");*/
-    launchClose();
+    tryToClose();
 }
 /**
  * Open the preferences dialog

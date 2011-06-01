@@ -96,10 +96,9 @@ function initIHM() {
     document.getElementById('authent.applicationURL').value = Preferences.get("offline.user.applicationURL", "");
     document.getElementById('authent.autoLogin').checked = autologin;
     
-    if (false){
+    if (autologin){
         setTimeout(tryToAuthent, 10);
     }
-    
 }
 
 function logIHM(message, obj) {

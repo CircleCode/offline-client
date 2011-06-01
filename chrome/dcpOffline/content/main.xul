@@ -58,8 +58,6 @@
                             oncommand='window.open("chrome://dcpoffline/content/debug/debug-eric.xul","Eric", "chrome,centerscreen");' />
                         <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
                             oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
-                            <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
-                            oncommand='window.open("chrome://dcpoffline/content/wizard/initialization.xul","Init", "chrome,centerscreen");' />
                     </menupopup>
                 </menu>
             </menubar>
