@@ -1,0 +1,6 @@
+<!-- initialization-->
+<!ENTITY wizard.initialization.title                "wizard.initialization.title">
+<!ENTITY wizard.initialization.welcome              "wizard.initialization.welcome">
+<!ENTITY wizard.initialization.domain               "wizard.initialization.domain">
+<!ENTITY wizard.first.login                         "wizard.first.login">
+<!ENTITY wizard.try.authent                         "wizard.try.authent">

@@ -6,73 +6,16 @@
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xul-overlay  href="chrome://dcpoffline/content/overlays/authent.xul"?>
+
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     id="authent-dialog" title="&authent.dialog;" buttons="accept,cancel"
     ondialogaccept="return doOk();" ondialogcancel="return doCancel();"
     onload="doLoad()">
-    <stringbundleset id="stringbundleset">
-        <stringbundle id="mainBundle"
-            src="chrome://dcpoffline/locale/main.properties" />
-    </stringbundleset>
+    
     <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/authent.js" />
-    <vbox>
-        <groupbox >
-            <caption>
-                <label value="&authent.login.groupbox;" />
-            </caption>
-            <grid>
-                <rows>
-                    <row>
-                        <label value="&authent.login;" />
-                        <textbox id="login" value="" flex="1"/>
-                    </row>
-                    <row>
-                        <label value="&authent.password;" />
-                        <textbox type="password" id="password"
-                            value="" flex="1"/>
-                    </row>
-                    <row>
-                        <label value="&authent.applicationURL;" />
-                        <textbox id="applicationURL" disabled="true" flex="1"/>
-                    </row>
-                </rows>
-            </grid>
-        </groupbox>
-        <groupbox id="optionGroup">
-            <caption>
-                <label value="&authent.login.option;" />
-            </caption>
-            <grid>
-                <rows>
-                    <row>
-                        <label value="&authent.remember.login.mdp;" />
-                        <checkbox id="remember" checked="true"
-                            />
-                    </row>
-                    <row>
-                        <label value="&authent.work.offline;" />
-                        <checkbox id="modeOffline" checked="true"
-                             />
-                    </row>
-                    <row>
-                        <label value="&authent.autologin;" />
-                        <checkbox id="autoLogin" 
-                             />
-                    </row>
-                </rows>
-            </grid>
-        </groupbox>
-        <groupbox id="progressGroup" >
-            <caption>
-                <label value="&authent.login.progress;" />
-            </caption>
-            <progressmeter id="progress" mode="undetermined" value="0"/>
-        </groupbox>
-        <groupbox id="errorGroup">
-            <caption>
-                <label value="&authent.error.label;" />
-            </caption>
-            <label id="errorLabel"/>
-        </groupbox>
+    
+    <vbox id="authent.mainBox">
     </vbox>
+    
 </dialog>
