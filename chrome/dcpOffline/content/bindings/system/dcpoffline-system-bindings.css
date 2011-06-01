@@ -38,13 +38,13 @@ dcpDocument dcpDocFooter {
 ************************************************************/
 dcpDocument dcpTabBox,dcpDocument[mode=view] dcpTabBox {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#tabpanel-attr-view");
 }
 
 dcpDocument dcpAttribute[type=tab],dcpDocument[mode=view] dcpAttribute[type=tab]
     {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#tab-attr-view");
 }
 
 dcpDocument dcpAttribute[type=frame],dcpDocument[mode=view] dcpAttribute[type=frame]

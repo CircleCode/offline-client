@@ -1,22 +1,13 @@
 /***********************************************************
         Not yet implemented
 ************************************************************/
-dcpAttribute[type=menu]
-    {
+dcpAttribute[type=menu] {
     border: 1px solid red;
     background: yellow;
     min-height: 24px;
 }
 
-dcpAttribute[type=htmltext],
-dcpAttribute[type=file],
-dcpAttribute[type=enum],
-dcpAttribute[type=color],
-dcpAttribute[type=file],
-dcpAttribute[type=image],
-dcpAttribute[type=docid],
-dcpTabBox,dcpAttribute[type=tab],
-dcpAttribute[type=array]
+dcpAttribute[type=htmltext],dcpAttribute[type=file],dcpAttribute[type=enum],dcpAttribute[type=color],dcpAttribute[type=file],dcpAttribute[type=image],dcpTabBox,dcpAttribute[type=tab],dcpAttribute[type=array]
     {
     border: 1px solid red;
     min-height: 24px;
@@ -51,17 +42,25 @@ dcpDocument dcpAttribute[type=frame] groupbox {
     width: 100%;
 }
 
-dcpDocument dcpAttribute .dcpLabel{
-    -moz-box-flex: 30;
+dcpDocument dcpAttribute[type=frame] groupbox .groupbox-body {
+    border: 1px solid #098777;
+}
+
+dcpDocument dcpAttribute[type=frame] groupbox .groupbox-title {
+    border: 1px solid #098777;
+}
+
+dcpDocument dcpAttribute .dcpLabel { /*-moz-box-flex: 30;*/
+    width: 100px;
 }
 
 dcpDocument dcpAttribute .link {
-    color:blue;
-    cursor:pointer;
+    color: blue;
+    cursor: pointer;
 }
 
-dcpDocument dcpAttribute .dcpValue {
-    -moz-box-flex: 100;
+dcpDocument dcpAttribute .dcpValue { /* -moz-box-flex: 100;*/
+    
 }
 
 dcpDocument dcpDocHeader {
@@ -73,7 +72,6 @@ dcpDocument dcpDocFooter {
     display: -moz-box;
     width: 100%;
 }
-
 /***********************************************************
         Validity
 ************************************************************/
@@ -91,5 +89,3 @@ span.validator {
    background-image: url("images/invalid.png");
  }
 */
-
-
