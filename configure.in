@@ -34,4 +34,5 @@ AC_MSG_NOTICE([PubRule located at $PUBRULE])
 AC_OUTPUT(Makefile \
           info.xml \
 	  application.ini \
+	  targets/mac/universal/Dynacase\\ Offline.app.template/Contents/Info.plist \
 	  )

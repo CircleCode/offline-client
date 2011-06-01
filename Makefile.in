@@ -27,6 +27,15 @@ CKEDITOR_PATCHES = ckeditor_wsc_document_domain.patch
 $(pubdir)/$(libdir): $(pubdir)
 	mkdir -p $@
 
+# -- programs --
+$(pubdir)/programs: $(pubdir)
+	mkdir -p $@
+
+$(pubdir)/programs/dynacase_offline_client_ckeditor_install: programs/dynacase_offline_client_ckeditor_install $(pubdir)/programs
+	cp $< $@
+
+# -- client --
+
 $(pubdir)/$(libdir)/client: $(pubdir)/$(libdir)
 	mkdir -p $@
 
@@ -38,18 +47,19 @@ $(pubdir)/$(libdir)/client/xulapp: $(pubdir)/$(libdir)/client
 	cp -pR defaults $@
 	cp -pR distribution $@
 
+# -- patches --
 $(pubdir)/$(libdir)/client/patches: $(CKEDITOR_PATCHES) $(pubdir)/$(libdir)/client
 	mkdir -p $@
 	cp -p $(CKEDITOR_PATCHES) $@
 
-$(pubdir)/programs: $(pubdir)
-	mkdir -p $@
+# -- targets --
+$(pubdir)/$(libdir)/client/targets: targets $(pubdir)/$(libdir)/client
+	mkdir -p "$@"
+	cp -pR targets/ "$@"
 
-$(pubdir)/programs/dynacase_offline_client_ckeditor_install: programs/dynacase_offline_client_ckeditor_install $(pubdir)/programs
-	cp $< $@
+_programs: $(pubdir)/programs/dynacase_offline_client_ckeditor_install
+_xulapp: $(pubdir)/$(libdir)/client/xulapp
+_patches: $(pubdir)/$(libdir)/client/patches
+_targets: $(pubdir)/$(libdir)/client/targets
 
-programs: $(pubdir)/programs/dynacase_offline_client_ckeditor_install
-xulapp: $(pubdir)/$(libdir)/client/xulapp
-patches: $(pubdir)/$(libdir)/client/patches
-
-publish: programs xulapp patches
+publish: _programs _xulapp _patches _targets

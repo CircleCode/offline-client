@@ -4,6 +4,7 @@
   <description lang="fr"></description>
 
   <requires>
+    <module name="dynacase-offline-xulruntimes" />
   </requires>
 
   <parameters>
@@ -14,12 +15,16 @@
     <check type="syscommand" command="gunzip" />
     <check type="syscommand" command="tar" />
     <check type="syscommand" command="patch" />
+    <check type="syscommand" command="zip" />
+    <check type="syscommand" command="makensis" />
   </pre-install>
 
   <pre-upgrade>
     <check type="syscommand" command="gunzip" />
     <check type="syscommand" command="tar" />
     <check type="syscommand" command="patch" />
+    <check type="syscommand" command="zip" />
+    <check type="syscommand" command="makensis" />
   </pre-upgrade>
 
   <post-install>
