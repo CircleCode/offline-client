@@ -40,6 +40,9 @@
                     var valueNode = this.getChild('displayValue');
                     if(valueNode){
                         valueNode.value = this.getValue();
+                        if (valueNode.value == '') {
+                            //valueNode.parentNode.style.display='none';
+                        }
                     } else {
                         Components.utils.import("resource://modules/exceptions.jsm");
                         throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
@@ -162,12 +165,13 @@
             var docid=this.getValue();
             var title=formater.getDocumentTitle({initid:docid});
             valueNode.value=title;
+            try {
             var rdoc=docManager.getLocalDocument({initid:docid});
             if (rdoc) {
-              valueNode.setAttribute('onclick',"openDocument({documentId:"+docid+"})");
-              valueNode.value+='(clic)';
+              valueNode.setAttribute('onclick',"tryToOpenDocument({documentId:"+docid+"})");
               valueNode.className+=' link';
             }
+            } catch (e) {}
             
             ]]>
             </constructor>

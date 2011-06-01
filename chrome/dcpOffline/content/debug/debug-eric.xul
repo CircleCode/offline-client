@@ -59,4 +59,19 @@
         </hbox>
         
     </vbox>
+    <tabbox>
+    <tabs>
+        <tab label="Page 1" />
+        <tab label="Page 2" />
+    </tabs>
+    <tabpanels>
+        <zou>
+        <tabpanel>
+            <textbox value="Premiere page"></textbox>
+        </tabpanel></zou>
+         <zou><tabpanel>
+            <textbox value="Seconde page"></textbox>
+        </tabpanel></zou>
+    </tabpanels></tabbox>
+    
 </window>

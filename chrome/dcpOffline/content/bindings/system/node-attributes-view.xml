@@ -13,26 +13,59 @@
     xmlns:xbl="http://www.mozilla.org/xbl">
     
     <binding id="node-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
-    
     <binding id="tab-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
-            <xul:tab anonid="label" label=""
-                xbl:inherits="attrid"/>
-        </content>
+            <xul:tabpanel anonid="label" xbl:inherits="id=attrid">
+                <xul:hbox><xbl:children /></xul:hbox>
+            </xul:tabpanel>
+           
+        </content> <implementation>
+            <constructor><![CDATA[
+            
+                 Components.utils.import("resource://modules/logger.jsm");
+                   
+                var tabs=this.getChild('label');
+                 logConsole("tabs one"+ tabs.tagName);
+            
+                
+                var anonTabs=null;
+                while (anonTabs == null && tabs != null ) {
+                 logConsole("node "+tabs.tagName);
+                 try {
+                    anonTabs=document.getAnonymousElementByAttribute(tabs, "anonid", "dcpTabs");
+                    
+                    tabs=tabs.parentNode;
+                    } catch (e) {
+                    tabs=null;
+                    }
+                }
+                if (anonTabs) {
+                   var tab=document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "tab");
+                   tab.setAttribute('label', this.getAttribute('label'));
+                   tab.setAttribute('linkedpanel', this.getAttribute('attrid'));
+                   
+                   anonTabs.appendChild(tab);
+                   logConsole("add tabs final", tab);
+                }
+                  //  logConsole("tabs final", anonTabs);
+            ]]></constructor></implementation>
     </binding>
-    
     <binding id="tabpanel-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
-            <xul:tabpanel xbl:inherits="attrid">
-                <xbl:children/>
-            </xul:tabpanel>
+            <xul:tabbox anonid="dcpTabBox">
+                <xul:tabs anonid="dcpTabs">
+                </xul:tabs>
+                <xul:tabpanels>
+                    <xbl:children />
+                </xul:tabpanels>
+            </xul:tabbox>
         </content>
     </binding>
     
     <binding id="frame-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
-            <xul:groupbox flex="1">
-                <xul:caption anonid="label" class="dcplabel" xbl:inherits="label"/>
+            <xul:groupbox class="dcpFrame" flex="1">
+                <xul:caption anonid="label" class="dcpLabel" xbl:inherits="label"/>
                 <children/>
             </xul:groupbox>
         </content>
