@@ -118,6 +118,7 @@ function clicMiscTest(domainid) {
         logConsole(ldoc.canEdit());
         logConsole(formater.getEnumLabel({attrid:'an_sexe',famid:1112,key:'M'}));
         logConsole(formater.getDocumentTitle({initid:1128}));
+        logConsole(context.getUser(), context.getUser());
 
     }
     //window.setTimeout( function () {clicPullDomain(domainid);}, 4000);

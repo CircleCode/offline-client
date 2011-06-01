@@ -42,7 +42,7 @@ ProtoFormater.prototype.getEnumLabel = function(config) {
  * @param config initid attrid famid @returns
  */
 ProtoFormater.prototype.getDocumentTitle = function(config) {
-    if (config && config.initid) {
+    if (config && (!isNaN(config.initid))) {
         var r = storageManager
         .execQuery({
             query : 'select title from doctitles where initid=:initid',

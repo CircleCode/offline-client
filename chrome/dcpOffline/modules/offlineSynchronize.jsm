@@ -456,8 +456,15 @@ offlineSynchronize.prototype.recordFiles = function(config) {
                 },
                 completeFileCallback : function() {
                     logConsole('end files', this.filesToDownload);
-
-                    me.callObserver('onSuccess', 1);
+                    if (me.synchroResults) {
+                        if (me.synchroResults.status != "successTransaction") {
+                            me.callObserver('onError', me.synchroResults);
+                        } else {
+                            me.callObserver('onSuccess', me.synchroResults);
+                        }
+                    } else {
+                        me.callObserver('onSuccess', true);
+                    }
                     me.log('all files recorded');
                     me.recordFilesInProgress = false;
                     fileManager.initModificationDates();
@@ -465,6 +472,16 @@ offlineSynchronize.prototype.recordFiles = function(config) {
                     me.updateDomainSyncDate(config);
                 }
             });
+        } else {
+            if (this.synchroResults) {
+                if (this.synchroResults.status != "successTransaction") {
+                    this.callObserver('onError', this.synchroResults);
+                } else {
+                    this.callObserver('onSuccess', this.synchroResults);
+                }
+            } else {
+                this.callObserver('onSuccess', true);
+            }
         }
     }
 };
@@ -928,6 +945,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
         var modifiedDocs = this.getModifiedDocs({
             domain : domain
         });
+        this.synchroResults=null;
         var ldoc;
         // this.callObserver('onAddFilesToSave', modifiedFiles.length);
         this.callObserver('onAddDocumentsToSave', modifiedDocs.length);
@@ -969,8 +987,10 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {
-                            me.callObserver('onError', this.synchroResults);
+                            //me.callObserver('onError', me.synchroResults);
                             return false;
+                        } else {
+                            //me.callObserver('onSuccess', me.synchroResults);
                         }
                         return true;
                     } else {

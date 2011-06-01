@@ -12,66 +12,84 @@
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
     <script type="application/javascript" src="chrome://dcpoffline/content/debug/debug-eric.js" />
     <hbox>
-        <button label="get Domains" onclick="clicGetDomains()" />
-        <html:select id="sdomains"></html:select>
+        <vbox>
+            <button label="get Domains" onclick="clicGetDomains()" />
+            <html:select id="sdomains"></html:select>
+        </vbox>
+        <vbox id="boxDomain" flex="1" style="visibility:hidden">
+            <hbox>
+                <button style="background-color:lightgreen;-moz-appearance: none;" label="pull domain"
+                    onclick="clicPullDomain(document.getElementById('sdomains').value)" />
+                <button style="background-color:lightblue;-moz-appearance: none;" label="push domain"
+                    onclick="clicPushDomain(document.getElementById('sdomains').value)" />
+                <button style="" label="Misc test" onclick="clicMiscTest(document.getElementById('sdomains').value)" />
+            </hbox>
+            <hbox>
+                <label id='domain'>No domains</label>
+                <html:br />
+                <statusbar>
+                    <statusbarpanel label="Left panel" />
+                    <spacer flex="1" />
+                    <progressmeter id="progressGlobal" mode="determined" value="10" />
+                    <progressmeter id="progressDetail" mode="determined" value="0" />
+                    <statusbarpanel id="detailLabel" label="Right panel" />
+                </statusbar>
+            </hbox>
+            <hbox style="background-color:lightgreen">
+                <description value="documents to record" />
+                <textbox id="documentsToRecord" size="3" value="0" />
+                <description value="document recorded" />
+                <textbox id="documentsRecorded" size="3" value="0" />
+            </hbox>
+            <hbox style="background-color:lightgreen">
+                <description value="files to record" />
+                <textbox id="filesToRecord" size="3" value="0" />
+                <description value="files recorded" />
+                <textbox id="filesRecorded" size="3" value="0" />
+            </hbox>
+            <hbox style="background-color:lightblue">
+                <description value="documents to save" />
+                <textbox id="documentsToSave" size="3" value="0" />
+                <description value="document saved" />
+                <textbox id="documentsSaved" size="3" value="0" />
+            </hbox>
+            <hbox style="background-color:lightblue">
+                <description value="files to save" />
+                <textbox id="filesToSave" size="3" value="0" />
+                <description value="files saved" />
+                <textbox id="filesSaved" size="3" value="0" />
+            </hbox>
+        </vbox>
+        <vbox datasources="file:///home/eric/test.rdf" ref="http://www.test.fr/tests">
+            <template>
+                <rule>
+                    <conditions>
+                        <content uri="?tests" />
+                        <member container="?tests" child="?test" />
+                        <triple subject="?test" predicate="http://www.test.fr/#titre" object="?titre" />
+                    </conditions>
+                    <action>
+                        <label uri="?test" value="?titre" />
+                    </action>
+                </rule>
+            </template>
+        </vbox>
+        <vbox datasources="file:///home/eric/test4.rdf" ref="urn:root">
+            <template>
+                <rule>
+                    <conditions>
+                        <content uri="?uri" />
+                        <triple subject="?uri" predicate="http://home.netscape.com/NC-rdf#links" object="?links" />
+                        <member container="?links" child="?child" />
+                        <triple subject="?child" predicate="http://home.netscape.com/NC-rdf#name" object="?name" />
+                    </conditions>
+                    <action>
+                        <hbox>
+                            <label uri="?child" value="?name" />
+                        </hbox>
+                    </action>
+                </rule>
+            </template>
+        </vbox>
     </hbox>
-    <vbox id="boxDomain" style="visibility:hidden">
-        <hbox>
-            <button style="background-color:lightgreen;-moz-appearance: none;" label="pull domain" onclick="clicPullDomain(document.getElementById('sdomains').value)" />
-            <button style="background-color:lightblue;-moz-appearance: none;" label="push domain" onclick="clicPushDomain(document.getElementById('sdomains').value)" />
-                  <button style="" label="Misc test" onclick="clicMiscTest(document.getElementById('sdomains').value)" />
-      
-        </hbox>
-        <hbox>
-            <label id='domain'>No domains</label><html:br/>
-            <statusbar>
-                <statusbarpanel label="Left panel" />
-                <spacer flex="1" />
-                <progressmeter id="progressGlobal" mode="determined" value="10" />
-                <progressmeter id="progressDetail" mode="determined" value="0" />
-                <statusbarpanel id="detailLabel" label="Right panel" />
-            </statusbar>
-        </hbox>
-        <hbox style="background-color:lightgreen">
-            <description value="documents to record" />
-            <textbox id="documentsToRecord" size="3" value="0" />
-            <description value="document recorded" />
-            <textbox id="documentsRecorded" size="3" value="0" />
-        </hbox>
-        <hbox style="background-color:lightgreen">
-            <description value="files to record" />
-            <textbox id="filesToRecord" size="3" value="0" />
-            <description value="files recorded" />
-            <textbox id="filesRecorded" size="3" value="0" />
-        </hbox>
-        
-        <hbox style="background-color:lightblue" >
-            <description value="documents to save" />
-            <textbox id="documentsToSave" size="3" value="0" />
-            <description value="document saved" />
-            <textbox id="documentsSaved" size="3" value="0" />
-        </hbox>
-        <hbox style="background-color:lightblue" >
-            <description value="files to save" />
-            <textbox id="filesToSave" size="3" value="0" />
-            <description value="files saved" />
-            <textbox id="filesSaved" size="3" value="0" />
-        </hbox>
-        
-    </vbox>
-    <tabbox>
-    <tabs>
-        <tab label="Page 1" />
-        <tab label="Page 2" />
-    </tabs>
-    <tabpanels>
-        <zou>
-        <tabpanel>
-            <textbox value="Premiere page"></textbox>
-        </tabpanel></zou>
-         <zou><tabpanel>
-            <textbox value="Seconde page"></textbox>
-        </tabpanel></zou>
-    </tabpanels></tabbox>
-    
 </window>

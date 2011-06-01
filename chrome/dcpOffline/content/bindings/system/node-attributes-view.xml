@@ -45,7 +45,7 @@
                    tab.setAttribute('linkedpanel', this.getAttribute('attrid'));
                    
                    anonTabs.appendChild(tab);
-                   logConsole("add tabs final", tab);
+                   logConsole("add tabs final", tab.tagName);
                 }
                   //  logConsole("tabs final", anonTabs);
             ]]></constructor></implementation>
