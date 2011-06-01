@@ -34,9 +34,9 @@ $(pubdir)/$(libdir)/client/xulapp: $(pubdir)/$(libdir)/client
 	mkdir -p $@
 	cp -p application.ini $@
 	cp -p chrome.manifest $@
-	cp -pR chrome/ $@
-	cp -pR defaults/ $@
-	cp -pR distribution/ $@
+	cp -pR chrome $@
+	cp -pR defaults $@
+	cp -pR distribution $@
 
 $(pubdir)/$(libdir)/client/patches: $(CKEDITOR_PATCHES) $(pubdir)/$(libdir)/client
 	mkdir -p $@
