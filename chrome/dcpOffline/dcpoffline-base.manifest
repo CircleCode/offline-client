@@ -6,6 +6,8 @@ resource    modules                         modules/
 
 ## locales
 locale      dcpoffline      fr-FR           locale/fr-FR/
+#debug purpose
+locale      dcpoffline      kl_GN           locale/kl_GN/
 
 ## customizable skin
 skin        dcpoffline      custom-skin     skins/custom/

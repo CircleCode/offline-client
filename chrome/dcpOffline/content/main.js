@@ -136,7 +136,7 @@ function openNewDocumentDialog() {
 function openCloseDialog() {
     /*window.openDialog("chrome://dcpoffline/content/dialogs/close.xul", "",
     "chrome,modal");*/
-    launchClose();
+    tryToClose();
 }
 /**
  * Open the preferences dialog
@@ -145,7 +145,7 @@ function openCloseDialog() {
  */
 function openPreferences() {
     window.openDialog("chrome://dcpoffline/content/dialogs/preferences.xul", "",
-    "chrome,modal");
+    "chrome,titlebar,toolbar,centerscreen,modal");
 }
 /**
  * Open the synchro dialog
