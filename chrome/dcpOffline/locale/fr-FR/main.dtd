@@ -60,3 +60,5 @@
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle                 "preference.dialogTitle">
+<!ENTITY preference.applicationPref             "preference.applicationPref">
+<!ENTITY preference.userPref                    "preference.userPref">
