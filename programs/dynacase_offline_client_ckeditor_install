@@ -1,0 +1,115 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Install CKEditor in offline client chrome dir
+ *
+ * @author Anakeen 2011
+ * @license http://www.fsf.org/licensing/licenses/agpl-3.0.html GNU Affero General Public License
+ */
+
+$WIFF_ROOT = getenv('WIFF_ROOT');
+if( $WIFF_ROOT === false ) {
+  print sprintf("WIFF_ROOT environment variable is not set!\n");
+  exit(1);
+}
+
+$WIFF_CONTEXT_ROOT = getenv('WIFF_CONTEXT_ROOT');
+if( $WIFF_CONTEXT_ROOT === false ) {
+  print sprintf("WIFF_CONTEXT_ROOT environment variable is not set!\n");
+  exit(1);
+}
+
+set_include_path(get_include_path().PATH_SEPARATOR.$WIFF_ROOT.PATH_SEPARATOR."$WIFF_ROOT/include");
+
+include_once('WHAT/Lib.System.php');
+
+$ckeditor_dir = 'lib/dynacase-offline/client/xulapp/chrome/ckeditor/content/ckeditor';
+
+$ckeditor_tgz = $argv[1];
+if( $ckeditor_tgz === null ) {
+  print sprintf("Missing CKEditor archive argument\n");
+  exit(1);
+}
+$ckeditor_tgz = realpath($ckeditor_tgz);
+if( ! is_file($ckeditor_tgz) ) {
+  print sprintf("CKEditor archive not found at '%s'\n", $ckeditor_tgz);
+  exit(1);
+}
+
+$tmpfile = LibSystem::tempnam(null, 'ckeditor_unpack');
+if( $tmpfile === false ) {
+  print sprintf("Could not create temporary file 'ckeditor_unpack'\n");
+  exit(1);
+}
+
+$tempdir = basename($tmpfile);
+$ret = mkdir($tempdir);
+if( $ret === false ) {
+  print sprintf("Could not create temporary directory '%s'\n", $tempdir);
+  @unlink($tmpfile);
+  exit(1);
+}
+
+$ret = false;
+
+// Unpack archive in tempdir
+$cmd = sprintf('tar -C %s -zxf %s > %s 2>&1', escapeshellarg($tempdir), escapeshellarg($ckeditor_tgz), escapeshellarg($tmpfile));
+system($cmd, $ret);
+$output = file_get_contents($tmpfile);
+@unlink($tmpfile);
+
+if( $ret !== 0 ) {
+  print sprintf("Error tar -C %s -zxf %s: %s\n", escapeshellarg($tempdir), escapeshellarg($ckeditor_tgz), $output);
+  exit(1);
+}
+
+// Remove old CKEditor
+if( is_dir($ckeditor_dir) ) {
+  $cmd = sprintf('rm -Rf %s', escapeshellarg($ckeditor_dir));
+  system($cmd, $ret);
+  if( $ret !== 0 ) {
+    print sprintf("Error erasing '%s'.\n", $ckeditor_dir);
+    exit(1);
+  }
+  clearstatcache();
+}
+if( ! is_dir($ckeditor_dir) ) {
+  $ret = mkdir($ckeditor_dir, 0777, true);
+  if( $ret === false ) {
+    print sprintf("Error creating directory '%s'.", $ckeditor_dir);
+    exit(1);
+  }
+  clearstatcache();
+}
+
+// Move temp files into destination dir
+$cmd = sprintf('tar -C %s -cf - . | tar -C %s -xf -', escapeshellarg(sprintf('%s/ckeditor', $tempdir)), escapeshellarg($ckeditor_dir));
+system($cmd, $ret);
+if( $ret !== 0 ) {
+  print sprintf("Error tar -C %s -cf - . | tar -C %s -xf -", escapeshellarg(sprintf('%s/ckeditor', $tempdir)), escapeshellarg($ckeditor_dir));
+  exit(1);
+}
+
+// Apply patches
+$patches_dir = sprintf('%s/lib/dynacase-offline/client/patches', $WIFF_CONTEXT_ROOT);
+foreach( array('ckeditor_wsc_document_domain.patch') as $patch ) {
+  $patch_file = sprintf('%s/ckeditor_wsc_document_domain.patch', $patches_dir);
+  if( ! is_file($patch_file) ) {
+    print sprintf("Missing patch '%s'?\n", $patch_file);
+    continue;
+  }
+  $cmd = sprintf('patch -p1 -d %s -i %s', escapeshellarg($ckeditor_dir), escapeshellarg($patch_file));
+  system($cmd, $ret);
+  if( $ret !== 0 ) {
+    print sprintf("Could not apply patch '%s'.", $patch_file);
+    exit(1);
+  }
+}
+
+// Cleanup tempdir
+$cmd = sprintf('rm -Rf %s', escapeshellarg($tempdir));
+system($cmd , $ret);
+
+exit(0);
+
+?>

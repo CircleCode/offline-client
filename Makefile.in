@@ -1,0 +1,55 @@
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+RELEASE = @RELEASE@
+utildir = @PUBRULE@
+pubdir = @prefix@
+srcdir = @srcdir@
+appname = lib/dynacase-offline/client
+libdir = lib/dynacase-offline
+
+export pubdir utildir
+
+TAR = gtar
+GZIP_ENV = --best
+
+export targetdir PACKAGE
+
+pages_not_xml = info.xml
+pages_not_php = fam2po.php po2js.php
+
+include $(utildir)/PubRule
+
+DISTFILES += $(SUBDIR) \
+            RELEASE VERSION 
+
+CKEDITOR_PATCHES = ckeditor_wsc_document_domain.patch
+
+$(pubdir)/$(libdir): $(pubdir)
+	mkdir -p $@
+
+$(pubdir)/$(libdir)/client: $(pubdir)/$(libdir)
+	mkdir -p $@
+
+$(pubdir)/$(libdir)/client/xulapp: $(pubdir)/$(libdir)/client
+	mkdir -p $@
+	cp -p application.ini $@
+	cp -p chrome.manifest $@
+	cp -pR chrome/ $@
+	cp -pR defaults/ $@
+	cp -pR distribution/ $@
+
+$(pubdir)/$(libdir)/client/patches: $(CKEDITOR_PATCHES) $(pubdir)/$(libdir)/client
+	mkdir -p $@
+	cp -p $(CKEDITOR_PATCHES) $@
+
+$(pubdir)/programs: $(pubdir)
+	mkdir -p $@
+
+$(pubdir)/programs/dynacase_offline_client_ckeditor_install: programs/dynacase_offline_client_ckeditor_install $(pubdir)/programs
+	cp $< $@
+
+programs: $(pubdir)/programs/dynacase_offline_client_ckeditor_install
+xulapp: $(pubdir)/$(libdir)/client/xulapp
+patches: $(pubdir)/$(libdir)/client/patches
+
+publish: programs xulapp patches
