@@ -80,7 +80,7 @@ function _main {
     if [ "$OUTPUT" != "-" -a "${OUTPUT:0:1}" != "/" ]; then
 	OUTPUT="$ORIG_DIR/$OUTPUT"
     fi
-    zip -q -r "$OUTPUT" "$APP"
+    zip -q -y -r "$OUTPUT" "$APP"
 
     set +e
 }
