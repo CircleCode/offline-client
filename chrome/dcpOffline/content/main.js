@@ -145,7 +145,7 @@ function openCloseDialog() {
  */
 function openPreferences() {
     window.openDialog("chrome://dcpoffline/content/dialogs/preferences.xul", "",
-    "chrome,modal");
+    "chrome,titlebar,toolbar,centerscreen,modal");
 }
 /**
  * Open the synchro dialog
