@@ -153,7 +153,7 @@ function openPreferences() {
  * @private
  */
 function openSynchro() {
-    window.open("chrome://dcpoffline/content/dialogs/synchro.xul", "",
+    window.openDialog("chrome://dcpoffline/content/dialogs/synchro.xul", "",
     "chrome,modal");
 }
 /**
