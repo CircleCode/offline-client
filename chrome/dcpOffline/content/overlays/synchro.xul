@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
+%mainDTD;
+]>
+<overlay id="toverlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    
+    <script type="application/javascript" src="chrome://dcpoffline/content/overlays/synchro.js" />
+    
+    <vbox id="synchronize.mainBox" flex="1">
+        <groupbox>
+            <caption> 
+                <label value="&synchro.domain;"/>
+            </caption>
+            <vbox>
+                <label id="currentLabelId" value=""/>
+            </vbox>
+        </groupbox>
+        <groupbox>
+            <caption> 
+                <label value="&synchro.progress;"/>
+            </caption>
+            <vbox>
+                <label value="&synchro.progress;"/>
+                <progressmeter id="progress" mode="determined" value="0" flex="1"/>
+                <label value="&synchro.progressGlobal;"/>
+                <progressmeter id="progressGlobal" mode="determined" value="0" flex="1"/>
+                <label value="&synchro.progressDetail;"/>
+                <progressmeter id="progressDetail" mode="determined" value="0" flex="1"/>
+            </vbox>
+        </groupbox>
+        <groupbox flex="1">
+            <caption> 
+                <label value="&synchro.progressMessages;"/>
+            </caption>
+            <textbox id="progressMessages" multiline="true" rows="10" value="" flex="1" disabled="true"/>
+        </groupbox>
+        <groupbox>
+            <caption> 
+                <label value="&synchro.detail;"/>
+            </caption>
+                <grid>
+                    <columns>
+                        <column />
+                        <column />
+                        <splitter/>
+                        <column />
+                        <column />
+                    </columns>
+                    <rows>
+                        <row>
+                            <label value="&synchro.client.server;"/>
+                        </row>
+                        <row>
+                            <description value="&synchro.documents.record;" />
+                            <textbox id="documentsToRecord" size="3" value="0" disabled="true"/>
+                            <description value="&synchro.documents.recorded;" />
+                            <textbox id="documentsRecorded" size="3" value="0" disabled="true"/>
+                        </row>
+                        <row>
+                            <description value="&synchro.files.record;" />
+                            <textbox id="filesToRecord" size="3" value="0" disabled="true"/>
+                            <description value="&synchro.files.recorded;" />
+                            <textbox id="filesRecorded" size="3" value="0" disabled="true"/>
+                        </row>
+                        <row>
+                            <label value="&synchro.server.client;"/>
+                        </row>
+                        <row>
+                            <description value="&synchro.documents.save;" />
+                            <textbox id="documentsToSave" size="3" value="0" disabled="true"/>
+                            <description value="&synchro.documents.saved;" />
+                            <textbox id="documentsSaved" size="3" value="0" disabled="true"/>
+                        </row>
+                        <row>
+                            <description value="&synchro.files.save;" />
+                            <textbox id="filesToSave" size="3" value="0" disabled="true"/>
+                            <description value="&synchro.files.saved;" />
+                            <textbox id="filesSaved" size="3" value="0" disabled="true"/>
+                        </row>
+                    </rows>
+                </grid>
+        </groupbox>
+        
+    </vbox>
+    
+    
+</overlay>
