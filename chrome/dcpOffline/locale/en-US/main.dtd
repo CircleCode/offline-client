@@ -1,0 +1,60 @@
+<!ENTITY  debug                         "Debug">
+<!ENTITY  menu.debug.launch.venkman     "Run Venkman">
+<!ENTITY  menu.debug.launch.method      "Run debugging method">
+<!ENTITY  menu.debug.eric               "Run Eric's debug session">
+<!ENTITY  menu.debug.matthieu           "Lancer Matthieu's debug session">
+
+
+<!ENTITY  welcome                       "Welcome">
+<!ENTITY  welcome.message               "Have a nice job with Dynacase Offline">
+
+
+<!-- Login traduction-->
+<!ENTITY authent.login.groupbox                 "Authentication">
+<!ENTITY authent.login                          "Login">
+<!ENTITY authent.password                       "Password">
+<!ENTITY authent.login.option                   "Options">
+<!ENTITY authent.applicationURL                 "Danacase server URL">
+<!ENTITY authent.remember.login.mdp             "Remenber login and password">
+<!ENTITY authent.dialog                         "Dynacase Offline Connection">
+<!ENTITY authent.login.progress                 "Connection in progress">
+<!ENTITY authent.work.offline                   "Force standalone mode">
+<!ENTITY authent.error.label                    "Informations">
+
+<!-- main -->
+<!ENTITY main.actionmenu                "Offline">
+<!ENTITY main.newDocument               "New document">
+<!ENTITY main.close                     "Quit">
+<!ENTITY main.preference                "Preferences">
+<!ENTITY main.synchro                   "Synchronise">
+<!ENTITY main.helpmenu                  "Help">
+<!ENTITY main.help                      "Help">
+<!ENTITY main.log                       "Log">
+<!ENTITY main.about                     "About">
+<!ENTITY main.abstract.search           "Search">
+<!ENTITY main.domain.choose             "Choose">
+
+<!-- synchronize -->
+<!ENTITY synchronize.dialogTitle        "Synchronisation">
+<!ENTITY synchronize.cancel             "Cancel">
+<!ENTITY synchronize.synchronize        "Synchronise">
+<!ENTITY synchro.progress               "Progress">
+<!ENTITY synchro.progressGlobal         "Global">
+<!ENTITY synchro.progressDetail         "Detail">
+<!ENTITY synchro.progressMessages       "Messages">
+<!ENTITY synchro.domain                 "Domain">
+<!ENTITY synchro.detail                 "Details">
+<!ENTITY synchro.documents.record       "Documents : to be recorded">
+<!ENTITY synchro.documents.recorded     "Documents : done">
+<!ENTITY synchro.files.record           "Files : to be recorded">
+<!ENTITY synchro.files.recorded         "Files : done">
+<!ENTITY synchro.documents.save         "Documents : to be loaded">
+<!ENTITY synchro.documents.saved        "Documents : done">
+<!ENTITY synchro.files.save             "Files : to be loaded">
+<!ENTITY synchro.files.saved            "Files : done">
+<!ENTITY synchro.client.server          "Upload (from client to the server)">
+<!ENTITY synchro.server.client          "Dowload (from server to the client)">
+<!ENTITY synchro.progress               "Progress">
+
+<!-- preference -->
+<!ENTITY preference.dialogTitle         "Preferences">
