@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/leaf-attributes-binding.dtd" >
+      <!ENTITY separator "&#160;:&#160;" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+      %leaf-attributes-bindingDTD;
+]>
+
+<bindings id="leaf-attributes-binding"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="leaf-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <implementation>
+            
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue').inputField;
+            ]]></field>
+            
+            <method name="setCustomValidity">
+                <parameter name="message"/>
+                <body><![CDATA[
+                    this.inputField.setCustomValidity(message);
+                    alert ("(FIXME) " + message);
+                ]]></body>
+            </method>
+            
+            <constructor><![CDATA[
+                var visibility = this.getAttribute('visibility');
+                if( visibility == 'S' ){
+                    this.setAttribute('disabled', true);
+                } else if( visibility == 'W' || visibility == 'O' ){
+                    this.removeAttribute('disabled', false);
+                } else {
+                    this.setAttribute('collapsed', true);
+                }
+            ]]></constructor>
+            
+        </implementation>
+        <handlers>
+            <handler event="blur" id="blur"><![CDATA[
+                if(event.originalTarget == this.inputField){
+                    this.setValue(this.inputField.value);
+                }
+            ]]></handler>
+        </handlers>
+    </binding>
+    
+    <!-- Text attributes -->
+    
+    <binding id="text-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute text">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:textbox anonid="displayValue" class="dcpValue" multiline="false" xbl:inherits="disabled"/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <binding id="longtext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute longtext">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:textbox anonid="displayValue" class="dcpValue" multiline="true" xbl:inherits="disabled"/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:iframe anonid="displayValue" src="chrome://dcpoffline/content/bindings/ckeditor/ckeditor.html" class="dcpValue"/>
+            </xul:hbox>
+        </content>
+        <implementation>
+            <method name="reloadValue">
+                <body><![CDATA[
+                    var oeditor = this.getChild('displayValue').contentWindow.editorInstance;
+                    
+                    if(oeditor){
+                        oeditor.setData(this.getDisplayValue());
+                    } else {
+                        alert('FIXME: htmltext-attr-view: the code is too fast...');
+                        throw new BindException("no displayValue chil for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                    }
+                ]]></body>
+            </method>
+        </implementation>
+    </binding>
+    
+    <!-- Numeric attributes -->
+    
+    <binding id="int-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute numeric int">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:textbox anonid="displayValue" class="dcpValue" xbl:inherits="disabled"/>
+            </xul:hbox>
+        </content>
+        
+        <implementation>
+            
+            <method name="checkValue">
+                <parameter name="value"/>
+                <body><![CDATA[
+                    if( isNaN(value) ){
+                        this.setCustomValidity("'" + value +"' is not a number");
+                        return false;
+                    }
+                ]]></body>
+            </method>
+            
+        </implementation>
+    </binding>
+    
+    <binding id="double-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:textbox anonid="displayValue" class="dcpValue" value=""
+                    type="number" hidespinbutton="true" decimalplaces="Infinity"
+                    inherited="min,max"/>
+                <xul:textbox anonid="rawValue" value="" collapsed="true"/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <binding id="money-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:textbox anonid="displayValue" class="dcpValue" value=""
+                    type="number" hidespinbutton="true" decimalplaces="2"
+                    inherited="min,max"/>
+                <xul:textbox anonid="rawValue" value="" collapsed="true"/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+    <!-- Date attributes -->
+    
+    <binding id="date-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
+                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:datepicker anonid="displayValue" class="dcpValue" value=""/>
+            </xul:hbox>
+        </content>
+    </binding>
+    
+</bindings>

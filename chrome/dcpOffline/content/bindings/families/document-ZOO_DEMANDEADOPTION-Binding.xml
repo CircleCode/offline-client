@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bindings>
+<bindings id="document-ZOO_DEMANDEADOPTION-Bindings"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="document-ZOO_DEMANDEADOPTION-view">
+        
+        <content>
+            <xul:vbox flex="1">
+                <dcpDocument xbl:inherits="initid" mode="view">
+                    <dcpAttribute type="frame" attrid="de_fr_reference">
+                        <dcpAttribute type="text" attrid="de_reference"/>
+                    </dcpAttribute>
+                    
+                    <dcpAttribute type="tab" attrid="de_tab_ident">
+                        <dcpAttribute type="frame" attrid="de_fr_identification">
+                            <dcpAttribute type="relation" attrid="de_idredac" relationFamily="IUSER"/>
+                        </dcpAttribute>
+                    </dcpAttribute>
+                    
+                    <dcpAttribute type="tab" attrid="de_tab_info">
+                        <dcpAttribute type="frame" attrid="de_fr_provenance">
+                            <dcpAttribute type="text" attrid="de_pays"/>
+                        </dcpAttribute>
+                    </dcpAttribute>
+                </dcpDocument>
+            </xul:vbox>
+        </content>
+        
+    </binding>
+    
+</bindings>

@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE window [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
+%mainDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<?xml-stylesheet href="chrome://dcpoffline/content/bindings/system/dcpoffline-system-bindings.css" type="text/css"?>
+
+<?xml-stylesheet href="chrome://ckeditor/content/bindings/ckeditor/ckeditor-binding.css" type="text/css"?>
+
+<?xml-stylesheet href="chrome://customization/content/dcpoffline-customization.css" type="text/css"?>
+
+<window id="main" title="Dynacase offline" width="800px" height="600px"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    onclose="launchClose();">
+    
+    <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
+    <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
+    
+    <toolbox id="main-toolbox">
+        <toolbar flex="1">
+            <menubar flex="1">
+                <menu id="main-menu" label="&main.actionmenu;">
+                    <menupopup >
+                        <menuitem label="&main.newDocument;"
+                            oncommand="openNewDocumentDialog();"/>
+                        <menuseparator/>
+                        <menuitem id="synchro-button" label="&main.synchro;"
+                            oncommand="openSynchro();"/>
+                        <menuitem id="preferences-button" label="&main.preference;"
+                            oncommand="openPreferences();"/>
+                        <menuseparator/>
+                        <menuitem label="&main.close;"
+                            oncommand="openCloseDialog();"/>
+                    </menupopup>
+                </menu>
+                
+                <spacer flex="1" />
+                <textbox type="search" searchbutton="true" />
+                <menu id="help-menu" label="&main.helpmenu;">
+                    <menupopup >
+                        <menuitem label="&main.help;"/>
+                        <menuitem label="&main.log;"
+                            oncommand="openLog();"/>
+                        <menuseparator/>
+                        <menuitem label="&main.about;"
+                            oncommand="openAbout();"/>
+                    </menupopup >
+                </menu>
+                <menu id="debug-menu" label="&debug;">
+                    <menupopup>
+                        <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;"
+                            oncommand="start_venkman()" />
+                        <menuitem id="debug-launch-method" label="&menu.debug.eric;"
+                            oncommand='window.open("chrome://dcpoffline/content/debug/debug-eric.xul","Eric", "chrome,centerscreen");' />
+                        <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
+                            oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
+                    </menupopup>
+                </menu>
+            </menubar>
+        </toolbar>
+    </toolbox>
+    <hbox flex="1">
+        <vbox minwidth="62px">
+            <richlistbox id="familyList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
+                <template>
+                    <query><![CDATA[
+                        SELECT title, icon, famid 
+                        FROM families 
+                        WHERE famid IN 
+                            (SELECT initid
+                            FROM docsbydomain
+                            WHERE domainid = :domainIdParam)
+                        ORDER BY title
+                    ]]>
+                        <param id="famDomainIdParam" name="domainIdParam" type="integer">0</param>
+                    </query>
+                    <action>
+                        <richlistitem uri="?" value="?famid" onclick="changeFamily(this.value);">
+                            <hbox >
+                                <image src="file://?icon" style="margin : 2px" tooltiptext="?title" width="48px" height="48px"/>
+                            </hbox >
+                        </richlistitem>
+                    </action>
+                </template>
+            </richlistbox>
+        </vbox>
+        <vbox width="200px" persist="width">
+            <vbox>
+                <menulist id="openDocumentList" oncommand='tryToOpenDocument({documentId : this.value});'>
+                    <menupopup>
+                        
+                    </menupopup>
+                </menulist>
+                <button label="&main.newDocument;" onclick="openNewDocumentDialog()"/>
+                <hbox flex="1">
+                    <textbox type="search" id="searchTitle" value="" oncommand="updateAbstractList( { searchValue : this.value} );" placeholder="&main.abstract.search;" />
+                </hbox>
+            </vbox>
+            <vbox flex="1">
+                <richlistbox id="abstractList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
+                    <template>
+                        <query><![CDATA[ 
+                            SELECT title, initid 
+                            FROM documents 
+                            WHERE initid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam) AND fromid = :famId AND title LIKE :searchTitle 
+                        ]]>
+                            <param id="abstractDomainIdParam" name="domainIdParam" type="integer">0</param>
+                            <param id="famIdParam" name="famId" type="integer">0</param>
+                            <param id="searchTitleParam" name="searchTitle">%</param>
+                        </query>
+                        <action>
+                            <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument({documentId : this.value});'>
+                                <vbox >
+                                    <label value="?title" />
+                                </vbox>
+                            </richlistitem>
+                        </action>
+                    </template>
+                </richlistbox>
+            </vbox>
+        </vbox>
+        <splitter collapse="before">
+            <grippy />
+        </splitter>
+        <deck id="documentsDeck" flex="1">
+            <vbox id="vboxDocument-void">
+            </vbox>
+        </deck>
+    </hbox>
+    <statusbar>
+        <hbox flex="1">
+            <menulist id="domainList" label="&main.domain.choose;" oncommand="changeDomain(this.value)" >
+                <menupopup id='domainPopupList' datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
+                    <template>
+                        <query>
+                        <![CDATA[ select description, id from domains]]>
+                        </query>
+                        <action>
+                            <menuitem uri="?" label="?description" value="?id" flex="1"/>
+                        </action>
+                    </template>
+                </menupopup>
+            </menulist>
+            <spacer flex="1"/>
+            <statusbarpanel label="Connection status" />
+        </hbox>
+    </statusbar>
+</window>

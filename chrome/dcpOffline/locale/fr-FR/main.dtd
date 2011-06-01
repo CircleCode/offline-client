@@ -1,0 +1,62 @@
+<!-- debug key : to remove-->
+<!ENTITY  debug                         "Débogage">
+<!ENTITY  menu.debug.launch.venkman     "Lancer Venkman">
+<!ENTITY  menu.debug.launch.method      "Lancer la méthode de débogage">
+<!ENTITY  menu.debug.eric               "Lancer le débogage d'Éric">
+<!ENTITY  menu.debug.matthieu           "Lancer le débogage de Matthieu">
+
+
+<!ENTITY  welcome                       "Bienvenue">
+<!ENTITY  welcome.message               "Message de Bienvenue">
+
+
+<!-- Login traduction-->
+<!ENTITY authent.login.groupbox                 "login.login">
+<!ENTITY authent.login                          "login">
+<!ENTITY authent.password                       "password">
+<!ENTITY authent.login.option                   "login.option">
+<!ENTITY authent.applicationURL                 "applicationURL">
+<!ENTITY authent.remember.login.mdp             "login.remember">
+<!ENTITY authent.dialog                         "login">
+<!ENTITY authent.login.progress                 "authent.login.progress">
+<!ENTITY authent.work.offline                   "authent.work.offline">
+<!ENTITY authent.error.label                    "authent.error.label">
+<!ENTITY authent.autologin                      "authent.autologin">
+
+<!-- main -->
+<!ENTITY main.actionmenu                        "main.actionmenu">
+<!ENTITY main.newDocument                       "main.newDocument...">
+<!ENTITY main.close                             "main.close...">
+<!ENTITY main.preference                        "main.preference...">
+<!ENTITY main.synchro                           "main.synchro...">
+<!ENTITY main.helpmenu                          "main.helpmenu">
+<!ENTITY main.help                              "main.help...">
+<!ENTITY main.log                               "main.log...">
+<!ENTITY main.about                             "main.about...">
+<!ENTITY main.abstract.search                   "main.abstract.search">
+<!ENTITY main.domain.choose                     "main.domain.choose">
+
+<!-- synchronize -->
+<!ENTITY synchronize.dialogTitle                "synchronize.dialogTitle">
+<!ENTITY synchronize.cancel                     "synchronize.cancel">
+<!ENTITY synchronize.synchronize                "synchronize.synchronize">
+<!ENTITY synchro.progress                       "synchro.progress">
+<!ENTITY synchro.progressGlobal                 "synchro.progressGlobal">
+<!ENTITY synchro.progressDetail                 "synchro.progressDetail">
+<!ENTITY synchro.progressMessages               "synchro.progressMessages">
+<!ENTITY synchro.domain                         "synchro.domain">
+<!ENTITY synchro.detail                         "synchro.detail">
+<!ENTITY synchro.documents.record               "synchro.documents.record">
+<!ENTITY synchro.documents.recorded             "synchro.documents.recorded">
+<!ENTITY synchro.files.record                   "synchro.files.record">
+<!ENTITY synchro.files.recorded                 "synchro.files.recorded">
+<!ENTITY synchro.documents.save                 "synchro.documents.save">
+<!ENTITY synchro.documents.saved                "synchro.documents.saved">
+<!ENTITY synchro.files.save                     "synchro.files.save">
+<!ENTITY synchro.files.saved                    "synchro.files.saved">
+<!ENTITY synchro.client.server                  "synchro.client.server">
+<!ENTITY synchro.server.client                  "synchro.server.client">
+<!ENTITY synchro.progress                       "synchro.progress">
+
+<!-- preference -->
+<!ENTITY preference.dialogTitle                 "preference.dialogTitle">

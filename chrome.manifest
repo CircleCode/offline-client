@@ -1,2 +1,3 @@
-manifest chrome/dcpoffline-base.manifest
-## other (customizable) manifests ?
+manifest chrome/dcpOffline/dcpoffline-base.manifest
+manifest chrome/customization/dcpoffline-customization.manifest
+manifest chrome/ckeditor/dcpoffline-customization.manifest

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE window [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
+%mainDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&preference.dialogTitle;"
+    buttons="accept,cancel">
+    
+    <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/preferences.js" />
+    
+    <vbox>
+        
+        <button label="suppress all user pref" onclick="deleteUserPref()" />
+        <button label="suppress current select doc" onclick="deleteCurrentSelectedDocPref()" />
+        
+    </vbox>
+    
+</window>

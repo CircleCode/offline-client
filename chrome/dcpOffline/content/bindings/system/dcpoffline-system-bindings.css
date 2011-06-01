@@ -1,0 +1,227 @@
+/***********************************************************
+        Not yet implemented
+************************************************************/
+dcpAttribute[type=menu]
+    {
+    border: 1px solid red;
+    background: yellow;
+    min-height: 24px;
+}
+
+dcpAttribute[type=htmltext],
+dcpAttribute[type=file],
+dcpAttribute[type=enum],
+dcpAttribute[type=color],
+dcpAttribute[type=file],
+dcpAttribute[type=image],
+dcpAttribute[type=docid],
+dcpTabBox,dcpAttribute[type=tab],
+dcpAttribute[type=array]
+    {
+    border: 1px solid red;
+    min-height: 24px;
+}
+
+/***********************************************************
+        Box model
+************************************************************/
+dcpDocument {
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    overflow-y: auto;
+    width: 100%;
+}
+
+dcpDocument dcpDocMenu {
+    display: -moz-box;
+    width: 100%;
+}
+
+dcpDocument dcpAttribute {
+    display: -moz-box;
+    -moz-box-orient: horizontal;
+    width: 100%;
+}
+
+dcpDocument dcpAttribute[type=frame] {
+    -moz-box-orient: vertical;
+}
+
+dcpDocument dcpAttribute[type=frame] groupbox {
+    width: 100%;
+}
+
+dcpDocument dcpAttribute .dcpValue {
+    -moz-box-flex: 1;
+}
+
+dcpDocument dcpDocHeader {
+    display: -moz-box;
+    width: 100%;
+}
+
+dcpDocument dcpDocFooter {
+    display: -moz-box;
+    width: 100%;
+}
+
+/***********************************************************
+        Validity
+************************************************************/
+/*
+span.validator {
+   width: 16px;
+   height: 16px;
+   display: inline-block;
+   background-size: 100%, 100%;
+ }
+ :-moz-ui-valid + span {
+   background-image: url("images/valid.png");
+ }
+ :-moz-ui-invalid + span {
+   background-image: url("images/invalid.png");
+ }
+*/
+/***********************************************************
+        Document
+************************************************************/
+dcpDocument {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/documents.xml#document");
+}
+
+/***********************************************************
+        Menu
+************************************************************/
+dcpDocument dcpDocMenu {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#doc-main-menu");
+}
+
+/***********************************************************
+        Header
+************************************************************/
+dcpDocument dcpDocHeader {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docHeader.xml#doc-header");
+}
+
+/***********************************************************
+        Footer
+************************************************************/
+dcpDocument dcpDocFooter {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docFooter.xml#doc-footer");
+}
+
+/***********************************************************
+        Node Attributes (view)
+************************************************************/
+dcpDocument dcpTabBox,dcpDocument[mode=view] dcpTabBox {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
+}
+
+dcpDocument dcpAttribute[type=tab],dcpDocument[mode=view] dcpAttribute[type=tab]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
+}
+
+dcpDocument dcpAttribute[type=frame],dcpDocument[mode=view] dcpAttribute[type=frame]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
+}
+
+dcpDocument dcpAttribute[type=array],dcpDocument[mode=view] dcpAttribute[type=array]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
+}
+
+/***********************************************************
+        Leaf Attributes (view)
+************************************************************/
+dcpDocument dcpAttribute[type=text],dcpDocument[mode=view] dcpAttribute[type=text]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#text-attr-view");
+}
+
+dcpDocument dcpAttribute[type=longtext],dcpDocument[mode=view] dcpAttribute[type=longtext]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#longtext-attr-view");
+}
+
+dcpDocument dcpAttribute[type=htmltext],dcpDocument[mode=view] dcpAttribute[type=htmltext]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#htmltext-attr-view");
+}
+
+dcpDocument dcpAttribute[type=int],dcpDocument[mode=view] dcpAttribute[type=int]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#int-attr-view");
+}
+
+dcpDocument dcpAttribute[type=double],dcpDocument[mode=view] dcpAttribute[type=double]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#double-attr-view");
+}
+
+dcpDocument dcpAttribute[type=money],dcpDocument[mode=view] dcpAttribute[type=money]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#int-attr-view");
+}
+
+dcpDocument dcpAttribute[type=date],dcpDocument[mode=view] dcpAttribute[type=date]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#date-attr-view");
+}
+
+dcpDocument dcpAttribute[type=docid],dcpDocument[mode=view] dcpAttribute[type=docid]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#docid-attr-view");
+}
+
+dcpDocument dcpAttribute[type=file],dcpDocument[mode=view] dcpAttribute[type=file]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#file-attr-view");
+}
+
+/***********************************************************
+        Attributes (edit)
+************************************************************/
+dcpDocument[mode=edit] dcpAttribute[type=frame] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#frame-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=text] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#text-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=int] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#int-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=date] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#date-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=file]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#file-attr-view");
+}

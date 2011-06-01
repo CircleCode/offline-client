@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bindings>
+<bindings id="docHeaderBindings"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="doc-header">
+        <!--<ressources/>-->
+        
+        <content>
+                <xul:vbox anonid="document-header">
+                    <xul:hbox>
+                        <xul:image anonid="document-icon"/>
+                        <xul:label anonid="document-title"/>
+                    </xul:hbox>
+                    <children/>
+                </xul:vbox>
+        </content>
+        
+        <implementation>
+            
+            <property
+                name="localDocument"
+                readonly="true"
+                onget="return this.doc;">
+            </property>
+                
+            <method name="getDocumentNode">
+                <body><![CDATA[
+                    if(this.documentNode){
+                        return this.documentNode;
+                    } else {
+                        Components.utils.import("resource://modules/domUtils.jsm");
+                        return domUtils.getParentByTagName(this, 'dcpDocument');
+                    }
+                ]]></body>
+            </method>
+            
+            <method name="getChild">
+                <parameter name="aChildName"/>
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+            
+            <constructor><![CDATA[
+                this.doc = this.getDocumentNode().localDocument;
+                
+                var icon = this.doc.getIcon();
+                
+                if( icon ){
+                    icon = "file://" + icon;
+                }
+                
+                this.getChild('document-icon').src = icon;
+                this.getChild('document-title').value = this.doc.getTitle();
+                
+            ]]></constructor>
+        </implementation>
+        
+        <!--<handlers/> -->
+    </binding>
+    
+</bindings>

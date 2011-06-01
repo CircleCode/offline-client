@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE window [
+<!ENTITY % debug-ericDTD SYSTEM "chrome://dcpoffline/locale/debug-eric.dtd" >
+%debug-ericDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window id="debug-ericDTD" title="Eric's debug window" width="800px" height="600px"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" onload="initEricContext();clicGetDomains()"
+>
+    <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
+    <script type="application/javascript" src="chrome://dcpoffline/content/debug/debug-eric.js" />
+    <hbox>
+        <button label="get Domains" onclick="clicGetDomains()" />
+        <html:select id="sdomains"></html:select>
+    </hbox>
+    <vbox id="boxDomain" style="visibility:hidden">
+        <hbox>
+            <button style="background-color:lightgreen;-moz-appearance: none;" label="pull domain" onclick="clicPullDomain(document.getElementById('sdomains').value)" />
+            <button style="background-color:lightblue;-moz-appearance: none;" label="push domain" onclick="clicPushDomain(document.getElementById('sdomains').value)" />
+                  <button style="" label="Misc test" onclick="clicMiscTest(document.getElementById('sdomains').value)" />
+      
+        </hbox>
+        <hbox>
+            <label id='domain'>No domains</label><html:br/>
+            <statusbar>
+                <statusbarpanel label="Left panel" />
+                <spacer flex="1" />
+                <progressmeter id="progressGlobal" mode="determined" value="10" />
+                <progressmeter id="progressDetail" mode="determined" value="0" />
+                <statusbarpanel id="detailLabel" label="Right panel" />
+            </statusbar>
+        </hbox>
+        <hbox style="background-color:lightgreen">
+            <description value="documents to record" />
+            <textbox id="documentsToRecord" size="3" value="0" />
+            <description value="document recorded" />
+            <textbox id="documentsRecorded" size="3" value="0" />
+        </hbox>
+        <hbox style="background-color:lightgreen">
+            <description value="files to record" />
+            <textbox id="filesToRecord" size="3" value="0" />
+            <description value="files recorded" />
+            <textbox id="filesRecorded" size="3" value="0" />
+        </hbox>
+        
+        <hbox style="background-color:lightblue" >
+            <description value="documents to save" />
+            <textbox id="documentsToSave" size="3" value="0" />
+            <description value="document saved" />
+            <textbox id="documentsSaved" size="3" value="0" />
+        </hbox>
+        <hbox style="background-color:lightblue" >
+            <description value="files to save" />
+            <textbox id="filesToSave" size="3" value="0" />
+            <description value="files saved" />
+            <textbox id="filesSaved" size="3" value="0" />
+        </hbox>
+        
+    </vbox>
+</window>
