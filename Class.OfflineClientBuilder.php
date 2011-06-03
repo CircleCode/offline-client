@@ -83,10 +83,11 @@ class OfflineClientBuilder {
 
   public function test() {
     foreach( array(
-		   array('linux', 'i686', 'linux_i686', '/tmp/out.linux_i686'),
-		   array('linux', 'x86_64', 'linux_x86_64', '/tmp/out.linux_x86_64'),
-		   array('mac', 'universal', 'mac_universal', '/tmp/out.mac_universal'),
-		   array('win', '32', 'win_32', '/tmp/out.win_32')
+		   array('linux', 'i686', 'linux_i686', '/tmp/out.linux_i686.tar.gz'),
+		   array('linux', 'x86_64', 'linux_x86_64', '/tmp/out.linux_x86_64.tar.gz'),
+		   array('mac', 'universal', 'mac_universal', '/tmp/out.mac_universal.zip'),
+		   array('win', '32', 'win_32', '/tmp/out.win_32.exe'),
+		   array('win', '32_zip', 'win_32_zip', '/tmp/out.win_32.zip'),
 		   ) as $argv ) {
       print sprintf("Building %s/%s... ", $argv[0], $argv[1]);
       $ret = call_user_func_array(array($this, 'build'), $argv);
