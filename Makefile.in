@@ -59,9 +59,14 @@ $(pubdir)/$(libdir)/client/targets: LICENSE targets $(pubdir)/$(libdir)/client
 	find "$@" -name "*.in" -exec rm {} \;
 	cp LICENSE "$@/win/32/LICENSE.txt"
 
+# -- php --
+$(pubdir)/$(libdir)/client/Class.OfflineClientBuilder.php: Class.OfflineClientBuilder.php
+	cp "$<" "$@"
+
 _programs: $(pubdir)/programs/dynacase_offline_client_ckeditor_install
 _xulapp: $(pubdir)/$(libdir)/client/xulapp
 _patches: $(pubdir)/$(libdir)/client/patches
 _targets: $(pubdir)/$(libdir)/client/targets
+_php: $(pubdir)/$(libdir)/client/Class.OfflineClientBuilder.php
 
-publish: _programs _xulapp _patches _targets
+publish: _programs _xulapp _patches _targets _php
