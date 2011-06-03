@@ -79,6 +79,10 @@
                 name="offline.application.rememberLogin" type="bool" />
             <preference id="offline.application.autoLogin"
                 name="offline.application.autoLogin" type="bool" />
+            <preference id="offline.application.debug.locale"
+                name="offline.application.debug.locale" type="string" />
+            <preference id="general.useragent.locale" name="general.useragent.locale"
+                type="string" />
         </preferences>
         <checkbox id="firstRun" preference="offline.application.firstRun"
             label="offline.application.firstRun" />
@@ -90,5 +94,13 @@
             label="offline.application.rememberLogin" />
         <checkbox id="autologin" preference="offline.application.autoLogin"
             label="offline.application.autoLogin" />
+        <hbox>
+            <label value="offline.application.debug.locale" />
+            <textbox id="debug.locale" preference="offline.application.debug.locale" />
+        </hbox>
+        <hbox>
+            <label value="general.useragent.locale" />
+            <textbox id="useragent.locale" preference="general.useragent.locale" />
+        </hbox>
     </prefpane>
 </prefwindow>

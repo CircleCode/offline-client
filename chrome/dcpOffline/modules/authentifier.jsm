@@ -10,6 +10,7 @@ Cu.import("resource://modules/offlineSynchronize.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/passwordManager.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
+Cu.import("resource://modules/events.jsm");
 
 var EXPORTED_SYMBOLS = ["authentificator"];
 
@@ -91,8 +92,25 @@ var authentificator = function() {
                         if (user.lastname) {
                             Preferences.set("offline.user.lastName", user.lastname);
                         }
+                        if (user.locale) {
+                            if (!Preferences.get("offline.application.debug.locale", false)) {
+                                if (Preferences.get("general.useragent.locale") != user.locale) {
+                                     if (that.switchLocale(user.locale)) {
+                                         applicationEvent.publish("needRestart", "changeLocal");
+                                     }else {
+                                         logDebug("unable to switch local because it doesn't exist "+user.locale);
+                                     }
+                                }
+                            }else {
+                                logConsole("debuglocal");
+                                if (Preferences.get("offline.application.debug.locale") != Preferences.get("general.useragent.locale")) {
+                                    that.switchLocale(Preferences.get("offline.application.debug.locale"));
+                                }
+                            }
+                            Preferences.set("offline.user.serverLocale", user.locale);
+                        }
                         if (user.getLocaleFormat()){
-                            Preferences.set("offline.user.locale", JSON.stringify(user.getLocaleFormat()));
+                            Preferences.set("offline.user.localeFormat", JSON.stringify(user.getLocaleFormat()));
                         }
                         passwordManager.updatePassword(that.currentLogin, that.currentPassword);
                         that.onSuccess();
@@ -125,6 +143,25 @@ var authentificator = function() {
             guessNetworkState : function() {
                 logConsole("guessNetworkState");
                 return !(networkChecker.isOffline());
+            },
+            
+            switchLocale : function(serverLocale) {
+                logConsole("switchLocale "+serverLocale);
+                var chromeRegService = Components.classes["@mozilla.org/chrome/chrome-registry;1"].getService();
+                var toolkitChromeReg = chromeRegService.QueryInterface(Components.interfaces.nsIToolkitChromeRegistry);
+                var availableLocales = toolkitChromeReg.getLocalesForPackage("dcpoffline");
+                var locale = "";
+                
+                while(availableLocales.hasMore()) {
+                    locale = availableLocales.getNext();
+                    logConsole("locale "+locale);
+                    if (locale == serverLocale) {
+                        Preferences.set("general.useragent.locale", locale);
+                        return true;
+                    }
+                }
+                
+                return false;
             }
     };
 
