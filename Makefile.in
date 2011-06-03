@@ -53,9 +53,11 @@ $(pubdir)/$(libdir)/client/patches: $(CKEDITOR_PATCHES) $(pubdir)/$(libdir)/clie
 	cp -p $(CKEDITOR_PATCHES) $@
 
 # -- targets --
-$(pubdir)/$(libdir)/client/targets: targets $(pubdir)/$(libdir)/client
+$(pubdir)/$(libdir)/client/targets: LICENSE targets $(pubdir)/$(libdir)/client
 	mkdir -p "$@"
 	cp -pR targets/ "$@"
+	find "$@" -name "*.in" -exec rm {} \;
+	cp LICENSE "$@/win/32/LICENSE.txt"
 
 _programs: $(pubdir)/programs/dynacase_offline_client_ckeditor_install
 _xulapp: $(pubdir)/$(libdir)/client/xulapp
