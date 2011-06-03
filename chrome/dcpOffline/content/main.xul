@@ -147,7 +147,8 @@
                 </menupopup>
             </menulist>
             <spacer flex="1"/>
-            <statusbarpanel label="Connection status" />
+            <statusbarpanel id="userName" label="" />
+            <statusbarpanel id="connectionStatus" label="Connection status" class="statusbarpanel-iconic-text"/>
         </hbox>
     </statusbar>
 </window>
