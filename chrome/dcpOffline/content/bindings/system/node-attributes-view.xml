@@ -13,53 +13,44 @@
     xmlns:xbl="http://www.mozilla.org/xbl">
     
     <binding id="node-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
+    
     <binding id="tab-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
-            <xul:tabpanel anonid="label" xbl:inherits="id=attrid">
-                <xul:hbox><xbl:children /></xul:hbox>
-            </xul:tabpanel>
-           
-        </content> <implementation>
-            <constructor><![CDATA[
-            
-                 Components.utils.import("resource://modules/logger.jsm");
-                   
-                var tabs=this.getChild('label');
-                 logConsole("tabs one"+ tabs.tagName);
-            
-                
-                var anonTabs=null;
-                while (anonTabs == null && tabs != null ) {
-                 logConsole("node "+tabs.tagName);
-                 try {
-                    anonTabs=document.getAnonymousElementByAttribute(tabs, "anonid", "dcpTabs");
-                    
-                    tabs=tabs.parentNode;
-                    } catch (e) {
-                    tabs=null;
-                    }
-                }
-                if (anonTabs) {
-                   var tab=document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "tab");
-                   tab.setAttribute('label', this.getAttribute('label'));
-                   tab.setAttribute('linkedpanel', this.getAttribute('attrid'));
-                   
-                   anonTabs.appendChild(tab);
-                   logConsole("add tabs final", tab);
-                }
-                  //  logConsole("tabs final", anonTabs);
-            ]]></constructor></implementation>
-    </binding>
-    <binding id="tabpanel-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
-        <content>
-            <xul:tabbox anonid="dcpTabBox">
-                <xul:tabs anonid="dcpTabs">
-                </xul:tabs>
-                <xul:tabpanels>
+            <xul:tabpanel anonid="tabPanel" flex="1">
+                <xul:vbox flex="1">
                     <xbl:children />
-                </xul:tabpanels>
-            </xul:tabbox>
-        </content>
+                </xul:vbox>
+            </xul:tabpanel>
+        </content> 
+        <implementation>
+            <field name="tabbox" readonly="true"><![CDATA[
+                var parent = this.parentNode;
+                while (parent) {
+                    if (parent.localName == "tabbox")
+                        break;
+                    parent = parent.parentNode;
+                }
+                parent;
+            ]]></field>
+            <constructor><![CDATA[
+                var tabs = this.tabbox.tabs;
+                
+                var id = Components.classes["@mozilla.org/uuid-generator;1"]
+                        .getService(Components.interfaces.nsIUUIDGenerator)
+                        .generateUUID()
+                        .toString()
+                        .slice(1,-1);
+                this.setAttribute('id', id);
+                
+                if (tabs) {                   
+                   var tab = tabs.appendItem(this.getAttribute('label'),this.getAttribute('label'));
+                   tab.setAttribute('linkedpanel', id);
+                } else {
+                    Components.utils.import("resource://modules/exceptions.jsm");
+                    logError(new BindError("there is no 'tabs' tag associated with this tab: " + this.getAttribute("attrid")));
+                }
+            ]]></constructor>
+        </implementation>
     </binding>
     
     <binding id="frame-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
