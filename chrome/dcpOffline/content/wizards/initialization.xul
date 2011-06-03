@@ -7,25 +7,53 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xul-overlay href="chrome://dcpoffline/content/overlays/authent.xul" ?>
-
+<?xul-overlay href="chrome://dcpoffline/content/overlays/synchro.xul" ?>
 <wizard id="theWizard" title="&wizard.initialization.title;"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onwizardcancel="tryToClose();"
-    onwizardback="wizardRewind();"
-    onwizardfinish="wizardEnd()"
-    >
+    onwizardcancel="tryToClose();" onwizardback="wizardRewind();"
+    onwizardfinish="wizardEnd();" width="800px" height="700px"
+    onload="initWizard();">
+    
     <script type="application/javascript"
         src="chrome://dcpoffline/content/wizards/initialization.js" />
+        
     <wizardpage id="welcome">
         <label value="&wizard.initialization.welcome;" />
     </wizardpage>
     <wizardpage pageid="firstAuthent" onpageshow="initFirstAuthent();">
         <label value="&wizard.first.login;" />
-        <button id="wizardTryToAuthent" label="&wizard.try.authent;" onclick="wizardAuthent();"/>
         <vbox id="authent.mainBox">
         </vbox>
+        <hbox>
+            <spacer flex="1" />
+            <button id="wizardTryToAuthent" label="&wizard.try.authent;"
+                onclick="wizardAuthent();" />
+        </hbox>
     </wizardpage>
-    <wizardpage pageid="firstSynchro">
-        <label value="&wizard.initialization.domain;" />
+    <wizardpage pageid="firstSynchro" onpageshow="initSynchronize(); refreshDomain();">
+        <label value="&wizard.initialization.selectDomain;" />
+        <menulist id="domainList" oncommand="changeDomain(this.value)">
+            <menupopup id='domainPopupList' datasources="profile:storage.sqlite"
+                ref="*" querytype="storage" flex="1">
+                <template>
+                    <query>
+                        <![CDATA[ select description, id from domains]]>
+                    </query>
+                    <action>
+                        <menuitem uri="?" label="?description"
+                            value="?id" flex="1" />
+                    </action>
+                </template>
+            </menupopup>
+        </menulist>
+        <vbox id="synchronize.mainBox">
+        </vbox>
+        <hbox>
+            <spacer flex="1" />
+            <button id="wizardTryToSynchronize" label="&wizard.try.synchronize;"
+                onclick="wizardSynchronize();" />
+        </hbox>
+    </wizardpage>
+    <wizardpage >
     </wizardpage>
 </wizard>

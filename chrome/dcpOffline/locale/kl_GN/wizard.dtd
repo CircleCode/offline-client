@@ -4,3 +4,5 @@
 <!ENTITY wizard.initialization.domain               "wizard.initialization.domain">
 <!ENTITY wizard.first.login                         "wizard.first.login">
 <!ENTITY wizard.try.authent                         "wizard.try.authent">
+<!ENTITY wizard.initialization.selectDomain         "wizard.initialization.selectDomain">
+<!ENTITY wizard.try.synchronize                     "wizard.try.synchronize">

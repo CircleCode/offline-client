@@ -122,8 +122,6 @@ function updateDomain(config) {
 };
 
 function tryToSynchronize() {
-    document.getElementById("synchronizeButton").disabled = true;
-    document.getElementById("cancelButton").disabled = true;
     if (!applicationEvent.publish("preSynchronize")) {
         // TODO add alert message
         alert("unable to synchronize");
