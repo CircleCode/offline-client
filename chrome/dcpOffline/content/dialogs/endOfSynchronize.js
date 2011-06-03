@@ -16,7 +16,7 @@ function initDialog() {
         }
     }
     if (result.description.manageWaitingUrl) {
-        document.getElementById("message").hidden = false;
+        document.getElementById("report").hidden = false;
         document.getElementById("report").href = result.description.manageWaitingUrl;
     }
     if (result.description.message) {
