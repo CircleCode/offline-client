@@ -12,9 +12,6 @@ Cu.import("resource://modules/fdl-context.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
-/* enabling password manager */
-Cc["@mozilla.org/login-manager;1"].getService(Ci.nsILoginManager);
-
 /* init elements */
 /* Add window binding onLoad and onClose*/
 window.onload = function() {
@@ -27,8 +24,11 @@ window.onload = function() {
  * @private
  */
 function initNetworkCheck() {
+    logIHM("initNetworkCheck");
+    
+    Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService).addObserver(updateConnectStatus, "network:link-status-changed", false);
+    /*First call is not trustable, so I initiate it don't supress it please*/
     networkChecker.isOffline();
-    setTimeout(initNetworkCheck, 15);
 }
 /**
  * Init the application
@@ -37,13 +37,16 @@ function initNetworkCheck() {
  */
 function initApplication() 
 {
+    
+    logIHM("initApplication");
+    
     var firstRun = Preferences.get("offline.application.firstRun", true);
     var fullyInitialised = Preferences.get("offline.application.fullyInitialised", false);
     
     initListeners();
     
     if (firstRun) {
-        window.openDialog("chrome://dcpoffline/content/wizards/initialization.xul", "","chrome,modal");
+        window.openDialog("chrome://dcpoffline/content/wizards/initialization.xul", "","chrome,titlebar,centerscreen,modal");
     }
     else {
         this.openLoginDialog();
@@ -102,10 +105,22 @@ function initListeners()
 function initValues()
 {
     logIHM("initValues");
-    document.getElementById("domainPopupList").builder.rebuild();
     setPrefCurrentSelectedDomain(true);
     setPrefCurrentSelectedFamily(true);
     setPrefCurrentOpenDocument(true);
+    if (!networkChecker.isOffline()) {
+        updateConnectStatus(null, null, "up");
+    }else{
+        updateConnectStatus(null, null, "down");
+    }
+    document.getElementById("userName").label = "";
+    
+    if (Preferences.get("offline.user.lastName", false)) {
+        document.getElementById("userName").label += Preferences.get("offline.user.lastName");
+    }
+    if (Preferences.get("offline.user.firstName", false)) {
+        document.getElementById("userName").label += " "+Preferences.get("offline.user.firstName");
+    }
 }
 
 /* Dialog opener */
@@ -263,6 +278,7 @@ function tryToCloseDocument(param) {
  */
 function tryToClose()
 {
+    logConsole("try to close application ");
     if (applicationEvent.publish("preClose")) {
         applicationEvent.publish("close");
     }else{
@@ -282,7 +298,19 @@ function close()
 {
     Cc['@mozilla.org/toolkit/app-startup;1'].getService(Ci.nsIAppStartup).quit(Ci.nsIAppStartup.eAttemptQuit);
 }
-
+function updateConnectStatus(aSubject, aTopic, status) {
+    logConsole("update connect status ", status);
+    var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
+    if (status == "up") {
+        document.getElementById("connectionStatus").label = translate.get("main.connectStatus.up");
+    }
+    if (status == "down") {
+        document.getElementById("connectionStatus").label = translate.get("main.connectStatus.down");
+    }
+    if (status == "unknown") {
+        document.getElementById("connectionStatus").label = translate.get("main.connectStatus.unknown");
+    }
+}
 /**
  * openDocument in main IHM 
  * Private method : you should never use it
@@ -542,6 +570,7 @@ function setPrefCurrentSelectedDomain(propagEvent)
 {
     logIHM("setPrefCurrentSelectedDomain");
     var domains = document.getElementById("domainList");
+    document.getElementById("domainPopupList").builder.rebuild();
     if (!Preferences.get("offline.user.currentSelectedDomain", false) === false) {
         var nbDomains = domains.itemCount;
         for(var i = 0; i < nbDomains; i++) {
@@ -705,8 +734,8 @@ function getListOfOpenDocuments() {
  * Shortcut to the logConsole
  * 
  */
-function logIHM(message) {
-    logConsole(message);
+function logIHM(message, object) {
+    logConsole(message, object);
 }
 
 /* debug stuff */

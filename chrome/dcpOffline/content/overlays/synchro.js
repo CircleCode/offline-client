@@ -23,7 +23,7 @@ function initSynchronize() {
 function isServerOK() {
     var translate = new StringBundle(
             "chrome://dcpoffline/locale/main.properties");
-    if (!networkChecker.isOffline() && context.isAuthenticated()) {
+    if (!networkChecker.isOffline({reset : true}) && context.isAuthenticated()) {
         logConsole("Ready to synchronize");
     } else {
         logConsole("Ready to synchronize");
@@ -122,8 +122,6 @@ function updateDomain(config) {
 };
 
 function tryToSynchronize() {
-    document.getElementById("synchronizeButton").disabled = true;
-    document.getElementById("cancelButton").disabled = true;
     if (!applicationEvent.publish("preSynchronize")) {
         // TODO add alert message
         alert("unable to synchronize");
