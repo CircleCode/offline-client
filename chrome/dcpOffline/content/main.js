@@ -339,7 +339,7 @@ function openDocument(config) {
             });
             template = doc.getBinding(mode);
             if (template) {
-                template = 'url(file://' + template + ')';
+                template = 'url("' + template + '")';
                 documentRepresentationId = 'vboxDocument-'+config.documentId;
                 documentRepresentation= document.getElementById(documentRepresentationId);
                 if(! documentRepresentation ){
