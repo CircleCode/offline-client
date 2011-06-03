@@ -4,8 +4,6 @@ function initDialog() {
     var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
     var result = window.arguments[0];
     
-    dump(JSON.stringify(result));
-    
     if (result.description.status) {
         document.getElementById("resultLabel").value = result.description.status;
     } else {
