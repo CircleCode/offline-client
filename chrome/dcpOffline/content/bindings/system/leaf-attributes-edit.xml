@@ -23,7 +23,11 @@
                 <parameter name="message"/>
                 <body><![CDATA[
                     this.inputField.setCustomValidity(message);
-                    alert ("(FIXME) " + message);
+                    if(message){
+                        alert ("(FIXME) " + message);
+                        this.inputField.focus();
+                        //XXX: selectAll should be better
+                    }
                 ]]></body>
             </method>
             
@@ -39,8 +43,11 @@
             ]]></constructor>
             
         </implementation>
+        
         <handlers>
             <handler event="blur" id="blur"><![CDATA[
+                Components.utils.import("resource://modules/logger.jsm");
+                logConsole("initial blur handler");
                 if(event.originalTarget == this.inputField){
                     this.setValue(this.inputField.value);
                 }
@@ -53,7 +60,7 @@
     <binding id="text-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute text">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="false" xbl:inherits="disabled"/>
             </xul:hbox>
@@ -63,7 +70,7 @@
     <binding id="longtext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="true" xbl:inherits="disabled"/>
             </xul:hbox>
@@ -72,23 +79,38 @@
     
     <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:iframe anonid="displayValue" src="chrome://dcpoffline/content/bindings/ckeditor/ckeditor.html" class="dcpValue"/>
-            </xul:hbox>
+            <xul:vbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
+                <xul:hbox>
+                    <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
+                    <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                </xul:hbox>
+                <xul:iframe anonid="displayValue" src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html" class="dcpValue" flex="1"/>
+
+            </xul:vbox>
         </content>
         <implementation>
             <method name="reloadValue">
                 <body><![CDATA[
-                    var oeditor = this.getChild('displayValue').contentWindow.editorInstance;
+                    var contentWindow = this.getChild('displayValue').contentWindow;
                     
-                    if(oeditor){
-                        oeditor.setData(this.getDisplayValue());
-                    } else {
-                        alert('FIXME: htmltext-attr-view: the code is too fast...');
-                        throw new BindException("no displayValue chil for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                    var contentDocument = this.getChild('displayValue').contentDocument;
+                    
+                    var value = this.getValue();
+                    
+                    var initEditor = function(){
+                        logConsole('initEditor');
+                        
+                        if(contentWindow.getEditorWrapper){
+                            var editorWrapper = contentWindow.getEditorWrapper();
+                            editorWrapper.innerHTML = value;
+                            contentWindow.initEditor();
+                        } else {
+                            logConsole('relaunch initEditor in 50 ms');
+                            setTimeout(initEditor,50);
+                        }
                     }
+
+                    setTimeout(initEditor,50);
                 ]]></body>
             </method>
         </implementation>
@@ -99,44 +121,60 @@
     <binding id="int-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute numeric int">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" xbl:inherits="disabled"/>
             </xul:hbox>
         </content>
         
         <implementation>
-            
             <method name="checkValue">
                 <parameter name="value"/>
                 <body><![CDATA[
                     if( isNaN(value) ){
+                        Components.utils.import("resource://modules/events.jsm");
                         this.setCustomValidity("'" + value +"' is not a number");
-                        return false;
+                        throw new attrCheckException("'" + value +"' is not a number");
+                    } else {
+                        this.setCustomValidity("");
                     }
+                    
+                    return value;
                 ]]></body>
             </method>
-            
         </implementation>
     </binding>
     
     <binding id="double-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:textbox anonid="displayValue" class="dcpValue" value=""
-                    type="number" hidespinbutton="true" decimalplaces="Infinity"
-                    inherited="min,max"/>
-                <xul:textbox anonid="rawValue" value="" collapsed="true"/>
+                <xul:textbox anonid="displayValue" class="dcpValue" xbl:inherits="disabled"/>
             </xul:hbox>
         </content>
+        
+        <implementation>
+            <method name="checkValue">
+                <parameter name="value"/>
+                <body><![CDATA[
+                    //XXX: do a better sanitization (spaces, english format, etc...)
+                    var parse_double = /^[0-9]+([.,][0-9]+)?$/
+                    if( value.match(parse_double) ){
+                        Components.utils.import("resource://modules/events.jsm");
+                        this.setCustomValidity("'" + value +"' is not a number");
+                        throw new attrCheckException("'" + value +"' is not a number");
+                    }
+                    return value;
+                ]]></body>
+            </method>
+        </implementation>
     </binding>
     
     <binding id="money-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:textbox anonid="displayValue" class="dcpValue" value=""
                     type="number" hidespinbutton="true" decimalplaces="2"
@@ -151,7 +189,7 @@
     <binding id="date-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <xul:label anonid="label" class="dcplabel" xbl:inherits="value=label"/>
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:datepicker anonid="displayValue" class="dcpValue" value=""/>
             </xul:hbox>

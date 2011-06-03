@@ -16,23 +16,22 @@
             <method name="checkValue">
                 <parameter name="value" />
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/logger.jsm");
-                    logConsole("check value " + value);
-                    return true;
+                    return value;
                 ]]></body>
             </method>
             <method name="setValue">
                 <parameter name="value" />
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/logger.jsm");
-                    logConsole("ask to set value " + value);
-                    var isValidValue = this.checkValue(value);
-                    if(isValidValue){
-                        logConsole("value " + value + " is valid");
+                    try{
+                        var value = this.checkValue(value);
                         this.doc.setValue(this.attrid, value);
                         this.reloadValue();
+                        return true;
+                    } catch(e){
+                        Components.utils.import("resource://modules/logger.jsm");
+                        logError(e);
                     }
-                    return isValidValue;
+                    return false;
                 ]]></body>
             </method>
             <method name="reloadValue">

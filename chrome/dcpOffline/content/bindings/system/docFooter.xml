@@ -49,9 +49,7 @@
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
                 
-                this.getChild('document-initid').value = this.doc.getInitid();
-                
-                logConsole("footer" + this.getChild('document-initid').value);
+                this.getChild('document-initid').label = this.doc.getInitid();
             ]]></constructor>
             
         </implementation>
