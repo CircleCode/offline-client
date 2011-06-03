@@ -5,7 +5,10 @@ content dcpoffline content/
 resource    modules                         modules/
 
 ## locales
-locale      dcpoffline      fr-FR           locale/fr-FR/
+locale      dcpoffline      fr_FR           locale/fr_FR/
+locale      dcpoffline      en_US           locale/en_US/
+#debug purpose
+locale      dcpoffline      kl_GN           locale/kl_GN/
 
 ## customizable skin
 skin        dcpoffline      custom-skin     skins/custom/

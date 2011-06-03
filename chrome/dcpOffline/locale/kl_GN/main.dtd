@@ -57,6 +57,11 @@
 <!ENTITY synchro.client.server                  "synchro.client.server">
 <!ENTITY synchro.server.client                  "synchro.server.client">
 <!ENTITY synchro.progress                       "synchro.progress">
+<!ENTITY synchro.status                         "synchro.status">
+<!ENTITY synchronize.report                     "synchronize.report">
+<!ENTITY synchro.result                         "synchro.result">
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle                 "preference.dialogTitle">
+<!ENTITY preference.applicationPref             "preference.applicationPref">
+<!ENTITY preference.userPref                    "preference.userPref">
