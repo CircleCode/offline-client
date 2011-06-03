@@ -81,7 +81,8 @@ class OfflineClientBuilder {
     return true;
   }
 
-  public function test() {
+  public static function test() {
+    $ocb = new OfflineClientBuilder();
     foreach( array(
 		   array('linux', 'i686', 'linux_i686', '/tmp/out.linux_i686.tar.gz'),
 		   array('linux', 'x86_64', 'linux_x86_64', '/tmp/out.linux_x86_64.tar.gz'),
@@ -90,10 +91,10 @@ class OfflineClientBuilder {
 		   array('win', '32_zip', 'win_32_zip', '/tmp/out.win_32.zip'),
 		   ) as $argv ) {
       print sprintf("Building %s/%s... ", $argv[0], $argv[1]);
-      $ret = call_user_func_array(array($this, 'build'), $argv);
+      $ret = call_user_func_array(array($ocb, 'build'), $argv);
       if( $ret === false ) {
 	print "[ERROR]\n";
-	print sprintf("%s\n", $this->error);
+	print sprintf("%s\n", $ocb->error);
 	print "\n";
       } else {
 	print "[OK]\n";
