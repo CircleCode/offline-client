@@ -49,7 +49,7 @@ function tryToAuthent() {
 }
 
 function onAuthentSuccess() {
-    applicationEvent.publish("authentOK");
+    applicationEvent.publish("authentSuccess");
 }
 
 function onAuthentError(reason) {
@@ -67,6 +67,7 @@ function onAuthentError(reason) {
     document.getElementById('authent.modeOffline').disabled = false;
     document.getElementById('authent.autoLogin').disabled = false;
     document.getElementById('authent.progressGroup').style.visibility = "hidden";
+    applicationEvent.publish("authentError", reason);
 }
 
 function initIHM() {

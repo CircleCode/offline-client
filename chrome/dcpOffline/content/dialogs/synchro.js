@@ -26,3 +26,9 @@ function suppressListener() {
     applicationEvent.unsubscribe("unableToSynchronize", displayError);
     applicationEvent.unsubscribe("postSynchronize", displayEndOfSynchronize);
 }
+
+function letSynchronize() {
+    document.getElementById("synchronizeButton").disabled = true;
+    document.getElementById("cancelButton").disabled = true;
+    tryToSynchronize();
+}

@@ -21,7 +21,7 @@
             <button id="cancelButton" label="&synchronize.cancel;"
                 onclick="letClose();" />
             <button id="synchronizeButton" label="&synchronize.synchronize;"
-                onclick="tryToSynchronize();" />
+                onclick="letSynchronize();" />
         </hbox>
     </vbox>
 </window>

@@ -105,7 +105,6 @@ function initListeners()
 function initValues()
 {
     logIHM("initValues");
-    document.getElementById("domainPopupList").builder.rebuild();
     setPrefCurrentSelectedDomain(true);
     setPrefCurrentSelectedFamily(true);
     setPrefCurrentOpenDocument(true);
@@ -571,6 +570,7 @@ function setPrefCurrentSelectedDomain(propagEvent)
 {
     logIHM("setPrefCurrentSelectedDomain");
     var domains = document.getElementById("domainList");
+    document.getElementById("domainPopupList").builder.rebuild();
     if (!Preferences.get("offline.user.currentSelectedDomain", false) === false) {
         var nbDomains = domains.itemCount;
         for(var i = 0; i < nbDomains; i++) {
