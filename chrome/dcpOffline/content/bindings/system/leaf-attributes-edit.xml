@@ -26,7 +26,7 @@
                     if(message){
                         alert ("(FIXME) " + message);
                         this.inputField.focus();
-                        //XXX: selectAll should be better
+                        //XXX: selectAll could be better
                     }
                 ]]></body>
             </method>
@@ -77,7 +77,7 @@
         </content>
     </binding>
     
-    <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:vbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
                 <xul:hbox>
@@ -85,7 +85,6 @@
                     <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 </xul:hbox>
                 <xul:iframe anonid="displayValue" src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html" class="dcpValue" flex="1"/>
-
             </xul:vbox>
         </content>
         <implementation>
@@ -97,18 +96,22 @@
                     
                     var value = this.getValue();
                     
+                    //XXX: this is suboptimal
+                    var that = this;
+
                     var initEditor = function(){
                         logConsole('initEditor');
                         
                         if(contentWindow.getEditorWrapper){
                             var editorWrapper = contentWindow.getEditorWrapper();
                             editorWrapper.innerHTML = value;
-                            contentWindow.initEditor();
+                            var editor = contentWindow.initEditor();
+                            editor.on('blur', function(){this.setValue(editor.getData())}, that);
                         } else {
                             logConsole('relaunch initEditor in 50 ms');
                             setTimeout(initEditor,50);
                         }
-                    }
+                    };
 
                     setTimeout(initEditor,50);
                 ]]></body>

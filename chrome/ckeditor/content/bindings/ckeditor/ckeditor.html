@@ -7,16 +7,11 @@
     <script type="text/javascript">
         function initEditor(){
             editorInstance = CKEDITOR.replace('editorWrapper');
+            return editorInstance;
         };
         function getEditorWrapper(){
             return document.getElementById('editorWrapper')
-        };/*
-        this.toto = 'tata';
-        this.titi = { pouet: 'pouf'}
-        alert(this.initEditor);
-        alert(window.getEditorWrapper());
-        alert(this.toto);
-        alert(this.titi.pouet);*/
+        };
     </script>
 </body>
 </html>
