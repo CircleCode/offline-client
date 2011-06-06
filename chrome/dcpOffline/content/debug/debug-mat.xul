@@ -59,7 +59,6 @@
             <button label="test bindings" oncommand="testBinding();"/>
             <button label="change tab" oncommand="changeTab();"/>
         </hbox>
-        <hbox flex="1"><box id="ckeditortest" flex="1"/></hbox>
     </vbox>
     
     <hbox flex="1">

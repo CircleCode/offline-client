@@ -58,14 +58,16 @@
     </binding>
     <binding id="array-attr-view" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <resources>
-            <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-system-bindings.css" />
+            <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-look.css" />
         </resources>
         <content>
+            <xul:box style="display: none;">
+                <children/>
+            </xul:box>
             <xul:groupbox class="dcpAttribute array">
                 <xul:caption anonid="value" xbl:inherits="label" />
                 <xul:grid flex="1" inherited="attrid ">
                     <xul:columns anonid="tableHead" class="dcpTableHeader">
-                        <children includes=""/>
                     </xul:columns>
                     <xul:rows anonid="tableBody">
                     </xul:rows>
@@ -78,6 +80,15 @@
                 
                 var tbody=this.getChild('tableBody');
                 var cn=this.childNodes;
+                
+                for(var i = 0; i < cn.length; i++){
+                     var col = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                     var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
+                     clabel.setAttribute('value', cn[i].getAttribute('label'));
+                     col.appendChild(clabel);
+                     this.getChild('tableHead').appendChild(col);
+                }
+                
                 var nbRow=2;
                 for (var r=0;r<nbRow; r++) {
                    var orow=document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");

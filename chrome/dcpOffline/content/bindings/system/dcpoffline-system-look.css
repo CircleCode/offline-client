@@ -38,16 +38,17 @@ dcpDocument dcpAttribute[type=frame] {
     -moz-box-orient: vertical;
 }
 
-dcpDocument dcpAttribute[type=frame] groupbox {
-    width: 100%;
-}
-
 dcpDocument dcpAttribute[type=frame] groupbox .groupbox-body {
     border: 1px solid #098777;
 }
 
 dcpDocument dcpAttribute[type=frame] groupbox .groupbox-title {
     border: 1px solid #098777;
+}
+
+dcpDocument dcpAttribute[type=frame] groupbox
+dcpDocument dcpAttribute[type=array] groupbox {
+    width: 100%;
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=htmltext]{

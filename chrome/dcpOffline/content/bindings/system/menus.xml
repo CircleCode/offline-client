@@ -126,7 +126,7 @@
         </implementation>
         
         <handlers>
-            <handler event="click"  button="0" id="click"><![CDATA[
+            <handler event="click"  button="0"><![CDATA[
                 switch(event.originalTarget){
                     case this.getChild('document-toolbar-system-edit') :
                         this.documentNode.switchMode('edit');
