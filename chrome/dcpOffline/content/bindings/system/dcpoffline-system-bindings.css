@@ -52,9 +52,14 @@ dcpDocument dcpAttribute[type=frame],dcpDocument[mode=view] dcpAttribute[type=fr
 dcpDocument dcpAttribute[type=array],dcpDocument[mode=view] dcpAttribute[type=array]
     {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-view");
 }
 
+dcpDocument[mode=view] dcpAttribute[type=array]  dcpAttribute
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-column");
+}
 /***********************************************************
         Leaf Attributes (view)
 ************************************************************/
