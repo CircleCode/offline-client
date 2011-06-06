@@ -1,9 +1,6 @@
-const
-Cc = Components.classes;
-const
-Ci = Components.interfaces;
-const
-Cu = Components.utils;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/storageManager.jsm");
@@ -59,7 +56,11 @@ var fileManager = {
                     if ((!filesRoot.contains(config.aFile, false))
                             || (config.aFile.leafName != config.basename)) {
                         try {
-                            config.aFile.moveTo(destDir, config.basename);
+                            if(config.forceCopy){
+                                config.aFile.copyTo(destDir, config.basename);
+                            } else {
+                                config.aFile.moveTo(destDir, config.basename);
+                            }
                         } catch (e) {
                             logError('fileManager::saveFile : could not move the file to '
                                     + filesRoot.path);
@@ -140,7 +141,6 @@ var fileManager = {
         var r = storageManager.execQuery({
             query : 'SELECT * from ' + TABLE_FILES
                     + ' WHERE recorddate is not null'
-
         });
         var mdate;
         var file = Components.classes["@mozilla.org/file/local;1"]
@@ -182,44 +182,31 @@ var fileManager = {
                 config.index = -1;
             }
 
-            if (getPending(config) == STATUS_PENDING) {
-                throw (new Error('file is currently in download'));
-            }
-
-            if (!config.hasOwnProperty('basename')) {
-                var r = storageManager
-                        .execQuery({
-                            query : 'SELECT basename from '
-                                    + TABLE_FILES
-                                    + ' WHERE initid = :initid AND attrid = :attrid AND index = :index',
-                            params : {
-                                initid : config.initid,
-                                attrid : config.attrid,
-                                index : config.index
-                            }
-                        });
-                config.basename = r[0].basename;
-            }
-
-            var destDirPath = config.initid + '/' + config.attrid; // TODO see
-                                                                    // savefile
-                                                                    // to set
-                                                                    // correctly
-            if (config.index >= 0) {
-                destDirPath += '/' + config.index;
-            }
-            destDirPath += '/' + config.basename;
-            var aFile = filesRoot.clone().append(destDirPath);
+            var r = storageManager
+                    .execQuery({
+                        query : 'SELECT path from '
+                                + TABLE_FILES
+                                + ' WHERE "initid" = :initid AND "attrid" = :attrid AND "index" = :index',
+                        params : {
+                            initid : config.initid,
+                            attrid : config.attrid,
+                            index : config.index
+                        }
+                    });
+            config.path = r[0].path;
+            
+            var aFile = Services.dirsvc.get("TmpD", Ci.nsILocalFile);
+            aFile.initWithPath(config.path);
+            
             if (aFile.exists()) {
                 return aFile;
             } else {
-                throw (new Error('file [' + filesRoot.path + '/' + destDirPath
-                        + '] does not exists'));
+                throw (new Error('file [' + config.path + '] does not exists'));
             }
         }
     },
 
-    openfile : function openFile(config) {
+    openFile : function openFile(config) {
         var f = this.getFile(config);
         try {
             f.launch();
@@ -311,7 +298,7 @@ var fileManager = {
                         me.downloadFiles();
                     }
                 }
-            }
+            };
             persist.saveURI(obj_URI, null, null, null, "", file.aFile);
         }
     }

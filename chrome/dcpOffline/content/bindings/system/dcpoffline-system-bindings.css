@@ -184,5 +184,5 @@ dcpDocument[mode=edit] dcpAttribute[type=date] {
 dcpDocument[mode=edit] dcpAttribute[type=file]
     {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#file-attr-view");
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#file-attr-edit");
 }
