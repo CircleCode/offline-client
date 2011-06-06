@@ -61,54 +61,46 @@
             <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-look.css" />
         </resources>
         <content>
+            <xul:groupbox class="dcpAttribute array" flex="1">
+                <xul:caption anonid="caption" xbl:inherits="label"/>
+                <xul:grid flex="1" inherited="attrid">
+                    <xul:columns anonid="columns"/>
+                    <xul:rows anonid="rows"/>
+                </xul:grid>
+            </xul:groupbox>
             <xul:box style="display: none;">
                 <children/>
             </xul:box>
-            <xul:groupbox class="dcpAttribute array">
-                <xul:caption anonid="value" xbl:inherits="label" />
-                <xul:grid flex="1" inherited="attrid ">
-                    <xul:columns anonid="tableHead" class="dcpTableHeader">
-                    </xul:columns>
-                    <xul:rows anonid="tableBody">
-                    </xul:rows>
-                </xul:grid>
-            </xul:groupbox>
         </content>
         <implementation>
             <constructor><![CDATA[
                 Components.utils.import("resource://modules/logger.jsm");
                 
                 var tbody=this.getChild('tableBody');
-                var cn=this.childNodes;
+                var cn=this.childNodes; // these should be the attributes(ie: the columns)
                 
                 for(var i = 0; i < cn.length; i++){
-                     var col = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
-                     var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
-                     clabel.setAttribute('value', cn[i].getAttribute('label'));
-                     col.appendChild(clabel);
-                     this.getChild('tableHead').appendChild(col);
+                     var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                     var columnFlex = cn[i].getAttribute('flex');
+                     currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
+                     
+                    var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
+                    clabel.setAttribute('value', cn[i].getAttribute('label'));
+                    clabel.classList.add('header');
+                    clabel.classList.add('plain');
+                    currentColumn.appendChild(clabel);
+                    
+                    var nbRow=2;
+                    for (var r=0;r<nbRow; r++) {
+                        var currentAttribute = cn[i].cloneNode(true);
+                        //currentAttribute.classList.add('body');
+                        currentAttribute.setAttribute('index', r);
+                        
+                        currentColumn.appendChild(currentAttribute);
+                    }
+                     
+                    this.getChild('columns').appendChild(currentColumn);
                 }
-                
-                var nbRow=2;
-                for (var r=0;r<nbRow; r++) {
-                   var orow=document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
-                   for(var i = 0; i < cn.length; i++){
-                     var cloclo=cn[i].cloneNode(true);
-                     cloclo.setAttribute("inbody","true");
-                     cloclo.setAttribute("index",r);
-                     orow.appendChild(cloclo);
-                     logConsole('append'+cn[i].tagName);
-                  }
-                  tbody.appendChild(orow);
-                } 
-                
-                var thead=this.getChild('tableHead');
-                 cn=this.childNodes;
-                 for(var i = 0; i < cn.length; i++){ 
-                   // var cloclo=cn[i].cloneNode(true);
-                    cn[i].setAttribute("inhead","true"); // add attribute to use specific binding
-                   // thead.appendChild(cloclo);
-                 }
                 
             ]]></constructor>
         </implementation>
