@@ -7,31 +7,9 @@
     <module name="dynacase-offline-xulruntimes" />
   </requires>
 
-  <parameters>
-    <param name="dynacase_offline_client_ckeditor_url" label="CKEditor download URL" type="text" default="http://ftp.dynacase.org/third-party/ckeditor_3.6.tar.gz" volatile="yes" />
-  </parameters>
-  
-  <pre-install>
-    <check type="syscommand" command="gunzip" />
-    <check type="syscommand" command="tar" />
-    <check type="syscommand" command="patch" />
-    <check type="syscommand" command="zip" />
-    <check type="syscommand" command="makensis" />
-  </pre-install>
-
-  <pre-upgrade>
-    <check type="syscommand" command="gunzip" />
-    <check type="syscommand" command="tar" />
-    <check type="syscommand" command="patch" />
-    <check type="syscommand" command="zip" />
-    <check type="syscommand" command="makensis" />
-  </pre-upgrade>
-
   <post-install>
-    <download href="@dynacase_offline_client_ckeditor_url" action="programs/dynacase_offline_client_ckeditor_install"><label lang="en">Download and install CKEditor</label></download>
   </post-install>
 
   <post-upgrade>
-    <download href="@dynacase_offline_client_ckeditor_url" action="programs/dynacase_offline_client_ckeditor_install"><label lang="en">Download and upgrade CKEditor</label></download>
   </post-upgrade>
 </module>

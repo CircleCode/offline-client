@@ -4,8 +4,7 @@ RELEASE = @RELEASE@
 utildir = @PUBRULE@
 pubdir = @prefix@
 srcdir = @srcdir@
-appname = lib/dynacase-offline/client
-libdir = lib/dynacase-offline
+appname = share/offline
 
 export pubdir utildir
 
@@ -22,51 +21,20 @@ include $(utildir)/PubRule
 DISTFILES += $(SUBDIR) \
             RELEASE VERSION 
 
-CKEDITOR_PATCHES = ckeditor_wsc_document_domain.patch
-
-$(pubdir)/$(libdir): $(pubdir)
-	mkdir -p $@
-
-# -- programs --
-$(pubdir)/programs: $(pubdir)
-	mkdir -p $@
-
-$(pubdir)/programs/dynacase_offline_client_ckeditor_install: programs/dynacase_offline_client_ckeditor_install $(pubdir)/programs
-	cp $< $@
-
-# -- client --
-
-$(pubdir)/$(libdir)/client: $(pubdir)/$(libdir)
-	mkdir -p $@
-
-$(pubdir)/$(libdir)/client/xulapp: $(pubdir)/$(libdir)/client
-	mkdir -p $@
-	cp -p application.ini $@
-	cp -p chrome.manifest $@
-	cp -pR chrome $@
-	cp -pR defaults $@
-	cp -pR distribution $@
-
-# -- patches --
-$(pubdir)/$(libdir)/client/patches: $(CKEDITOR_PATCHES) $(pubdir)/$(libdir)/client
-	mkdir -p $@
-	cp -p $(CKEDITOR_PATCHES) $@
-
-# -- targets --
-$(pubdir)/$(libdir)/client/targets: LICENSE targets $(pubdir)/$(libdir)/client
+$(pubdir)/share: $(pubdir)
 	mkdir -p "$@"
-	cp -pR targets/ "$@"
-	find "$@" -name "*.in" -exec rm {} \;
-	cp LICENSE "$@/win/32/LICENSE.txt"
 
-# -- php --
-$(pubdir)/$(libdir)/client/Class.OfflineClientBuilder.php: Class.OfflineClientBuilder.php
-	cp "$<" "$@"
+$(pubdir)/share/offline: $(pubdir)/share
+	mkdir -p "$@"
 
-_programs: $(pubdir)/programs/dynacase_offline_client_ckeditor_install
-_xulapp: $(pubdir)/$(libdir)/client/xulapp
-_patches: $(pubdir)/$(libdir)/client/patches
-_targets: $(pubdir)/$(libdir)/client/targets
-_php: $(pubdir)/$(libdir)/client/Class.OfflineClientBuilder.php
+$(pubdir)/share/offline/xulapp: $(pubdir)/share/offline
+	mkdir -p "$@"
+	cp -p application.ini "$@"
+	cp -p chrome.manifest "$@"
+	cp -pR chrome "$@"
+	cp -pR defaults "$@"
+	cp -pR distribution "$@"
 
-publish: _programs _xulapp _patches _targets _php
+_xulapp: $(pubdir)/share/offline/xulapp
+
+publish: _xulapp
