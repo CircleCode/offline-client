@@ -17,7 +17,7 @@ function initWizard() {
 }
 
 function wizardEnd() {
-    //Preferences.set("offline.application.firstRun", false);
+    Preferences.set("offline.application.firstRun", false);
     applicationEvent.publish("initializationWizardEnd");
     applicationEvent.unsubscribe("authentOK", authentNextStep);
     applicationEvent.unsubscribe("unableToSynchronize", displayError);
