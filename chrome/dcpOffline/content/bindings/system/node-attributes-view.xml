@@ -6,14 +6,10 @@
       <!ENTITY separator "&#160;:&#160;" >
       %node-attributes-bindingDTD;
 ]>
-
-<bindings id="node-attributes-binding"
-    xmlns="http://www.mozilla.org/xbl"
-    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl">
-    
-    <binding id="node-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
-    
+<bindings id="node-attributes-binding" xmlns="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+>
+    <binding id="node-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr" />
     <binding id="tab-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
             <xul:tabpanel anonid="tabPanel" flex="1">
@@ -21,7 +17,7 @@
                     <xbl:children />
                 </xul:vbox>
             </xul:tabpanel>
-        </content> 
+        </content>
         <implementation>
             <field name="tabbox" readonly="true"><![CDATA[
                 var parent = this.parentNode;
@@ -52,24 +48,73 @@
             ]]></constructor>
         </implementation>
     </binding>
-    
     <binding id="frame-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
             <xul:groupbox class="dcpFrame" flex="1">
-                <xul:caption anonid="label" class="dcpLabel" xbl:inherits="label"/>
-                <children/>
+                <xul:caption anonid="label" class="dcpLabel" xbl:inherits="label" />
+                <children />
             </xul:groupbox>
         </content>
     </binding>
-    
-    <binding id="array-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
+    <binding id="array-attr-view" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
+        <resources>
+            <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-system-bindings.css" />
+        </resources>
         <content>
-            <xul:box inherited="attrid ">
-                <xul:caption anonid="value" value=""/>
-                <xul:label value="Not yet implemented"/>
-            </xul:box>
+            <xul:groupbox class="dcpAttribute array">
+                <xul:caption anonid="value" xbl:inherits="label" />
+                <xul:grid flex="1" inherited="attrid ">
+                    <xul:columns anonid="tableHead" class="dcpTableHeader">
+                        <children includes=""/>
+                    </xul:columns>
+                    <xul:rows anonid="tableBody">
+                    </xul:rows>
+                </xul:grid>
+            </xul:groupbox>
+        </content>
+        <implementation>
+            <constructor><![CDATA[
+                Components.utils.import("resource://modules/logger.jsm");
+                
+                var tbody=this.getChild('tableBody');
+                var cn=this.childNodes;
+                var nbRow=2;
+                for (var r=0;r<nbRow; r++) {
+                   var orow=document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+                   for(var i = 0; i < cn.length; i++){
+                     var cloclo=cn[i].cloneNode(true);
+                     cloclo.setAttribute("inbody","true");
+                     cloclo.setAttribute("index",r);
+                     orow.appendChild(cloclo);
+                     logConsole('append'+cn[i].tagName);
+                  }
+                  tbody.appendChild(orow);
+                } 
+                
+                var thead=this.getChild('tableHead');
+                 cn=this.childNodes;
+                 for(var i = 0; i < cn.length; i++){ 
+                    var cloclo=cn[i].cloneNode(true);
+                    cn[i].setAttribute("inhead","true");
+                    thead.appendChild(cloclo);
+                 }
+                
+            ]]></constructor>
+        </implementation>
+    </binding>
+    <binding id="array-attr-header" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
+        <content>
+            <xul:column flex="1">
+                <xul:label class="dcpLabel" xbl:inherits="value=label" />
+            </xul:column>
         </content>
         <implementation></implementation>
     </binding>
-    
+    <binding id="array-attr-body" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
+        <content>
+            BODY
+            <xul:label class="dcpLabel" xbl:inherits="value=label" />
+        </content>
+        <implementation></implementation>
+    </binding>
 </bindings>

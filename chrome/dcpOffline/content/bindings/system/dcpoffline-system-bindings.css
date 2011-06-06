@@ -55,11 +55,22 @@ dcpDocument dcpAttribute[type=array],dcpDocument[mode=view] dcpAttribute[type=ar
         url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-view");
 }
 
-dcpDocument[mode=view] dcpAttribute[type=array]  dcpAttribute
+dcpDocument[mode=view] dcpAttribute[type=array]  dcpAttribute[inhead=true]
     {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-column");
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-header");        
+    
 }
+/*
+dcpDocument[mode=view] dcpAttribute[type=array] dcpAttribute[inbody=true]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-body");        
+    
+}
+*/
+
+
 /***********************************************************
         Leaf Attributes (view)
 ************************************************************/

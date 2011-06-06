@@ -50,11 +50,30 @@
             </method>
             <method name="getValue">
                 <body><![CDATA[
-                    return this.doc.getValue(this.attrid);
+                    var index=this.getAttribute("index");
+                    if ( index !== null) {
+                       var val=this.doc.getValue(this.attrid);
+                       if (Array.isArray(val)) {
+                          return val[index];
+                       } else {
+                          return val;
+                       }
+                    } else {
+                       return this.doc.getValue(this.attrid);
+                    }
                 ]]></body>
             </method>
             <constructor><![CDATA[
                 this.reloadValue();
+                var index=this.getAttribute("index");
+                if ( index !== null) {
+                    var label = this.getChild('label');
+                    if (label) label.style.display='none';
+                    var separator = this.getChild('separator');
+                    if (separator) separator.style.display='none';
+                    logConsole("delete label"+this.attrid+index);
+                } 
+                
             ]]></constructor>
         </implementation>
     </binding>
