@@ -32,7 +32,7 @@ function doCancel() {
 
 function doLoad() {
     logIHM('Authent  : doLoad');
-    applicationEvent.subscribe("authentOK", closeDialog);
+    applicationEvent.subscribe("authentSuccess", closeDialog);
     initIHM();
 
 }
