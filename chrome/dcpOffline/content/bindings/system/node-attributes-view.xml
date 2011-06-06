@@ -94,9 +94,9 @@
                 var thead=this.getChild('tableHead');
                  cn=this.childNodes;
                  for(var i = 0; i < cn.length; i++){ 
-                    var cloclo=cn[i].cloneNode(true);
-                    cn[i].setAttribute("inhead","true");
-                    thead.appendChild(cloclo);
+                   // var cloclo=cn[i].cloneNode(true);
+                    cn[i].setAttribute("inhead","true"); // add attribute to use specific binding
+                   // thead.appendChild(cloclo);
                  }
                 
             ]]></constructor>
@@ -112,7 +112,7 @@
     </binding>
     <binding id="array-attr-body" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
-            BODY
+            BODY NO USE
             <xul:label class="dcpLabel" xbl:inherits="value=label" />
         </content>
         <implementation></implementation>
