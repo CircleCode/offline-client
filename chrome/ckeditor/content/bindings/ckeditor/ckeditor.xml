@@ -10,7 +10,7 @@
         
         <content>
             <xul:box flex="1">
-                <xul:iframe src="chrome://dcpoffline/content/bindings/ckeditor/ckeditor.html" flex="1"/>
+                <xul:iframe src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html" flex="1"/>
             </xul:box>
         </content>
         

@@ -1,4 +1,4 @@
 #ckeditortest {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/ckeditor/ckeditor.xml#ckeditor");
+        url("chrome://ckeditor/content/bindings/ckeditor/ckeditor.xml#ckeditor");
 }

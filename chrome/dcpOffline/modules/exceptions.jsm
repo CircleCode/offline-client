@@ -1,6 +1,6 @@
 Components.utils.import("resource://modules/logfile.jsm");
 
-var EXPORTED_SYMBOLS = [ "ArgException", "SyncException" , "StorageException", "IHMException"];
+var EXPORTED_SYMBOLS = [ "ArgException", "SyncException" , "StorageException", "BindException", "attrCheckException", "IHMException"];
 function ArgException(message) {
     this.message = message;
     logFile.write({
@@ -90,3 +90,20 @@ BindException.prototype = {
         return this.code;
     }
 };
+
+function attrCheckException(message) {
+    this.message = message;
+    logFile.write({
+        message : message,
+        priority : logFile.ERR
+    });
+};
+attrCheckException.prototype = {
+    code : 'invalidAttrValue',
+    toString : function() {
+        return this.message;
+    },
+    valueOf : function() {
+        return this.code;
+    }
+}; 

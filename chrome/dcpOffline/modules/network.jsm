@@ -20,27 +20,10 @@ var networkChecker = {
 
                 return ioService.offline;
             }
-        }/*,
-        observe : function(aSubject, aTopic, aState) {
-            if (aTopic == "network:offline-status-changed") {
-                if (aState == "online") {
-                    networkChecker.goOnline();
-                    return true;
-                } else {
-                    networkChecker.goOffline();
-                    return false;
-                }
-            }
-        },
-        goOffline : function() {
-            logConsole('going offline');
-        },
-        goOnline : function() {
-            logConsole('going online');
-        }*/
+        }
 
 };
 
 /*Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService)
-.addObserver(networkChecker.observe, "network:offline-status-changed",
+.addObserver(networkChecker.observe, "network:link-status-changed",
         false);*/

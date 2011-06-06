@@ -7,7 +7,7 @@ dcpAttribute[type=menu] {
     min-height: 24px;
 }
 
-dcpAttribute[type=htmltext],dcpAttribute[type=file],dcpAttribute[type=enum],dcpAttribute[type=color],dcpAttribute[type=file],dcpAttribute[type=image],dcpTabBox,dcpAttribute[type=tab],dcpAttribute[type=array]
+dcpAttribute[type=htmltext],dcpAttribute[type=file],dcpAttribute[type=enum],dcpAttribute[type=color],dcpAttribute[type=file],dcpAttribute[type=image],dcpAttribute[type=tab],dcpAttribute[type=array]
     {
     border: 1px solid red;
     min-height: 24px;
@@ -48,6 +48,10 @@ dcpDocument dcpAttribute[type=frame] groupbox .groupbox-body {
 
 dcpDocument dcpAttribute[type=frame] groupbox .groupbox-title {
     border: 1px solid #098777;
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=htmltext]{
+    min-height: 350px;
 }
 
 dcpDocument dcpAttribute .dcpLabel { /*-moz-box-flex: 30;*/

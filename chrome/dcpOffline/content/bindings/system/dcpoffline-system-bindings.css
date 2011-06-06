@@ -36,10 +36,6 @@ dcpDocument dcpDocFooter {
 /***********************************************************
         Node Attributes (view)
 ************************************************************/
-dcpDocument dcpTabBox,dcpDocument[mode=view] dcpTabBox {
-    -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#tabpanel-attr-view");
-}
 
 dcpDocument dcpAttribute[type=tab],dcpDocument[mode=view] dcpAttribute[type=tab]
     {
@@ -117,16 +113,46 @@ dcpDocument dcpAttribute[type=file],dcpDocument[mode=view] dcpAttribute[type=fil
 }
 
 /***********************************************************
-        Attributes (edit)
+        Node Attributes (view)
 ************************************************************/
-dcpDocument[mode=edit] dcpAttribute[type=frame] {
+
+dcpDocument[mode=edit] dcpAttribute[type=tab]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#tab-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=frame]
+    {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#frame-attr-edit");
 }
 
+dcpDocument[mode=edit] dcpAttribute[type=array]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#frame-attr-edit");
+}
+
+/***********************************************************
+        Attributes (edit)
+************************************************************/
+
 dcpDocument[mode=edit] dcpAttribute[type=text] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#text-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=longtext]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#longtext-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=htmltext]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#htmltext-attr-edit");
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=int] {

@@ -16,71 +16,74 @@
         <!--<ressources/>-->
         
         <content>
-                <xul:hbox anonid="document-toolbar" flex="1">
-                    
-                    <xul:button anonid="document-toolbar-system-save"
-                        label="&document.toolbar.button.save;"
-                        tooltiptext="&document.toolbar.button.save.tooltip;"
-                        icon="save"
-                        mode="edit">
-                    </xul:button>
-                    
-                    <xul:button anonid="document-toolbar-system-cancel"
-                        label="&document.toolbar.button.cancel;"
-                        tooltiptext="&document.toolbar.button.cancel.tooltip;"
-                        icon="cancel"
-                        mode="edit"
-                        oncommand="alert('(FIXME) do cancel');">
-                    </xul:button>
-                    
-                    <xul:button
-                        anonid="document-toolbar-system-edit"
-                        label="&document.toolbar.button.modify;"
-                        tooltiptext="&document.toolbar.button.modify.tooltip;"
-                        mode="view">
-                    </xul:button>
-                    
-                    <xul:splitter anonid="document-toolbar-system-splitter"/>
-                    
-                    <xul:spacer flex="1"/>
-                    
-                    <children/>
-                    
-                    <xul:button
-                        anonid="document-toolbar-system-properties"
-                        label="&document.toolbar.button.properties;"
-                        tooltiptext="&document.toolbar.button.properties.tooltip;"
-                        icon="properties"
-                        oncommand="alert('(FIXME) open properties');">
-                    </xul:button>
-                    
-                    <xul:splitter/>
-                    
-                    <xul:button
-                        anonid="document-toolbar-system-close"
-                        label="&document.toolbar.button.close;"
-                        tooltiptext="&document.toolbar.button.close.tooltip;"
-                        icon="close">
-                    </xul:button>
-                    
-                </xul:hbox>
+            <xul:hbox anonid="document-toolbar" flex="1">
+                
+                <xul:button anonid="document-toolbar-system-save"
+                    label="&document.toolbar.button.save;"
+                    tooltiptext="&document.toolbar.button.save.tooltip;"
+                    icon="save"
+                    mode="edit">
+                </xul:button>
+                
+                <xul:button anonid="document-toolbar-system-cancel"
+                    label="&document.toolbar.button.cancel;"
+                    tooltiptext="&document.toolbar.button.cancel.tooltip;"
+                    icon="cancel"
+                    mode="edit"
+                    oncommand="alert('(FIXME) do cancel');">
+                </xul:button>
+                
+                <xul:button
+                    anonid="document-toolbar-system-edit"
+                    label="&document.toolbar.button.modify;"
+                    tooltiptext="&document.toolbar.button.modify.tooltip;"
+                    mode="view">
+                </xul:button>
+                
+                <xul:splitter anonid="document-toolbar-system-splitter"/>
+                
+                <xul:spacer flex="1"/>
+                
+                <children/>
+                
+                <xul:button
+                    anonid="document-toolbar-system-properties"
+                    label="&document.toolbar.button.properties;"
+                    tooltiptext="&document.toolbar.button.properties.tooltip;"
+                    icon="properties"
+                    oncommand="alert('(FIXME) open properties');">
+                </xul:button>
+                
+                <xul:splitter/>
+                
+                <xul:button
+                    anonid="document-toolbar-system-close"
+                    label="&document.toolbar.button.close;"
+                    tooltiptext="&document.toolbar.button.close.tooltip;"
+                    icon="close">
+                </xul:button>
+                
+            </xul:hbox>
         </content>
         
         <implementation>
+            
+            
+            <field name="documentNode" readonly="true"><![CDATA[
+                var parent = this.parentNode;
+                while (parent) {
+                    if (parent.localName == "dcpDocument")
+                        break;
+                    parent = parent.parentNode;
+                }
+                parent;
+            ]]></field>
+            
             <property
                 name="localDocument"
                 readonly="true"
-                onget="return this.doc;"/>
-                
-            <method name="getDocumentNode">
-                <body><![CDATA[
-                    if(! this.documentNode){
-                        Components.utils.import("resource://modules/domUtils.jsm");
-                        this.documentNode = domUtils.getParentByTagName(this, 'dcpDocument');
-                    }
-                    return this.documentNode
-                ]]></body>
-            </method>
+                onget="return this.doc;">
+            </property>
             
             <method name="getChild">
                 <parameter name="aChildName"/>
@@ -88,9 +91,10 @@
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
+            
             <constructor><![CDATA[
             
-                this.doc = this.getDocumentNode().localDocument;
+                this.doc = this.documentNode.localDocument;
                 
                 var mode = documentNode.mode;
                 
@@ -125,13 +129,13 @@
             <handler event="click"  button="0" id="click"><![CDATA[
                 switch(event.originalTarget){
                     case this.getChild('document-toolbar-system-edit') :
-                        this.getDocumentNode().switchMode('edit');
+                        this.documentNode.switchMode('edit');
                         break;
                     case this.getChild('document-toolbar-system-close') :
-                        this.getDocumentNode().close();
+                        this.documentNode.close();
                         break;
                     case this.getChild('document-toolbar-system-save') :
-                        this.getDocumentNode().save();
+                        this.documentNode.save();
                         break;
                     default:
                         logConsole("pouet");
