@@ -21,7 +21,7 @@ pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 pref("dom.report_all_js_exceptions", true);
 
-pref("general.useragent.locale", "kl_GN");
+
 
 /* application prefs */
 // TODO all notations to update and merge with recent
@@ -36,3 +36,4 @@ pref("offline.user.password", "");
 pref("offline.user.applicationURL", "http://dynacase.r2d2.paris.lan/dev/");
 
 pref("offline.application.modeOffline", false);
+pref("offline.application.debug.locale", "kl_GN");
