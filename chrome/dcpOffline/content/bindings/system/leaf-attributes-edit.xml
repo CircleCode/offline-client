@@ -210,6 +210,22 @@
                 this.getChild('modifyButton');
             ]]></field>
             
+            <method name="reloadValue">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    var aFile = fileManager.getFile({
+                        initid:this.doc.getInitid(),
+                        attrid:this.attrid,
+                        index:this.index
+                    });
+                    if(aFile){
+                        this.inputField.value = aFile.leafName;
+                    } else {
+                        this.inputField.value = "";
+                    }
+                ]]></body>
+            </method>
+            
             <method name="changeFile">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
@@ -271,9 +287,98 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:datepicker anonid="displayValue" class="dcpValue" value=""/>
+                <xul:image anonid="displayValue" class="dcpValue"/>
+                <xul:vbox pack="end">
+                    <xul:button anonid="modifyButton" label="&attribute.file.button.modify;"/>
+                </xul:vbox>
             </xul:hbox>
         </content>
+        
+        <implementation>
+            
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+            
+            <field name="modifyButton"><![CDATA[
+                this.getChild('modifyButton');
+            ]]></field>
+            
+            <method name="reloadValue">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    var aFile = fileManager.getFile({
+                        initid:this.doc.getInitid(),
+                        attrid:this.attrid,
+                        index:this.index
+                    });
+                    if(aFile){
+                        Components.utils.import("resource://modules/formater.jsm");
+                        var aFileURI = formater.getURI({file: aFile});
+                        this.inputField.src = aFileURI.spec;
+                        this.inputField.tooltipText = aFile.leafName;
+                    } else {
+                        this.inputField.src = "";
+                        this.inputField.tooltipText = "";
+                    }
+                ]]></body>
+            </method>
+            
+            <method name="changeFile">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    
+                    const nsIFilePicker = Components.interfaces.nsIFilePicker;
+
+                    var fp = Components.classes["@mozilla.org/filepicker;1"]
+                                   .createInstance(nsIFilePicker);
+                    fp.init(window, "Choose an image", nsIFilePicker.modeOpen); // TODO: dialog title
+                    fp.appendFilters(nsIFilePicker.filterAll | nsIFilePicker.filterImage);
+                    
+                    var rv = fp.show();
+                    if (rv == nsIFilePicker.returnOK) {
+                        try{
+                            var aFile = fp.file;
+                            fileManager.saveFile({
+                                initid: this.doc.getInitid(),
+                                attrid: this.attrid,
+                                writable: true,
+                                basename: aFile.leafName,
+                                aFile: aFile,
+                                forceCopy: true
+                            });
+                            this.setValue(aFile.leafName);
+                            this.reloadValue();
+                        } catch(e){
+                            alert(e);
+                        }
+                    }
+                ]]></body>
+            </method>
+            
+            <method name="openFile">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    fileManager.openFile({
+                        initid: this.doc.getInitid(),
+                        attrid: this.attrid,
+                        index:this.index
+                    });
+                ]]></body>
+            </method>
+            
+        </implementation>
+        
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+                if(event.originalTarget == this.modifyButton){
+                    this.changeFile();
+                } else 
+                if(event.originalTarget == this.inputField){
+                    this.openFile();
+                }
+            ]]></handler>
+        </handlers>
     </binding>
     
 </bindings>

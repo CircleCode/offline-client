@@ -62,14 +62,14 @@ dcpDocument dcpAttribute .link {
     color: blue;
     cursor: pointer;
 }
-/* image height */
-dcpDocument dcpAttribute .dcpImage {
-    width:100px;
-    height:100px;    
-   
-}
+
 dcpDocument dcpAttribute .dcpValue { /* -moz-box-flex: 100;*/
     
+}
+
+dcpDocument dcpAttribute[type=image] .dcpValue {
+    max-width: 100px;
+    max-height: 100px;
 }
 
 dcpDocument dcpDocHeader {
