@@ -381,4 +381,57 @@
         </handlers>
     </binding>
     
+    <!-- enum attributes -->
+    
+    <binding id="enum-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute file">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:menulist anonid="displayValue" class="dcpValue">
+                    <xul:menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
+                        <xul:template>
+                            <xul:query><![CDATA[
+                                SELECT key, label 
+                                FROM enums
+                                WHERE famid = :famid AND attrid = :attrid 
+                            ]]>
+                                <xul:param anonid="attrid" name="attrid"/>
+                                <xul:param anonid="famid" name="famid" type="integer"/>
+                            </xul:query>
+                            <xul:action>
+                                <xul:menuitem uri="?" value="?key" label="?label"/>
+                            </xul:action>
+                        </xul:template>
+                    </xul:menupopup>
+                </xul:menulist>
+            </xul:hbox>
+        </content>
+        
+        <implementation>
+            
+            <method name="reloadValue">
+                <body><![CDATA[
+                    var value = this.getValue();
+                    var menuList = this.getChild('displayValue');
+                    var nbItems = menuList.itemCount;
+                    for(var i = 0; i < nbItems; i++) {
+                        if(menuList.getItemAtIndex(i).value == value){
+                            menuList.selectedIndex = i;
+                            return;
+                        }
+                    }
+                ]]></body>
+            </method>
+            
+            <constructor><![CDATA[
+                this.getChild('attrid').textContent = this.attrid;
+                this.getChild('famid').textContent = this.doc.getProperty('fromid');
+                this.getChild('displayValue').menupopup.builder.rebuild();
+                this.reloadValue();
+            ]]></constructor>
+            
+        </implementation>
+    </binding>
+    
 </bindings>

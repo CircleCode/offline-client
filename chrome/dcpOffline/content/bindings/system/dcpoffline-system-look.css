@@ -7,7 +7,21 @@ dcpAttribute[type=menu] {
     min-height: 24px;
 }
 
-dcpAttribute[type=htmltext],dcpAttribute[type=enum],dcpAttribute[type=color]
+dcpDocument[mode=edit] dcpAttribute[type=docid],
+dcpDocument[mode=edit] dcpAttribute[type=date],
+dcpDocument[mode=edit] dcpAttribute[type=time],
+dcpDocument[mode=edit] dcpAttribute[type=timestamp],
+dcpDocument[mode=edit] dcpAttribute[type=color]
+    {
+    border: 1px solid red;
+    min-height: 24px;
+}
+
+dcpDocument[mode=view] dcpAttribute[type=date],
+dcpDocument[mode=view] dcpAttribute[type=time],
+dcpDocument[mode=view] dcpAttribute[type=timestamp],
+dcpDocument[mode=view] dcpAttribute[type=color],
+dcpDocument[mode=view] dcpAttribute[type=enum]
     {
     border: 1px solid red;
     min-height: 24px;

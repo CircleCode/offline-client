@@ -185,3 +185,8 @@ dcpDocument[mode=edit] dcpAttribute[type=image] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#image-attr-edit");
 }
+
+dcpDocument[mode=edit] dcpAttribute[type=enum] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#enum-attr-edit");
+}
