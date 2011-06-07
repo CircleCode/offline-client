@@ -200,9 +200,8 @@ localDocument.prototype = {
             file.append('Bindings');
             file.append(famName+'.xml');
             
-            var ios = Components.classes["@mozilla.org/network/io-service;1"]
-                      .getService(Components.interfaces.nsIIOService);
-            var fileURI = ios.newFileURI(file);
+            Components.utils.import("resource://modules/formater.jsm");
+            var fileURI = formater.getURI({file: file});
             
             if(file.exists()){
                 return fileURI.spec+'#document-'+famName+'-'+mode;

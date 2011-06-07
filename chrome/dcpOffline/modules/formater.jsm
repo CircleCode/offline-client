@@ -58,4 +58,15 @@ ProtoFormater.prototype.getDocumentTitle = function(config) {
         throw new ArgException("getDocumentTitle need initid");
     }
 };
+
+ProtoFormater.prototype.getURI = function(config) {
+    if (config && config.file){
+        var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+        return ios.newFileURI(config.file);
+    } else {
+        throw new ArgException("getUri need file");
+    }
+};
+
 var formater = new ProtoFormater();
