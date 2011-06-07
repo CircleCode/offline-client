@@ -68,7 +68,8 @@ dcpDocument dcpAttribute .dcpImage {
     height:100px;    
    
 }
-dcpDocument dcpAttribute .dcpValue { /* -moz-box-flex: 100;*/
+dcpDocument dcpAttribute .dcpValue { 
+    -moz-box-flex: 1;
     
 }
 
