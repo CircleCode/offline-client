@@ -48,15 +48,23 @@
             </method>
             <method name="reloadValue">
                 <body><![CDATA[
-                    var valueNode = this.getChild('displayValue');
-                    if(valueNode){
-                        valueNode.value = this.getValue();
-                        if (valueNode.value == '') {
-                            //valueNode.parentNode.style.display='none';
-                        }
+                    if (this.getValue() == '') {
+                       var cn=document.getAnonymousNodes(this);
+                       for (var i=0;i<cn.length;i++) {
+                         cn[i].style.display='none';
+                       }
                     } else {
-                       // Components.utils.import("resource://modules/exceptions.jsm");
-                       // throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                        var valueNode = this.getChild('displayValue');
+                        if(valueNode){
+                           if (Array.isArray(this.getValue())) {
+                             valueNode.textContent=this.getValue();
+                           } else {
+                            valueNode.textContent=this.getDisplayValue();
+                           }
+                        } else {
+                           // Components.utils.import("resource://modules/exceptions.jsm");
+                           // throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                        }
                     }
                 ]]></body>
             </method>
@@ -75,17 +83,13 @@
                     }
                 ]]></body>
             </method>
+            <method name="getDisplayValue">
+                <body><![CDATA[
+                    return this.getValue()
+                ]]></body>
+            </method>
             <constructor><![CDATA[
-                this.reloadValue();/*
-                var index=this.getAttribute("index");
-                if ( index !== null) {
-                    var label = this.getChild('label');
-                    if (label) label.style.display='none';
-                    var separator = this.getChild('separator');
-                    if (separator) separator.style.display='none';
-                    logConsole("delete label"+this.attrid+index);
-                } 
-                */
+                this.reloadValue();
             ]]></constructor>
         </implementation>
     </binding>
@@ -104,9 +108,12 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:textbox anonid="displayValue" class="dcpValue plain" multiline="true" style="white-space:pre-line;" />
+                <xul:label anonid="displayValue" class="dcpValue" style="white-space:pre-line;">
+                </xul:label>
             </xul:hbox>
         </content>
+        <implementation>
+        </implementation>
     </binding>
     <binding id="htmltext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
@@ -145,7 +152,7 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute int">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:textbox anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue plain" />
             </xul:hbox>
         </content>
     </binding>
@@ -154,7 +161,7 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute double">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:textbox anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue plain" />
             </xul:hbox>
         </content>
     </binding>
@@ -163,7 +170,7 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute money">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:textbox anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue plain" />
             </xul:hbox>
         </content>
     </binding>
@@ -173,7 +180,7 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:textbox anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue plain" />
             </xul:hbox>
         </content>
     </binding>
@@ -187,6 +194,25 @@
             </xul:hbox>
         </content>
         <implementation>
+            <field name="displayValue"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+            <field name="docid"><![CDATA[
+                this.getValue();
+            ]]></field>
+            <method name="openDoc">
+                <body><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            
+            
+            try {
+              var rdoc=docManager.getLocalDocument({initid:this.docid});
+              if (rdoc) {
+                tryToOpenDocument({documentId:this.docid});
+              }
+            } catch (e) {}
+                ]]></body>
+            </method>
             <constructor><![CDATA[
             Components.utils.import("resource://modules/formater.jsm");
             Components.utils.import("resource://modules/docManager.jsm");
@@ -194,15 +220,94 @@
             
             var docid=this.getValue();
             var title=formater.getDocumentTitle({initid:docid});
+            
             valueNode.value=title;
             try {
-            var rdoc=docManager.getLocalDocument({initid:docid});
-            if (rdoc) {
-              valueNode.setAttribute('onclick',"tryToOpenDocument({documentId:"+docid+"})");
-              valueNode.className+=' link';
-            }
+              var rdoc=docManager.getLocalDocument({initid:docid});
+              if (rdoc) {
+                valueNode.classList.add('link');
+              }
             } catch (e) {}
             
+            ]]>
+            </constructor>
+        </implementation>
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+                if(event.originalTarget == this.displayValue){
+                    this.openDoc();
+                }
+            ]]></handler>
+        </handlers>
+    </binding>
+    <binding id="docid-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:grid flex="1" inherited="attrid">
+                    <xul:columns anonid="columns" />
+                    <xul:rows anonid="rows" />
+                </xul:grid>
+            </xul:hbox>
+        </content>
+        <implementation>
+            <constructor><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            
+            var docids=this.getValue();
+            var rows=this.getChild('rows');
+            for (var i=0;i<docids.length; i++) {
+               var clo=this.cloneNode(false);
+               clo.setAttribute("multiple", "false");
+               clo.setAttribute("index", i);
+               rows.appendChild(clo);
+            }
+            ]]>
+            </constructor>
+        </implementation>
+    </binding>
+    <!-- Enum attributes -->
+    <binding id="enum-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:label anonid="displayValue" class="dcpValue" />
+            </xul:hbox>
+        </content>
+        <implementation>
+            <method name="getDisplayValue">
+                <body><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            return formater.getEnumLabel({attrid:this.attrid,famid:this.doc.getProperty('fromid'),key:this.getValue()});
+                ]]></body>
+            </method>
+        </implementation>
+    </binding>
+    <binding id="enum-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:grid flex="1" inherited="attrid">
+                    <xul:columns anonid="columns" />
+                    <xul:rows anonid="rows" />
+                </xul:grid>
+            </xul:hbox>
+        </content>
+        <implementation>
+            <constructor><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            
+            var docids=this.getValue();
+            var rows=this.getChild('rows');
+            for (var i=0;i<docids.length; i++) {
+               var clo=this.cloneNode(false);
+               clo.setAttribute("multiple", "false");
+               clo.setAttribute("index", i);
+               rows.appendChild(clo);
+            }
             ]]>
             </constructor>
         </implementation>
@@ -239,10 +344,12 @@
             var docid=this.doc.getInitid();
             var lfile=fileManager.getFile({initid:docid, attrid:this.attrid, index:this.getAttribute('index')});
             if (lfile) {
-                var title=lfile.leafName;
-                valueNode.value=title;
-                valueNode.className+=' link';
-            }
+              var title=lfile.leafName;
+              //logConsole("test file", lfile);
+              valueNode.value=title;
+              
+              valueNode.classList.add('link');
+            } 
             
             ]]>
             </constructor>
@@ -278,8 +385,7 @@
                     });
                 ]]></body>
             </method>
-            <constructor><![CDATA[
-            
+            <constructor><![CDATA[     
                 Components.utils.import("resource://modules/formater.jsm");
                 Components.utils.import("resource://modules/fileManager.jsm");
                 
@@ -303,8 +409,6 @@
                     this.openFile();
                 }
             ]]></handler>
-           
         </handlers>
     </binding>
-   
 </bindings>

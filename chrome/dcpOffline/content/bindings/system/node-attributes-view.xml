@@ -92,7 +92,9 @@
                     clabel.classList.add('plain');
                     currentColumn.appendChild(clabel);
                     
-                    var nbRow=2;
+                   
+                    var values=this.doc.getValue(cn[i].getAttribute('attrid'));
+                    var nbRow=values.length;
                     for (var r=0;r<nbRow; r++) {
                         var currentAttribute = cn[i].cloneNode(true);
                         //currentAttribute.classList.add('body');
@@ -100,7 +102,6 @@
                         
                         currentColumn.appendChild(currentAttribute);
                     }
-                     
                     this.getChild('columns').appendChild(currentColumn);
                 }
                 

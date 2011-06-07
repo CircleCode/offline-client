@@ -77,10 +77,6 @@ dcpDocument dcpAttribute .link {
     cursor: pointer;
 }
 
-dcpDocument dcpAttribute .dcpValue { /* -moz-box-flex: 100;*/
-    
-}
-
 dcpDocument dcpAttribute[type=image] .dcpValue {
     max-width: 100px;
     max-height: 100px;
@@ -116,8 +112,12 @@ dcpDocument[mode=view] dcpAttribute[type=array] grid {
     color: -moz-fieldtext;
 }
 
+dcpDocument[mode=view] dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
+dcpDocument[mode=view] dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
 dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
-dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpSeparator {
+dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpSeparator,
+dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpLabel,
+dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpSeparator {
     visibility: collapse;
 }
 

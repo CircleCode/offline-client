@@ -244,5 +244,12 @@ localDocument.prototype = {
             }
             if (this.labels[id]) return this.labels[id];
             return "no label "+id;
+        },
+        /**
+         * get row of an array
+         * @param string attrid
+         */
+        getRowNumber: function (attrid) {
+            
         }
 };
