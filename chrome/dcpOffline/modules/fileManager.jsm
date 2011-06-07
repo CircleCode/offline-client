@@ -1,6 +1,9 @@
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
+const
+Cc = Components.classes;
+const
+Ci = Components.interfaces;
+const
+Cu = Components.utils;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/storageManager.jsm");
@@ -56,7 +59,7 @@ var fileManager = {
                     if ((!filesRoot.contains(config.aFile, false))
                             || (config.aFile.leafName != config.basename)) {
                         try {
-                            if(config.forceCopy){
+                            if (config.forceCopy) {
                                 config.aFile.copyTo(destDir, config.basename);
                             } else {
                                 config.aFile.moveTo(destDir, config.basename);
@@ -180,8 +183,9 @@ var fileManager = {
         if (config && config.initid && config.attrid) {
             if (!config.hasOwnProperty('index')) {
                 config.index = -1;
+            } else if (config.index === null) {
+                config.index = -1;
             }
-
             var r = storageManager
                     .execQuery({
                         query : 'SELECT path from '
@@ -193,17 +197,22 @@ var fileManager = {
                             index : config.index
                         }
                     });
-            config.path = r[0].path;
-            
-            var aFile = Services.dirsvc.get("TmpD", Ci.nsILocalFile);
-            aFile.initWithPath(config.path);
-            
-            if (aFile.exists()) {
-                return aFile;
-            } else {
-                throw (new Error('file [' + config.path + '] does not exists'));
+
+            if (r.length > 0) {
+                config.path = r[0].path;
+
+                var aFile = Services.dirsvc.get("TmpD", Ci.nsILocalFile);
+                aFile.initWithPath(config.path);
+
+                if (aFile.exists()) {
+                    return aFile;
+                } else {
+                    throw (new Error('file [' + config.path
+                            + '] does not exists'));
+                }
             }
         }
+        return null;
     },
 
     openFile : function openFile(config) {

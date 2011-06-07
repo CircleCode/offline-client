@@ -7,7 +7,7 @@ dcpAttribute[type=menu] {
     min-height: 24px;
 }
 
-dcpAttribute[type=htmltext],dcpAttribute[type=file],dcpAttribute[type=enum],dcpAttribute[type=color],dcpAttribute[type=file],dcpAttribute[type=image],dcpAttribute[type=tab],dcpAttribute[type=array]
+dcpAttribute[type=htmltext],dcpAttribute[type=enum],dcpAttribute[type=color]
     {
     border: 1px solid red;
     min-height: 24px;
@@ -62,7 +62,12 @@ dcpDocument dcpAttribute .link {
     color: blue;
     cursor: pointer;
 }
-
+/* image height */
+dcpDocument dcpAttribute .dcpImage {
+    width:100px;
+    height:100px;    
+   
+}
 dcpDocument dcpAttribute .dcpValue { /* -moz-box-flex: 100;*/
     
 }

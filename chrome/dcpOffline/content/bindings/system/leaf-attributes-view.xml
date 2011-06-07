@@ -43,8 +43,8 @@
                             //valueNode.parentNode.style.display='none';
                         }
                     } else {
-                        Components.utils.import("resource://modules/exceptions.jsm");
-                        throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                       // Components.utils.import("resource://modules/exceptions.jsm");
+                       // throw new BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
                     }
                 ]]></body>
             </method>
@@ -201,17 +201,103 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:textbox anonid="displayValue" class="dcpValue plain" value="NOT YET IMPLEMENTED" />
+                <xul:label anonid="fileName" class="dcpValue plain" value="FILE NOT YET IMPLEMENTED" />
             </xul:hbox>
         </content>
+        <implementation>
+            <field name="fileName"><![CDATA[
+                this.getChild('fileName');
+            ]]></field>
+            <method name="openFile">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    fileManager.openFile({
+                        initid: this.doc.getInitid(),
+                        attrid: this.attrid,
+                        index: this.getAttribute('index')
+                    });
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            Components.utils.import("resource://modules/docManager.jsm");
+            Components.utils.import("resource://modules/fileManager.jsm");
+                Components.utils.import("resource://modules/logger.jsm");
+            var valueNode = this.getChild('fileName');
+            var docid=this.doc.getInitid();
+            var lfile=fileManager.getFile({initid:docid, attrid:this.attrid, index:this.getAttribute('index')});
+            if (lfile) {
+              var title=lfile.leafName;
+              logConsole("test file", lfile);
+              valueNode.value=title;
+              valueNode.className+=' link';
+            }
+            
+            ]]>
+            </constructor>
+        </implementation>
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+               
+                if(event.originalTarget == this.fileName){
+                    this.openFile();
+                }
+            ]]></handler>
+        </handlers>
     </binding>
     <binding id="image-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:textbox anonid="displayValue" class="dcpValue plain" value="NOT YET IMPLEMENTED" />
+                <xul:image anonid="fileName" class="dcpImage" title="FILE NOT YET IMPLEMENTED" />
             </xul:hbox>
         </content>
+        <implementation>
+            <field name="fileName"><![CDATA[
+                this.getChild('fileName');
+            ]]></field>
+            <method name="openFile">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    fileManager.openFile({
+                        initid: this.doc.getInitid(),
+                        attrid: this.attrid,
+                        index: this.getAttribute('index')
+                    });
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            Components.utils.import("resource://modules/docManager.jsm");
+            Components.utils.import("resource://modules/fileManager.jsm");
+                Components.utils.import("resource://modules/logger.jsm");
+            var valueNode = this.getChild('fileName');
+            var docid=this.doc.getInitid();
+            var lfile=fileManager.getFile({initid:docid, attrid:this.attrid, index:this.getAttribute('index')});
+            if (lfile) {
+              var title=lfile.leafName;
+              logConsole("test img", lfile.path);
+              valueNode.title=title;
+             // valueNode.className+=' link';
+              
+              logConsole("test node", valueNode);
+              
+              valueNode.src='file://'+lfile.path;
+            }
+            
+            ]]>
+            </constructor>
+        </implementation>
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+               
+                if(event.originalTarget == this.fileName){
+                    this.openFile();
+                }
+            ]]></handler>
+           
+        </handlers>
     </binding>
+   
 </bindings>
