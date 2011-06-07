@@ -104,12 +104,18 @@ dcpDocument dcpAttribute[type=money],dcpDocument[mode=view] dcpAttribute[type=mo
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#int-attr-view");
 }
 
+dcpDocument dcpAttribute[type=timestamp],dcpDocument[mode=view] dcpAttribute[type=timestamp],
 dcpDocument dcpAttribute[type=date],dcpDocument[mode=view] dcpAttribute[type=date]
     {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#date-attr-view");
 }
 
+dcpDocument dcpAttribute[type=time],dcpDocument[mode=view] dcpAttribute[type=time]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#time-attr-view");
+}
 dcpDocument dcpAttribute[type=docid],dcpDocument[mode=view] dcpAttribute[type=docid]
     {
     -moz-binding:

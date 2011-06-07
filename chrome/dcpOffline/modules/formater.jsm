@@ -2,6 +2,10 @@ var EXPORTED_SYMBOLS = [ "formater" ];
 
 Components.utils.import("resource://modules/exceptions.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
+Components.utils.import("resource://modules/preferences.jsm");
+Components.utils.import("resource://modules/utils.jsm");
+Components.utils.import("resource://modules/logger.jsm");
+
 function ProtoFormater(config) {
 
 };
@@ -57,5 +61,40 @@ ProtoFormater.prototype.getDocumentTitle = function(config) {
     } else {
         throw new ArgException("getDocumentTitle need initid");
     }
+};
+
+
+/*
+ * @param string isoDate YYYY-MM-DD
+ */
+ProtoFormater.prototype.getLocaleDate = function(isoDate) {
+    if (isoDate) {
+        var locale=JSON.parse(Preferences.get("offline.user.locale"));
+        logConsole("locale", locale);
+        var date=null;
+
+        var format=''; 
+        if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}:[0-9]{2}/.test(isoDate)) {
+           date=new Date(isoDate.substring(0,4), isoDate.substring(5,7)-1, isoDate.substring(8,10),isoDate.substring(11,13),isoDate.substring(14,16),isoDate.substring(17,19));
+           format=locale.dateTimeFormat; // %d/%m/%Y %H:%M
+      } else if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}/.test(isoDate)) {
+          date=new Date(isoDate.substring(0,4), isoDate.substring(5,7)-1, isoDate.substring(8,10));
+           format=locale.dateFormat; // %d/%m/%Y 
+      }
+        if (date) {
+            format=format.replace('%Y', date.getFullYear());
+            format=format.replace('%d', utils.twoDigits(date.getDate()));
+            format=format.replace('%m', utils.twoDigits(date.getMonth()+1));
+            format=format.replace('%H', utils.twoDigits(date.getHours()));
+            format=format.replace('%M', utils.twoDigits(date.getMinutes()));
+            format=format.replace('%S', utils.twoDigits(date.getSeconds()));
+
+            return format;
+        }
+        
+        
+        
+    }
+    return isoDate;
 };
 var formater = new ProtoFormater();

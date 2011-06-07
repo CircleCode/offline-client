@@ -62,6 +62,11 @@ dcpDocument dcpAttribute .link {
     color: blue;
     cursor: pointer;
 }
+
+dcpDocument dcpAttribute[type=htmltext] a{
+    
+    color: blue;    
+}
 /* image height */
 dcpDocument dcpAttribute .dcpImage {
     width:100px;
