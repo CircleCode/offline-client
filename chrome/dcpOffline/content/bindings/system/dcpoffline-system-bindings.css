@@ -121,6 +121,20 @@ dcpDocument dcpAttribute[type=docid][multiple=true],dcpDocument[mode=view] dcpAt
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#docid-multiple-attr-view");
 }
+
+
+dcpDocument dcpAttribute[type=enum],dcpDocument[mode=view] dcpAttribute[type=enum]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#enum-attr-view");
+}
+
+dcpDocument dcpAttribute[type=enum][multiple=true],dcpDocument[mode=view] dcpAttribute[type=enum][multiple=true]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#enum-multiple-attr-view");
+}
+
 dcpDocument dcpAttribute[type=file],dcpDocument[mode=view] dcpAttribute[type=file]
     {
     -moz-binding:

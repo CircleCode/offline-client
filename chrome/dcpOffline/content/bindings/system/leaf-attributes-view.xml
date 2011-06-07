@@ -47,7 +47,7 @@
                            if (Array.isArray(this.getValue())) {
                              valueNode.textContent=this.getValue();
                            } else {
-                            valueNode.textContent=this.getValue();
+                            valueNode.textContent=this.getDisplayValue();
                            }
                         } else {
                            // Components.utils.import("resource://modules/exceptions.jsm");
@@ -69,6 +69,11 @@
                     } else {
                        return this.doc.getValue(this.attrid);
                     }
+                ]]></body>
+            </method>
+            <method name="getDisplayValue">
+                <body><![CDATA[
+                    return this.getValue()
                 ]]></body>
             </method>
             <constructor><![CDATA[
@@ -207,7 +212,6 @@
             valueNode.value=title;
             try {
               var rdoc=docManager.getLocalDocument({initid:docid});
-              logConsole("serach doc:"+title+docid);
               if (rdoc) {
                 valueNode.classList.add('link');
               }
@@ -224,17 +228,14 @@
             ]]></handler>
         </handlers>
     </binding>
-    
-    
-      <binding id="docid-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding id="docid-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                
-                 <xul:grid flex="1" inherited="attrid">
-                    <xul:columns anonid="columns"/>
-                    <xul:rows anonid="rows"/>
+                <xul:grid flex="1" inherited="attrid">
+                    <xul:columns anonid="columns" />
+                    <xul:rows anonid="rows" />
                 </xul:grid>
             </xul:hbox>
         </content>
@@ -253,9 +254,52 @@
             ]]>
             </constructor>
         </implementation>
-   
     </binding>
-    
+    <!-- Enum attributes -->
+    <binding id="enum-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:label anonid="displayValue" class="dcpValue" />
+            </xul:hbox>
+        </content>
+        <implementation>
+            <method name="getDisplayValue">
+                <body><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            return formater.getEnumLabel({attrid:this.attrid,famid:this.doc.getProperty('fromid'),key:this.getValue()});
+                ]]></body>
+            </method>
+        </implementation>
+    </binding>
+    <binding id="enum-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:grid flex="1" inherited="attrid">
+                    <xul:columns anonid="columns" />
+                    <xul:rows anonid="rows" />
+                </xul:grid>
+            </xul:hbox>
+        </content>
+        <implementation>
+            <constructor><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            
+            var docids=this.getValue();
+            var rows=this.getChild('rows');
+            for (var i=0;i<docids.length; i++) {
+               var clo=this.cloneNode(false);
+               clo.setAttribute("multiple", "false");
+               clo.setAttribute("index", i);
+               rows.appendChild(clo);
+            }
+            ]]>
+            </constructor>
+        </implementation>
+    </binding>
     <!-- file attributes -->
     <binding id="file-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>

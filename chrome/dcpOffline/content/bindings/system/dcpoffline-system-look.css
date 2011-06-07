@@ -7,7 +7,7 @@ dcpAttribute[type=menu] {
     min-height: 24px;
 }
 
-dcpAttribute[type=htmltext],dcpAttribute[type=enum],dcpAttribute[type=color]
+dcpAttribute[type=color]
     {
     border: 1px solid red;
     min-height: 24px;
@@ -103,9 +103,11 @@ dcpDocument[mode=view] dcpAttribute[type=array] grid {
     color: -moz-fieldtext;
 }
 
+dcpDocument[mode=view] dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
+dcpDocument[mode=view] dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
 dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
-dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpLabel,
 dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpSeparator,
+dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpLabel,
 dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpSeparator {
     visibility: collapse;
 }
