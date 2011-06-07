@@ -1,0 +1,40 @@
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+RELEASE = @RELEASE@
+utildir = @PUBRULE@
+pubdir = @prefix@
+srcdir = @srcdir@
+appname = share/offline
+
+export pubdir utildir
+
+TAR = gtar
+GZIP_ENV = --best
+
+export targetdir PACKAGE
+
+pages_not_xml = info.xml
+pages_not_php = fam2po.php po2js.php
+
+include $(utildir)/PubRule
+
+DISTFILES += $(SUBDIR) \
+            RELEASE VERSION 
+
+$(pubdir)/share: $(pubdir)
+	mkdir -p "$@"
+
+$(pubdir)/share/offline: $(pubdir)/share
+	mkdir -p "$@"
+
+$(pubdir)/share/offline/xulapp: $(pubdir)/share/offline
+	mkdir -p "$@"
+	cp -p application.ini "$@"
+	cp -p chrome.manifest "$@"
+	cp -pR chrome "$@"
+	cp -pR defaults "$@"
+	cp -pR distribution "$@"
+
+_xulapp: $(pubdir)/share/offline/xulapp
+
+publish: _xulapp

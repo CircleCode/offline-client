@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module name="@PACKAGE@" version="@VERSION@" release="@RELEASE@" license="@LICENSE@">
+  <description lang="en"></description>
+  <description lang="fr"></description>
+
+  <requires>
+    <module name="dynacase-offline-xulruntimes" />
+  </requires>
+
+  <post-install>
+  </post-install>
+
+  <post-upgrade>
+  </post-upgrade>
+</module>
