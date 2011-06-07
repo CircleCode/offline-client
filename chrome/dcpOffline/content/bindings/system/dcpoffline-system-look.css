@@ -104,7 +104,9 @@ dcpDocument[mode=view] dcpAttribute[type=array] grid {
 }
 
 dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
-dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpSeparator {
+dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpLabel,
+dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpSeparator,
+dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpSeparator {
     visibility: collapse;
 }
 

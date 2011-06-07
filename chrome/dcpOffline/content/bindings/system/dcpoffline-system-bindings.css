@@ -116,6 +116,11 @@ dcpDocument dcpAttribute[type=docid],dcpDocument[mode=view] dcpAttribute[type=do
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#docid-attr-view");
 }
 
+dcpDocument dcpAttribute[type=docid][multiple=true],dcpDocument[mode=view] dcpAttribute[type=docid][multiple=true]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#docid-multiple-attr-view");
+}
 dcpDocument dcpAttribute[type=file],dcpDocument[mode=view] dcpAttribute[type=file]
     {
     -moz-binding:
