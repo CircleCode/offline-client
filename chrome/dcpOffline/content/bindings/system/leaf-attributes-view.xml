@@ -170,19 +170,37 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute money">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:label anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
     </binding>
+    
+    <binding id="time-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute time">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:label anonid="displayValue" class="dcpValue" />
+            </xul:hbox>
+        </content>
+    </binding>
+    
     <!-- Date attributes -->
     <binding id="date-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:label anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
-        </content>
+        </content> <implementation>
+            <method name="getDisplayValue">
+                <body><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            return formater.getLocaleDate(this.getValue());
+                ]]></body>
+            </method>
+        </implementation>
     </binding>
     <!-- Relation attributes -->
     <binding id="docid-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
