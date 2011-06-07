@@ -64,7 +64,7 @@
                 ]]></body>
             </method>
             <constructor><![CDATA[
-                this.reloadValue();
+                this.reloadValue();/*
                 var index=this.getAttribute("index");
                 if ( index !== null) {
                     var label = this.getChild('label');
@@ -73,7 +73,7 @@
                     if (separator) separator.style.display='none';
                     logConsole("delete label"+this.attrid+index);
                 } 
-                
+                */
             ]]></constructor>
         </implementation>
     </binding>
