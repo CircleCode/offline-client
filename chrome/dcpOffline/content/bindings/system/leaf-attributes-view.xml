@@ -97,7 +97,7 @@
     </binding>
     <!-- Date attributes -->
     <binding id="htmlanchor-attr-view">
-        <content> ANCHOR</content>
+        <content></content>
         <implementation>
             <field name="link"><![CDATA[
                 this.getAttribute('link')
