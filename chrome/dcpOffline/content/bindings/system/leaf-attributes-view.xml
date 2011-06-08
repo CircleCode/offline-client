@@ -421,7 +421,7 @@
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
                 <html:div class="dcpValue">
-                    <html:img class="dcpImage" anonid="fileName" />
+                    <html:img class="dcpImage" anonid="imageField" />
                 </html:div>
             </xul:hbox>
         </content>
