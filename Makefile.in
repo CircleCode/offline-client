@@ -33,7 +33,6 @@ $(pubdir)/share/offline/xulapp: $(pubdir)/share/offline
 	cp -p chrome.manifest "$@"
 	cp -pR chrome "$@"
 	cp -pR defaults "$@"
-	cp -pR distribution "$@"
 
 _xulapp: $(pubdir)/share/offline/xulapp
 
