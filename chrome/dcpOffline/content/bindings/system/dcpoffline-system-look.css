@@ -7,25 +7,12 @@ dcpAttribute[type=menu] {
     min-height: 24px;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=docid],
-dcpDocument[mode=edit] dcpAttribute[type=date],
-dcpDocument[mode=edit] dcpAttribute[type=time],
-dcpDocument[mode=edit] dcpAttribute[type=timestamp],
-dcpDocument[mode=edit] dcpAttribute[type=color]
+dcpAttribute[type=color]
     {
     border: 1px solid red;
     min-height: 24px;
 }
 
-dcpDocument[mode=view] dcpAttribute[type=date],
-dcpDocument[mode=view] dcpAttribute[type=time],
-dcpDocument[mode=view] dcpAttribute[type=timestamp],
-dcpDocument[mode=view] dcpAttribute[type=color],
-dcpDocument[mode=view] dcpAttribute[type=enum]
-    {
-    border: 1px solid red;
-    min-height: 24px;
-}
 
 /***********************************************************
         Box model
@@ -80,10 +67,15 @@ dcpDocument dcpAttribute .link {
 dcpDocument dcpAttribute[type=htmltext] a{
     color: blue;    
 }
-
-dcpDocument dcpAttribute[type=image] .dcpValue {
-    max-width: 100px;
-    max-height: 100px;
+/* image height */
+dcpDocument dcpAttribute .dcpImage {
+    width:100px;
+  /*  height:100px; */   
+   
+}
+dcpDocument dcpAttribute .dcpValue { 
+    -moz-box-flex: 1;
+    
 }
 
 dcpDocument dcpDocHeader {

@@ -146,6 +146,41 @@
             </method>
         </implementation>
     </binding>
+    <!-- Date attributes -->
+    <binding id="htmlanchor-attr-view">
+        <content> ANCHOR</content>
+        <implementation>
+            <field name="link"><![CDATA[
+                this.getAttribute('link')
+            ]]></field>
+            <constructor><![CDATA[
+                this.setAttribute('title',this.href);
+                var href=this.href;
+                this.setAttribute('href','javascript:void(0)');
+                this.setAttribute('link',href);
+                
+            ]]></constructor>
+        </implementation>
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+                if(this.link!=''){
+                   
+                    // first construct an nsIURI object using the ioservice
+                    var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
+                                              .getService(Components.interfaces.nsIIOService);
+                    
+                    var uriToOpen = ioservice.newURI(this.link, null, null);
+                    
+                    var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                                          .getService(Components.interfaces.nsIExternalProtocolService);
+                    
+                    // now, open it!
+                    extps.loadURI(uriToOpen);
+                    
+                }
+            ]]></handler>
+        </handlers>
+    </binding>
     <!-- Numeric attributes -->
     <binding id="int-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
@@ -174,7 +209,6 @@
             </xul:hbox>
         </content>
     </binding>
-    
     <binding id="time-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute time">
@@ -184,7 +218,6 @@
             </xul:hbox>
         </content>
     </binding>
-    
     <!-- Date attributes -->
     <binding id="date-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
@@ -193,7 +226,8 @@
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
-        </content> <implementation>
+        </content>
+        <implementation>
             <method name="getDisplayValue">
                 <body><![CDATA[
             Components.utils.import("resource://modules/formater.jsm");
@@ -386,7 +420,9 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:image anonid="imageField" class="dcpValue" title="FILE NOT YET IMPLEMENTED" />
+                <html:div class="dcpValue">
+                    <html:img class="dcpImage" anonid="imageField" />
+                </html:div>
             </xul:hbox>
         </content>
         <implementation>
