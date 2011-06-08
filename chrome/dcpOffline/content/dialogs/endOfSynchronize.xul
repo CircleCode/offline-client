@@ -17,7 +17,7 @@
         </caption>
         <vbox>
             <label id="resultLabel" value="toto"/>
-            <label id="report" value="&synchronize.report;" class="text-link" hidden="true" />
+            <label id="report" value="&synchronize.report;" onclick="openServerStatusPage()" class="text-link" hidden="true" />
             <textbox id="message" multiline="true" rows="10"
                 value="" flex="1" disabled="true" hidden="true" />
         </vbox>
