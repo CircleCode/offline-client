@@ -1,3 +1,0 @@
-# http://developer.mozilla.org/en/docs/Chrome_Registration
-content 	mozzipper 				content/
-overlay chrome://mccoy/content/mccoy.xul         chrome://mozzipper/content/overlayMccoy.xul
