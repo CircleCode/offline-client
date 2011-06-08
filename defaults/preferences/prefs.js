@@ -36,5 +36,7 @@ pref("offline.user.password", "");
 pref("offline.user.applicationURL", "http://dynacase.r2d2.paris.lan/dev/");
 
 pref("offline.application.modeOffline", false);
+
+/* debug prefs */
 pref("offline.application.debug.locale", "kl_GN");
-pref("general.useragent.locale", "kl_GN");    
+pref("general.useragent.locale", "kl_GN");

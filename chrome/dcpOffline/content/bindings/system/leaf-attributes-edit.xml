@@ -12,12 +12,56 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
     
-    <binding id="leaf-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding id="leaf-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
             
             <field name="inputField"><![CDATA[
                 this.getChild('displayValue').inputField;
             ]]></field>
+            
+            <property name="value"
+                onget="this.getValue();"
+                onset="this.setValue(val);">
+            </property>
+            
+            <method name="checkValue">
+                <parameter name="value" />
+                <body><![CDATA[
+                    return value;
+                ]]></body>
+            </method>
+            
+            <method name="setValue">
+                <parameter name="value" />
+                <body><![CDATA[
+                    try{
+                        var value = this.checkValue(value);
+                        this.doc.setValue(this.attrid, value);
+                        this.reloadValue();
+                        return true;
+                    } catch(e){
+                        Components.utils.import("resource://modules/logger.jsm");
+                        logError(e);
+                    }
+                    return false;
+                ]]></body>
+            </method>
+            
+            <method name="reloadValue">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/logger.jsm");
+                    logConsole("reloadValue for attribute "+this.attrid);
+                    var valueNode = this.getChild('displayValue');
+                    if(valueNode){
+                        valueNode.value = this.getValue();
+                        logConsole("value: "+valueNode.value);
+                    } else {
+                        logConsole("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                        Components.utils.import("resource://modules/exceptions.jsm");
+                        throw BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                    }
+                ]]></body>
+            </method>
             
             <method name="setCustomValidity">
                 <parameter name="message"/>
@@ -97,16 +141,13 @@
                     //XXX: this is suboptimal
                     var that = this;
                     
-                    var initEditor = function(){
-                        logConsole('initEditor');
-                        
+                    var initEditor = function(){                        
                         if(contentWindow.getEditorWrapper){
                             var editorWrapper = contentWindow.getEditorWrapper();
                             editorWrapper.innerHTML = value;
                             var editor = contentWindow.initEditor();
                             editor.on('blur', function(){this.setValue(editor.getData())}, that);
                         } else {
-                            logConsole('relaunch initEditor in 50 ms');
                             setTimeout(initEditor,50);
                         }
                     };

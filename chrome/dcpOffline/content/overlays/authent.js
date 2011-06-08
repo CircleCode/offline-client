@@ -16,7 +16,7 @@ function tryToAuthent() {
         var param = {};
         param.currentLogin = document.getElementById('authent.login').value;
         param.currentPassword = document.getElementById('authent.password').value;
-        param.currentApplicationURL = Preferences.get("offline.user.applicationURL", "");
+        param.currentApplicationURL = document.getElementById('authent.applicationURL').value;
         param.modeOffline = document.getElementById('authent.modeOffline').checked;
         
         if (document.getElementById('authent.remember').checked) {
@@ -49,6 +49,7 @@ function tryToAuthent() {
 }
 
 function onAuthentSuccess() {
+    Preferences.set("offline.user.applicationURL", document.getElementById('authent.applicationURL').value);
     applicationEvent.publish("authentSuccess");
 }
 

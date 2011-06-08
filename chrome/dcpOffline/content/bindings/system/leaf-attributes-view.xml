@@ -11,41 +11,7 @@
 >
     <binding id="leaf-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
-            <property name="value"
-                onget="this.getValue();"
-                onset="this.setValue(val);">
-            </property>
-            <property name="index"
-                readonly="true">
-                <getter><![CDATA[
-                    if(this.hasAttribute('index')){
-                        return this.getAttribute('index');
-                    } else {
-                        return -1;
-                    }
-                ]]></getter>
-            </property>
-            <method name="checkValue">
-                <parameter name="value" />
-                <body><![CDATA[
-                    return value;
-                ]]></body>
-            </method>
-            <method name="setValue">
-                <parameter name="value" />
-                <body><![CDATA[
-                    try{
-                        var value = this.checkValue(value);
-                        this.doc.setValue(this.attrid, value);
-                        this.reloadValue();
-                        return true;
-                    } catch(e){
-                        Components.utils.import("resource://modules/logger.jsm");
-                        logError(e);
-                    }
-                    return false;
-                ]]></body>
-            </method>
+            
             <method name="reloadValue">
                 <body><![CDATA[
                     if (this.getValue() == '') {
@@ -68,29 +34,12 @@
                     }
                 ]]></body>
             </method>
-            <method name="getValue">
-                <body><![CDATA[
-                    var index=this.getAttribute("index");
-                    if ( index !== null) {
-                       var val=this.doc.getValue(this.attrid);
-                       if (Array.isArray(val)) {
-                          return val[index];
-                       } else {
-                          return val;
-                       }
-                    } else {
-                       return this.doc.getValue(this.attrid);
-                    }
-                ]]></body>
-            </method>
+            
             <method name="getDisplayValue">
                 <body><![CDATA[
                     return this.getValue()
                 ]]></body>
             </method>
-            <constructor><![CDATA[
-                this.reloadValue();
-            ]]></constructor>
         </implementation>
     </binding>
     <!-- Text attributes -->
