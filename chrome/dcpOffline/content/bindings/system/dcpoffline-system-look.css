@@ -70,7 +70,7 @@ dcpDocument dcpAttribute[type=htmltext] a{
 /* image height */
 dcpDocument dcpAttribute .dcpImage {
     width:100px;
-    height:100px;    
+  /*  height:100px; */   
    
 }
 dcpDocument dcpAttribute .dcpValue { 

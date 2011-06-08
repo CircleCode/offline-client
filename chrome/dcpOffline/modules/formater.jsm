@@ -23,16 +23,16 @@ ProtoFormater.prototype = {
  */
 ProtoFormater.prototype.getEnumLabel = function(config) {
     if (config && config.key && config.attrid && config.famid) {
-        
+
         var r = storageManager
-        .execQuery({
-            query : 'select label from enums where famid=:famid and attrid = :attrid and key=:key',
-            params : {
-                famid : config.famid,
-                key:config.key,
-                attrid:config.attrid
-            }
-        });
+                .execQuery({
+                    query : 'select label from enums where famid=:famid and attrid = :attrid and key=:key',
+                    params : {
+                        famid : config.famid,
+                        key : config.key,
+                        attrid : config.attrid
+                    }
+                });
         if (r.length == 1) {
             return (r[0].label);
         }
@@ -47,8 +47,7 @@ ProtoFormater.prototype.getEnumLabel = function(config) {
  */
 ProtoFormater.prototype.getDocumentTitle = function(config) {
     if (config && (!isNaN(config.initid))) {
-        var r = storageManager
-        .execQuery({
+        var r = storageManager.execQuery({
             query : 'select title from doctitles where initid=:initid',
             params : {
                 initid : config.initid
@@ -63,38 +62,46 @@ ProtoFormater.prototype.getDocumentTitle = function(config) {
     }
 };
 
-
 /*
  * @param string isoDate YYYY-MM-DD
  */
 ProtoFormater.prototype.getLocaleDate = function(isoDate) {
     if (isoDate) {
-        var locale=JSON.parse(Preferences.get("offline.user.locale"));
-        logConsole("locale", locale);
-        var date=null;
+        try {
+            var locale = JSON.parse(Preferences.get("offline.user.localeFormat"));
 
-        var format=''; 
-        if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}:[0-9]{2}/.test(isoDate)) {
-           date=new Date(isoDate.substring(0,4), isoDate.substring(5,7)-1, isoDate.substring(8,10),isoDate.substring(11,13),isoDate.substring(14,16),isoDate.substring(17,19));
-           format=locale.dateTimeFormat; // %d/%m/%Y %H:%M
-      } else if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}/.test(isoDate)) {
-          date=new Date(isoDate.substring(0,4), isoDate.substring(5,7)-1, isoDate.substring(8,10));
-           format=locale.dateFormat; // %d/%m/%Y 
-      }
-        if (date) {
-            format=format.replace('%Y', date.getFullYear());
-            format=format.replace('%d', utils.twoDigits(date.getDate()));
-            format=format.replace('%m', utils.twoDigits(date.getMonth()+1));
-            format=format.replace('%H', utils.twoDigits(date.getHours()));
-            format=format.replace('%M', utils.twoDigits(date.getMinutes()));
-            format=format.replace('%S', utils.twoDigits(date.getSeconds()));
+            
+            var date = null;
 
-            return format;
+            var format = '';
+            if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}:[0-9]{2}/.test(isoDate)) {
+                date = new Date(isoDate.substring(0, 4), isoDate
+                        .substring(5, 7) - 1, isoDate.substring(8, 10), isoDate
+                        .substring(11, 13), isoDate.substring(14, 16), isoDate
+                        .substring(17, 19));
+                format = locale.dateTimeFormat; // %d/%m/%Y %H:%M
+            } else if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}/.test(isoDate)) {
+                date = new Date(isoDate.substring(0, 4), isoDate
+                        .substring(5, 7) - 1, isoDate.substring(8, 10));
+                format = locale.dateFormat; // %d/%m/%Y
+            }
+            if (date) {
+                format = format.replace('%Y', date.getFullYear());
+                format = format.replace('%d', utils.twoDigits(date.getDate()));
+                format = format.replace('%m', utils
+                        .twoDigits(date.getMonth() + 1));
+                format = format.replace('%H', utils.twoDigits(date.getHours()));
+                format = format.replace('%M', utils
+                        .twoDigits(date.getMinutes()));
+                format = format.replace('%S', utils
+                        .twoDigits(date.getSeconds()));
+
+                return format;
+            }
+        } catch (e) {
         }
-        
-        
-        
     }
+
     return isoDate;
 };
 var formater = new ProtoFormater();

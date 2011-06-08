@@ -86,6 +86,11 @@ dcpDocument dcpAttribute[type=htmltext],dcpDocument[mode=view] dcpAttribute[type
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#htmltext-attr-view");
 }
 
+dcpDocument[mode=view] dcpAttribute[type=htmltext] a{
+   -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#htmlanchor-attr-view");
+
+}
 dcpDocument dcpAttribute[type=int],dcpDocument[mode=view] dcpAttribute[type=int]
     {
     -moz-binding:
