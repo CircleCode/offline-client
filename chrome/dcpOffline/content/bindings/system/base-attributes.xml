@@ -42,6 +42,22 @@
                 readonly="true"
                 onget="return this.doc.getLabel(this.attrid);">
             </property>
+            
+            <property name="value"
+                onget="this.getValue();"
+                readonly="true">
+            </property>
+            
+            <property name="index"
+                readonly="true">
+                <getter><![CDATA[
+                    if(this.hasAttribute('index')){
+                        return this.getAttribute('index');
+                    } else {
+                        return -1;
+                    }
+                ]]></getter>
+            </property>
                 
             <method name="getDocumentNode">
                 <body><![CDATA[
@@ -57,8 +73,25 @@
                 ]]></body>
             </method>
             
+            <method name="getValue">
+                <body><![CDATA[
+                    var index=this.getAttribute("index");
+                    if ( index !== null) {
+                       var val=this.doc.getValue(this.attrid);
+                       if (Array.isArray(val)) {
+                          return val[index];
+                       } else {
+                          return val;
+                       }
+                    } else {
+                       return this.doc.getValue(this.attrid);
+                    }
+                ]]></body>
+            </method>
+            
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
+                this.reloadValue();
             ]]></constructor>
             
             <destructor><![CDATA[
