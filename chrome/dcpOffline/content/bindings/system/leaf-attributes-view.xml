@@ -11,7 +11,19 @@
 >
     <binding id="leaf-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
-            <property name="value" onget="this.getValue();" onset="this.setValue(val);">
+            <property name="value"
+                onget="this.getValue();"
+                onset="this.setValue(val);">
+            </property>
+            <property name="index"
+                readonly="true">
+                <getter><![CDATA[
+                    if(this.hasAttribute('index')){
+                        return this.getAttribute('index');
+                    } else {
+                        return -1;
+                    }
+                ]]></getter>
             </property>
             <method name="checkValue">
                 <parameter name="value" />
@@ -385,7 +397,7 @@
             var lfile=fileManager.getFile({initid:docid, attrid:this.attrid, index:this.getAttribute('index')});
             if (lfile) {
               var title=lfile.leafName;
-              logConsole("test file", lfile);
+              //logConsole("test file", lfile);
               valueNode.value=title;
               
               valueNode.classList.add('link');
@@ -405,7 +417,7 @@
     </binding>
     <binding id="image-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
                 <html:div class="dcpValue">
@@ -414,8 +426,8 @@
             </xul:hbox>
         </content>
         <implementation>
-            <field name="fileName"><![CDATA[
-                this.getChild('fileName');
+            <field name="imageField"><![CDATA[
+                this.getChild('imageField');
             ]]></field>
             <method name="openFile">
                 <body><![CDATA[
@@ -423,25 +435,24 @@
                     fileManager.openFile({
                         initid: this.doc.getInitid(),
                         attrid: this.attrid,
-                        index: this.getAttribute('index')
+                        index: this.index
                     });
                 ]]></body>
             </method>
-            <constructor><![CDATA[
-            Components.utils.import("resource://modules/fileManager.jsm");
-                Components.utils.import("resource://modules/logger.jsm");
-            var valueNode = this.getChild('fileName');
-            var docid=this.doc.getInitid();
-            var lfile=fileManager.getFile({initid:docid, attrid:this.attrid, index:this.getAttribute('index')});
-            if (lfile) {
-              var title=lfile.leafName;
-              valueNode.title=title;
-              valueNode.classList.add('link');
-              valueNode.src='file://'+lfile.path;
-            } else {
-              valueNode.style.display='none';
-            }
-            
+            <constructor><![CDATA[     
+                Components.utils.import("resource://modules/formater.jsm");
+                Components.utils.import("resource://modules/fileManager.jsm");
+                
+                var valueNode = this.getChild('fileName');
+                var lfile=fileManager.getFile({
+                    initid:this.doc.getInitid(),
+                    attrid:this.attrid,
+                    index:this.index
+                });
+                if (lfile) {
+                    this.imageField.tooltipText = lfile.leafName;
+                    this.imageField.src=formater.getURI({file:lfile}).spec;
+                }
             ]]>
             </constructor>
         </implementation>

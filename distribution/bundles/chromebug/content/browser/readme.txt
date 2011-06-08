@@ -1,1 +1,0 @@
-The files in the chromebug/content/browser directory are copies of files from Firefox so the chromebug can work on other xul apps

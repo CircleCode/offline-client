@@ -62,6 +62,16 @@ ProtoFormater.prototype.getDocumentTitle = function(config) {
     }
 };
 
+ProtoFormater.prototype.getURI = function(config) {
+    if (config && config.file){
+        var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                .getService(Components.interfaces.nsIIOService);
+        return ios.newFileURI(config.file);
+    } else {
+        throw new ArgException("getUri need file");
+    }
+};
+
 /*
  * @param string isoDate YYYY-MM-DD
  */
@@ -104,4 +114,5 @@ ProtoFormater.prototype.getLocaleDate = function(isoDate) {
 
     return isoDate;
 };
+
 var formater = new ProtoFormater();
