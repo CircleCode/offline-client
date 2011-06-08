@@ -452,6 +452,7 @@
                 if (lfile) {
                     this.imageField.tooltipText = lfile.leafName;
                     this.imageField.src=formater.getURI({file:lfile}).spec;
+                    this.imageField.classList.add('link');//.className+=' link';
                 }
             ]]>
             </constructor>
@@ -459,7 +460,7 @@
         <handlers>
             <handler event="click" button="0"><![CDATA[
                
-                if(event.originalTarget == this.fileName){
+                if(event.originalTarget == this.imageField){
                     this.openFile();
                 }
             ]]></handler>

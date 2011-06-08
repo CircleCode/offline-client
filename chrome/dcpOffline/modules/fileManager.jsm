@@ -61,6 +61,11 @@ var fileManager = {
                         try {
                             if (config.forceCopy) {
                                 config.aFile.copyTo(destDir, config.basename);
+                                 config.aFile = Components.classes["@mozilla.org/file/local;1"].
+                                 createInstance(Components.interfaces.nsILocalFile);
+                                 config.aFile.initWithPath(destDir.path);
+                                 config.aFile.append(config.basename);
+                                 config.newFile=true;
                             } else {
                                 config.aFile.moveTo(destDir, config.basename);
                             }
@@ -340,19 +345,27 @@ function storeFile(config) {
                 }
             });
         } else {
+            var mdate=utils.toIso8601(new Date(config.aFile.lastModifiedTime));
+            var rdate=mdate;
+            if (config.newFile) {
+                rdate=utils.toIso8601(new Date(2000));
+            }
             storageManager
+              
                     .execQuery({
                         query : 'insert into '
                                 + TABLE_FILES
-                                + '("initid", "attrid", "index", "basename", "path", "writable")'
-                                + ' values (:initid, :attrid, :index, :basename, :path, :writable)',
+                                + '("initid", "attrid", "index", "basename", "path", "writable", "recorddate", "modifydate")'
+                                + ' values (:initid, :attrid, :index, :basename, :path, :writable, :recorddate, :modifydate)',
                         params : {
                             initid : config.initid,
                             attrid : config.attrid,
                             index : config.index,
                             basename : config.basename,
                             path : config.aFile.path,
-                            writable : config.writable
+                            writable : config.writable,
+                            recorddate:rdate,
+                            modifydate:mdate
                         }
                     });
         }
