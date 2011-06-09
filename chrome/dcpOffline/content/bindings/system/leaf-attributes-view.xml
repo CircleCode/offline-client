@@ -40,7 +40,7 @@
                     return this.getValue()
                 ]]></body>
             </method>
-
+            
             <constructor><![CDATA[
                 this.reloadValue();
             ]]></constructor>

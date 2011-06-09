@@ -193,7 +193,17 @@ dcpDocument[mode=edit] dcpAttribute[type=frame] {
 
 dcpDocument[mode=edit] dcpAttribute[type=array] {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#frame-attr-edit");
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#array-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=array] dcpArrayTableTools{
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#array-table-tools");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=array] dcpArrayRowTools{
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#array-row-tools");
 }
 
 /***********************************************************

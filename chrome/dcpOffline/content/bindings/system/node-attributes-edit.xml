@@ -21,26 +21,146 @@
     <binding id="frame-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
         <!-- use frame-attr-view instead -->
     </binding>
-
+    
     <binding id="array-attr-edit" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
-
+        
         <resources>
             <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-system.css" />
         </resources>
-
+        
         <content>
+            
+            <xul:groupbox class="dcpAttribute array" flex="1">
+                <xul:caption anonid="caption" xbl:inherits="xbl:text=label"/>
+                
+                <xul:grid flex="1" inherited="attrid">
+                    <xul:columns anonid="columns"/>
+                    <xul:rows anonid="rows"/>
+                </xul:grid>
+                
             </xul:groupbox>
+            
+            <xul:box anonid="childAttributes" style="display: none;">
+                <children/>
+            </xul:box>
+            
+        </content>
+        
+        <implementation>
+            
+            <field name="rows"
+                readonly="true">
+                this.getChild('rows');
+            </field>
+            
+            <field name="columns"
+                readonly="true">
+                this.getChild('columns');
+            </field>
+            
+            <field name="childAttributes"
+                readonly="true">
+                this.getElementsByTagName('dcpAttribute')
+            </field>
+            
+            <method name="insertRow">
+                <parameter name="values"/>
+                <parameter name="index"/>
+                <body><![CDATA[
+                    if(isNaN(index)){
+                        index = this.rows.childElementCount;
+                    } else if(index < this.rows.childElementCount){
+                        alert('(FIXME) rows can currently only be inserted');
+                    }
+                    values = values || values;
+                    
+                    var currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+                    
+                    var toolsCell = document.createElement('dcpArrayRowTools');
+                    currentRow.appendChild(toolsCell);
+                    
+                    for (var i = 0; i < this.childAttributes.length; ++i) {
+                        var attributeNode = this.childAttributes[i];
+                        
+                        var currentAttribute = attributeNode.cloneNode(true);
+                        currentAttribute.setAttribute('flex',1);
+                        currentAttribute.setAttribute('index', index-1);
+                        if(values.hasOwnProperty(attributeNode.getAttribute('attrid'))){
+                            currentAttribute.setAttribute('value', values[attributeNode.getAttribute('attrid')]);
+                        }
+                        
+                        currentRow.appendChild(currentAttribute);
+                    }
+                    
+                    if(index >= this.rows.childElementCount){
+                        this.rows.appendChild(currentRow);
+                    } else {
+                        this.rows.insertBefore(currentRow, this.rows.childNodes[index]);
+                    }
+                    
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+                Components.utils.import("resource://modules/logger.jsm");
+                
+                var currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+                
+                var toolsColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                this.columns.appendChild(toolsColumn);
+                
+                var toolsCell = document.createElement('dcpArrayTableTools');
+                toolsCell.classList.add('header');
+                toolsCell.classList.add('plain');
+                currentRow.appendChild(toolsCell);
+                
+                var nbRows = 0;
+                
+                for (var i = 0; i < this.childAttributes.length; ++i) {
+                    var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
+                    clabel.setAttribute("value", this.childAttributes[i].getAttribute('label'));
+                    clabel.classList.add('header');
+                    clabel.classList.add('plain');
+                    
+                    currentRow.appendChild(clabel);
+                    
+                    var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                    var columnFlex = this.childAttributes[i].getAttribute('flex');
+                    currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
+                    
+                    var visibility = this.childAttributes[i].getAttribute('visibility'); 
+                    if(visibility == 'R' || visibility == 'H'){
+                        currentColumn.collapsed = true;
+                    }
+                    
+                    this.columns.appendChild(currentColumn);
+                    
+                    nbRows = Math.max(nbRows, this.doc.getValue(this.childAttributes[i].getAttribute('attrid')).length);
+                }
+                
+                this.rows.appendChild(currentRow);
+                
+                for (var i = 0; i < nbRows; i++){
+                    this.insertRow(i);
+                }
+                
+            ]]></constructor>
+        </implementation>
+    </binding>
+    
+    <binding id="array-table-tools">
+        <content>
+            <xul:hbox class="array-table-tools">
+                <xul:button class="delete" tooltiptext="&array.row.tools.delete;"/>
+            </xul:hbox>
         </content>
     </binding>
     
-    <binding id="array-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
+    <binding id="array-row-tools">
         <content>
-            <xul:box inherited="attrid ">
-                <xul:caption anonid="value" value=""/>
-                <xul:label value="Not yet implemented"/>
-            </xul:box>
+            <xul:hbox class="array-row-tools">
+                <xul:button class="add" tooltiptext="&array.table.tools.add;"/>
+            </xul:hbox>
         </content>
-        <implementation></implementation>
     </binding>
     
 </bindings>
