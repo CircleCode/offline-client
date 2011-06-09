@@ -40,6 +40,10 @@
                     return this.getValue()
                 ]]></body>
             </method>
+
+            <constructor><![CDATA[
+                this.reloadValue();
+            ]]></constructor>
         </implementation>
     </binding>
     <!-- Text attributes -->

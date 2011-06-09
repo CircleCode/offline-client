@@ -60,7 +60,6 @@
             </method>
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
-                this.reloadValue();
             ]]></constructor>
             <destructor><![CDATA[
             ]]></destructor>
