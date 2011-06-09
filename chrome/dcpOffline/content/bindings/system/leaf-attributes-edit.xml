@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE bindings [
-      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/leaf-attributes-binding.dtd" >
+      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.dtd" >
       <!ENTITY separator "&#160;:&#160;" >
       <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       %leaf-attributes-bindingDTD;
@@ -49,14 +49,10 @@
             
             <method name="reloadValue">
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/logger.jsm");
-                    logConsole("reloadValue for attribute "+this.attrid);
                     var valueNode = this.getChild('displayValue');
                     if(valueNode){
                         valueNode.value = this.getValue();
-                        logConsole("value: "+valueNode.value);
                     } else {
-                        logConsole("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
                         Components.utils.import("resource://modules/exceptions.jsm");
                         throw BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
                     }
@@ -84,6 +80,7 @@
                 } else {
                     this.setAttribute('collapsed', true);
                 }
+                this.reloadValue();
             ]]></constructor>
             
         </implementation>

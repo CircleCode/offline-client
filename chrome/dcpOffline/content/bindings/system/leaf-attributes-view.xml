@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE bindings [
-      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/leaf-attributes-binding.dtd" >
+      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.dtd" >
       <!ENTITY separator "&#160;:&#160;" >
       <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       %leaf-attributes-bindingDTD;
@@ -40,6 +40,10 @@
                     return this.getValue()
                 ]]></body>
             </method>
+            
+            <constructor><![CDATA[
+                this.reloadValue();
+            ]]></constructor>
         </implementation>
     </binding>
     <!-- Text attributes -->

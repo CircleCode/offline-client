@@ -84,7 +84,7 @@ dcpDocument dcpDocFooter {
 }
 
 
-dcpDocument[mode=view] dcpAttribute[type=array] grid {
+dcpDocument dcpAttribute[type=array] grid {
     /*border-top-width: 2px;
     border-top-style: solid;
     border-top-color: -moz-use-text-color;*/
@@ -103,19 +103,33 @@ dcpDocument[mode=view] dcpAttribute[type=array] grid {
     color: -moz-fieldtext;
 }
 
-dcpDocument[mode=view] dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
-dcpDocument[mode=view] dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
-dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
-dcpDocument[mode=view] dcpAttribute[type=array] grid dcpAttribute .dcpSeparator,
-dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpLabel,
-dcpDocument[mode=view] dcpAttribute[type=docid] grid dcpAttribute .dcpSeparator {
+dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
+dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
+dcpDocument dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
+dcpDocument dcpAttribute[type=array] grid dcpAttribute .dcpSeparator,
+dcpDocument dcpAttribute[type=docid] grid dcpAttribute .dcpLabel,
+dcpDocument dcpAttribute[type=docid] grid dcpAttribute .dcpSeparator {
     visibility: collapse;
 }
 
-dcpDocument[mode=view] dcpAttribute[type=array] grid label.header {
+dcpDocument dcpAttribute[type=array] grid .header {
     -moz-appearance: treeheadercell;
     -moz-box-align: center;
     text-align: center;
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=array] hbox.array-row-tools button,
+dcpDocument[mode=edit] dcpAttribute[type=array] hbox.array-table-tools button{
+    min-width: 0;
+    box-pack: center;
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=array] dcpArrayRowTools hbox.array-row-tools button.delete{
+    list-style-image: url("chrome://dcpoffline/content/images/delete-row.png");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=array] dcpArrayRowTools hbox.array-row-tools button.add{
+    list-style-image: url("chrome://global/skin/icons/Close.gif");
 }
 /***********************************************************
         Validity

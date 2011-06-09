@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE bindings [
-      <!ENTITY % node-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/node-attributes-binding.dtd" >
+      <!ENTITY % node-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/node-attributes-binding.dtd" >
       <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       <!ENTITY separator "&#160;:&#160;" >
       %node-attributes-bindingDTD;
@@ -9,7 +9,8 @@
 <bindings id="node-attributes-binding" xmlns="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl"
 >
-    <binding id="node-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr" />
+    <binding id="node-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
+    
     <binding id="tab-attr-view" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <content>
             <xul:tabpanel anonid="tabPanel" flex="1">
@@ -61,7 +62,7 @@
     </binding>
     <binding id="array-attr-view" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
         <resources>
-            <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-look.css" />
+            <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-system.css" />
         </resources>
         <content>
             <xul:groupbox class="dcpAttribute array" flex="1">
@@ -108,20 +109,5 @@
                 
             ]]></constructor>
         </implementation>
-    </binding>
-    <binding id="array-attr-header" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
-        <content>
-            <xul:column flex="1">
-                <xul:label class="dcpLabel" xbl:inherits="value=label" />
-            </xul:column>
-        </content>
-        <implementation></implementation>
-    </binding>
-    <binding id="array-attr-body" extends="&systemBindingsDirPath;/node-attributes-view.xml#node-attr-view">
-        <content>
-            BODY NO USE
-            <xul:label class="dcpLabel" xbl:inherits="value=label" />
-        </content>
-        <implementation></implementation>
     </binding>
 </bindings>
