@@ -216,7 +216,9 @@ localDocument.prototype = {
          */
         getIcon : function () {
             var famName=this.getProperty('fromname');
-
+            if (this.getProperty('doctype')=="C") {
+                famName=this.getProperty('name');
+            }
             var r = storageManager.execQuery({
                 query : 'select icon from families where name=:famname',
                 params : {

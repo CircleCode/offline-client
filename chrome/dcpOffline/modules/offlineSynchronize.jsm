@@ -128,15 +128,29 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
 
             logConsole('pull families : ' + fam.getTitle());
             this.log('pull families : ' + fam.getTitle());
+            
+            var ricon=storageManager.execQuery({
+                query : "select icon from families where name=:famname",
+                params : {
+                    famname : fam.getProperty('name')
+                }
+            });
+            var icon='';
+            if (ricon.length > 0) {
+                icon=ricon[0].icon;
+            }
+            
+            
             storageManager
                     .execQuery({
-                        query : "insert into families(famid, name, title, json_object, creatable) values(:famid, :famname, :famtitle, :fam, :creatable)",
+                        query : "insert into families(famid, name, title, json_object, creatable, icon) values(:famid, :famname, :famtitle, :fam, :creatable, :icon)",
                         params : {
                             famid : fam.getProperty('id'),
                             famtitle : fam.getTitle(),
                             famname : fam.getProperty('name'),
                             fam : JSON.stringify(fam),
-                            creatable : fam.control('icreate')
+                            creatable : fam.control('icreate'),
+                            icon:icon
                         }
                     });
             // view generation
@@ -246,7 +260,7 @@ offlineSynchronize.prototype.pushDocument = function(config) {
         });
         if (document) {
             // put document and modifies files
-            logConsole('push', document);
+            //logConsole('push', document);
             this.callObserver('onDetailLabel',"pushing document :"+document.getTitle());
             var updateDocument = domain.sync().pushDocument({
                 context : domain.context,
@@ -978,6 +992,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
             }
             var me = this;
             var onComplete=config.onComplete;
+            var onError=config.onError;
             this.pushFiles({
                 domain : domain,
                 onEndPushFiles : function() {
@@ -996,6 +1011,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {
+                            
                             me.callObserver('onError', me.synchroResults);
                             return false;
                         } else {
