@@ -225,7 +225,8 @@ localDocument.prototype = {
                     famname : famName
                 }
             });
-            if (r.length==1) {
+            
+            if (r.length > 1) {
                 return r[0].icon;
             }
             return null;

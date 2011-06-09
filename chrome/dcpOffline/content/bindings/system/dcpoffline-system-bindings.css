@@ -196,6 +196,11 @@ dcpDocument[mode=edit] dcpAttribute[type=array] {
         url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#array-attr-edit");
 }
 
+dcpDocument[mode=edit] dcpAttribute[type=array] dcpRow{
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#row-attr-edit");
+}
+
 dcpDocument[mode=edit] dcpAttribute[type=array] dcpArrayTableTools{
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#array-table-tools");
@@ -247,4 +252,9 @@ dcpDocument[mode=edit] dcpAttribute[type=image] {
 dcpDocument[mode=edit] dcpAttribute[type=enum] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#enum-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=docid][multiple=false] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#docid-attr-edit");
 }
