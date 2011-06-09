@@ -150,9 +150,9 @@
                     
                     var value = this.getValue();
                     
-                    //XXX: this is suboptimal
                     var that = this;
                     
+                    //XXX: this is suboptimal (should use DOMFrameContentLoaded)
                     var initEditor = function(){                        
                         if(contentWindow.getEditorWrapper){
                             var editorWrapper = contentWindow.getEditorWrapper();
