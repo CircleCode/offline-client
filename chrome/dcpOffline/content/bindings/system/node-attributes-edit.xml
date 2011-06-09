@@ -31,7 +31,7 @@
         <content>
             
             <xul:groupbox class="dcpAttribute array" flex="1">
-                <xul:caption anonid="caption" xbl:inherits="xbl:text=label"/>
+                <xul:caption anonid="caption" xbl:inherits="label"/>
                 
                 <xul:grid flex="1" inherited="attrid">
                     <xul:columns anonid="columns"/>
