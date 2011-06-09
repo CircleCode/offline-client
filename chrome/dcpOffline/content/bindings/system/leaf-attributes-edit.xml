@@ -10,7 +10,8 @@
 <bindings id="leaf-attributes-binding"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl">
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml">
     
     <binding id="leaf-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
@@ -325,7 +326,9 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
-                <xul:image anonid="displayValue" class="dcpValue"/>
+                <html:div class="dcpValue">
+                    <html:img class="dcpImage" anonid="imageField" />
+                </html:div>
                 <xul:vbox pack="end">
                     <xul:button anonid="modifyButton" label="&attribute.file.button.modify;"/>
                 </xul:vbox>
@@ -335,7 +338,7 @@
         <implementation>
             
             <field name="inputField"><![CDATA[
-                this.getChild('displayValue');
+                this.getChild('imageField');
             ]]></field>
             
             <field name="modifyButton"><![CDATA[
