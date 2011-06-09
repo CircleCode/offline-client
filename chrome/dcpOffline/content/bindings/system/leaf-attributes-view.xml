@@ -130,13 +130,34 @@
             ]]></handler>
         </handlers>
     </binding>
+    
+    <!-- Color attributes -->
+    <binding id="color-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute color">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:label anonid="displayValue" class="dcpValue" />
+            </xul:hbox>
+        </content> 
+        <implementation>
+            <field name="displayValue"><![CDATA[
+                this.getChild('displayValue')
+            ]]></field>
+            <constructor><![CDATA[
+              if (this.getValue()) {
+                this.displayValue.style.backgroundColor=this.getValue();
+              }
+            ]]></constructor>
+        </implementation>
+    </binding>
     <!-- Numeric attributes -->
     <binding id="int-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute int">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:label anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
     </binding>
@@ -145,7 +166,7 @@
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute double">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
-                <xul:label anonid="displayValue" class="dcpValue plain" />
+                <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
     </binding>
@@ -199,8 +220,19 @@
                 this.getChild('displayValue');
             ]]></field>
             <field name="docid"><![CDATA[
-                this.getValue();
+                this.getDocid();
             ]]></field>
+            
+           
+            <method name="getDocid">
+                <body><![CDATA[
+                var docid=this.getValue();
+                if (this.getAttribute('docid') > 0) {
+                   docid=this.getAttribute('docid');
+                }
+                return docid;
+                ]]></body>
+            </method>
             <method name="openDoc">
                 <body><![CDATA[
             Components.utils.import("resource://modules/formater.jsm");
@@ -219,12 +251,11 @@
             Components.utils.import("resource://modules/docManager.jsm");
             var valueNode = this.getChild('displayValue');
             
-            var docid=this.getValue();
-            var title=formater.getDocumentTitle({initid:docid});
+            var title=formater.getDocumentTitle({initid:this.docid});
             
             valueNode.value=title;
             try {
-              var rdoc=docManager.getLocalDocument({initid:docid});
+              var rdoc=docManager.getLocalDocument({initid:this.docid});
               if (rdoc) {
                 valueNode.classList.add('link');
               }
@@ -268,6 +299,39 @@
             </constructor>
         </implementation>
     </binding>
+    
+    <binding id="docid-multiple2-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+            
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <xul:grid flex="1" inherited="attrid">
+                    <xul:columns anonid="columns" />
+                    <xul:rows anonid="rows" />
+                </xul:grid>
+               
+            </xul:hbox>
+        </content>
+        <implementation>
+            <constructor><![CDATA[
+            Components.utils.import("resource://modules/formater.jsm");
+            
+            var docids=this.getValue();
+            docids=docids.split('<BR>');
+            var rows=this.getChild('rows');
+            for (var i=0;i<docids.length; i++) {
+               var clo=this.cloneNode(false);
+               clo.setAttribute("multiple", "false");
+               clo.setAttribute("index", i);
+               clo.setAttribute("docid", docids[i]);
+               rows.appendChild(clo);
+            }
+            ]]>
+            </constructor>
+        </implementation>
+    </binding>
+    
     <!-- Enum attributes -->
     <binding id="enum-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>

@@ -7,11 +7,6 @@ dcpAttribute[type=menu] {
     min-height: 24px;
 }
 
-dcpAttribute[type=color]
-    {
-    border: 1px solid red;
-    min-height: 24px;
-}
 
 
 /***********************************************************
