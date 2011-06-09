@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE bindings [
-      <!ENTITY % node-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/node-attributes-binding.dtd" >
+      <!ENTITY % node-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/node-attributes-binding.dtd" >
       <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       <!ENTITY separator "&#160;:&#160;" >
       %node-attributes-bindingDTD;
