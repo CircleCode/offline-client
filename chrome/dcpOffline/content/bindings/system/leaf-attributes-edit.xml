@@ -20,6 +20,20 @@
                 this.getChild('displayValue').inputField;
             ]]></field>
             
+            <property name="index" readonly="false">
+                <getter><![CDATA[
+                    if(this.hasAttribute('index')){
+                        return this.getAttribute('index');
+                    } else {
+                        return -1;
+                    }
+                ]]></getter>
+                <setter><![CDATA[
+                    this.setAttribute('index', val);
+                    this.reloadValue();
+                ]]></setter>
+            </property>
+
             <property name="value"
                 onget="this.getValue();"
                 onset="this.setValue(val);">
