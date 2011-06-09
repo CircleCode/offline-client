@@ -467,13 +467,18 @@
             
             <method name="reloadValue">
                 <body><![CDATA[
-                    var value = this.getValue();
-                    var menuList = this.getChild('displayValue');
-                    var nbItems = menuList.itemCount;
-                    for(var i = 0; i < nbItems; i++) {
-                        if(menuList.getItemAtIndex(i).value == value){
-                            menuList.selectedIndex = i;
-                            return;
+                    if(this.constructed){
+                        var value = this.getValue();
+                        var menuList = this.getChild('displayValue');
+                        var nbItems = menuList.itemCount;
+                        if(value){
+                            for(var i = 0; i < nbItems; i++) {
+                                var item = menuList.getItemAtIndex(i);
+                                if( (item.localName == 'menuitem') && (item.value == value) ){
+                                    menuList.selectedIndex = i;
+                                    return;
+                                }
+                            }
                         }
                     }
                 ]]></body>
@@ -483,10 +488,19 @@
                 this.getChild('attrid').textContent = this.attrid;
                 this.getChild('famid').textContent = this.doc.getProperty('fromid');
                 this.getChild('displayValue').menupopup.builder.rebuild();
+                this.constructed = true;
                 this.reloadValue();
             ]]></constructor>
             
         </implementation>
+
+        <handlers>
+            <handler event="command"><![CDATA[
+                this.setValue(this.getChild('displayValue').value);
+            ]]></handler>
+        </handlers>
+    </binding>
+
     <!-- docid attributes -->
 
     <binding id="docid-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
