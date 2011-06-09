@@ -37,7 +37,7 @@
                 <body><![CDATA[
                     try{
                         var value = this.checkValue(value);
-                        this.doc.setValue(this.attrid, value);
+                        this.doc.setValue(this.attrid, value, this.index);
                         this.reloadValue();
                         return true;
                     } catch(e){
