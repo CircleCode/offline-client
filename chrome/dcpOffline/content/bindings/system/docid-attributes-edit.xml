@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+      <!ENTITY % leaf-attributes-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.dtd" >
+      <!ENTITY separator "&#160;:&#160;" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+      %leaf-attributes-bindingDTD;
+]>
+
+<bindings id="docid-attributes-binding"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="leaf-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
+        <implementation>
+            
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue').inputField;
+            ]]></field>
+            
+            <property name="value"
+                onget="this.getValue();"
+                onset="this.setValue(val);">
+            </property>
+            
+            <method name="checkValue">
+                <parameter name="value" />
+                <body><![CDATA[
+                    return value;
+                ]]></body>
+            </method>
+            
+            <method name="setValue">
+                <parameter name="value" />
+                <body><![CDATA[
+                    try{
+                        var value = this.checkValue(value);
+                        this.doc.setValue(this.attrid, value);
+                        this.reloadValue();
+                        return true;
+                    } catch(e){
+                        Components.utils.import("resource://modules/logger.jsm");
+                        logError(e);
+                    }
+                    return false;
+                ]]></body>
+            </method>
+            
+            <method name="reloadValue">
+                <body><![CDATA[
+                    var valueNode = this.getChild('displayValue');
+                    if(valueNode){
+                        valueNode.value = this.getValue();
+                    } else {
+                        Components.utils.import("resource://modules/exceptions.jsm");
+                        throw BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                    }
+                ]]></body>
+            </method>
+            
+            <method name="setCustomValidity">
+                <parameter name="message"/>
+                <body><![CDATA[
+                    this.inputField.setCustomValidity(message);
+                    if(message){
+                        alert ("(FIXME) " + message);
+                        this.inputField.focus();
+                        //XXX: selectAll could be better
+                    }
+                ]]></body>
+            </method>
+            
+            <constructor><![CDATA[
+                var visibility = this.getAttribute('visibility');
+                if( visibility == 'S' ){
+                    this.setAttribute('disabled', true);
+                } else if( visibility == 'W' || visibility == 'O' ){
+                    this.removeAttribute('disabled', false);
+                } else {
+                    this.setAttribute('collapsed', true);
+                }
+                this.reloadValue();
+            ]]></constructor>
+            
+        </implementation>
+        
+        <handlers>
+            <handler event="change"><![CDATA[
+                if(event.originalTarget == this.inputField){
+                    this.setValue(this.inputField.value);
+                }
+            ]]></handler>
+        </handlers>
+    </binding>
+    
+    
+  
+    
+    <!-- docid attributes -->
+    
+    <binding id="docid-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
+                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <xul:menulist editable="false" disableautoselect="true" anonid="displayValue" class="dcpValue">
+                    <xul:menupopup  datasources="profile:storage.sqlite" ref="*" querytype="storage">
+                        <xul:template>
+                            <xul:query><![CDATA[
+                                SELECT initid, title 
+                                FROM doctitles
+                                WHERE famname = :famid order by title
+                            ]]>
+                                <xul:param anonid="famid" name="famid" />
+                            </xul:query>
+                            <xul:action>
+                                <xul:menuitem uri="?" value="?initid" label="?title"/>
+                            </xul:action>
+                        </xul:template>
+                    </xul:menupopup>
+                </xul:menulist>
+            </xul:hbox>
+        </content>
+        
+        <implementation>
+            
+            <method name="reloadValue">
+                <body><![CDATA[
+                    var value = this.getValue();
+                    var menuList = this.getChild('displayValue');
+                    var nbItems = menuList.itemCount;
+                    for(var i = 0; i < nbItems; i++) {
+                        if(menuList.getItemAtIndex(i).value == value){
+                            menuList.selectedIndex = i;
+                            return;
+                        }
+                    }
+                ]]></body>
+            </method>
+             <method name="getDocid">
+                <parameter name="value" />
+                <body><![CDATA[
+                    var menuList = this.getChild('displayValue');
+                    return menuList.value;
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+            logConsole('find rela:'+this.getAttribute('relationFamily'));
+                this.getChild('famid').textContent = this.getAttribute('relationFamily');
+                this.getChild('displayValue').menupopup.builder.rebuild();
+                this.reloadValue();
+            ]]></constructor>
+            
+        </implementation>
+        <handlers>
+            <handler event="change"><![CDATA[
+                //alert('change');
+            ]]></handler>
+            <handler event="command"><![CDATA[
+           
+                this.setValue(this.getDocid());
+            ]]></handler>
+        </handlers>
+    </binding>
+    
+</bindings>
