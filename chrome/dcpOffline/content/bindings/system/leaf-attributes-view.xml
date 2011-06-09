@@ -46,8 +46,7 @@
     <binding id="text-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -55,8 +54,7 @@
     <binding id="longtext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" style="white-space:pre-line;">
                 </xul:label>
             </xul:hbox>
@@ -67,8 +65,7 @@
     <binding id="htmltext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <html:div anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -135,8 +132,7 @@
     <binding id="color-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute color">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content> 
@@ -155,8 +151,7 @@
     <binding id="int-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute int">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -164,8 +159,7 @@
     <binding id="double-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute double">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -173,8 +167,7 @@
     <binding id="money-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute money">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -182,8 +175,7 @@
     <binding id="time-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute time">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -192,8 +184,7 @@
     <binding id="date-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -206,12 +197,14 @@
             </method>
         </implementation>
     </binding>
+    
+ 
+    
     <!-- Relation attributes -->
     <binding id="docid-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -275,8 +268,7 @@
     <binding id="docid-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:grid flex="1" inherited="attrid">
                     <xul:columns anonid="columns" />
                     <xul:rows anonid="rows" />
@@ -304,8 +296,7 @@
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
             
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:grid flex="1" inherited="attrid">
                     <xul:columns anonid="columns" />
                     <xul:rows anonid="rows" />
@@ -336,8 +327,7 @@
     <binding id="enum-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -353,8 +343,7 @@
     <binding id="enum-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:grid flex="1" inherited="attrid">
                     <xul:columns anonid="columns" />
                     <xul:rows anonid="rows" />
@@ -381,8 +370,7 @@
     <binding id="file-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="fileName" class="dcpValue plain" value="FILE NOT YET IMPLEMENTED" />
             </xul:hbox>
         </content>
@@ -431,8 +419,7 @@
     <binding id="image-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label" />
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <html:div class="dcpValue">
                     <html:img class="dcpImage" anonid="imageField" />
                 </html:div>

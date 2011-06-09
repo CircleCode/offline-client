@@ -29,7 +29,15 @@ dcpDocument dcpDocFooter {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/docFooter.xml#doc-footer");
 }
-
+/***********************************************************
+        Label Attribute
+************************************************************/
+dcpDocument dcpAttributeLabel {
+    display: -moz-box;
+    -moz-box-orient: horizontal;
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/base-attributes.xml#label-attribute");
+}
 /***********************************************************
         Node Attributes (view)
 ************************************************************/
