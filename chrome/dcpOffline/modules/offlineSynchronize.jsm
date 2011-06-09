@@ -93,16 +93,23 @@ offlineSynchronize.prototype.synchronizeDomain = function(config) {
         this.recordFamilies({
             domain : domain
         });
+        var me=this;
         this.recordFamiliesBinding({
             domain : domain
         });
 
         this.pushDocuments({
-            domain : domain
+            domain : domain,
+            onComplete:function () {
+                logConsole("oncomplete", domain);
+                me.pullDocuments({
+                    domain : domain
+                });
+            }
         });
-        this.pullDocuments({
+       /* this.pullDocuments({
             domain : domain
-        });
+        });*/
     } else {
         throw new ArgException("synchronizeDomain need domain parameter");
     }
@@ -114,7 +121,7 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
         var domain = config.domain;
         var families = domain.getAvailableFamilies();
         logConsole('pull families : ');
-
+        this.callObserver('onDetailLabel',"retrieve families definition");
         var fam = null;
         for ( var i = 0; i < families.length; i++) {
             fam = families.getDocument(i);
@@ -173,6 +180,7 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
 offlineSynchronize.prototype.recordFamiliesBinding = function(config) {
 
     if (config && config.domain) {
+        this.callObserver('onDetailLabel',"retrieve families interfaces");
         var domain = config.domain;
         var bindings = domain.view().getFamiliesBindings();
         for ( var famname in bindings) {
@@ -969,6 +977,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                 }
             }
             var me = this;
+            var onComplete=config.onComplete;
             this.pushFiles({
                 domain : domain,
                 onEndPushFiles : function() {
@@ -987,10 +996,14 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {
-                            //me.callObserver('onError', me.synchroResults);
+                            me.callObserver('onError', me.synchroResults);
                             return false;
                         } else {
                             //me.callObserver('onSuccess', me.synchroResults);
+                           
+                            if (onComplete) {
+                                onComplete(); // pull documents
+                            }
                         }
                         return true;
                     } else {
