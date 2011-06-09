@@ -179,16 +179,16 @@ dcpDocument dcpAttribute[type=image],dcpDocument[mode=view] dcpAttribute[type=im
 
 
 /***********************************************************
-        Node Attributes (view)
+        Node Attributes (edit)
 ************************************************************/
 dcpDocument[mode=edit] dcpAttribute[type=tab] {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#tab-attr-edit");
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#tab-attr-view");
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=frame] {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-edit.xml#frame-attr-edit");
+        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#frame-attr-view");
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=array] {

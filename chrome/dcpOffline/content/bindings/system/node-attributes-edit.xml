@@ -15,25 +15,20 @@
     <binding id="node-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
     
     <binding id="tab-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
-        <content>
-            <xul:tab anonid="label" label=""
-                xbl:inherits="attrid"/>
-        </content>
-    </binding>
-    
-    <binding id="tabpanel-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
-        <content>
-            <xul:tabpanel xbl:inherits="attrid">
-                <xbl:children/>
-            </xul:tabpanel>
-        </content>
+        <!-- use tab-attr-view instead -->
     </binding>
     
     <binding id="frame-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
+        <!-- use frame-attr-view instead -->
+    </binding>
+
+    <binding id="array-attr-edit" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
+
+        <resources>
+            <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-system.css" />
+        </resources>
+
         <content>
-            <xul:groupbox>
-                <xul:caption anonid="label" class="dcplabel" xbl:inherits="label"/>
-                <children/>
             </xul:groupbox>
         </content>
     </binding>
