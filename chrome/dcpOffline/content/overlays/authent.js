@@ -23,11 +23,6 @@ function tryToAuthent() {
             Preferences.set("offline.user.login", param.currentLogin);
         }
         
-        Preferences.set("offline.application.rememberLogin", document.getElementById('authent.remember').checked);
-        Preferences.set("offline.application.modeOffline", param.modeOffline);
-        Preferences.set("offline.application.autoLogin", document.getElementById('authent.autoLogin').checked);
-        
-        
         document.getElementById('authent.login').disabled = true;
         document.getElementById('authent.password').disabled = true;
         document.getElementById('authent.remember').disabled = true;
@@ -50,6 +45,9 @@ function tryToAuthent() {
 
 function onAuthentSuccess() {
     Preferences.set("offline.user.applicationURL", document.getElementById('authent.applicationURL').value);
+    Preferences.set("offline.application.rememberLogin", document.getElementById('authent.remember').checked);
+    Preferences.set("offline.application.modeOffline", document.getElementById('authent.modeOffline').checked);
+    Preferences.set("offline.application.autoLogin", document.getElementById('authent.autoLogin').checked);
     applicationEvent.publish("authentSuccess");
 }
 

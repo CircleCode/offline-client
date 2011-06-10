@@ -38,18 +38,19 @@ function tryToClose() {
 
 /* Authent Method  */
 
-function initFirstAuthent() {
+function wizardInitAuthent() {
+	prepareAuthent();
     initIHM();
-    prepareAuthent();
 }
 
 function authentNextStep() {
     var translate = new StringBundle("chrome://dcpoffline/locale/wizard.properties");
-    prepareAuthent();
+    document.getElementById('authent.applicationURL').disabled = false;
+    document.getElementById('wizardTryToAuthent').disabled = false;
     document.getElementById('authent.login').disabled = false;
     document.getElementById('authent.password').disabled = false;
     document.getElementById('authent.remember').disabled = false;
-    document.getElementById('authent.modeOffline').disabled = false;
+    document.getElementById('authent.modeOffline').disabled = true;
     document.getElementById('authent.autoLogin').disabled = false;
     document.getElementById('authent.progressGroup').hidden = true;
     document.getElementById('theWizard').canAdvance = true;
@@ -60,10 +61,16 @@ function authentNextStep() {
 function wizardAuthent() {
     document.getElementById('authent.applicationURL').disabled = true;
     document.getElementById('wizardTryToAuthent').disabled = true;
+    document.getElementById('theWizard').canAdvance = false;
+    document.getElementById('theWizard').canRewind = false;
     tryToAuthent();
 }
 
 function prepareAuthent() {
+	Preferences.set("offline.application.rememberLogin", false);
+	Preferences.set("offline.application.modeOffline", false);
+	Preferences.set("offline.application.autoLogin", false);
+	document.getElementById('authent.modeOffline').disabled = true;
     document.getElementById('authent.applicationURL').disabled = false;
     document.getElementById('wizardTryToAuthent').disabled = false;
     document.getElementById('theWizard').canAdvance = false;
@@ -71,8 +78,13 @@ function prepareAuthent() {
 
 /* Synchro Method  */
 
+function initSynchroElement() {
+	refreshDomain(); 
+	initSynchronize();
+	document.getElementById('theWizard').canRewind = false;
+}
+
 function refreshDomain() {
-    logConsole("refreshDomain");
     document.getElementById("domainPopupList").builder.rebuild();
     document.getElementById('theWizard').canAdvance = false;
     document.getElementById("domainList").selectedIndex = 1;
@@ -91,6 +103,8 @@ function changeDomain(value) {
 function wizardSynchronize() {
     document.getElementById('theWizard').canAdvance = false;
     document.getElementById("wizardTryToSynchronize").disabled = true;
+    document.getElementById('theWizard').canAdvance = false;
+    document.getElementById('theWizard').canRewind = false;
     tryToSynchronize();
 }
 
