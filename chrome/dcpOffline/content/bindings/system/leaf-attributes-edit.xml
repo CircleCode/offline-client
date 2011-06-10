@@ -279,7 +279,7 @@
                         var value = this.checkValue(value);
 
                         //copy file and store it
-                        aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                        var aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
                         aFile.initWithPath(value);
                         fileManager.saveFile({
                             initid: this.doc.getInitid(),
@@ -287,9 +287,9 @@
                             writable: true,
                             basename: aFile.leafName,
                             aFile: aFile,
-                            forceCopy: true
+                            forceCopy: true,
+                            index: this.index
                         });
-                        this.doc.setValue(this.attrid, aFile.leafName, this.index);
 
                         this.reloadValue();
                         return true;
@@ -304,7 +304,7 @@
             <method name="checkValue">
                 <parameter name="value" />
                 <body><![CDATA[
-                    aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                    var aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
                     aFile.initWithPath(value);
                     if(aFile.exists()){
                         return value;
@@ -393,6 +393,11 @@
             <field name="inputField"><![CDATA[
                 this.getChild('imageField');
             ]]></field>
+
+            <field name="filters">
+                var nsIFilePicker = Components.interfaces.nsIFilePicker;
+                nsIFilePicker.filterAll | nsIFilePicker.filterImages;
+            </field>
             
             <method name="reloadValue">
                 <body><![CDATA[
