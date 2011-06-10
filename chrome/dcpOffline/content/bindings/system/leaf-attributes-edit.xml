@@ -250,6 +250,7 @@
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
                 <xul:label anonid="displayValue" class="dcpValue text-link"/>
                 <xul:button anonid="modifyButton" label="&attribute.file.button.modify;"/>
+                <xul:button anonid="deleteButton" tooltiptext="&attribute.file.button.delete;"/>
             </xul:hbox>
         </content>
         
@@ -263,6 +264,60 @@
                 this.getChild('modifyButton');
             ]]></field>
             
+            <field name="deleteButton"><![CDATA[
+                this.getChild('deleteButton');
+            ]]></field>
+
+            <field name="filters">
+                var nsIFilePicker = Components.interfaces.nsIFilePicker;
+                nsIFilePicker.filterAll | nsIFilePicker.filterApps;
+            </field>
+
+            <method name="setValue">
+                <!-- value is a path -->
+                <parameter name="value" />
+                <body><![CDATA[
+                    try{
+                        Components.utils.import("resource://modules/fileManager.jsm");
+
+                        var value = this.checkValue(value);
+
+                        //copy file and store it
+                        aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                        aFile.initWithPath(value);
+                        fileManager.saveFile({
+                            initid: this.doc.getInitid(),
+                            attrid: this.attrid,
+                            writable: true,
+                            basename: aFile.leafName,
+                            aFile: aFile,
+                            forceCopy: true
+                        });
+                        this.doc.setValue(this.attrid, aFile.leafName, this.index);
+
+                        this.reloadValue();
+                        return true;
+                    } catch(e){
+                        Components.utils.import("resource://modules/logger.jsm");
+                        logError(e);
+                    }
+                    return false;
+                ]]></body>
+            </method>
+
+            <method name="checkValue">
+                <parameter name="value" />
+                <body><![CDATA[
+                    aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+                    aFile.initWithPath(value);
+                    if(aFile.exists()){
+                        return value;
+                    } else {
+                        throw new attrCheckException("the file '" + value +"' does not exists");
+                    }
+                ]]></body>
+            </method>
+
             <method name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
@@ -279,31 +334,20 @@
                 ]]></body>
             </method>
             
-            <method name="changeFile">
+            <method name="chooseFile">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
                     
                     const nsIFilePicker = Components.interfaces.nsIFilePicker;
 
-                    var fp = Components.classes["@mozilla.org/filepicker;1"]
-                                   .createInstance(nsIFilePicker);
+                    var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
                     fp.init(window, "Choose a file", nsIFilePicker.modeOpen); // TODO: dialog title
-                    fp.appendFilters(nsIFilePicker.filterAll | nsIFilePicker.filterApps);
+                    fp.appendFilters(this.filters);
                     
                     var rv = fp.show();
                     if (rv == nsIFilePicker.returnOK) {
                         try{
-                            var aFile = fp.file;
-                            fileManager.saveFile({
-                                initid: this.doc.getInitid(),
-                                attrid: this.attrid,
-                                writable: true,
-                                basename: aFile.leafName,
-                                aFile: aFile,
-                                forceCopy: true
-                            });
-                            this.setValue(aFile.leafName);
-                            this.reloadValue();
+                            this.setValue(fp.file.path);
                         } catch(e){
                             alert(e);
                         }
@@ -326,7 +370,7 @@
         <handlers>
             <handler event="click" button="0"><![CDATA[
                 if(event.originalTarget == this.modifyButton){
-                    this.changeFile();
+                    this.chooseFile();
                 } else 
                 if(event.originalTarget == this.inputField){
                     this.openFile();
@@ -335,7 +379,7 @@
         </handlers>
     </binding>
     
-    <binding id="image-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+    <binding id="image-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#file-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
                 <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
@@ -343,9 +387,8 @@
                 <html:div class="dcpValue">
                     <html:img class="dcpImage" anonid="imageField" />
                 </html:div>
-                <xul:vbox pack="end">
-                    <xul:button anonid="modifyButton" label="&attribute.file.button.modify;"/>
-                </xul:vbox>
+                <xul:button anonid="modifyButton" label="&attribute.image.button.modify;"/>
+                <xul:button anonid="deleteButton" tooltiptext="&attribute.image.button.delete;"/>
             </xul:hbox>
         </content>
         
@@ -353,10 +396,6 @@
             
             <field name="inputField"><![CDATA[
                 this.getChild('imageField');
-            ]]></field>
-            
-            <field name="modifyButton"><![CDATA[
-                this.getChild('modifyButton');
             ]]></field>
             
             <method name="reloadValue">
@@ -379,61 +418,7 @@
                 ]]></body>
             </method>
             
-            <method name="changeFile">
-                <body><![CDATA[
-                    Components.utils.import("resource://modules/fileManager.jsm");
-                    
-                    const nsIFilePicker = Components.interfaces.nsIFilePicker;
-
-                    var fp = Components.classes["@mozilla.org/filepicker;1"]
-                                   .createInstance(nsIFilePicker);
-                    fp.init(window, "Choose an image", nsIFilePicker.modeOpen); // TODO: dialog title
-                    fp.appendFilters(nsIFilePicker.filterAll | nsIFilePicker.filterImage);
-                    
-                    var rv = fp.show();
-                    if (rv == nsIFilePicker.returnOK) {
-                        try{
-                            var aFile = fp.file;
-                            fileManager.saveFile({
-                                initid: this.doc.getInitid(),
-                                attrid: this.attrid,
-                                writable: true,
-                                basename: aFile.leafName,
-                                aFile: aFile,
-                                forceCopy: true
-                            });
-                            this.setValue(aFile.leafName);
-                            this.reloadValue();
-                        } catch(e){
-                            alert(e);
-                        }
-                    }
-                ]]></body>
-            </method>
-            
-            <method name="openFile">
-                <body><![CDATA[
-                    Components.utils.import("resource://modules/fileManager.jsm");
-                    fileManager.openFile({
-                        initid: this.doc.getInitid(),
-                        attrid: this.attrid,
-                        index:this.index
-                    });
-                ]]></body>
-            </method>
-            
         </implementation>
-        
-        <handlers>
-            <handler event="click" button="0"><![CDATA[
-                if(event.originalTarget == this.modifyButton){
-                    this.changeFile();
-                } else 
-                if(event.originalTarget == this.inputField){
-                    this.openFile();
-                }
-            ]]></handler>
-        </handlers>
     </binding>
     
     <!-- enum attributes -->

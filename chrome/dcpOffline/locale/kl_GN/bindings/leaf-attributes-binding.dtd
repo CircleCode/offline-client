@@ -1,1 +1,4 @@
 <!ENTITY  attribute.file.button.modify                      "attribute.file.button.modify">
+<!ENTITY  attribute.file.button.delete                      "attribute.file.button.delete">
+<!ENTITY  attribute.image.button.modify                     "attribute.image.button.modify">
+<!ENTITY  attribute.image.button.delete                     "attribute.image.button.delete">
