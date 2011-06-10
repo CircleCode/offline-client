@@ -1,34 +1,23 @@
-const
-Cc = Components.classes;
-const
-Ci = Components.interfaces;
-const
-Cu = Components.utils;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/storageManager.jsm");
 Cu.import("resource://modules/utils.jsm");
 Cu.import("resource://modules/docManager.jsm");
 
-var EXPORTED_SYMBOLS = [ "fileManager" ];
-const
-STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
-const
-STATE_STOP = Components.interfaces.nsIWebProgressListener.STATE_STOP;
-const
-PATH_FILES = "Files";
+var EXPORTED_SYMBOLS = ["fileManager"];
+const STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
+const STATE_STOP = Components.interfaces.nsIWebProgressListener.STATE_STOP;
+const PATH_FILES = "Files";
 
-const
-PERMISSIONS_WRITABLE = 0660;
-const
-PERMISSIONS_NOT_WRITABLE = 0440;
+const PERMISSIONS_WRITABLE = 0660;
+const PERMISSIONS_NOT_WRITABLE = 0440;
 
-const
-TABLE_FILES = 'files';
-const
-STATUS_DONE = 1;
-const
-STATUS_UNDEF = -1;
+const TABLE_FILES = 'files';
+const STATUS_DONE = 1;
+const STATUS_UNDEF = -1;
 
 var filesRoot = Services.dirsvc.get("ProfD", Ci.nsILocalFile);
 filesRoot.append(PATH_FILES);
@@ -37,7 +26,7 @@ var fileDwldProgress = {};
 
 var fileManager = {
     saveFile : function saveFile(config) {
-
+        
         if (config && config.initid && config.attrid && config.basename
                 && config.aFile) {
             try {
@@ -47,12 +36,25 @@ var fileManager = {
                 if (!config.hasOwnProperty('index')) {
                     config.index = -1;
                 }
-
-                var destDir = filesRoot.clone();
-                destDir.append(config.initid);
-                destDir.append(config.attrid);
-                if (config.index >= 0)
-                    destDir.append(config.index);
+                
+                var index = config.index;
+                
+                var destDir = null;
+                try {
+                    destDir = this.getFile(config).parent;
+                } catch(e) {
+                    config.uuid = config.uuid || Components.classes["@mozilla.org/uuid-generator;1"]
+                            .getService(Components.interfaces.nsIUUIDGenerator)
+                            .generateUUID()
+                            .toString()
+                            .slice(1,-1);
+                    
+                    destDir = filesRoot.clone();
+                    destDir.append(config.initid);
+                    destDir.append(config.attrid);
+                    destDir.append(config.uuid);
+                    config.index = config.uuid;
+                }
 
                 if (config.aFile) {
                     // verify file is in correct dir
@@ -61,11 +63,11 @@ var fileManager = {
                         try {
                             if (config.forceCopy) {
                                 config.aFile.copyTo(destDir, config.basename);
-                                 config.aFile = Components.classes["@mozilla.org/file/local;1"].
-                                 createInstance(Components.interfaces.nsILocalFile);
-                                 config.aFile.initWithPath(destDir.path);
-                                 config.aFile.append(config.basename);
-                                 config.newFile=true;
+                                config.aFile = Components.classes["@mozilla.org/file/local;1"]
+                                        .createInstance(Components.interfaces.nsILocalFile);
+                                config.aFile.initWithPath(destDir.path);
+                                config.aFile.append(config.basename);
+                                config.newFile = true;
                             } else {
                                 config.aFile.moveTo(destDir, config.basename);
                             }
@@ -76,10 +78,20 @@ var fileManager = {
                         }
                     }
                     // logConsole('save in '+destDir.path);
-                    config.aFile.permissions = config.writable ? PERMISSIONS_WRITABLE
+                    config.aFile.permissions = config.writable
+                            ? PERMISSIONS_WRITABLE
                             : PERMISSIONS_NOT_WRITABLE;
                     // set ref in database
-                    storeFile(config);
+                    try{
+                        storeFile(config);
+                        if( (config.uuid) && (config.attrid != 'icon') ){
+                            var localDoc = docManager.getLocalDocument({initid: config.initid});
+                            localDoc.setValue(config.attrid, config.uuid, index);
+                            localDoc.save({force: true});
+                        }
+                    } catch(e){
+                        throw e;
+                    }
                 }
             } catch (e) {
                 logError(e);
@@ -89,6 +101,31 @@ var fileManager = {
         } else {
             logError('saveFile : missing parameters');
             // logConsole('error', config);
+        }
+    },
+
+    deleteFile : function(config) {
+        if (config && config.initid && config.attrid) {
+            if (!config.hasOwnProperty('index')) {
+                config.index = -1;
+            }
+
+            var destDir = filesRoot.clone();
+            destDir.append(config.initid);
+            destDir.append(config.attrid);
+            if (config.index >= 0)
+                destDir.append(config.index);
+
+            while (destDir.directoryEntries.hasMoreElements()) {
+                var currentFile = destDir.directoryEntries.getNext();
+                currentFile.QueryInterface(Components.interfaces.nsILocalFile)
+                        .remove(false);
+            }
+
+            dropFile(config);
+
+        } else {
+            logError('deleteFile : missing parameters');
         }
     },
 
@@ -113,6 +150,7 @@ var fileManager = {
             // logConsole('error', config);
         }
     },
+    
     /**
      * init recorddate when files were downloaded
      */
@@ -154,9 +192,12 @@ var fileManager = {
         var file = Components.classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
         var localDoc = null;
+        var file = null;
+        
         for ( var i = 0; i < r.length; i++) {
             file.initWithPath(r[i].path);
             mdate = utils.toIso8601(new Date(file.lastModifiedTime));
+            
             if (mdate != r[i].modifydate) {
                 storageManager
                         .execQuery({
@@ -180,6 +221,7 @@ var fileManager = {
                 } catch (e) {
                     // nothing may be not in good domain
                     // normaly never go here
+                    logError(e);
                 }
             }
         }
@@ -191,6 +233,10 @@ var fileManager = {
             } else if (config.index === null) {
                 config.index = -1;
             }
+            
+            config.index = docManager.getLocalDocument({initid: config.initid})
+                    .getValue(config.attrid, config.index);
+            
             var r = storageManager
                     .execQuery({
                         query : 'SELECT path from '
@@ -351,7 +397,6 @@ function storeFile(config) {
                 rdate=utils.toIso8601(new Date(2000));
             }
             storageManager
-              
                     .execQuery({
                         query : 'insert into '
                                 + TABLE_FILES
@@ -369,8 +414,27 @@ function storeFile(config) {
                         }
                     });
         }
+    } else {
+        throw(new ArgException("storeFile : missing arguments"));
     }
-}
+};
+
+function dropFile(config) {
+    if (config && config.initid && config.attrid
+            && config.hasOwnProperty('index')) {
+        storageManager
+                .execQuery({
+                    query : 'DELETE FROM '
+                            + TABLE_FILES
+                            + 'WHERE initid=:initid AND attrid=:attrid AND index=:index',
+                    params : {
+                        initid : config.initid,
+                        attrid : config.attrid,
+                        index : config.index,
+                    }
+                });
+    }
+};
 /*
  * function retrieveFile(config) { if (config && config.url) { if
  * (!config.aFile) { config.aFile = createTmpFile(); } // FIXME: download file
@@ -384,7 +448,7 @@ function createTmpFile() {
     aFile.append("suggestedName.tmp");
     aFile.createUnique(aFile.NORMAL_FILE_TYPE, 0666);
     return aFile;
-}
+};
 /*
  * function addPending(config) { if (config && config.initid && config.attrid &&
  * config.index) { fileDwldProgress[initid] = fileDwldProgress[initid] || {};
