@@ -106,11 +106,8 @@ dcpDocument dcpAttribute[type=array] grid {
     color: -moz-fieldtext;
 }
 
-<<<<<<< HEAD
 dcpDocument dcpAttribute[nolabel=true] .dcpLabel,
 dcpDocument dcpAttribute[nolabel=true] .dcpSeparator,
-=======
->>>>>>> b3eab2f0955e37dd15e04651e5d0e5ce429cc8b0
 dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
 dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
 dcpDocument dcpAttribute[type=array] grid dcpAttribute .dcpLabel,

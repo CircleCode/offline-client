@@ -202,7 +202,6 @@
             <children />
         </content>
         <implementation>
-            <<<<<<< HEAD
             <field name="rows" readonly="true"> this.getChild('rows');</field>
             <field name="columns" readonly="true"> this.getChild('columns');</field>
             <field name="childAttributes" readonly="true"> this.getElementsByTagName('dcpAttribute')</field>
