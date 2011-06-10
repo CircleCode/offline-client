@@ -87,14 +87,15 @@
             </method>
             
             <constructor><![CDATA[
-                var visibility = this.getAttribute('visibility');
-                if( visibility == 'S' ){
+                 var visibility = this.getAttribute('visibility');
+                 if (visibility == 'S') {
                     this.setAttribute('disabled', true);
-                } else if( visibility == 'W' || visibility == 'O' ){
+                 } else if( visibility == 'W' || visibility == 'O' ){
                     this.removeAttribute('disabled', false);
-                } else {
+                 } else {
                     this.setAttribute('collapsed', true);
-                }
+                 }
+                 
                 this.reloadValue();
             ]]></constructor>
             
@@ -114,8 +115,7 @@
     <binding id="text-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute text">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="false" xbl:inherits="disabled"/>
             </xul:hbox>
         </content>
@@ -124,8 +124,8 @@
     <binding id="longtext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute longtext">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+            
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="true" xbl:inherits="disabled"/>
             </xul:hbox>
         </content>
@@ -135,8 +135,7 @@
         <content>
             <xul:vbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
                 <xul:hbox>
-                    <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                    <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 </xul:hbox>
                 <xul:iframe anonid="displayValue" src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html" class="dcpValue" flex="1"/>
             </xul:vbox>
@@ -175,8 +174,7 @@
     <binding id="int-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute numeric int">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:textbox anonid="displayValue" class="dcpValue" xbl:inherits="disabled"/>
             </xul:hbox>
         </content>
@@ -202,8 +200,7 @@
     <binding id="double-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:textbox anonid="displayValue" class="dcpValue" xbl:inherits="disabled"/>
             </xul:hbox>
         </content>
@@ -234,8 +231,7 @@
     <binding id="date-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:datepicker anonid="displayValue" class="dcpValue" value=""/>
             </xul:hbox>
         </content>
@@ -426,8 +422,7 @@
     <binding id="enum-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute file">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:menulist anonid="displayValue" class="dcpValue">
                     <xul:menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
                         <xul:template>
@@ -486,6 +481,6 @@
         </handlers>
     </binding>
 
-   
+    
     
 </bindings>
