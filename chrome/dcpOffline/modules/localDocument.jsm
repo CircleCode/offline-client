@@ -251,7 +251,7 @@ localDocument.prototype = {
                 }
             });
             
-            if (r.length > 1) {
+            if (r.length > 0) {
                 return r[0].icon;
             }
             return null;

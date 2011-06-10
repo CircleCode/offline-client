@@ -64,10 +64,16 @@ docManagerSingleton.prototype = {
 	 * @access public
 	 * @param config
 	 *     initid 
+	 *     name
 	 * @return localDocument
 	 */
 	getLocalDocument : function(config) {
+	    if (config && config.name) {
+	        config.initid=this.nameToInitid(config.name);
+	        if (! config.initid) return null;
+	    }
 		if (config && config.initid) {
+		    try {
 			if (!config.domain) {
 				config.domain = this.getActiveDomain();
 			}
@@ -75,10 +81,27 @@ docManagerSingleton.prototype = {
 				this.initDocInstance(config);
 			}
 			return this._docInstances[config.domain][config.initid];
+		    } catch (e) {
+		        return null; // no document found
+		    }
 		} else {
 			throw "getLocalDocument :: need initid parameter";
 		}
 	},
+	
+	nameToInitid : function (name) {
+	    var r = storageManager.execQuery({
+            query : 'select initid from documents where name=:name',
+            params: {
+                name:name
+            }
+        });
+	    if (r.length > 0) {
+	        return r[0].initid;
+	    }
+	    return 0;
+	},
+	
 	/**
 	 * convert local document to server document
 	 * @access public

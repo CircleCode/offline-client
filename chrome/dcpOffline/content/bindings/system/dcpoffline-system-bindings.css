@@ -254,7 +254,12 @@ dcpDocument[mode=edit] dcpAttribute[type=enum] {
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#enum-attr-edit");
 }
 
+
 dcpDocument[mode=edit] dcpAttribute[type=docid][multiple=false] {
     -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#docid-attr-edit");
+        url("chrome://dcpoffline/content/bindings/system/docid-attributes-edit.xml#docid-attr-edit");
+}
+dcpDocument[mode=edit] dcpAttribute[type=docid][multiple=true] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docid-attributes-edit.xml#docid-multiple-attr-edit");
 }

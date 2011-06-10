@@ -82,6 +82,10 @@ dcpDocument dcpDocFooter {
     width: 100%;
 }
 
+dcpDocument dcpAttribute[type=docid] image {
+    width:20px;
+    height:20px;
+}
 
 dcpDocument dcpAttribute[type=array] grid {
     /*border-top-width: 2px;
@@ -102,6 +106,8 @@ dcpDocument dcpAttribute[type=array] grid {
     color: -moz-fieldtext;
 }
 
+dcpDocument dcpAttribute[nolabel=true] .dcpLabel,
+dcpDocument dcpAttribute[nolabel=true] .dcpSeparator,
 dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
 dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
 dcpDocument dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
