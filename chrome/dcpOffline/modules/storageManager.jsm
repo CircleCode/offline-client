@@ -592,7 +592,7 @@ var storageManager = {
                                 if(Array.isArray(value)){
                                     value = JSON.stringify(value);
                                 } else {
-                                    throw "value is not an array for " + attrId + " which is marked as multiple";
+                                    throw "value '+JSON.stringify(value)+' is not an array for " + attrId + " which is marked as multiple";
                                 }
                             	}
                             } else {
