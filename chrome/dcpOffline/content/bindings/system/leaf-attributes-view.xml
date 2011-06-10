@@ -209,6 +209,8 @@
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
+                <html:div>
+                <html:img anonid="docIcon" class="dcpIcon" /></html:div>
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
         </content>
@@ -255,6 +257,11 @@
               var rdoc=docManager.getLocalDocument({initid:this.docid});
               if (rdoc) {
                 valueNode.classList.add('link');
+                var oicon=this.getChild("docIcon");
+                var icon=rdoc.getIcon();
+                if (icon) {
+                    oicon.src='file://'+icon;
+                }
               }
             } catch (e) {}
             
@@ -330,7 +337,7 @@
     <!-- Enum attributes -->
     <binding id="enum-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue" />
             </xul:hbox>
@@ -346,7 +353,7 @@
     </binding>
     <binding id="enum-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:grid flex="1" inherited="attrid">
                     <xul:columns anonid="columns" />

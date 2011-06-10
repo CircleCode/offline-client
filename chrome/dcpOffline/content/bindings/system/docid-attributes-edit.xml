@@ -17,6 +17,7 @@
                 <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
                 <xul:menulist editable="false" disableautoselect="true" anonid="displayValue" class="dcpValue">
                     <xul:menupopup anonid="queryList" datasources="profile:storage.sqlite" ref="*" querytype="storage">
+                        <xul:menuitem anonid="choose" value="" class="dcpChooseDocid" label="choose document" />
                         <xul:template>
                             <xul:query><![CDATA[
                                 SELECT initid, title 
@@ -37,13 +38,14 @@
         <implementation>
             <method name="reloadValue">
                 <body><![CDATA[
+                  if (this.constructed) {
                     var value = this.getDocId();
                     if (! value) value=this.getValue();
                     var menuList = this.getChild('displayValue');
                     var nbItems = menuList.itemCount;
                     for(var i = 0; i < nbItems; i++) {
-                    
-                        if(menuList.getItemAtIndex(i).value == value){
+                        var item = menuList.getItemAtIndex(i);
+                        if( (item.localName == 'menuitem') && (item.value == value) ){
                             menuList.selectedIndex = i;
                             break;
                         }
@@ -59,6 +61,13 @@
                     
                           menuList.image='file://'+icon;
                     }
+                  }
+                ]]></body>
+            </method>
+            <method name="unSelect">
+                <body><![CDATA[
+                    var menuList = this.getChild('displayValue');
+                    menuList.selectedIndex=0;
                 ]]></body>
             </method>
             <method name="getDocId">
@@ -77,9 +86,14 @@
               if (this.getAttribute('relationFamily')) {
                 this.getChild('famid').textContent = this.getAttribute('relationFamily');
                 this.getChild('filterid').textContent = this.getValue();
-                this.getChild('displayValue').menupopup.builder.rebuild();
+                this.getChild('displayValue').menupopup.builder.rebuild(); 
+                this.constructed = true;
+                if (this.getAttribute('relationFamily')) {
+                    var choose=this.getChild('choose');
+                    choose.label='choose '+docManager.getFamilyTitle({name:this.getAttribute('relationFamily')});
+                }
                 this.reloadValue();
-              }
+              } 
             ]]></constructor>
         </implementation>
         <handlers>
@@ -99,7 +113,7 @@
             <handler event="command"><![CDATA[
               if (this.getAttribute("noset") != "true") {
                 this.setValue(this.getDocId());
-                } else {
+              } else {
                 this.reloadValue();
               }
             ]]></handler>
@@ -117,7 +131,7 @@
                     <dcpAttribute anonid="selector" xbl:inherits="attrid,label,relationFamily,visibility,type" nolabel="true" noset="true"
                         multiple="false" />
                 </xul:vbox>
-                 <xul:button anonid="clearSelection" label="Clear selection" />
+                 <xul:button anonid="clearSelection" disabled="true" label="Clear selection" />
                 </xul:hbox>
             </xul:hbox>
         </content>
@@ -125,25 +139,41 @@
            <field name="clearSelection"><![CDATA[
                 this.getChild('clearSelection');
             ]]></field>
+           <field name="multiBox"><![CDATA[
+                this.getChild('multiBox');
+            ]]></field>
          <method name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/formater.jsm");
             
             var docids=this.getValue();
-            var olistbox=this.getChild("multiBox");
+            var olistbox=this.multiBox;
             while (olistbox.getRowCount() > 0) {
                 olistbox.removeItemAt(0);
             }
             var ltitle;
             for (var i=0;i< docids.length;i++) {
                 ltitle=formater.getDocumentTitle({initid:docids[i]});
-               
                 olistbox.appendItem(ltitle, docids[i]);
             }
             olistbox.setAttribute('rows', docids.length);
                 ]]></body>
             </method>
             
+         <method name="getValues">
+                <body><![CDATA[
+                       var values=[];
+                       var olistbox=this.multiBox;
+                       var nbRows=olistbox.getRowCount();
+                       logConsole('xcount', nbRows);
+                       for (var i=0;i<nbRows;i++) {
+                          if (olistbox.getItemAtIndex(i).value) {
+                            values.push(olistbox.getItemAtIndex(i).value);
+                            }
+                       }
+                       return values;
+                ]]></body>
+            </method>
         </implementation>
           <handlers>
             <handler event="change"><![CDATA[
@@ -151,7 +181,28 @@
             ]]></handler>
              <handler event="click" button="0"><![CDATA[
                 if(event.originalTarget == this.clearSelection){
-                    alert('clear');
+                  
+                    
+                    var olistbox=this.multiBox;
+                    
+                    var sel=this.getChild('selector');
+                    sel.unSelect();
+                    var sels=olistbox.selectedItems;
+                    while (olistbox.selectedItems.length > 0) {
+                       olistbox.removeItemAt(olistbox.getIndexOfItem(olistbox.selectedItems[0]));
+                    }
+                    this.setValue(this.getValues());
+                }
+            ]]></handler>
+            
+            <handler event="select"><![CDATA[
+                if(event.originalTarget == this.multiBox){
+                   var nbRows=this.multiBox.selectedCount;
+                   if (nbRows > 0) {
+                     this.clearSelection.disabled=false;
+                   } else {
+                     this.clearSelection.disabled=true;
+                   }
                 }
             ]]></handler>
             <handler event="command"><![CDATA[
@@ -159,35 +210,30 @@
                logConsole('sel', sel.tagName);
                var newDocumentId=sel.getDocId();
                
-               var olistbox=this.getChild("multiBox");
-               var nbRows=olistbox.getRowCount();
-               var isAlreadySet=false;
-               for (var i=0;i<nbRows;i++) {
-                  if (olistbox.getItemAtIndex(i).value == newDocumentId) {
-                    isAlreadySet=true;
-                    break;
-                  }
-               }
-               if (! isAlreadySet) {
-                   var newtitle=sel.getDocTitle();
-                   /*
-                   var newItem=olistbox.appendItem(newtitle, newDocumentId);
-                   olistbox.setAttribute('rows', olistbox.getRowCount());
-                   logConsole('sel', newDocumentId);
-                   logConsole('selindex', olistbox.getIndexOfItem(newItem));
-                    // alert('the command change');
-                    */
-                   var values=[];
+               if (newDocumentId > 0) {
+                   var olistbox=this.getChild("multiBox");
                    var nbRows=olistbox.getRowCount();
-                   logConsole('xcount', nbRows);
+                   var isAlreadySet=false;
                    for (var i=0;i<nbRows;i++) {
-                      if (olistbox.getItemAtIndex(i).value) {
-                        values.push(olistbox.getItemAtIndex(i).value);
-                        }
+                      if (olistbox.getItemAtIndex(i).value == newDocumentId) {
+                        isAlreadySet=true;
+                        break;
+                      }
                    }
-                   values.push(newDocumentId);
-                  
-                   this.setValue(values);
+                   if (! isAlreadySet) {
+                       var newtitle=sel.getDocTitle();
+                       /*
+                       var newItem=olistbox.appendItem(newtitle, newDocumentId);
+                       olistbox.setAttribute('rows', olistbox.getRowCount());
+                       logConsole('sel', newDocumentId);
+                       logConsole('selindex', olistbox.getIndexOfItem(newItem));
+                        // alert('the command change');
+                        */
+                       var values=this.getValues();
+                       values.push(newDocumentId);
+                      
+                       this.setValue(values);
+                    }
                 }
             ]]></handler>
         </handlers>
