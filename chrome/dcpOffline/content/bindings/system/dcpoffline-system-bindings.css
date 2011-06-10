@@ -267,3 +267,15 @@ dcpDocument[mode=edit] dcpAttribute[type=array] dcpAttribute[type=docid][multipl
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/docid-attributes-edit.xml#docid-multiple2-attr-edit");
 }
+/*
+dcpDocument[mode=edit] dcpAttribute[visibility=I] vbox,
+dcpDocument[mode=edit] dcpAttribute[visibility=I] vbox,
+dcpDocument[mode=edit] dcpAttribute[visibility=R] vbox,
+dcpDocument[mode=edit] dcpAttribute[visibility=H] vbox,
+dcpDocument[mode=edit] dcpAttribute[visibility=R] hbox,
+dcpDocument[mode=edit] dcpAttribute[visibility=H] hbox {
+    visibility:collapse;
+}
+*/
+
+
