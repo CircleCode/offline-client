@@ -118,17 +118,18 @@ dcpDocument dcpAttribute[type=array] grid .header {
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button,
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button{
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button {
     min-width: 0;
     min-height: 0;
     -moz-box-pack: center;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.delete{
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.delete {
     list-style-image: url("chrome://dcpoffline/content/images/delete_table_row-16.png");
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button.add{
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button.add,
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.add {
     list-style-image: url("chrome://dcpoffline/content/images/insert_table_row-16.png");
 }
 /***********************************************************

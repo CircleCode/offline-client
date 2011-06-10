@@ -64,39 +64,53 @@
             </field>
             
             <method name="insertNewRow">
-                <parameter name="index"/>
+                <parameter name="rowIndex"/>
                 <parameter name="noReindex"/>
                 <body><![CDATA[
-                    if(isNaN(index)){
-                        index = this.rows.childElementCount;
-                    } else {
-                        index++;//so that we go after head
+                    if(rowIndex === undefined){
+                        rowIndex = this.rows.childElementCount-1;
+                        // -1 for removing header
                     }
-                    if(index < this.rows.childElementCount){
-                        alert('(FIXME) rows can currently only be inserted');
+                    if(isNaN(rowIndex)){
+                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is not a number"));
+                    } else {
+                        rowIndex = rowIndex-0; //remember that all parameters are string...
+                        var indexInGrid = rowIndex+1; //so that we go after head
+                    }
+                    if(indexInGrid > this.rows.childElementCount){
+                        alert(indexInGrid + " VS " + this.rows.childElementCount);
+                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + " is too high (there are "+this.rows.childElementCount+" rows in this grid)"));
+                    } else if(indexInGrid < 1){
+                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is too low"));
                     }
                     
                     var currentRow = document.createElement('dcpRow');
-                    currentRow.setAttribute('index', index-1);
+                    currentRow.setAttribute('index', rowIndex);
                     
                     for (var i = 0; i < this.childAttributes.length; ++i) {
                         var attributeNode = this.childAttributes[i];
                         
                         var currentAttribute = attributeNode.cloneNode(true);
                         currentAttribute.setAttribute('flex',1);
-                        currentAttribute.setAttribute('index', index-1);
+                        currentAttribute.setAttribute('index', rowIndex);
                         
                         currentRow.appendChild(currentAttribute);
+                        
+                        if(this.constructed){
+                            //insert empty value at rowIndex position, only if insertion occurs after construction
+                            var attrid = currentAttribute.getAttribute('attrid');
+                            
+                            var value = this.doc.getValue(attrid);
+                            value.splice(rowIndex, 0, '');
+                        
+                            this.doc.setValue(attrid, value);
+                        }
                     }
                     
-                    if(index >= this.rows.childElementCount){
-                        this.rows.appendChild(currentRow);
-                    } else {
-                        this.rows.insertBefore(currentRow, this.rows.childNodes[index]);
-                    }
+                    this.rows.insertBefore(currentRow, this.rows.childNodes[indexInGrid-1].nextSibling); // ==insertAfter or append
                     
                     if(! noReindex){
-                        this.reindexRows(index-1);
+                        this.reindexRows(rowIndex);
                     }
                     
                 ]]></body>
@@ -118,8 +132,6 @@
                         var indexInGrid = rowIndex+1; //so that we go after head
                     }
                     if(indexInGrid > this.rows.childElementCount-1){
-                        alert("indexInGrid: "+indexInGrid);
-                        alert("this.rows.childElementCount-1: "+this.rows.childElementCount-1);
                         throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + " is too high (there are "+this.rows.childElementCount+" rows in this grid)"));
                     } else if(indexInGrid < 1){
                         throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + "is too low"));
@@ -134,14 +146,10 @@
                     for (var i = 0; i < this.childAttributes.length; ++i) {
                         var attrid = this.childAttributes[i].getAttribute('attrid');
                         
-                        logConsole("value of ["+attrid+"] before splice :", this.doc.getValue(attrid));
-                        
                         var value = this.doc.getValue(attrid);
                         value.splice(rowIndex,1)
                         
                         this.doc.setValue(attrid, value);
-                        
-                        logConsole("value of ["+attrid+"] after splice :", this.doc.getValue(attrid));
                     }
                     
                     this.rows.removeChild(row);
@@ -212,6 +220,8 @@
                 }
                 
                 //this.reindexRows();
+                
+                this.constructed = true;
                 
             ]]></constructor>
         </implementation>
@@ -309,6 +319,7 @@
             
             <xul:hbox class="array-row-tools">
                 <xul:button anonid="button-delete" class="delete" tooltiptext="&array.row.tools.delete;"/>
+                <xul:button anonid="button-add" class="add" tooltiptext="&array.row.tools.add;"/>
             </xul:hbox>
             
         </content>
@@ -345,6 +356,9 @@
                 switch(event.originalTarget){
                     case this.getChild('button-delete') :
                         this.array.deleteRow(this.index);
+                        break;
+                    case this.getChild('button-add') :
+                        this.array.insertNewRow(this.index);
                         break;
                 }
             ]]></handler>
