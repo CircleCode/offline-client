@@ -89,6 +89,34 @@ docManagerSingleton.prototype = {
 		}
 	},
 	
+	
+	/**
+     * get document from local database
+     * @access public
+     * @param config
+     *     initid 
+     *     name
+     * @return localDocument
+     */
+	getFamilyTitle : function(config) {
+	    
+	    if (config && config.name) {
+	        var r=storageManager
+	        .execQuery({
+	            query : "select title from families where name=:name",
+	            params:{
+	                name:config.name
+	            }
+	        });
+	        if (r.length > 0) {
+	            return r[0].title;
+	        }
+	    } else {
+	        throw "getFamilyTitle :: need name parameter";
+	    }
+	    return 'no family title';
+	},
+	
 	nameToInitid : function (name) {
 	    var r = storageManager.execQuery({
             query : 'select initid from documents where name=:name',

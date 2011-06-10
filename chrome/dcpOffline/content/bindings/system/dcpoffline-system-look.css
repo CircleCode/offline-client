@@ -82,6 +82,10 @@ dcpDocument dcpDocFooter {
     width: 100%;
 }
 
+dcpDocument .dcpIcon {
+    width:16px;
+    height:16px;    
+}
 dcpDocument dcpAttribute[type=docid] image {
     width:20px;
     height:20px;
@@ -121,6 +125,9 @@ dcpDocument dcpAttribute[type=array] grid .header {
     -moz-appearance: treeheadercell;
     -moz-box-align: center;
     text-align: center;
+}
+dcpDocument .dcpChooseDocid {
+    font-style: italic;
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button,
