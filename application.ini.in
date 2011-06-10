@@ -4,7 +4,7 @@ Name=Dynacase-offline-client
 Version=@VERSION@
 BuildID=badef52b-0273-4ead-bcbb-0c9b3ee5ae8b
 ID=dynacase-offline-client@anakeen.com
-Copyright=Copyright (c) 2011 Anakeen
+Copyright="Copyright (c) 2011 Anakeen"
 [Gecko]
 MinVersion=2.0
 MaxVersion=2.0.*
