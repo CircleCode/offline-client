@@ -166,11 +166,20 @@
                 <body><![CDATA[
                     if(isNaN(fromRow)){
                         fromRow = 0;
+                    } else {
+                        fromRow = fromRow-0;
                     }
                     
+                    Components.utils.import("resource://modules/logger.jsm");
+                    logConsole("reindex rows from " + fromRow + " to " + this.rows.childNodes.length);
+                    
                     var rowChildren = this.rows.childNodes;
+                    
                     for (var i = fromRow+1; i < this.rows.childNodes.length; i++){
                         var row = rowChildren[i];
+                        logConsole("reindexing row at position "+i);
+                        logConsole("row index was "+row.index);
+                        logConsole("row index will be "+(i-1));
                         row.index = i-1;
                     }
                 ]]></body>
@@ -248,7 +257,7 @@
             
             <property name="index"
                 onget="return this.getAttribute('index');"
-                onset="this.setAttribute('index', val);">
+                onset="this.updateIndex(val);">
             </property>
             
             <method name="getChild">
@@ -261,10 +270,14 @@
             <method name="updateIndex">
                 <parameter name="newIndex" />
                 <body><![CDATA[
-                    this.index = newIndex;
+                    this.setAttribute('index', newIndex);
                     var children = this.childNodes;
                     for(var i = 0; i < children.length; i++){
-                        children[i].index=newIndex;
+                        try{
+                            children[i].index=newIndex;
+                        } catch(e) {
+                            alert(e);
+                        }
                     }
                 ]]></body>
             </method>
