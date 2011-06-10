@@ -20,7 +20,7 @@
     <wizardpage id="welcome">
         <label value="&wizard.initialization.welcome;" />
     </wizardpage>
-    <wizardpage pageid="firstAuthent" onpageshow="initFirstAuthent();">
+    <wizardpage pageid="firstAuthent" onpageshow="wizardInitAuthent();">
         <label value="&wizard.first.login;" />
         <vbox id="authent.mainBox">
         </vbox>
@@ -30,7 +30,7 @@
                 onclick="wizardAuthent();" />
         </hbox>
     </wizardpage>
-    <wizardpage pageid="firstSynchro" onpageshow="initSynchronize(); refreshDomain();">
+    <wizardpage pageid="firstSynchro" onpageshow="initSynchroElement()">
         <label value="&wizard.initialization.selectDomain;" />
         <menulist id="domainList" oncommand="changeDomain(this.value)">
             <menupopup id='domainPopupList' datasources="profile:storage.sqlite"
