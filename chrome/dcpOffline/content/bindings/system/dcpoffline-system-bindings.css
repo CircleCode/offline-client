@@ -254,3 +254,7 @@ dcpDocument[mode=edit] dcpAttribute[type=docid][multiple=false] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/docid-attributes-edit.xml#docid-attr-edit");
 }
+dcpDocument[mode=edit] dcpAttribute[type=docid][multiple=true] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/docid-attributes-edit.xml#docid-multiple-attr-edit");
+}
