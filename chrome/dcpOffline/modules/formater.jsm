@@ -84,7 +84,7 @@ ProtoFormater.prototype.getLocaleDate = function(isoDate) {
             var date = null;
 
             var format = '';
-            if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2} [0-9]{2}:[0-9]{2}/.test(isoDate)) {
+            if (/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}[ |T][0-9]{2}:[0-9]{2}/.test(isoDate)) {
                 date = new Date(isoDate.substring(0, 4), isoDate
                         .substring(5, 7) - 1, isoDate.substring(8, 10), isoDate
                         .substring(11, 13), isoDate.substring(14, 16), isoDate
