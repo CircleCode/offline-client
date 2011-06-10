@@ -7,8 +7,6 @@ dcpAttribute[type=menu] {
     min-height: 24px;
 }
 
-
-
 /***********************************************************
         Box model
 ************************************************************/
@@ -30,18 +28,20 @@ dcpDocument dcpAttribute {
     width: 100%;
 }
 
+dcpDocument dcpAttribute[type=array] dcpRow{
+    display: -moz-grid-line
+}
+
+dcpDocument dcpAttribute[type=array] dcpRow dcpArrayRowTools,
+dcpDocument dcpAttribute[type=array] dcpArrayTableTools{
+    display: -moz-inline-box;
+    min-width: 0;
+}
+
 dcpDocument dcpAttribute[type=frame] {
     -moz-box-orient: vertical;
 }
-/*
-dcpDocument dcpAttribute[type=frame] groupbox .groupbox-body {
-    border: 1px solid #098777;
-}
 
-dcpDocument dcpAttribute[type=frame] groupbox .groupbox-title {
-    border: 1px solid #098777;
-}
-*/
 dcpDocument dcpAttribute[type=frame] groupbox {
     width: 100%;
 }
@@ -50,7 +50,7 @@ dcpDocument[mode=edit] dcpAttribute[type=htmltext]{
     min-height: 350px;
 }
 
-dcpDocument dcpAttribute .dcpLabel { /*-moz-box-flex: 30;*/
+dcpDocument dcpAttribute .dcpLabel {
     width: 100px;
 }
 
@@ -62,10 +62,9 @@ dcpDocument dcpAttribute .link {
 dcpDocument dcpAttribute[type=htmltext] a{
     color: blue;    
 }
-/* image height */
+
 dcpDocument dcpAttribute .dcpImage {
     width:100px;
-  /*  height:100px; */   
    
 }
 dcpDocument dcpAttribute .dcpValue { 
@@ -107,8 +106,11 @@ dcpDocument dcpAttribute[type=array] grid {
     color: -moz-fieldtext;
 }
 
+<<<<<<< HEAD
 dcpDocument dcpAttribute[nolabel=true] .dcpLabel,
 dcpDocument dcpAttribute[nolabel=true] .dcpSeparator,
+=======
+>>>>>>> b3eab2f0955e37dd15e04651e5d0e5ce429cc8b0
 dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
 dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
 dcpDocument dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
@@ -124,18 +126,20 @@ dcpDocument dcpAttribute[type=array] grid .header {
     text-align: center;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] hbox.array-row-tools button,
-dcpDocument[mode=edit] dcpAttribute[type=array] hbox.array-table-tools button{
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button,
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button {
     min-width: 0;
-    box-pack: center;
+    min-height: 0;
+    -moz-box-pack: center;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] dcpArrayRowTools hbox.array-row-tools button.delete{
-    list-style-image: url("chrome://dcpoffline/content/images/delete-row.png");
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.delete {
+    list-style-image: url("chrome://dcpoffline/content/images/delete_table_row-16.png");
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] dcpArrayRowTools hbox.array-row-tools button.add{
-    list-style-image: url("chrome://global/skin/icons/Close.gif");
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button.add,
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.add {
+    list-style-image: url("chrome://dcpoffline/content/images/insert_table_row-16.png");
 }
 /***********************************************************
         Validity

@@ -6,66 +6,209 @@
       <!ENTITY separator "&#160;:&#160;" >
       %node-attributes-bindingDTD;
 ]>
-
-<bindings id="node-attributes-binding"
-    xmlns="http://www.mozilla.org/xbl"
-    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl">
-    
-    <binding id="node-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr"/>
-    
+<bindings id="node-attributes-binding" xmlns="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+>
+    <binding id="node-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr" />
     <binding id="tab-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
         <!-- use tab-attr-view instead -->
     </binding>
-    
     <binding id="frame-attr-edit" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
         <!-- use frame-attr-view instead -->
     </binding>
-    
     <binding id="array-attr-edit" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
-        
         <resources>
             <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-system.css" />
         </resources>
-        
         <content>
-            
             <xul:groupbox class="dcpAttribute array" flex="1">
-                <xul:caption anonid="caption" xbl:inherits="xbl:text=label"/>
-                
+                <xul:caption anonid="caption" xbl:inherits="label" />
                 <xul:grid flex="1" inherited="attrid">
-                    <xul:columns anonid="columns"/>
-                    <xul:rows anonid="rows"/>
+                    <xul:columns anonid="columns" />
+                    <xul:rows anonid="rows" />
                 </xul:grid>
-                
             </xul:groupbox>
-            
             <xul:box anonid="childAttributes" style="display: none;">
-                <children/>
+                <children />
             </xul:box>
-            
         </content>
-        
         <implementation>
-            
-            <field name="rows"
-                readonly="true">
-                this.getChild('rows');
-            </field>
-            
-            <field name="columns"
-                readonly="true">
-                this.getChild('columns');
-            </field>
-            
-            <field name="childAttributes"
-                readonly="true">
-                this.getElementsByTagName('dcpAttribute')
-            </field>
-            
+            <field name="rows" readonly="true"> this.getChild('rows');</field>
+            <field name="columns" readonly="true"> this.getChild('columns');</field>
+            <field name="childAttributes" readonly="true"> this.getElementsByTagName('dcpAttribute')</field>
+            <method name="insertNewRow">
+                <parameter name="rowIndex" />
+                <parameter name="noReindex" />
+                <body><![CDATA[
+                    if(rowIndex === undefined){
+                        rowIndex = this.rows.childElementCount-1;
+                        // -1 for removing header
+                    }
+                    if(isNaN(rowIndex)){
+                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is not a number"));
+                    } else {
+                        rowIndex = rowIndex-0; //remember that all parameters are string...
+                        var indexInGrid = rowIndex+1; //so that we go after head
+                    }
+                    if(indexInGrid > this.rows.childElementCount){
+                        alert(indexInGrid + " VS " + this.rows.childElementCount);
+                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + " is too high (there are "+this.rows.childElementCount+" rows in this grid)"));
+                    } else if(indexInGrid < 1){
+                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is too low"));
+                    }
+                    
+                    var currentRow = document.createElement('dcpRow');
+                    currentRow.setAttribute('index', rowIndex);
+                    
+                    for (var i = 0; i < this.childAttributes.length; ++i) {
+                        var attributeNode = this.childAttributes[i];
+                        
+                        var currentAttribute = attributeNode.cloneNode(true);
+                        currentAttribute.setAttribute('flex',1);
+                        currentAttribute.setAttribute('index', rowIndex);
+                        
+                        currentRow.appendChild(currentAttribute);
+                        
+                        if(this.constructed){
+                            //insert empty value at rowIndex position, only if insertion occurs after construction
+                            var attrid = currentAttribute.getAttribute('attrid');
+                            
+                            var value = this.doc.getValue(attrid);
+                            value.splice(rowIndex, 0, '');
+                        
+                            this.doc.setValue(attrid, value);
+                        }
+                    }
+                    
+                    this.rows.insertBefore(currentRow, this.rows.childNodes[indexInGrid-1].nextSibling); // ==insertAfter or append
+                    
+                    if(! noReindex){
+                        this.reindexRows(rowIndex);
+                    }
+                    
+                ]]></body>
+            </method>
+            <method name="deleteRow">
+                <parameter name="rowIndex" />
+                <parameter name="noReindex" />
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/logger.jsm");
+                    Components.utils.import("resource://modules/exceptions.jsm");
+                    
+                    logConsole("remove row "+rowIndex);
+                    
+                    if(isNaN(rowIndex)){
+                        throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + "is not a number"));
+                    } else {
+                        rowIndex = rowIndex-0; //remember that all parameters are string...
+                        var indexInGrid = rowIndex+1; //so that we go after head
+                    }
+                    if(indexInGrid > this.rows.childElementCount-1){
+                        throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + " is too high (there are "+this.rows.childElementCount+" rows in this grid)"));
+                    } else if(indexInGrid < 1){
+                        throw(new ArgException("array-attr-edit::deleteRow : " + rowIndex + "is too low"));
+                    }
+                    
+                    var row = this.rows.childNodes[indexInGrid];
+                    
+                    if(row.index != rowIndex){
+                        throw("(FIXME) trying to remove row at index ["+rowIndex+"] but this rows says having index ["+row.index+"]");
+                    }
+                    
+                    for (var i = 0; i < this.childAttributes.length; ++i) {
+                        var attrid = this.childAttributes[i].getAttribute('attrid');
+                        
+                        var value = this.doc.getValue(attrid);
+                        value.splice(rowIndex,1)
+                        
+                        this.doc.setValue(attrid, value);
+                    }
+                    
+                    this.rows.removeChild(row);
+                    
+                    if(! noReindex){
+                        this.reindexRows(rowIndex);
+                    }
+                    
+                ]]></body>
+            </method>
+            <method name="reindexRows">
+                <parameter name="fromRow" />
+                <body><![CDATA[
+                    if(isNaN(fromRow)){
+                        fromRow = 0;
+                    }
+                    
+                    var rowChildren = this.rows.childNodes;
+                    for (var i = fromRow+1; i < this.rows.childNodes.length; i++){
+                        var row = rowChildren[i];
+                        row.index = i-1;
+                    }
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+                Components.utils.import("resource://modules/logger.jsm");
+                
+                var currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+                
+                var toolsColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                this.columns.appendChild(toolsColumn);
+                
+                var toolsCell = document.createElement('dcpArrayTableTools');
+                toolsCell.classList.add('header');
+                toolsCell.classList.add('plain');
+                currentRow.appendChild(toolsCell);
+                
+                var nbRows = 0;
+                
+                for (var i = 0; i < this.childAttributes.length; ++i) {
+                    var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
+                    clabel.setAttribute("value", this.childAttributes[i].getAttribute('label'));
+                    clabel.classList.add('header');
+                    clabel.classList.add('plain');
+                    
+                    currentRow.appendChild(clabel);
+                    
+                    var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                    var columnFlex = this.childAttributes[i].getAttribute('flex');
+                    currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
+                    
+                    var visibility = this.childAttributes[i].getAttribute('visibility'); 
+                    if(visibility == 'R' || visibility == 'H'){
+                        currentColumn.collapsed = true;
+                    }
+                    
+                    this.columns.appendChild(currentColumn);
+                    
+                    nbRows = Math.max(nbRows, this.doc.getValue(this.childAttributes[i].getAttribute('attrid')).length);
+                }
+                
+                this.rows.appendChild(currentRow);
+                
+                for (var i = 0; i < nbRows; i++){
+                    this.insertNewRow(i, true);
+                }
+                
+                //this.reindexRows();
+                
+                this.constructed = true;
+                
+            ]]></constructor>
+        </implementation>
+    </binding>
+    <binding id="row-attr-edit">
+        <content>
+            <dcpArrayRowTools anonid="row-tools" xbl:inherits="index" />
+            <children />
+        </content>
+        <implementation>
+            <<<<<<< HEAD
+            <field name="rows" readonly="true"> this.getChild('rows');</field>
+            <field name="columns" readonly="true"> this.getChild('columns');</field>
+            <field name="childAttributes" readonly="true"> this.getElementsByTagName('dcpAttribute')</field>
             <method name="insertRow">
-                <parameter name="values"/>
-                <parameter name="index"/>
+                <parameter name="values" />
+                <parameter name="index" />
                 <body><![CDATA[
                     if(isNaN(index)){
                         index = this.rows.childElementCount;
@@ -146,21 +289,90 @@
             ]]></constructor>
         </implementation>
     </binding>
-    
+    <binding id="row-attr-edit">
+        <content>
+            <dcpArrayRowTools anonid="row-tools" xbl:inherits="index" />
+            <children />
+        </content>
+        <implementation>
+            <field name="array"> var parent = this.parentNode; while (parent) { if (parent.localName == "dcpAttribute")
+                if(parent.getAttribute('type') == 'array') break; parent = parent.parentNode; } parent;</field>
+            <property name="index" onget="return this.getAttribute('index');" onset="this.setAttribute('index', val);">
+            </property>
+            <method name="getChild">
+                <parameter name="aChildName" />
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+            <method name="updateIndex">
+                <parameter name="newIndex" />
+                <body><![CDATA[
+                    this.index = newIndex;
+                    var children = this.childNodes;
+                    for(var i = 0; i < children.length; i++){
+                        children[i].index=newIndex;
+                    }
+                ]]></body>
+            </method>
+        </implementation>
+    </binding>
     <binding id="array-table-tools">
         <content>
             <xul:hbox class="array-table-tools">
-                <xul:button class="delete" tooltiptext="&array.row.tools.delete;"/>
+                <xul:button anonid="button-add" class="add" tooltiptext="&array.table.tools.add;" />
             </xul:hbox>
         </content>
+        <implementation>
+            <field name="array"> var parent = this.parentNode; while (parent) { if (parent.localName == "dcpAttribute")
+                if(parent.getAttribute('type') == 'array') break; parent = parent.parentNode; } parent;</field>
+            <method name="getChild">
+                <parameter name="aChildName" />
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+        </implementation>
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+                switch(event.originalTarget){
+                    case this.getChild('button-add') :
+                        this.array.insertNewRow();
+                        break;
+                }
+            ]]></handler>
+        </handlers>
     </binding>
-    
     <binding id="array-row-tools">
         <content>
             <xul:hbox class="array-row-tools">
-                <xul:button class="add" tooltiptext="&array.table.tools.add;"/>
+                <xul:button anonid="button-delete" class="delete" tooltiptext="&array.row.tools.delete;" />
+                <xul:button anonid="button-add" class="add" tooltiptext="&array.row.tools.add;" />
             </xul:hbox>
         </content>
+        <implementation>
+            <field name="array"> var parent = this.parentNode; while (parent) { if (parent.localName == "dcpAttribute")
+                if(parent.getAttribute('type') == 'array') break; parent = parent.parentNode; } parent;</field>
+            <property name="index" onget="return this.getAttribute('index');" onset="this.setAttribute('index', val);">
+            </property>
+            <method name="getChild">
+                <parameter name="aChildName" />
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+        </implementation>
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+                switch(event.originalTarget){
+                    case this.getChild('button-delete') :
+                        this.array.deleteRow(this.index);
+                        break;
+                    case this.getChild('button-add') :
+                        this.array.insertNewRow(this.index);
+                        break;
+                }
+            ]]></handler>
+        </handlers>
     </binding>
-    
 </bindings>

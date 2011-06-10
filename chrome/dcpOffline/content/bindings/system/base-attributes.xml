@@ -45,17 +45,7 @@
             </method>
             <method name="getValue">
                 <body><![CDATA[
-                    var index=this.getAttribute("index");
-                    if ( index !== null) {
-                       var val=this.doc.getValue(this.attrid);
-                       if (Array.isArray(val)) {
-                          return val[index];
-                       } else {
-                          return val;
-                       }
-                    } else {
-                       return this.doc.getValue(this.attrid);
-                    }
+                    return this.doc.getValue(this.attrid, this.index);
                 ]]></body>
             </method>
             <constructor><![CDATA[

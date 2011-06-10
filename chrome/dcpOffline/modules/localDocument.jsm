@@ -75,10 +75,22 @@ localDocument.prototype = {
             return this._initid;
         },
 
-        getValue : function(id) {
+        getValue : function(id, index) {
             if (id) {
-                return this.values[id];// not need it is do by storageManager (may
-                // be JSON.stringify )
+                if( (index === undefined) || (index === -1) ){
+                    return this.values[id];// not need it is do by storageManager (may
+                    // be JSON.stringify )
+                } else {
+                    if( isNaN(index) ){
+                        throw new ArgException("setValue :: given index is not a number");
+                    }
+                    var arrayValue = this.getValue(id);
+                    if( Array.isArray(arrayValue) ){
+                        return arrayValue[index];
+                    } else {
+                        return arrayValue;
+                    }
+                }
             } else {
                 // FIXME
                 throw new ArgException("getValue :: missing arguments");
@@ -117,9 +129,22 @@ localDocument.prototype = {
             }
             return _propertyNames;
         },
-        setValue : function(id, value) {
+        setValue : function(id, value, index) {
             if (id && (value !== undefined)) {
-                this.values[id] = value;
+                if( (index === undefined) || (index === -1) ){
+                    this.values[id] = value;
+                } else {
+                    if( isNaN(index) ){
+                        throw new ArgException("setValue :: given index is not a number");
+                    }
+                    var arrayValue = this.getValue(id);
+                    if( Array.isArray(arrayValue) ){
+                        arrayValue.splice(index, 1, value);
+                    } else {
+                        arrayValue = [value];
+                    }
+                    this.values[id] = arrayValue;
+                }
             } else {
                 // FIXME
                 throw new ArgException("setValue :: missing arguments");
