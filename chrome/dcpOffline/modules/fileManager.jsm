@@ -192,7 +192,6 @@ var fileManager = {
         var file = Components.classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
         var localDoc = null;
-        var file = null;
         
         for ( var i = 0; i < r.length; i++) {
             file.initWithPath(r[i].path);
