@@ -100,7 +100,7 @@
                 </menulist>
                 <!--  <button label="&main.newDocument;" onclick="openNewDocumentDialog()"/>-->
                 <hbox flex="1">
-                    <textbox type="search" id="searchTitle" value="" oncommand="updateAbstractList( { searchValue : this.value} );" placeholder="&main.abstract.search;" />
+                    <textbox type="search" id="abstractSearchTitle" value="" oncommand="updateAbstractList( { searchValue : this.value} );" placeholder="&main.abstract.search;" />
                 </hbox>
             </vbox>
             <vbox flex="1">
