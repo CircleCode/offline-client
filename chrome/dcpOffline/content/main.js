@@ -72,15 +72,15 @@ function initListeners() {
 	applicationEvent.subscribe("initializationWizardEnd", initValues);
 
 	applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
-	applicationEvent.subscribe("postChangeSelectedDomain", updateFamilyList);
-	applicationEvent.subscribe("postChangeSelectedDomain", updateAbstractList);
 	applicationEvent.subscribe("postChangeSelectedDomain",
 			updateOpenDocumentList);
 	applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
+	applicationEvent.subscribe("changeSelectedDomain", updateFamilyList);
+	applicationEvent.subscribe("changeSelectedDomain",updateAbstractList);
+	applicationEvent.subscribe("postChangeSelectedDomain", tryToUpdateOpenFamily);
 	applicationEvent.subscribe("postChangeSelectedDomain",
-			updateCurrentDocument);
-	applicationEvent.subscribe("postChangeSelectedDomain",
-			cleanCurrentDocSearch);
+			tryToUpdateCurrentDocument);
+	
 
 	applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
 	applicationEvent.subscribe("postChangeSelectedFamily",
@@ -258,6 +258,7 @@ function tryToChangeFamily(value) {
  */
 function tryToOpenDocument(param) {
 	logIHM("try to change open document", param);
+	var deck = null;
 	if (!(param && param.documentId)) {
 		deck = document.getElementById('documentsDeck');
 		deck.selectedPanel = document.getElementById('vboxDocument-void');
@@ -309,10 +310,19 @@ function tryToClose() {
 /**
  * Update current open document
  */
-function updateCurrentDocument() {
+function tryToUpdateCurrentDocument() {
 	logIHM("updateCurrentDocument");
 	setPrefCurrentOpenDocument(true);
 }
+
+/**
+ * Update current open families
+ */
+function tryToUpdateOpenFamily() {
+	logIHM("updateCurrentDocument");
+	setPrefCurrentSelectedFamily(true);
+}
+
 
 // IHM methods
 
@@ -423,6 +433,7 @@ function closeDocument(config) {
 				.getElementById(documentRepresentationId);
 		if (documentRepresentation) {
 			deck.removeChild(documentRepresentation);
+			deck.selectedPanel = document.getElementById("vboxDocument-void");
 		} else {
 			logConsole("closeDocument :: document " + config.documentId
 					+ " is not open");
@@ -443,7 +454,7 @@ function updateFamilyList(config) {
 		document.getElementById("famDomainIdParam").textContent = config.domainId;
 	}
 	document.getElementById("familyList").builder.rebuild();
-	applicationEvent.publish("postUpdateFamilyList");
+	//applicationEvent.publish("postUpdateFamilyList");
 }
 /**
  * update abstract list Private method : you should never use it
@@ -466,7 +477,7 @@ function updateAbstractList(config) {
 	}
 	document.getElementById("abstractList").builder.rebuild();
 	document.getElementById("abstractList").selectedIndex = -1;
-	applicationEvent.publish("postUpdateAbstractList");
+	//applicationEvent.publish("postUpdateAbstractList");
 }
 /**
  * Update documentList IHM Private method : you should never use it
