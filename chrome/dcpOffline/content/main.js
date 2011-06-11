@@ -27,7 +27,7 @@ function initNetworkCheck() {
     logIHM("initNetworkCheck");
     
     Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService).addObserver(updateConnectStatus, "network:link-status-changed", false);
-    /*First call is not trustable, so I initiate it don't supress it please*/
+    /*First call is not trustable, so I initiate it don't suppress it please*/
     networkChecker.isOffline();
 }
 /**
@@ -416,7 +416,7 @@ function updateFamilyList(config)
  */
 function updateAbstractList(config)
 {
-    logIHM("updateAbstractList");
+    logIHM("updateAbstractList", config);
     if (config && config.domainId != undefined) {
         document.getElementById("abstractDomainIdParam").textContent = config.domainId;
     }

@@ -14,6 +14,8 @@
 
 <?xml-stylesheet href="chrome://customization/content/dcpoffline-customization.css" type="text/css"?>
 
+<?xml-stylesheet href="chrome://dcpoffline/content/css/main.css" type="text/css"?>
+
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     onclose="tryToClose();">
@@ -105,19 +107,23 @@
                 <richlistbox id="abstractList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
                         <query><![CDATA[ 
-                            SELECT title, initid 
-                            FROM documents 
-                            WHERE initid IN (SELECT initid FROM docsbydomain WHERE domainid= :domainIdParam) AND fromid = :famId AND title LIKE :searchTitle 
+                            SELECT documents.title, documents.initid, docsbydomain.editable 
+                            	FROM documents, docsbydomain 
+                            	WHERE documents.initid = docsbydomain.initid 
+                            		AND documents.fromid = :famIdParam
+                            		AND docsbydomain.domainid = :domainIdParam
+                            		AND documents.title LIKE :searchTitleParam
                         ]]>
                             <param id="abstractDomainIdParam" name="domainIdParam" type="integer">0</param>
-                            <param id="famIdParam" name="famId" type="integer">0</param>
-                            <param id="searchTitleParam" name="searchTitle">%</param>
+                            <param id="famIdParam" name="famIdParam" type="integer">0</param>
+                            <param id="searchTitleParam" name="searchTitleParam">%</param>
                         </query>
                         <action>
                             <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument({documentId : this.value});'>
-                                <vbox >
-                                    <label value="?title" />
-                                </vbox>
+                                <hbox flex="1">
+                                    <label value="?title" flex="1"/>
+                                    <image src="chrome://dcpoffline/content/images/isEditable?editable^.png" class="abstractIsEditable?editable , abstractIsEditable"/>
+                                </hbox>
                             </richlistitem>
                         </action>
                     </template>
