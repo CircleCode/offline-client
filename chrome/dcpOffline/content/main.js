@@ -76,11 +76,11 @@ function initListeners() {
 			updateOpenDocumentList);
 	applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
 	applicationEvent.subscribe("changeSelectedDomain", updateFamilyList);
-	applicationEvent.subscribe("changeSelectedDomain",updateAbstractList);
-	applicationEvent.subscribe("postChangeSelectedDomain", tryToUpdateOpenFamily);
+	applicationEvent.subscribe("changeSelectedDomain", updateAbstractList);
+	applicationEvent.subscribe("postChangeSelectedDomain",
+			tryToUpdateOpenFamily);
 	applicationEvent.subscribe("postChangeSelectedDomain",
 			tryToUpdateCurrentDocument);
-	
 
 	applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
 	applicationEvent.subscribe("postChangeSelectedFamily",
@@ -107,6 +107,8 @@ function initListeners() {
 	applicationEvent.subscribe("askForCloseDocument", tryToCloseDocument);
 
 	applicationEvent.subscribe("askForOpenDocument", tryToOpenDocument);
+
+	applicationEvent.subscribe("preCloseDocument", prepareClose);
 
 	applicationEvent.subscribe("closeDocument", removeDocumentFromOpenList);
 	applicationEvent.subscribe("postCloseDocument", closeDocument);
@@ -291,6 +293,11 @@ function tryToCloseDocument(param) {
 	} else {
 		applicationEvent.publish("closeDocument", param);
 		applicationEvent.publish("postCloseDocument", param);
+		if (param.openAfterClose) {
+			tryToOpenDocument({
+				documentId : param.openAfterClose
+			});
+		}
 	}
 	return true;
 }
@@ -322,7 +329,6 @@ function tryToUpdateOpenFamily() {
 	logIHM("updateCurrentDocument");
 	setPrefCurrentSelectedFamily(true);
 }
-
 
 // IHM methods
 
@@ -454,7 +460,7 @@ function updateFamilyList(config) {
 		document.getElementById("famDomainIdParam").textContent = config.domainId;
 	}
 	document.getElementById("familyList").builder.rebuild();
-	//applicationEvent.publish("postUpdateFamilyList");
+	// applicationEvent.publish("postUpdateFamilyList");
 }
 /**
  * update abstract list Private method : you should never use it
@@ -477,7 +483,7 @@ function updateAbstractList(config) {
 	}
 	document.getElementById("abstractList").builder.rebuild();
 	document.getElementById("abstractList").selectedIndex = -1;
-	//applicationEvent.publish("postUpdateAbstractList");
+	// applicationEvent.publish("postUpdateAbstractList");
 }
 /**
  * Update documentList IHM Private method : you should never use it
@@ -724,6 +730,40 @@ function setPrefCurrentOpenDocument(propagEvent) {
 			+ ".currentOpenDocument");
 	if (propagEvent === true) {
 		tryToOpenDocument(null);
+	}
+}
+
+function prepareClose(param) {
+	logIHM("prepareClose", param);
+
+	var currentDoc;
+	var currentDocs;
+	var stop = false;
+
+	if (param && param.documentId) {
+		currentDoc = getCurrentDocument();
+		if (param.documentId == currentDoc.documentId) {
+			currentDocs = getListOfOpenDocuments();
+			for (currentDocId in currentDocs) {
+				if (stop) {
+					param.openAfterClose = currentDocId;
+					return true;
+				}
+				if (currentDocId == param.documentId) {
+					stop = true;
+				}
+			}
+			if (!param.onAfterClose) {
+				for (currentDocId in currentDocs) {
+					break;
+				}
+				if (currentDocId != currentDoc.documentId) {
+					param.openAfterClose = currentDocId;
+					return true;
+				}
+			}
+		}
+		return true;
 	}
 }
 
