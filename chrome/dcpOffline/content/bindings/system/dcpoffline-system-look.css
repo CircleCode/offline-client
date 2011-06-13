@@ -28,6 +28,22 @@ dcpDocument dcpAttribute {
     width: 100%;
 }
 
+dcpAttribute[type=text],
+dcpAttribute[type=longtext],
+dcpAttribute[type=color],
+dcpAttribute[type=int],
+dcpAttribute[type=double],
+dcpAttribute[type=money],
+dcpAttribute[type=timestamp],
+dcpAttribute[type=date],
+dcpAttribute[type=time],
+dcpAttribute[type=docid],
+dcpAttribute[type=enum],
+dcpAttribute[type=file],
+dcpAttribute[type=image] {
+    -moz-box-align: center;
+}
+
 dcpDocument dcpAttribute[type=array] dcpRow{
     display: -moz-grid-line
 }
@@ -130,9 +146,14 @@ dcpDocument .dcpChooseDocid {
     font-style: italic;
 }
 
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools,
+dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools {
+    -moz-box-align: center;
+}
+
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button,
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button {
-    min-width: none;
+    min-width: 0;
     -moz-box-pack: center;
 }
 
@@ -147,12 +168,12 @@ dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.add {
 
 dcpDocument[mode=edit] dcpAttribute[type=file] hbox,
 dcpDocument[mode=edit] dcpAttribute[type=image] hbox {
-    -moz-box-align: end;
+    -moz-box-align: center;
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=file] button,
 dcpDocument[mode=edit] dcpAttribute[type=image] button {
-    min-width: none;
+    min-width: 0;
     -moz-box-pack: center;
 }
 
