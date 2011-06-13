@@ -175,6 +175,33 @@
                 ]]></body>
             </method>
             
+            <method name="revert">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/network.jsm");
+                    Components.utils.import("resource://modules/fdl-context.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    Components.utils.import("resource://modules/offlineSynchronize.jsm");
+                    
+                    if(networkChecker.isOffline()){
+                        alert("(FIXME) you can only revert when online");
+                    } else {
+                        try{
+                            var domainId = docManager.getActiveDomain();
+                            var domain = context.getDocument({
+                                id : domainId
+                            });
+                            offlineSync.revertDocument({
+                                domain: domain,
+                                initid: this.initid
+                            });
+                            this.reinit();
+                        } catch(e) {
+                            logError(e, "error when reverting document "+this.initid);
+                        }
+                    }
+                ]]></body>
+            </method>
+            
             <constructor><![CDATA[
                 try{
                     Components.utils.import("resource://modules/events.jsm");
