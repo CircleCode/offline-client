@@ -5,6 +5,8 @@ Components.utils.import("resource://modules/localDocument.jsm");
 Components.utils.import("resource://modules/localDocumentList.jsm");
 Components.utils.import("resource://modules/fdl-data-debug.jsm");
 
+Components.utils.import("resource://modules/events.jsm");
+
 var EXPORTED_SYMBOLS = [ "docManager" ];
 
 function docManagerSingleton() {
@@ -255,6 +257,16 @@ docManagerSingleton.prototype = {
 			//logConsole('error', config);
 		}
 		return null;
+	},
+	
+	/*
+	 * called after a document is closed to remove its references
+	 */
+	onDocumentClosed : function(config){
+	    // TODO: should be used in conjonction with onDocumentOpen to handle document references
+	    // it would be better to use document constructors / destructors
+	    config.initid = config.documentId;
+	    this.dropDocInstance(config);
 	}
 };
 
@@ -271,16 +283,10 @@ function getFileServerId(config) {
         }
     }
     
-    return "noFile";
+    return " ";
 }
 
-/*
 
-let defaultDomain = Preferences.get('dcpoffline.domain');
-log('default domain is [' + defaultDomain + ']');
-if (defaultDomain) {
-	docManager.setActiveDomain({
-		domain : defaultDomain
-	});
-}*/
+
+applicationEvent.subscribe("postCloseDocument", docManager.onDocumentClosed, {scope: docManager});
 

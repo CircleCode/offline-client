@@ -57,7 +57,7 @@ MicroEvent.prototype = {
                 scope = this;
             }
             try {
-                return fct.apply(scope, arguments)
+                return fct.apply(scope, arguments);
             } catch (error) {
                 if (config.onError) {
                     return this.doIt(currentEvent, config.onError, [error], {scope : scope});

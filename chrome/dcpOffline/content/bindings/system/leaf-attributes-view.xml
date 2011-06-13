@@ -382,7 +382,7 @@
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="fileName" class="dcpValue plain" value="FILE NOT YET IMPLEMENTED" />
+                <xul:label anonid="fileName" class="dcpValue plain" />
             </xul:hbox>
         </content>
         <implementation>

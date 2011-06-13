@@ -54,7 +54,6 @@
                         }
                         else{
                             Components.utils.import("resource://modules/events.jsm");
-                            logConsole("document " + this.initid + " asked to switch in " + mode + " mode");
                             var param = {
                                 documentId : this.initid,
                                 mode : mode
@@ -80,13 +79,23 @@
                 ]]></body>
             </method>
             
+            <method name="onPreLocalSave">
+                <body><![CDATA[return true;]]></body>
+            </method>
+            
+            <method name="onAfterLocalSave">
+                <body><![CDATA[return true;]]></body>
+            </method>
+            
             <method name="save">
                 <body><![CDATA[
                     try {
-                        var err = this.doc.save();
+                        this.onPreLocalSave();
+                        this.doc.save();
+                        this.onAfterLocalSave();
                         this.switchMode("view");
                     } catch(e) {
-                        logConsole("error on document save");
+                        logError(e, "error on document ["+this.initid+"] save");
                         alert('(FIXME) ' + e);
                     }
                 ]]></body>
@@ -96,7 +105,6 @@
                 <!-- FIXME: pre-close -->
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
-                    logConsole("document " + this.initid + " asked to be closed");
                     var param = {
                         documentId : this.initid
                     };
@@ -104,10 +112,73 @@
                 ]]></body>
             </method>
             
+            <method name="reinit">
+                <!-- FIXME: pre-close -->
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/events.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    
+                    docManager.initDocInstance({initid: this.initid});
+                    
+                    var param = {
+                        documentId : this.initid,
+                        openAfterClose: this.initid
+                    };
+                    applicationEvent.publish("askForCloseDocument", param);
+                ]]></body>
+            </method>
+            
+            <method name="preClose">
+                <body><![CDATA[
+                    if(this.doc.isDirty()){
+                        try {
+                            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                    .getService(Components.interfaces.nsIPromptService);
+            
+                            var check = {value: false}; // default the checkbox to false
+                            // (this checkBox may be used later for 'do not ask again')
+                            
+                            var flags = prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_SAVE +
+                                        prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_CANCEL  +
+                                        prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_DONT_SAVE;
+                            
+                            var button = prompts.confirmEx(
+                                null,
+                                "Confirm close document",
+                                "What do you want to do?",
+                                flags,
+                                "",
+                                "",
+                                "",
+                                null, //here comes the don't ask me again message
+                                check
+                            );
+                            
+                            switch(button){
+                                case 0: //save and continue
+                                    return this.save();
+                                    break;
+                                case 1: //cancel
+                                    return false;
+                                    break;
+                                case 2: //do not save and continue
+                                    return true;
+                                    break;
+                            }
+                        } catch(e) {
+                            logError(e, "document ["+this.initid+"] preclose");
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                ]]></body>
+            </method>
+            
             <constructor><![CDATA[
-                Components.utils.import("resource://modules/logger.jsm");
-                logConsole("<--------- entering document [" + this.initid + "] constructor");
                 try{
+                    Components.utils.import("resource://modules/events.jsm");
+                    
                     Components.utils.import("resource://modules/docManager.jsm");
                     this.doc = docManager.getLocalDocument({initid : this.initid});
                     
@@ -124,17 +195,23 @@
                         }
                     }
                     
+                    applicationEvent.subscribe("preCloseDocument", this.preClose, {scope: this});
+                    
                     //XXX: register as a render
                 } catch(e){
+                    Components.utils.import("resource://modules/logger.jsm");
                     logError(e, "document document [" + this.initid + "] constructor");
                     throw(e);
                 }
-                logConsole("leaving document [" + this.initid + "] constructor --------->");
                 return true;
             ]]></constructor>
             
             <destructor><![CDATA[
                 try{
+                    Components.utils.import("resource://modules/events.jsm");
+                    
+                    applicationEvent.unsubscribe("preCloseDocument", this.preClose);
+                
                     //TODO: unregister as a render
                     return true;
                 } catch(e){

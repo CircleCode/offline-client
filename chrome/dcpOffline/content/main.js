@@ -20,7 +20,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 window.onload = function() {
 	initNetworkCheck();
 	initApplication();
-}
+};
 /**
  * Init the network check Private method : you should never use it
  * 
@@ -95,6 +95,7 @@ function initListeners() {
 	applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
 	applicationEvent.subscribe("postOpenDocument", openDocument);
 
+    applicationEvent.subscribe("preSynchronize", tryToCloseAllDocuments);
 	applicationEvent.subscribe("postSynchronize", updateFamilyList);
 	applicationEvent.subscribe("postSynchronize", updateAbstractList);
 
@@ -108,11 +109,16 @@ function initListeners() {
 
 	applicationEvent.subscribe("askForOpenDocument", tryToOpenDocument);
 
-	applicationEvent.subscribe("preCloseDocument", prepareClose);
+	applicationEvent.subscribe("preCloseDocument", prepareCloseDocument);
 
 	applicationEvent.subscribe("closeDocument", removeDocumentFromOpenList);
 	applicationEvent.subscribe("postCloseDocument", closeDocument);
 
+    // applicationEvent.subscribe("preCloseAllDocuments", FIXME);
+    applicationEvent.subscribe("closeAllDocuments", closeAllDocuments);
+    // applicationEvent.subscribe("postCloseAllDocuments", FIXME);
+
+    applicationEvent.subscribe("preClose", tryToCloseAllDocuments);
 	applicationEvent.subscribe("close", close);
 }
 /**
@@ -302,16 +308,36 @@ function tryToCloseDocument(param) {
 	return true;
 }
 /**
+ * Try to change to close a document
+ *
+ * @param param
+ */
+function tryToCloseAllDocuments(param) {
+    logIHM("try to close all documents ", param);
+    if (!applicationEvent.publish("preCloseAllDocuments", param)) {
+        // TODO add alert message
+        alert("unable to close all documents");
+        return false;
+    } else {
+        if(applicationEvent.publish("closeAllDocuments", param)){
+            return applicationEvent.publish("postCloseAllDocuments", param);
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+/**
  * Try to close the application
- * 
  */
 function tryToClose() {
 	logIHM("try to close application ");
 	if (applicationEvent.publish("preClose")) {
-		applicationEvent.publish("close");
+		return applicationEvent.publish("close");
 	} else {
 		// TODO add alert message
 		alert("unable to close application");
+		return false;
 	}
 }
 /**
@@ -446,11 +472,29 @@ function closeDocument(config) {
 		}
 	}
 }
+/**
+ * Close all documents (Private method : you should never use it)
+ * 
+ * @private
+ * @param config
+ */
+function closeAllDocuments(config) {
+
+    logIHM("closeAllDocuments ", config);
+
+    var openDocuments = getListOfOpenDocuments();
+
+    for(var documentId in openDocuments){
+        if(! tryToCloseDocument({documentId: documentId}) ){
+            return false;
+        }
+    }
+
+    return true;
+}
 
 /**
- * update interface family list
- * 
- * Private method : you should never use it
+ * update interface family list Private method : you should never use it
  * 
  * @private
  */
@@ -733,8 +777,8 @@ function setPrefCurrentOpenDocument(propagEvent) {
 	}
 }
 
-function prepareClose(param) {
-	logIHM("prepareClose", param);
+function prepareCloseDocument(param) {
+	logIHM("prepareCloseDocument", param);
 
 	var currentDoc;
 	var currentDocs;
@@ -744,7 +788,7 @@ function prepareClose(param) {
 		currentDoc = getCurrentDocument();
 		if (param.documentId == currentDoc.documentId) {
 			currentDocs = getListOfOpenDocuments();
-			for (currentDocId in currentDocs) {
+			for (var currentDocId in currentDocs) {
 				if (stop) {
 					param.openAfterClose = currentDocId;
 					return true;

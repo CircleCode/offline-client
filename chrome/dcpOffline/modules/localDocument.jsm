@@ -27,6 +27,8 @@ function localDocument(config) {
 }
 localDocument.prototype = {
         _initid : null,
+        _dirty : false,
+        _modified : null,
         properties : {},
         values : {},
         labels : null,
@@ -149,6 +151,7 @@ localDocument.prototype = {
                 // FIXME
                 throw new ArgException("setValue :: missing arguments");
             }
+            this._dirty = true;
             return this;
         },
 
@@ -176,7 +179,36 @@ localDocument.prototype = {
             } else {
                 throw "document " + this._initid + " is not editable";
             }
+            this._dirty = false;
+            this._modified = true;
+            return this;
         },
+        
+        /*
+         * Check if the document has been modified and not saved
+         */
+        isDirty : function(){
+            return this._dirty;
+        },
+        
+        /*
+         * check if the document has been modified and saved since its last synchro
+         */
+        isModified : function(){
+            if(this._modified === null){
+                var r = storageManager.execQuery({
+                    query : 'SELECT (lastsynclocal < lastsavelocal) as "modified"'
+                            + ' FROM synchrotimes'
+                            + ' WHERE initid = :initid',
+                    params : {
+                        initid: this._initid
+                    }
+                });
+                this._modified = true && r[0].modified;
+            }
+            return this._modified;
+        },
+        
         /**
          * @return boolean true if can
          */
