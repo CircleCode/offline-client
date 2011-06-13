@@ -3,6 +3,7 @@ Components.utils.import("resource://modules/preferences.jsm");
 Components.utils.import("resource://modules/storageManager.jsm");
 Components.utils.import("resource://modules/localDocument.jsm");
 Components.utils.import("resource://modules/localDocumentList.jsm");
+Components.utils.import("resource://modules/fdl-data-debug.jsm");
 
 Components.utils.import("resource://modules/events.jsm");
 
@@ -146,13 +147,46 @@ docManagerSingleton.prototype = {
 			if (!config.domain) {
 				config.domain = this.getActiveDomain();
 			}
-			logConsole('local', config.localDocument.properties);
+			//logConsole('local', config.localDocument.properties);
 			var doc=new Fdl.Document({context:config.context});
+			// clone it
+			var values=JSON.parse(JSON.stringify(config.localDocument.values));
+			
 			doc.affect({properties:config.localDocument.properties,
-				values:config.localDocument.values});
+				values:values});
+			
+			var r = storageManager.execQuery({
+                query : 'select * from files where initid=:initid',
+                params: {
+                    initid:config.localDocument.getInitid()
+                }
+			});
+			if (r.length > 0) {
+			    // convert local file id to server file id
+			    var family=config.context.getDocument({id:config.localDocument.getProperty('fromid')});
+			    var oas = family.getAttributes();
+			    var oa = null;
+			    for (var aid in oas) {
+			        oa = oas[aid];
+			        if ((oa.type == 'file') || (oa.type == 'image')) {
+			            if (oa.inArray()) {
+			                var lfiles=config.localDocument.getValue(oa.id);
+			                var sfiles=[];
+			                for (var fi=0;fi<lfiles.length;fi++) {
+			                    sfiles.push(getFileServerId({attrid:oa.id, index:lfiles[fi],localValues:r}));
+			                }
+			                doc.setValue(oa.id, sfiles);
+			            } else {
+			                doc.setValue(oa.id, getFileServerId({attrid:oa.id, index:config.localDocument.getValue(oa.id),localValues:r}));
+			            }
+                        logConsole('modi',doc._mvalues);
+			        }
+			    }
+			}
+
 			return doc;
 		} else {
-			throw "localToServerDocument :: need localDocument parameter";
+		    throw "localToServerDocument :: need localDocument parameter";
 		}
 	},
 	/**
@@ -237,6 +271,22 @@ docManagerSingleton.prototype = {
 };
 
 var docManager = new docManagerSingleton();
+
+function getFileServerId(config) {
+    for (var i=0;i< config.localValues.length; i++) {
+        if ((config.localValues[i].attrid==config.attrid) && (config.localValues[i].index==config.index)) {
+            if ( config.localValues[i].serverid) {
+                return config.localValues[i].serverid;
+            } else {
+                return "newFile";
+            }
+        }
+    }
+    
+    return " ";
+}
+
+
 
 applicationEvent.subscribe("postCloseDocument", docManager.onDocumentClosed, {scope: docManager});
 

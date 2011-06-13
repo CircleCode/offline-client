@@ -23,6 +23,7 @@
                 <button style="background-color:lightblue;-moz-appearance: none;" label="push domain"
                     onclick="clicPushDomain(document.getElementById('sdomains').value)" />
                 <button style="" label="Misc test" onclick="clicMiscTest(document.getElementById('sdomains').value)" />
+                <button style="" label="Reset" onclick="clicReset()" />
             </hbox>
             <hbox>
                 <label id='domain'>No domains</label>
@@ -60,36 +61,6 @@
                 <textbox id="filesSaved" size="3" value="0" />
             </hbox>
         </vbox>
-        <vbox datasources="file:///home/eric/test.rdf" ref="http://www.test.fr/tests">
-            <template>
-                <rule>
-                    <conditions>
-                        <content uri="?tests" />
-                        <member container="?tests" child="?test" />
-                        <triple subject="?test" predicate="http://www.test.fr/#titre" object="?titre" />
-                    </conditions>
-                    <action>
-                        <label uri="?test" value="?titre" />
-                    </action>
-                </rule>
-            </template>
-        </vbox>
-        <vbox datasources="file:///home/eric/test4.rdf" ref="urn:root">
-            <template>
-                <rule>
-                    <conditions>
-                        <content uri="?uri" />
-                        <triple subject="?uri" predicate="http://home.netscape.com/NC-rdf#links" object="?links" />
-                        <member container="?links" child="?child" />
-                        <triple subject="?child" predicate="http://home.netscape.com/NC-rdf#name" object="?name" />
-                    </conditions>
-                    <action>
-                        <hbox>
-                            <label uri="?child" value="?name" />
-                        </hbox>
-                    </action>
-                </rule>
-            </template>
-        </vbox>
+        
     </hbox>
 </window>

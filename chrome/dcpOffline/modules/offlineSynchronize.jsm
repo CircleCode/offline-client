@@ -45,6 +45,19 @@ offlineSynchronize.prototype.getCore = function() {
     return this.offlineCore;
 
 };
+offlineSynchronize.prototype.resetAll = function(config) {
+    storageManager.execQuery({query : "delete from docsbydomain"});
+    storageManager.execQuery({query : "delete from documents"});
+    storageManager.execQuery({query : "delete from synchrotimes"});
+    storageManager.execQuery({query : "delete from files"});
+    
+
+    var filesRoot = Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
+    filesRoot.append('Files');
+    filesRoot.remove(true);
+
+
+};
 offlineSynchronize.prototype.recordOfflineDomains = function(config) {
     var domains = this.getCore().getOfflineDomains();
     // TODO record in database
@@ -101,7 +114,7 @@ offlineSynchronize.prototype.synchronizeDomain = function(config) {
         this.pushDocuments({
             domain : domain,
             onComplete:function () {
-                logConsole("oncomplete", domain);
+                //logConsole("oncomplete", domain);
                 me.pullDocuments({
                     domain : domain
                 });
@@ -256,6 +269,7 @@ offlineSynchronize.prototype.pushDocument = function(config) {
         var domain = config.domain;
         var localDocument = config.localDocument;
         var document = docManager.localToServerDocument({
+            context : domain.context,
             localDocument : localDocument
         });
         if (document) {
@@ -331,20 +345,18 @@ offlineSynchronize.prototype.pendingPushFiles = function(config) {
     if (config && config.files && config.localDocument) {
         for ( var i = 0; i < config.files.length; i++) {
             var file = config.files[i];
-            logConsole(config.localDocument.getInitid(), file);
-            logConsole("test:" + file.initid + '?='
-                    + config.localDocument.getInitid() + ']');
+           // logConsole(config.localDocument.getInitid(), file);
+          //  logConsole("test:" + file.initid + '?='+ config.localDocument.getInitid() + ']');
             if (file.initid == config.localDocument.getInitid()) {
 
-                logConsole("test success:" + file.initid + '?='
-                        + config.localDocument.getInitid());
+               // logConsole("test success:" + file.initid + '?=' + config.localDocument.getInitid());
                 this.filesToUpload.push({
                     path : file.path,
                     attrid : file.attrid,
                     index : file.index,
                     initid : file.initid
                 });
-                logConsole("uploads", this.filesToUpload);
+                //logConsole("uploads", this.filesToUpload);
                 this.callObserver('onAddFilesToSave', 1);
                 this.log('saving file ' + file.basename);
             }
@@ -361,19 +373,37 @@ offlineSynchronize.prototype.pendingPushFiles = function(config) {
  */
 offlineSynchronize.prototype.pushFiles = function(config) {
     if (config && config.domain && config.onEndPushFiles) {
-        logConsole('file to push', this.filesToUpload);
+        //logConsole('file to push', this.filesToUpload);
         for ( var i = 0; i < this.filesToUpload.length; i++) {
             var file = this.filesToUpload[i];
             var attrid = file.attrid;
-            if (file.index >= 0) {
-                attrid += '[' + file.index + ']';
+            
+            var localDocument=docManager.getLocalDocument({initid:file.initid});
+            if (localDocument) {
+                var lvalues=localDocument.getValue(attrid);
+                var index=-2;
+                if (Array.isArray(lvalues)) {
+                    //logConsole('pusharrayfile :'+file.index, lvalues);
+                    for (var vi=0;vi < lvalues.length; vi++) {
+                        if (lvalues[vi]==file.index) index=vi;
+                    }
+                }  else {
+                    if (lvalues == file.index) {
+                        index=-1;
+                    }
+                }
+                if (index != -2) {
+                    if (index >= 0) {
+                        attrid += '[' + index + ']';
+                    }
+                    config.domain.sync().pushFile({
+                        path : file.path,
+                        documentId : file.initid,
+                        attributeId : attrid
+                    });
+                    logConsole('pushfile :'+attrid, file);
+                }
             }
-            config.domain.sync().pushFile({
-                path : file.path,
-                documentId : file.initid,
-                attributeId : attrid
-            });
-            logConsole('pushfile', file);
             // this.filesToUpload.splice(i, 1); // in asynchronous
             this.callObserver('onAddFilesSaved', 1);
         }
@@ -419,6 +449,7 @@ offlineSynchronize.prototype.pendingFiles = function(config) {
                                                 url : url,
                                                 basename : basename,
                                                 index : fi,
+                                                serverid : vs[fi],
                                                 attrid : aid,
                                                 initid : document
                                                         .getProperty('initid'),
@@ -440,6 +471,7 @@ offlineSynchronize.prototype.pendingFiles = function(config) {
                                         document.id),
                                 basename : basename,
                                 index : -1,
+                                serverid : document.getValue(aid),
                                 attrid : aid,
                                 initid : document.getProperty('initid'),
                                 writable : writable
@@ -477,7 +509,7 @@ offlineSynchronize.prototype.recordFiles = function(config) {
                     me.callObserver('onAddFilesRecorded', 1);
                 },
                 completeFileCallback : function() {
-                    logConsole('end files', this.filesToDownload);
+                   // logConsole('end files', this.filesToDownload);
                     if (me.synchroResults) {
                         if (me.synchroResults.status != "successTransaction") {
                             me.callObserver('onError', me.synchroResults);
@@ -576,7 +608,7 @@ offlineSynchronize.prototype.getRecordedDocuments = function(config) {
                 domainid:config.domain.id
             }
         });
-        logConsole("getRecordedDocuments", r);
+        //logConsole("getRecordedDocuments", r);
         return r;
     } else {
         throw new ArgException("getRecordedDocuments need domain, origin parameter");

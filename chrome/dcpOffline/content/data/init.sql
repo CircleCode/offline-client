@@ -142,6 +142,7 @@ CREATE TABLE IF NOT EXISTS "files" (
     "index"             INTEGER,
     "basename"          TEXT NOT NULL,
     "path"              TEXT NOT NULL,
+    "serverid"          TEXT,
     "writable"          BOOLEAN NOT NULL DEFAULT FALSE,
     "recorddate"        DATETIME,
     "modifydate"        DATETIME,

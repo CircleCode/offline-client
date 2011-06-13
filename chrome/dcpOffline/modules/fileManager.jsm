@@ -87,7 +87,7 @@ var fileManager = {
                         if( (config.uuid) && (config.attrid != 'icon') ){
                             var localDoc = docManager.getLocalDocument({initid: config.initid});
                             localDoc.setValue(config.attrid, config.uuid, index);
-                            localDoc.save({force: true});
+                            localDoc.save({force: true, noModificationDate:true});
                         }
                     } catch(e){
                         throw e;
@@ -139,7 +139,7 @@ var fileManager = {
             logConsole('domain' + domainId);
             var r = storageManager
                     .execQuery({
-                        query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and recorddate is not null and recorddate < modifydate',
+                        query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and recorddate < modifydate',
                         params : {
                             domainid : domainId
                         }
@@ -236,6 +236,10 @@ var fileManager = {
             config.index = docManager.getLocalDocument({initid: config.initid})
                     .getValue(config.attrid, config.index);
             
+            if (! config.index) {
+                throw (new Error('file attr [' + config.attrid
+                        + '] does not exists'));
+            }
             var r = storageManager
                     .execQuery({
                         query : 'SELECT path from '
@@ -338,6 +342,7 @@ var fileManager = {
                         if (file.writable) {
                             file.aFile.permissions = 0444;
                         }
+                        file.serverFile=true;
                         me.saveFile(file);
                         for ( var i = 0; i < me.filesToDownLoad.length; i++) {
                             if (me.filesToDownLoad[i]
@@ -347,6 +352,7 @@ var fileManager = {
                                 break;
                             }
                         }
+                        me.updateFileSyncDate({initid:file.initid});
                         // me.filesToDownLoad.pop();
                         // refreshProgressBar()
                         if (typeof me.acquitFileCallback == "function")
@@ -359,6 +365,22 @@ var fileManager = {
                 }
             };
             persist.saveURI(obj_URI, null, null, null, "", file.aFile);
+        }
+    },
+    updateFileSyncDate : function(config) {
+        var now = new Date();
+        if (config && config.initid) {
+            var clientDate = utils.toIso8601(now);
+            storageManager
+                    .execQuery({
+                        query : "update synchrotimes set lastsynclocal=:clientDate where initid=:initid",
+                        params : {
+                            clientDate : clientDate,
+                            initid : config.initid
+                        }
+                    });
+        } else {
+            throw new ArgException("updateFileSyncDate need document parameter");
         }
     }
 };
@@ -392,18 +414,19 @@ function storeFile(config) {
         } else {
             var mdate=utils.toIso8601(new Date(config.aFile.lastModifiedTime));
             var rdate=mdate;
-            if (config.newFile) {
+            if (config.newFile && (! config.serverFile)) {
                 rdate=utils.toIso8601(new Date(2000));
             }
             storageManager
                     .execQuery({
                         query : 'insert into '
                                 + TABLE_FILES
-                                + '("initid", "attrid", "index", "basename", "path", "writable", "recorddate", "modifydate")'
-                                + ' values (:initid, :attrid, :index, :basename, :path, :writable, :recorddate, :modifydate)',
+                                + '("initid", "attrid", "serverid", "index", "basename", "path", "writable", "recorddate", "modifydate")'
+                                + ' values (:initid, :attrid, :serverid, :index, :basename, :path, :writable, :recorddate, :modifydate)',
                         params : {
                             initid : config.initid,
                             attrid : config.attrid,
+                            serverid : (config.serverid)?config.serverid:'newFile',
                             index : config.index,
                             basename : config.basename,
                             path : config.aFile.path,

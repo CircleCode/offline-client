@@ -18,6 +18,7 @@ Protoutils.prototype.twoDigits = function(n) {
 		return '0' + n.toString();
 };
 Protoutils.prototype.toIso8601 = function(now, withoutT) {
+    if (! now) return '';
 	var T='T';
 	if (withoutT) T=' ';
 	return now.getFullYear() + '-' + this.twoDigits(now.getMonth() + 1) + '-'
