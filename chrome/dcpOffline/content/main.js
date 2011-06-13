@@ -95,6 +95,7 @@ function initListeners() {
 	applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
 	applicationEvent.subscribe("postOpenDocument", openDocument);
 
+    applicationEvent.subscribe("preSynchronize", tryToCloseAllDocuments);
 	applicationEvent.subscribe("postSynchronize", updateFamilyList);
 	applicationEvent.subscribe("postSynchronize", updateAbstractList);
 
