@@ -155,21 +155,24 @@ localDocument.prototype = {
         save : function(config) {
             if (this.canEdit() || (config && config.force)) {
                 var now = new Date();
-                this.properties.revdate = parseInt(now.getTime() / 1000);
-                this.properties.mdate = utils.toIso8601(now, true);
+                if ((!config) || (! config.noModificationDate)) {
+                  this.properties.revdate = parseInt(now.getTime() / 1000);
+                  this.properties.mdate = utils.toIso8601(now, true);
+                }
                 var saveConfig = {
                         attributes : this.values,
                         properties : this.properties
                 };
                 storageManager.saveDocumentValues(saveConfig);
-                storageManager
-                .execQuery({
-                    query : 'update synchrotimes set lastsavelocal=:mdate where initid=:initid',
-                    params : {
-                        mdate : utils.toIso8601(now),
-                        initid : this._initid
-                    }
-                });
+                if ((!config) || (! config.noModificationDate)) {
+                   storageManager.execQuery({
+                        query : 'update synchrotimes set lastsavelocal=:mdate where initid=:initid',
+                        params : {
+                            mdate : utils.toIso8601(now),
+                            initid : this._initid
+                        }
+                   });
+                }
             } else {
                 throw "document " + this._initid + " is not editable";
             }

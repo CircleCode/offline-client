@@ -18,6 +18,7 @@ function initDialog() {
                     .get("synchronize.fail");
         }
     }
+    logConsole("Status", result.description);
     if (result.description.manageWaitingUrl) {
         document.getElementById("report").hidden = false;
        // document.getElementById("report").href = result.description.manageWaitingUrl;

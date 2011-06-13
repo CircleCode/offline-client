@@ -82,7 +82,7 @@ function clicPushDomain(domainid) {
 		 * document.getElementById('filesToSave'), filesSaved :
 		 * document.getElementById('filesSaved') });
 		 */
-		modifyAntilope();
+		
 		var label = document.getElementById('domain');
 
 		label.value = domain.getTitle();
@@ -109,6 +109,9 @@ function clicGetDomains() {
 	}
 	boxDomain.style.visibility = 'visible';
 
+}
+function clicReset() {
+    offlineSync.resetAll();
 }
 function clicMiscTest(domainid) {
     var ldoc=docManager.getLocalDocument({initid:1170});

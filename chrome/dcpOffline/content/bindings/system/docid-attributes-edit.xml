@@ -51,15 +51,16 @@
                         }
                     }
                     var icon=null;
-                    var sdoc=docManager.getLocalDocument({initid:value});
-                    if (! sdoc) sdoc=docManager.getLocalDocument({name:this.getAttribute('relationFamily')});
-                    if (sdoc) {
-                      icon=sdoc.getIcon();
-                    }
-                    
-                    if (icon) {
-                    
-                          menuList.image='file://'+icon;
+                    if (value) {
+                        var sdoc=docManager.getLocalDocument({initid:value});
+                        if (! sdoc) sdoc=docManager.getLocalDocument({name:this.getAttribute('relationFamily')});
+                        if (sdoc) {
+                          icon=sdoc.getIcon();
+                        }
+                        
+                        if (icon) {
+                              menuList.image='file://'+icon;
+                        }
                     }
                   } else {
                      // first call
