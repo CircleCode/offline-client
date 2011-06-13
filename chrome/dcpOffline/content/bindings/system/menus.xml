@@ -142,8 +142,6 @@
                     case this.getChild('document-toolbar-system-save') :
                         this.documentNode.save();
                         break;
-                    default:
-                        logConsole("pouet");
                 }
             ]]></handler>
         </handlers>

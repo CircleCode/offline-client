@@ -54,7 +54,6 @@
                         }
                         else{
                             Components.utils.import("resource://modules/events.jsm");
-                            logConsole("document " + this.initid + " asked to switch in " + mode + " mode");
                             var param = {
                                 documentId : this.initid,
                                 mode : mode
@@ -86,7 +85,7 @@
                         var err = this.doc.save();
                         this.switchMode("view");
                     } catch(e) {
-                        logConsole("error on document save");
+                        logError(e, "error on document ["+this.initid+"] save");
                         alert('(FIXME) ' + e);
                     }
                 ]]></body>
@@ -121,7 +120,6 @@
             
             <constructor><![CDATA[
                 Components.utils.import("resource://modules/logger.jsm");
-                logConsole("<--------- entering document [" + this.initid + "] constructor");
                 try{
                     Components.utils.import("resource://modules/docManager.jsm");
                     this.doc = docManager.getLocalDocument({initid : this.initid});
@@ -144,7 +142,6 @@
                     logError(e, "document document [" + this.initid + "] constructor");
                     throw(e);
                 }
-                logConsole("leaving document [" + this.initid + "] constructor --------->");
                 return true;
             ]]></constructor>
             
