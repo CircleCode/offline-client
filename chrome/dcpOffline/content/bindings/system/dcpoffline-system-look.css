@@ -1,13 +1,4 @@
 /***********************************************************
-        Not yet implemented
-************************************************************/
-dcpAttribute[type=menu] {
-    border: 1px solid red;
-    background: yellow;
-    min-height: 24px;
-}
-
-/***********************************************************
         Box model
 ************************************************************/
 dcpDocument {
@@ -20,6 +11,21 @@ dcpDocument {
 dcpDocument dcpDocMenu {
     display: -moz-box;
     width: 100%;
+    -moz-box-orient: horizontal;
+}
+
+dcpDocument dcpDocHeader {
+    display: -moz-box;
+    -moz-box-orient: horizontal;
+    width: 100%;
+}
+
+dcpDocument dcpDocHeader .title{
+    -moz-box-flex: 1;
+    border-bottom: 1px solid #CCCCCC;
+    color: #003366;
+    font-size: 1.6em;
+    font-weight: normal;
 }
 
 dcpDocument dcpAttribute {
@@ -54,6 +60,10 @@ dcpDocument dcpAttribute[type=array] dcpArrayTableTools{
     min-width: 0;
 }
 
+dcpDocument dcpAttribute[type=array] dcpAttribute {
+    min-height: 24px;
+}
+
 dcpDocument dcpAttribute[type=frame] {
     -moz-box-orient: vertical;
 }
@@ -83,14 +93,9 @@ dcpDocument dcpAttribute .dcpImage {
     max-width:100px;
    
 }
+
 dcpDocument dcpAttribute .dcpValue { 
     -moz-box-flex: 1;
-    
-}
-
-dcpDocument dcpDocHeader {
-    display: -moz-box;
-    width: 100%;
 }
 
 dcpDocument dcpDocFooter {
@@ -111,6 +116,22 @@ dcpDocument dcpAttribute[type=array] grid {
     /*border-top-width: 2px;
     border-top-style: solid;
     border-top-color: -moz-use-text-color;*/
+    
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: -moz-use-text-color;
+    
+    -moz-border-image: none;
+    -moz-border-top-colors: threedshadow threeddarkshadow;
+    -moz-border-right-colors: threedhighlight threedlightshadow;
+    -moz-border-bottom-colors: threedhighlight threedlightshadow;
+    -moz-border-left-colors: threedshadow threeddarkshadow;
+    
+    background-color: -moz-field;
+    color: -moz-fieldtext;
+}
+
+dcpDocument dcpAttribute[type=array] grid dcpRow{
     
     border-bottom-width: 2px;
     border-bottom-style: solid;

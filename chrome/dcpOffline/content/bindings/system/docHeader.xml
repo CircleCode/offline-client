@@ -9,13 +9,13 @@
         <!--<ressources/>-->
         
         <content>
-                <xul:vbox anonid="document-header">
-                    <xul:hbox>
+                <xul:hbox class="document-header" flex="1">
+                    <xul:hbox flex="1">
                         <xul:image anonid="document-icon"/>
-                        <xul:label anonid="document-title"/>
+                        <xul:label anonid="document-title" class="title"/>
                     </xul:hbox>
                     <children/>
-                </xul:vbox>
+                </xul:hbox>
         </content>
         
         <implementation>
