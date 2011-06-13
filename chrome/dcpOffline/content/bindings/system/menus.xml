@@ -136,6 +136,9 @@
                     case this.getChild('document-toolbar-system-close') :
                         this.documentNode.close();
                         break;
+                    case this.getChild('document-toolbar-system-cancel') :
+                        this.documentNode.reinit();
+                        break;
                     case this.getChild('document-toolbar-system-save') :
                         this.documentNode.save();
                         break;

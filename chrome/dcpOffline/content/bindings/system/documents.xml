@@ -96,9 +96,24 @@
                 <!-- FIXME: pre-close -->
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
-                    logConsole("document " + this.initid + " asked to be closed");
                     var param = {
                         documentId : this.initid
+                    };
+                    applicationEvent.publish("askForCloseDocument", param);
+                ]]></body>
+            </method>
+            
+            <method name="reinit">
+                <!-- FIXME: pre-close -->
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/events.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    
+                    docManager.initDocInstance({initid: this.initid});
+                    
+                    var param = {
+                        documentId : this.initid,
+                        openAfterClose: this.initid
                     };
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
