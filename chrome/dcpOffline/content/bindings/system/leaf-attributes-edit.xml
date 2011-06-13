@@ -124,7 +124,6 @@
     <binding id="longtext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute longtext">
-            
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="true" xbl:inherits="disabled"/>
             </xul:hbox>
@@ -134,9 +133,7 @@
     <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:vbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:hbox>
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                </xul:hbox>
                 <xul:iframe anonid="displayValue" src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html" class="dcpValue" flex="1"/>
             </xul:vbox>
         </content>
@@ -242,11 +239,12 @@
     <binding id="file-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute file">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue text-link"/>
-                <xul:button anonid="modifyButton" label="&attribute.file.button.modify;"/>
-                <xul:button anonid="deleteButton" tooltiptext="&attribute.file.button.delete;"/>
+                <xul:box anonid="buttons">
+                    <xul:button anonid="modifyButton" label="&attribute.file.button.modify;" crop="center"/>
+                    <xul:button anonid="deleteButton" class="delete" tooltiptext="&attribute.file.button.delete;"/>
+                </xul:box>
             </xul:hbox>
         </content>
         
@@ -378,13 +376,14 @@
     <binding id="image-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#file-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <html:div class="dcpValue">
                     <html:img class="dcpImage" anonid="imageField" />
                 </html:div>
-                <xul:button anonid="modifyButton" label="&attribute.image.button.modify;"/>
-                <xul:button anonid="deleteButton" tooltiptext="&attribute.image.button.delete;"/>
+                <xul:box anonid="buttons">
+                    <xul:button anonid="modifyButton" label="&attribute.image.button.modify;" crop="center"/>
+                    <xul:button anonid="deleteButton" class="delete" tooltiptext="&attribute.image.button.delete;"/>
+                </xul:box>
             </xul:hbox>
         </content>
         

@@ -64,7 +64,7 @@ dcpDocument dcpAttribute[type=htmltext] a{
 }
 
 dcpDocument dcpAttribute .dcpImage {
-    width:100px;
+    max-width:100px;
    
 }
 dcpDocument dcpAttribute .dcpValue { 
@@ -132,8 +132,7 @@ dcpDocument .dcpChooseDocid {
 
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button,
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button {
-    min-width: 0;
-    min-height: 0;
+    min-width: none;
     -moz-box-pack: center;
 }
 
@@ -144,6 +143,22 @@ dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.delete {
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button.add,
 dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.add {
     list-style-image: url("chrome://dcpoffline/content/images/insert_table_row-16.png");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=file] hbox,
+dcpDocument[mode=edit] dcpAttribute[type=image] hbox {
+    -moz-box-align: end;
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=file] button,
+dcpDocument[mode=edit] dcpAttribute[type=image] button {
+    min-width: none;
+    -moz-box-pack: center;
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=file] button.delete,
+dcpDocument[mode=edit] dcpAttribute[type=image] button.delete {
+    list-style-image: url("chrome://dcpoffline/content/images/button_cancel-16.png");
 }
 /***********************************************************
         Validity
