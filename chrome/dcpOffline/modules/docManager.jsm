@@ -150,7 +150,7 @@ docManagerSingleton.prototype = {
 			//logConsole('local', config.localDocument.properties);
 			var doc=new Fdl.Document({context:config.context});
 			// clone it
-			var values=JSON.parse(JSON.stringify(config.localDocument.values));
+			var values=Object.create(config.localDocument.values);
 			
 			doc.affect({properties:config.localDocument.properties,
 				values:values});

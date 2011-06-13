@@ -105,7 +105,7 @@ var fileManager = {
     },
 
     deleteFile : function(config) {
-        if (config && config.initid && config.attrid) {
+        if (config && config.initid && config.attrid && (config.index || config.localIndex)) {
             if (!config.hasOwnProperty('index')) {
                 config.index = -1;
             }
@@ -113,16 +113,22 @@ var fileManager = {
             var destDir = filesRoot.clone();
             destDir.append(config.initid);
             destDir.append(config.attrid);
-            if (config.index >= 0)
-                destDir.append(config.index);
-
-            while (destDir.directoryEntries.hasMoreElements()) {
-                var currentFile = destDir.directoryEntries.getNext();
-                currentFile.QueryInterface(Components.interfaces.nsILocalFile)
-                        .remove(false);
+            
+            if (! config.localIndex) {
+                config.localIndex = docManager.getLocalDocument({initid: config.initid})
+                .getValue(config.attrid, config.index);
             }
+            if (config.localIndex) {
+                
+                destDir.append(config.localIndex);
+                try {
+                destDir.remove(true);
+                } catch (e) {
 
-            dropFile(config);
+                    dropFile(config);
+                   // logConsole("file delete:",destDir );
+                }
+            }
 
         } else {
             logError('deleteFile : missing parameters');
@@ -164,6 +170,7 @@ var fileManager = {
                 .createInstance(Components.interfaces.nsILocalFile);
         for ( var i = 0; i < r.length; i++) {
             file.initWithPath(r[i].path);
+            try {
             storageManager
                     .execQuery({
                         query : 'update '
@@ -177,6 +184,9 @@ var fileManager = {
                             attrid : r[i].attrid
                         }
                     });
+            } catch (e) {
+                
+            }
         }
     },
 
@@ -194,34 +204,38 @@ var fileManager = {
         var localDoc = null;
         
         for ( var i = 0; i < r.length; i++) {
-            file.initWithPath(r[i].path);
-            mdate = utils.toIso8601(new Date(file.lastModifiedTime));
-            
-            if (mdate != r[i].modifydate) {
-                storageManager
-                        .execQuery({
-                            query : 'update '
-                                    + TABLE_FILES
-                                    + ' set modifydate=:modifydate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
-                            params : {
-                                modifydate : mdate,
-                                initid : r[i].initid,
-                                index : r[i].index,
-                                attrid : r[i].attrid
-                            }
-                        });
-
-                localDoc = docManager.getLocalDocument({
-                    initid : r[i].initid
-                });
-                // logConsole('doclocal', localDoc);
-                try {
-                    localDoc.save(); // to change modification date
-                } catch (e) {
-                    // nothing may be not in good domain
-                    // normaly never go here
-                    logError(e);
+              file.initWithPath(r[i].path);
+            try {
+                mdate = utils.toIso8601(new Date(file.lastModifiedTime));
+                
+                if (mdate != r[i].modifydate) {
+                    storageManager
+                            .execQuery({
+                                query : 'update '
+                                        + TABLE_FILES
+                                        + ' set modifydate=:modifydate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
+                                params : {
+                                    modifydate : mdate,
+                                    initid : r[i].initid,
+                                    index : r[i].index,
+                                    attrid : r[i].attrid
+                                }
+                            });
+    
+                    localDoc = docManager.getLocalDocument({
+                        initid : r[i].initid
+                    });
+                    // logConsole('doclocal', localDoc);
+                    try {
+                        localDoc.save(); // to change modification date
+                    } catch (e) {
+                        // nothing may be not in good domain
+                        // normaly never go here
+                        logError(e);
+                    }
                 }
+            } catch (e) {
+                //logError(e);
             }
         }
     },
@@ -353,6 +367,8 @@ var fileManager = {
                             }
                         }
                         me.updateFileSyncDate({initid:file.initid});
+                        // TODO Call cleanFileSync
+                        //me.cleanFileSync({initid:file.initid, attrid:file.attrid});
                         // me.filesToDownLoad.pop();
                         // refreshProgressBar()
                         if (typeof me.acquitFileCallback == "function")
@@ -381,6 +397,38 @@ var fileManager = {
                     });
         } else {
             throw new ArgException("updateFileSyncDate need document parameter");
+        }
+    },
+    cleanFileSync : function(config) {
+        var localDocument=docManager.getLocalDocument({initid:config.initid});
+        if (localDocument) {
+            
+            var r=storageManager
+            .execQuery({
+                query : "select * from files where initid=:initid",
+                    params:{
+                        initid:config.initid
+                    }
+            });
+            for (var i=0;i<r.length;i++) {
+                var file=r[i];
+                var lvalues=localDocument.getValue(file.attrid);
+                var index=-2;
+                if (Array.isArray(lvalues)) {
+                    //logConsole('pusharrayfile :'+file.index, lvalues);
+                    for (var vi=0;vi < lvalues.length; vi++) {
+                        if (lvalues[vi]==file.index) index=vi;
+                    }
+                }  else {
+                    if (lvalues == file.index) {
+                        index=-1;
+                    }
+                }
+                if (index==-2) {
+                    logConsole('need delete', {initid:file.initid, attrid:attrid, localIndex:file.index});
+                    fileManager.deleteFile({initid:config.initid, attrid:file.attrid, localIndex:localIndex});
+                }
+            }
         }
     }
 };
@@ -412,6 +460,7 @@ function storeFile(config) {
                 }
             });
         } else {
+            try {
             var mdate=utils.toIso8601(new Date(config.aFile.lastModifiedTime));
             var rdate=mdate;
             if (config.newFile && (! config.serverFile)) {
@@ -435,6 +484,9 @@ function storeFile(config) {
                             modifydate:mdate
                         }
                     });
+            } catch (e) {
+                logError('no local file '+config.attrid);
+            }
         }
     } else {
         throw(new ArgException("storeFile : missing arguments"));
@@ -443,16 +495,16 @@ function storeFile(config) {
 
 function dropFile(config) {
     if (config && config.initid && config.attrid
-            && config.hasOwnProperty('index')) {
+            && config.hasOwnProperty('localIndex')) {
         storageManager
                 .execQuery({
                     query : 'DELETE FROM '
                             + TABLE_FILES
-                            + 'WHERE initid=:initid AND attrid=:attrid AND index=:index',
+                            + ' WHERE initid=:initid AND attrid=:attrid AND "index"=:index',
                     params : {
                         initid : config.initid,
                         attrid : config.attrid,
-                        index : config.index,
+                        index : config.localIndex
                     }
                 });
     }

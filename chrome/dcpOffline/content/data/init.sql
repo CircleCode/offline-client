@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS "doctitles" (
 CREATE TABLE IF NOT EXISTS "files" (
     "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "attrid"            TEXT NOT NULL REFERENCES attrmappings("attrid") ON UPDATE CASCADE,
-    "index"             INTEGER,
+    "index"             TEXT,
     "basename"          TEXT NOT NULL,
     "path"              TEXT NOT NULL,
     "serverid"          TEXT,
