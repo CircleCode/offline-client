@@ -313,7 +313,6 @@ function tryToCloseDocument(param) {
  * @param param
  */
 function tryToCloseAllDocuments(param) {
-    alert("try to close all documents ", JSON.stringify(param));
     logIHM("try to close all documents ", param);
     if (!applicationEvent.publish("preCloseAllDocuments", param)) {
         // TODO add alert message
@@ -321,10 +320,8 @@ function tryToCloseAllDocuments(param) {
         return false;
     } else {
         if(applicationEvent.publish("closeAllDocuments", param)){
-            alert("allDocuments successfully closed");
             return applicationEvent.publish("postCloseAllDocuments", param);
         } else {
-            alert("allDocuments not closed");
             return false;
         }
     }
