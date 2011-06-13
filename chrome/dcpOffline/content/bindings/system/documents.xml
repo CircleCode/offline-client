@@ -79,10 +79,20 @@
                 ]]></body>
             </method>
             
+            <method name="onPreLocalSave">
+                <body><![CDATA[return true;]]></body>
+            </method>
+            
+            <method name="onAfterLocalSave">
+                <body><![CDATA[return true;]]></body>
+            </method>
+            
             <method name="save">
                 <body><![CDATA[
                     try {
-                        var err = this.doc.save();
+                        this.onPreLocalSave();
+                        this.doc.save();
+                        this.onAfterLocalSave();
                         this.switchMode("view");
                     } catch(e) {
                         logError(e, "error on document ["+this.initid+"] save");
