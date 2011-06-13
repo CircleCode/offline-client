@@ -95,7 +95,7 @@
                  } else {
                     this.setAttribute('collapsed', true);
                  }
-                 
+
                 this.reloadValue();
             ]]></constructor>
             
@@ -124,7 +124,6 @@
     <binding id="longtext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute longtext">
-            
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:textbox anonid="displayValue" class="dcpValue" multiline="true" xbl:inherits="disabled"/>
             </xul:hbox>
@@ -134,9 +133,7 @@
     <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:vbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <xul:hbox>
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                </xul:hbox>
                 <xul:iframe anonid="displayValue" src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html" class="dcpValue" flex="1"/>
             </xul:vbox>
         </content>
@@ -144,13 +141,13 @@
             <method name="reloadValue">
                 <body><![CDATA[
                     var contentWindow = this.getChild('displayValue').contentWindow;
-                    
+
                     var contentDocument = this.getChild('displayValue').contentDocument;
-                    
+
                     var value = this.getValue();
-                    
+
                     var that = this;
-                    
+
                     //XXX: this is suboptimal (should use DOMFrameContentLoaded)
                     var initEditor = function(){                        
                         if(contentWindow.getEditorWrapper){
@@ -190,7 +187,7 @@
                     } else {
                         this.setCustomValidity("");
                     }
-                    
+
                     return value;
                 ]]></body>
             </method>
@@ -242,11 +239,12 @@
     <binding id="file-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute file">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:label anonid="displayValue" class="dcpValue text-link"/>
-                <xul:button anonid="modifyButton" label="&attribute.file.button.modify;"/>
-                <xul:button anonid="deleteButton" tooltiptext="&attribute.file.button.delete;"/>
+                <xul:box anonid="buttons">
+                    <xul:button anonid="modifyButton" label="&attribute.file.button.modify;" crop="center"/>
+                    <xul:button anonid="deleteButton" class="delete" tooltiptext="&attribute.file.button.delete;"/>
+                </xul:box>
             </xul:hbox>
         </content>
         
@@ -317,14 +315,18 @@
             <method name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
-                    var aFile = fileManager.getFile({
-                        initid:this.doc.getInitid(),
-                        attrid:this.attrid,
-                        index:this.index
-                    });
-                    if(aFile){
-                        this.inputField.value = aFile.leafName;
-                    } else {
+                    try{
+                        var aFile = fileManager.getFile({
+                            initid:this.doc.getInitid(),
+                            attrid:this.attrid,
+                            index:this.index
+                        });
+                        if(aFile && aFile.exists()){
+                            this.inputField.value = aFile.leafName;
+                        } else {
+                            this.inputField.value = "";
+                        }
+                    } catch(e) {
                         this.inputField.value = "";
                     }
                 ]]></body>
@@ -332,14 +334,12 @@
             
             <method name="chooseFile">
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/fileManager.jsm");
-                    
                     const nsIFilePicker = Components.interfaces.nsIFilePicker;
 
                     var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
                     fp.init(window, "Choose a file", nsIFilePicker.modeOpen); // TODO: dialog title
                     fp.appendFilters(this.filters);
-                    
+
                     var rv = fp.show();
                     if (rv == nsIFilePicker.returnOK) {
                         try{
@@ -347,6 +347,25 @@
                         } catch(e){
                             alert(e);
                         }
+                    }
+                ]]></body>
+            </method>
+            
+            <method name="deleteFile">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    try{
+                        fileManager.deleteFile({
+                            initid:this.doc.getInitid(),
+                            attrid:this.attrid,
+                            index:this.index
+                        });
+                        this.reloadValue();
+                    } catch(e) {
+                        logError(e, "could not delete file for document"
+                                + " initid: " + this.doc.getInitid()
+                                + " attrid: " + this.attrid
+                                + " index: " + this.index);
                     }
                 ]]></body>
             </method>
@@ -365,11 +384,16 @@
         
         <handlers>
             <handler event="click" button="0"><![CDATA[
-                if(event.originalTarget == this.modifyButton){
-                    this.chooseFile();
-                } else 
-                if(event.originalTarget == this.inputField){
-                    this.openFile();
+                switch(event.originalTarget) {
+                    case this.modifyButton :
+                        this.chooseFile();
+                        break;
+                    case this.deleteButton :
+                        this.deleteFile();
+                        break;
+                    case this.inputField :
+                        this.openFile();
+                        break;
                 }
             ]]></handler>
         </handlers>
@@ -378,13 +402,14 @@
     <binding id="image-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#file-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
-                <xul:label anonid="label" class="dcpLabel" xbl:inherits="value=label"/>
-                <xul:label anonid="separator" class="dcpSeparator" value="&separator;"/>
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <html:div class="dcpValue">
                     <html:img class="dcpImage" anonid="imageField" />
                 </html:div>
-                <xul:button anonid="modifyButton" label="&attribute.image.button.modify;"/>
-                <xul:button anonid="deleteButton" tooltiptext="&attribute.image.button.delete;"/>
+                <xul:box anonid="buttons">
+                    <xul:button anonid="modifyButton" label="&attribute.image.button.modify;" crop="center"/>
+                    <xul:button anonid="deleteButton" class="delete" tooltiptext="&attribute.image.button.delete;"/>
+                </xul:box>
             </xul:hbox>
         </content>
         
@@ -402,17 +427,22 @@
             <method name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
-                    var aFile = fileManager.getFile({
-                        initid:this.doc.getInitid(),
-                        attrid:this.attrid,
-                        index:this.index
-                    });
-                    if(aFile){
-                        Components.utils.import("resource://modules/formater.jsm");
-                        var aFileURI = formater.getURI({file: aFile});
-                        this.inputField.src = aFileURI.spec;
-                        this.inputField.tooltipText = aFile.leafName;
-                    } else {
+                    try{
+                        var aFile = fileManager.getFile({
+                            initid:this.doc.getInitid(),
+                            attrid:this.attrid,
+                            index:this.index
+                        });
+                        if(aFile && aFile.exists()){
+                            Components.utils.import("resource://modules/formater.jsm");
+                            var aFileURI = formater.getURI({file: aFile});
+                            this.inputField.src = aFileURI.spec;
+                            this.inputField.tooltipText = aFile.leafName;
+                        } else {
+                            this.inputField.src = "";
+                            this.inputField.tooltipText = "";
+                        }
+                    } catch(e) {
                         this.inputField.src = "";
                         this.inputField.tooltipText = "";
                     }

@@ -93,16 +93,16 @@ dcpDocument dcpAttribute[type=htmltext],dcpDocument[mode=view] dcpAttribute[type
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#htmltext-attr-view");
 }
+dcpDocument[mode=view] dcpAttribute[type=htmltext] a{
+   -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#htmlanchor-attr-view");
+
+}
 
 dcpDocument dcpAttribute[type=color],dcpDocument[mode=view] dcpAttribute[type=color]
     {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#color-attr-view");
-}
-dcpDocument[mode=view] dcpAttribute[type=htmltext] a{
-   -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#htmlanchor-attr-view");
-
 }
 dcpDocument dcpAttribute[type=int],dcpDocument[mode=view] dcpAttribute[type=int]
     {
@@ -139,12 +139,10 @@ dcpDocument dcpAttribute[type=docid],dcpDocument[mode=view] dcpAttribute[type=do
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#docid-attr-view");
 }
-
 dcpDocument[mode=view] dcpAttribute[type=array] dcpAttribute[type=docid][multiple=true] {
 -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#docid-multiple2-attr-view");
 }
-
 dcpDocument dcpAttribute[type=docid][multiple=true],dcpDocument[mode=view] dcpAttribute[type=docid][multiple=true]
     {
     -moz-binding:

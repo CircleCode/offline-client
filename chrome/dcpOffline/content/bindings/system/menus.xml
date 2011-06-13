@@ -16,54 +16,70 @@
         <!--<ressources/>-->
         
         <content>
-            <xul:hbox anonid="document-toolbar" flex="1">
+            <xul:toolbox id="document-toolbox" flex="1">
+                <xul:toolbar anonid="document-toolbar" flex="1">
                 
-                <xul:button anonid="document-toolbar-system-save"
-                    label="&document.toolbar.button.save;"
-                    tooltiptext="&document.toolbar.button.save.tooltip;"
-                    icon="save"
-                    mode="edit">
-                </xul:button>
+                    <xul:toolbarbutton anonid="document-toolbar-system-save"
+                        label="&document.toolbar.button.save;"
+                        tooltiptext="&document.toolbar.button.save.tooltip;"
+                        icon="save"
+                        mode="edit">
+                    </xul:toolbarbutton>
+                    
+                    <xul:toolbarbutton anonid="document-toolbar-system-cancel"
+                        label="&document.toolbar.button.cancel;"
+                        tooltiptext="&document.toolbar.button.cancel.tooltip;"
+                        icon="cancel"
+                        mode="edit"
+                        oncommand="alert('(FIXME) do cancel');">
+                    </xul:toolbarbutton>
+                    
+                    <xul:toolbarbutton
+                        anonid="document-toolbar-system-edit"
+                        label="&document.toolbar.button.modify;"
+                        tooltiptext="&document.toolbar.button.modify.tooltip;"
+                        mode="view">
+                    </xul:toolbarbutton>
+                    
+                    <xul:spacer flex="1"/>
+                    
+                    <children/>
+                    
+                    <xul:toolbarbutton
+                        anonid="document-menu-advanced"
+                        type="menu"
+                        label="&document.toolbar.button.advanced;"
+                        tooltiptext="&document.toolbar.button.advanced.tooltip;">
+                        <xul:menupopup>
+                            <xul:menuitem
+                                anonid="document-toolbar-system-properties"
+                                label="&document.toolbar.button.properties;"
+                                tooltiptext="&document.toolbar.button.properties.tooltip;"
+                                icon="properties"
+                                oncommand="alert('(FIXME) open properties');">
+                            </xul:menuitem>
+                            <xul:menuseparator/>
+                            <xul:menuitem
+                                anonid="document-toolbar-system-revert"
+                                label="&document.toolbar.button.revert;"
+                                tooltiptext="&document.toolbar.button.revert.tooltip;"
+                                icon="clear"
+                                oncommand="alert('(FIXME) revert');">
+                            </xul:menuitem>
+                        </xul:menupopup>
+                    </xul:toolbarbutton>
+                    
+                    
+                    
+                    <xul:toolbarbutton
+                        anonid="document-toolbar-system-close"
+                        label="&document.toolbar.button.close;"
+                        tooltiptext="&document.toolbar.button.close.tooltip;"
+                        icon="close">
+                    </xul:toolbarbutton>
                 
-                <xul:button anonid="document-toolbar-system-cancel"
-                    label="&document.toolbar.button.cancel;"
-                    tooltiptext="&document.toolbar.button.cancel.tooltip;"
-                    icon="cancel"
-                    mode="edit"
-                    oncommand="alert('(FIXME) do cancel');">
-                </xul:button>
-                
-                <xul:button
-                    anonid="document-toolbar-system-edit"
-                    label="&document.toolbar.button.modify;"
-                    tooltiptext="&document.toolbar.button.modify.tooltip;"
-                    mode="view">
-                </xul:button>
-                
-                <xul:splitter anonid="document-toolbar-system-splitter"/>
-                
-                <xul:spacer flex="1"/>
-                
-                <children/>
-                
-                <xul:button
-                    anonid="document-toolbar-system-properties"
-                    label="&document.toolbar.button.properties;"
-                    tooltiptext="&document.toolbar.button.properties.tooltip;"
-                    icon="properties"
-                    oncommand="alert('(FIXME) open properties');">
-                </xul:button>
-                
-                <xul:splitter/>
-                
-                <xul:button
-                    anonid="document-toolbar-system-close"
-                    label="&document.toolbar.button.close;"
-                    tooltiptext="&document.toolbar.button.close.tooltip;"
-                    icon="close">
-                </xul:button>
-                
-            </xul:hbox>
+                </xul:toolbar>
+            </xul:toolbox>
         </content>
         
         <implementation>
@@ -141,6 +157,9 @@
                         break;
                     case this.getChild('document-toolbar-system-save') :
                         this.documentNode.save();
+                        break;
+                    case this.getChild('document-toolbar-system-revert') :
+                        this.documentNode.revert();
                         break;
                 }
             ]]></handler>

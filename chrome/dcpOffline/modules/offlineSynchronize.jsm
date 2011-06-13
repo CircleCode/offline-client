@@ -333,7 +333,7 @@ offlineSynchronize.prototype.setObservers = function(config) {
 };
 
 offlineSynchronize.prototype.callObserver = function(fn, arg) {
-    if ((typeof this.observers == 'object') && this.observers[fn]) {
+    if (this.observers && (typeof this.observers == 'object') && this.observers[fn]) {
         try {
             this.observers[fn](arg);
         } catch (e) {

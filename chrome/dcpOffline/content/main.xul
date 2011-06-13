@@ -29,8 +29,8 @@
                 <menu id="main-menu" label="&main.actionmenu;">
                     <menupopup >
                         <!--<menuitem label="&main.newDocument;"
-                            oncommand="openNewDocumentDialog();"/>-->
-                        <menuseparator/>
+                            oncommand="openNewDocumentDialog();"/>
+                        <menuseparator/>-->
                         <menuitem id="synchro-button" label="&main.synchro;"
                             oncommand="openSynchro();"/>
                         <menuitem id="preferences-button" label="&main.preference;"
