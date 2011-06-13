@@ -383,7 +383,7 @@ offlineSynchronize.prototype.pushFiles = function(config) {
                 var lvalues=localDocument.getValue(attrid);
                 var index=-2;
                 if (Array.isArray(lvalues)) {
-                    logConsole('pusharrayfile :'+file.index, lvalues);
+                    //logConsole('pusharrayfile :'+file.index, lvalues);
                     for (var vi=0;vi < lvalues.length; vi++) {
                         if (lvalues[vi]==file.index) index=vi;
                     }
