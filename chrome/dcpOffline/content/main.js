@@ -744,7 +744,7 @@ function prepareClose(param) {
 		currentDoc = getCurrentDocument();
 		if (param.documentId == currentDoc.documentId) {
 			currentDocs = getListOfOpenDocuments();
-			for (currentDocId in currentDocs) {
+			for (var currentDocId in currentDocs) {
 				if (stop) {
 					param.openAfterClose = currentDocId;
 					return true;
