@@ -129,7 +129,9 @@
             <handler event="click"  button="0"><![CDATA[
                 switch(event.originalTarget){
                     case this.getChild('document-toolbar-system-edit') :
-                        this.documentNode.switchMode('edit');
+                        if(! this.getChild('document-toolbar-system-edit').disabled){
+                            this.documentNode.switchMode('edit');
+                        }
                         break;
                     case this.getChild('document-toolbar-system-close') :
                         this.documentNode.close();
