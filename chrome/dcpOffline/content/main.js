@@ -18,9 +18,11 @@ Cu.import("resource://gre/modules/Services.jsm");
 /* init elements */
 /* Add window binding onLoad and onClose */
 window.onload = function() {
+    window.setTimeout(function(){
 	initNetworkCheck();
 	initApplication();
-};
+    }, 100);
+}
 /**
  * Init the network check Private method : you should never use it
  * 
