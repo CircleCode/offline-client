@@ -67,52 +67,59 @@
                 <parameter name="rowIndex" />
                 <parameter name="noReindex" />
                 <body><![CDATA[
-                    if(rowIndex === undefined){
-                        rowIndex = this.rows.childElementCount-1;
-                        // -1 for removing header
-                    }
-                    if(isNaN(rowIndex)){
-                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is not a number"));
-                    } else {
-                        rowIndex = rowIndex-0; //remember that all parameters are string...
-                        var indexInGrid = rowIndex+1; //so that we go after head
-                    }
-                    if(indexInGrid > this.rows.childElementCount){
-                        alert(indexInGrid + " VS " + this.rows.childElementCount);
-                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + " is too high (there are "+this.rows.childElementCount+" rows in this grid)"));
-                    } else if(indexInGrid < 1){
-                        throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is too low"));
-                    }
-                    
-                    var currentRow = document.createElement('dcpRow');
-                    currentRow.setAttribute('index', rowIndex);
-                    
-                    for (var i = 0; i < this.childAttributes.length; ++i) {
-                        var attributeNode = this.childAttributes[i];
-                        
-                        var currentAttribute = attributeNode.cloneNode(true);
-                        currentAttribute.setAttribute('flex',1);
-                        currentAttribute.setAttribute('index', rowIndex);
-                        
-                        currentRow.appendChild(currentAttribute);
-                        
-                        if(this.constructed){
-                            //insert empty value at rowIndex position, only if insertion occurs after construction
-                            var attrid = currentAttribute.getAttribute('attrid');
-                            
-                            var value = this.doc.getValue(attrid);
-                            value.splice(rowIndex, 0, '');
-                        
-                            this.doc.setValue(attrid, value);
+                    Components.utils.import("resource://modules/logger.jsm");
+                    try{
+                        if(rowIndex === undefined){
+                            rowIndex = this.rows.childElementCount-1;
+                            // -1 for removing header
                         }
+                        if(isNaN(rowIndex)){
+                            throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is not a number"));
+                        } else {
+                            rowIndex = rowIndex-0; //remember that all parameters are string...
+                            var indexInGrid = rowIndex+1; //so that we go after head
+                        }
+                        if(indexInGrid > this.rows.childElementCount){
+                            alert(indexInGrid + " VS " + this.rows.childElementCount);
+                            throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + " is too high (there are "+this.rows.childElementCount+" rows in this grid)"));
+                        } else if(indexInGrid < 1){
+                            throw(new ArgException("array-attr-edit::insertNewRow : " + rowIndex + "is too low"));
+                        }
+                        
+                        var currentRow = document.createElement('dcpRow');
+                        currentRow.setAttribute('index', rowIndex);
+                        
+                        for (var i = 0; i < this.childAttributes.length; ++i) {
+                            var attributeNode = this.childAttributes[i];
+                            
+                            var currentAttribute = attributeNode.cloneNode(true);
+                            currentAttribute.setAttribute('flex',1);
+                            currentAttribute.setAttribute('index', rowIndex);
+                            
+                            currentRow.appendChild(currentAttribute);
+                            
+                            if(this.constructed){
+                                //insert empty value at rowIndex position, only if insertion occurs after construction
+                                var attrid = currentAttribute.getAttribute('attrid');
+                                
+                                var value = this.doc.getValue(attrid);
+                                if( (!Array.isArray(value)) && (!value) ){
+                                    value = [];
+                                }
+                                value.splice(rowIndex, 0, '');
+                            
+                                this.doc.setValue(attrid, value);
+                            }
+                        }
+                        
+                        this.rows.insertBefore(currentRow, this.rows.childNodes[indexInGrid-1].nextSibling); // ==insertAfter or append
+                        
+                        if(! noReindex){
+                            this.reindexRows(rowIndex);
+                        }
+                    } catch(e) {
+                        logError(e, "insert New Row in doc "+this.doc.getInitid());
                     }
-                    
-                    this.rows.insertBefore(currentRow, this.rows.childNodes[indexInGrid-1].nextSibling); // ==insertAfter or append
-                    
-                    if(! noReindex){
-                        this.reindexRows(rowIndex);
-                    }
-                    
                 ]]></body>
             </method>
             
