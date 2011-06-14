@@ -375,7 +375,8 @@
                     Components.utils.import("resource://modules/fileManager.jsm");
                     fileManager.openFile({
                         initid: this.doc.getInitid(),
-                        attrid: this.attrid
+                        attrid: this.attrid,
+                        index: this.index
                     });
                 ]]></body>
             </method>
