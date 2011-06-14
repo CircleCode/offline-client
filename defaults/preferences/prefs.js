@@ -21,19 +21,17 @@ pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 pref("dom.report_all_js_exceptions", true);
 
-
-
 /* application prefs */
 // TODO all notations to update and merge with recent
 pref("dcpoffline.storage.fileName", "storage.sqlite");
 pref("dcpoffline.storage.location", "ProfD");
 pref("dcpoffline.domain", "default");
-pref("dcpoffline.context.url", "http://dynacase.r2d2/dev/");
-pref("dcpoffline.online.url", "http://dynacase.r2d2/dev/");
+pref("dcpoffline.context.url", "");
+pref("dcpoffline.online.url", "");
 
 pref("offline.user.login", "");
 pref("offline.user.password", "");
-pref("offline.user.applicationURL", "http://dynacase.r2d2.paris.lan/dev/");
+pref("offline.user.applicationURL", "");
 
 pref("offline.application.modeOffline", false);
 
