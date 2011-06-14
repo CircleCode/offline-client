@@ -150,7 +150,11 @@ docManagerSingleton.prototype = {
 			//logConsole('local', config.localDocument.properties);
 			var doc=new Fdl.Document({context:config.context});
 			// clone it
-			var values=Object.create(config.localDocument.values);
+			//var values=Object.create(config.localDocument.values);
+		//	logConsole("clone", Object.create(config.localDocument.values));
+          //  logConsole("origi", config.localDocument.values);
+			//var values=config.localDocument.values;
+            var values=JSON.parse(JSON.stringify(config.localDocument.values));
 			
 			doc.affect({properties:config.localDocument.properties,
 				values:values});
@@ -179,7 +183,6 @@ docManagerSingleton.prototype = {
 			            } else {
 			                doc.setValue(oa.id, getFileServerId({attrid:oa.id, index:config.localDocument.getValue(oa.id),localValues:r}));
 			            }
-                        logConsole('modi',doc._mvalues);
 			        }
 			    }
 			}
