@@ -6,6 +6,11 @@ Components.utils.import("resource://modules/fdl-data-debug.jsm");
 
 var EXPORTED_SYMBOLS = [ "context" ];
 
+var url = Preferences.get('dcpoffline.context.url');
+if(url == ''){
+    url = 'http://fakeurl.com';
+}
+
 var context = new Fdl.Context({
-  url: Preferences.get('dcpoffline.context.url')
+    url: url
 });
