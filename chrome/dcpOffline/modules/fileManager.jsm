@@ -251,6 +251,7 @@ var fileManager = {
                     .getValue(config.attrid, config.index);
             
             if (! config.index) {
+                return null;
                 throw (new Error('file attr [' + config.attrid
                         + '] does not exists'));
             }
@@ -368,7 +369,7 @@ var fileManager = {
                         }
                         me.updateFileSyncDate({initid:file.initid});
                         // TODO Call cleanFileSync
-                        //me.cleanFileSync({initid:file.initid, attrid:file.attrid});
+                        me.cleanFileSync({initid:file.initid, attrid:file.attrid});
                         // me.filesToDownLoad.pop();
                         // refreshProgressBar()
                         if (typeof me.acquitFileCallback == "function")
@@ -425,8 +426,8 @@ var fileManager = {
                     }
                 }
                 if (index==-2) {
-                    logConsole('need delete', {initid:file.initid, attrid:attrid, localIndex:file.index});
-                    fileManager.deleteFile({initid:config.initid, attrid:file.attrid, localIndex:localIndex});
+                    logConsole('need delete', {initid:file.initid, attrid:file.attrid, localIndex:file.index});
+                    fileManager.deleteFile({initid:file.initid, attrid:file.attrid, localIndex:file.index});
                 }
             }
         }

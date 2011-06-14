@@ -50,6 +50,8 @@ offlineSynchronize.prototype.resetAll = function(config) {
     storageManager.execQuery({query : "delete from documents"});
     storageManager.execQuery({query : "delete from synchrotimes"});
     storageManager.execQuery({query : "delete from files"});
+    storageManager.execQuery({query : "delete from families"});
+    storageManager.execQuery({query : "delete from attrmappings"});
     
 
     var filesRoot = Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
@@ -96,13 +98,13 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
                 });
 
     }
+    // TODO delete domains not listed
     return domains;
 };
 
 offlineSynchronize.prototype.synchronizeDomain = function(config) {
     if (config && config.domain) {
         var domain = config.domain;
-        // TODO record synchro date in domain table
         this.recordFamilies({
             domain : domain
         });
@@ -274,13 +276,12 @@ offlineSynchronize.prototype.pushDocument = function(config) {
         });
         if (document) {
             // put document and modifies files
-            //logConsole('push', document);
+            
             this.callObserver('onDetailLabel',"pushing document :"+document.getTitle());
             var updateDocument = domain.sync().pushDocument({
                 context : domain.context,
                 document : document
             });
-
             if (!updateDocument) {
                 throw new SyncException("pushDocument");
             } else {
