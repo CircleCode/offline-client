@@ -6,7 +6,16 @@
 	<textarea id="editorWrapper" style="width:100%"></textarea>
     <script type="text/javascript">
         function initEditor(){
-            editorInstance = CKEDITOR.replace('editorWrapper');
+            editorInstance = CKEDITOR.replace('editorWrapper', {toolbar:[
+                                                                         
+                                                                         { name: 'basicstyles', items : [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ] },
+                                                                         { name: 'paragraph', items : [ 'NumberedList','BulletedList','-','Outdent','Indent','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'] },
+                                                                         { name: 'links', items : [ 'Link','Unlink'] },
+                                                                         { name: 'insert', items : [ 'Image','Table','HorizontalRule' ] },
+                                                                        
+                                                                         { name: 'styles', items : [ 'Format' ] }
+                                                                 ]});
+          //  editorInstance = CKEDITOR.replace('editorWrapper', {toolbar:'Basic'});
             return editorInstance;
         };
         function getEditorWrapper(){

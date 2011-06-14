@@ -6,6 +6,7 @@ dcpDocument {
     -moz-box-orient: vertical;
     overflow-y: auto;
     width: 100%;
+    background-color: white;
 }
 
 dcpDocument dcpDocMenu {
@@ -50,6 +51,9 @@ dcpAttribute[type=image] {
     -moz-box-align: center;
 }
 
+dcpAttribute[type=longtext] textbox textarea{
+    resize:vertical;
+}
 dcpDocument dcpAttribute[type=array] dcpRow{
     display: -moz-grid-line
 }
@@ -81,12 +85,12 @@ dcpDocument dcpAttribute .dcpLabel {
 }
 
 dcpDocument dcpAttribute .link {
-    color: blue;
+    color: #2d1b9b; /* dark blue */
     cursor: pointer;
 }
 
 dcpDocument dcpAttribute[type=htmltext] a{
-    color: blue;    
+    color: #2d1b9b; /* dark blue */
 }
 
 dcpDocument dcpAttribute .dcpImage {
