@@ -102,7 +102,6 @@
             </method>
             
             <method name="close">
-                <!-- FIXME: pre-close -->
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
                     var param = {
@@ -113,7 +112,6 @@
             </method>
             
             <method name="reinit">
-                <!-- FIXME: pre-close -->
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
                     Components.utils.import("resource://modules/docManager.jsm");
@@ -129,9 +127,13 @@
             </method>
             
             <method name="preClose">
+                <parameter name="config"/>
                 <body><![CDATA[
                     if(this.doc.isDirty()){
                         try {
+                            Components.utils.import("resource://modules/events.jsm");
+                            applicationEvent.publish("askForOpenDocument", {documentId : this.initid});
+                            
                             var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                     .getService(Components.interfaces.nsIPromptService);
             
@@ -145,7 +147,8 @@
                             var button = prompts.confirmEx(
                                 null,
                                 "Confirm close document",
-                                "What do you want to do?",
+                                "Document ["+this.doc.getTitle()+"] has been modified since its last save.\n"
+                                        + "What do you want to do?",
                                 flags,
                                 "",
                                 "",
@@ -221,8 +224,15 @@
                             this.setAttribute('mode', 'view');
                         }
                     }
+                    this.hooks = this.hooks || {};
+                    this.hooks.preClose = function preCloseHook(config){
+                        if(config.documentId == this.initid){
+                            return this.preClose(config);
+                        }
+                        return true
+                    }
                     
-                    applicationEvent.subscribe("preCloseDocument", this.preClose, {scope: this});
+                    applicationEvent.subscribe("preCloseDocument", this.hooks.preClose, {scope: this});
                     
                     //XXX: register as a render
                 } catch(e){
@@ -237,8 +247,8 @@
                 try{
                     Components.utils.import("resource://modules/events.jsm");
                     
-                    applicationEvent.unsubscribe("preCloseDocument", this.preClose);
-                
+                    applicationEvent.unsubscribe("preCloseDocument", this.hooks.preClose);
+                    
                     //TODO: unregister as a render
                     return true;
                 } catch(e){
