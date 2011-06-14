@@ -1,9 +1,6 @@
-const
-Cc = Components.classes;
-const
-Ci = Components.interfaces;
-const
-Cu = Components.utils;
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
 
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/exceptions.jsm");

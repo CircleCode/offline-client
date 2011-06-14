@@ -19,8 +19,9 @@
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     onclose="return tryToClose()">
-    
+    <!--
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
+    -->
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
     
     <toolbox id="main-toolbox">
@@ -53,6 +54,7 @@
                             oncommand="openAbout();"/>
                     </menupopup >
                 </menu> -->
+                <!--
                 <menu id="debug-menu" label="&debug;">
                     <menupopup>
                         <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;"
@@ -63,6 +65,7 @@
                             oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
                     </menupopup>
                 </menu>
+                -->
             </menubar>
         </toolbar>
     </toolbox>
