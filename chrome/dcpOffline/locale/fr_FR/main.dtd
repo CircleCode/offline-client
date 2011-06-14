@@ -11,54 +11,57 @@
 
 
 <!-- Login traduction-->
-<!ENTITY authent.login.groupbox                 "login.login">
-<!ENTITY authent.login                          "login">
-<!ENTITY authent.password                       "password">
-<!ENTITY authent.login.option                   "login.option">
-<!ENTITY authent.applicationURL                 "applicationURL">
-<!ENTITY authent.remember.login.mdp             "login.remember">
+<!ENTITY authent.login.groupbox                 "Informations d'authentification">
+<!ENTITY authent.login                          "Compte">
+<!ENTITY authent.password                       "Mot de passe">
+<!ENTITY authent.login.option                   "Options de connexion">
+<!ENTITY authent.applicationURL                 "URL du serveur Dynacase">
+<!ENTITY authent.remember.login.mdp             "Mémoriser les information de connexion">
 <!ENTITY authent.dialog                         "login">
-<!ENTITY authent.login.progress                 "authent.login.progress">
-<!ENTITY authent.work.offline                   "authent.work.offline">
-<!ENTITY authent.error.label                    "authent.error.label">
-<!ENTITY authent.autologin                      "authent.autologin">
+<!ENTITY authent.login.progress                 "Connexion au serveur Dynacase en cours...">
+<!ENTITY authent.work.offline                   "Fonctionnement en mode déconnecté par défaut">
+<!ENTITY authent.error.label                    "Résultat de la phase d'authentification">
+<!ENTITY authent.autologin                      "Autoriser l'authentification automatique">
 
 <!-- main -->
-<!ENTITY main.actionmenu                        "main.actionmenu">
-<!ENTITY main.newDocument                       "main.newDocument...">
-<!ENTITY main.close                             "main.close...">
-<!ENTITY main.preference                        "main.preference...">
-<!ENTITY main.synchro                           "main.synchro...">
-<!ENTITY main.helpmenu                          "main.helpmenu">
-<!ENTITY main.help                              "main.help...">
-<!ENTITY main.log                               "main.log...">
-<!ENTITY main.about                             "main.about...">
-<!ENTITY main.abstract.search                   "main.abstract.search">
+<!ENTITY main.actionmenu                        "Offline...">
+<!ENTITY main.newDocument                       "Nouveau document">
+<!ENTITY main.close                             "Quitter">
+<!ENTITY main.preference                        "Préférences">
+<!ENTITY main.synchro                           "Synchronisation">
+<!ENTITY main.helpmenu                          "Information">
+<!ENTITY main.help                              "Aide">
+<!ENTITY main.log                               "Journal">
+<!ENTITY main.about                             "A propos">
+<!ENTITY main.abstract.search                   "recherche">
 <!ENTITY main.domain.choose                     "main.domain.choose">
 
 <!-- synchronize -->
-<!ENTITY synchronize.dialogTitle                "synchronize.dialogTitle">
-<!ENTITY synchronize.cancel                     "synchronize.cancel">
-<!ENTITY synchronize.synchronize                "synchronize.synchronize">
-<!ENTITY synchro.progress                       "synchro.progress">
-<!ENTITY synchro.progressGlobal                 "synchro.progressGlobal">
-<!ENTITY synchro.progressDetail                 "synchro.progressDetail">
-<!ENTITY synchro.progressMessages               "synchro.progressMessages">
-<!ENTITY synchro.domain                         "synchro.domain">
-<!ENTITY synchro.detail                         "synchro.detail">
-<!ENTITY synchro.documents.record               "synchro.documents.record">
-<!ENTITY synchro.documents.recorded             "synchro.documents.recorded">
-<!ENTITY synchro.files.record                   "synchro.files.record">
-<!ENTITY synchro.files.recorded                 "synchro.files.recorded">
-<!ENTITY synchro.documents.save                 "synchro.documents.save">
-<!ENTITY synchro.documents.saved                "synchro.documents.saved">
-<!ENTITY synchro.files.save                     "synchro.files.save">
-<!ENTITY synchro.files.saved                    "synchro.files.saved">
-<!ENTITY synchro.client.server                  "synchro.client.server">
-<!ENTITY synchro.server.client                  "synchro.server.client">
-<!ENTITY synchro.progress                       "synchro.progress">
+<!ENTITY synchronize.dialogTitle                "Synchronisation du domaine">
+<!ENTITY synchronize.cancel                     "Annuler">
+<!ENTITY synchronize.synchronize                "Synchroniser">
+<!ENTITY synchro.progress                       "Avancement">
+<!ENTITY synchro.progressGlobal                 "global">
+<!ENTITY synchro.progressDetail                 "détail">
+<!ENTITY synchro.progressMessages               "Message de la synchronisation">
+<!ENTITY synchro.domain                         "Domaine de synchronisation">
+<!ENTITY synchro.detail                         "Détails">
+<!ENTITY synchro.documents.record               "documents à enregistrer">
+<!ENTITY synchro.documents.recorded             "documents enregistrés">
+<!ENTITY synchro.files.record                   "fichiers à enregistrer">
+<!ENTITY synchro.files.recorded                 "fichiers enregistrés">
+<!ENTITY synchro.documents.save                 "documents à récupérer">
+<!ENTITY synchro.documents.saved                "documents récupérés">
+<!ENTITY synchro.files.save                     "fichiers à récupérer">
+<!ENTITY synchro.files.saved                    "fichiers récupérés">
+<!ENTITY synchro.client.server                  "Téléversement (local vers serveur)">
+<!ENTITY synchro.server.client                  "Téléchargement (serveur vers local)">
+<!ENTITY synchro.progress                       "progression">
+<!ENTITY synchro.status                         "status">
+<!ENTITY synchronize.report                     "rapport">
+<!ENTITY synchro.result                         "résultat">
 
 <!-- preference -->
-<!ENTITY preference.dialogTitle                 "preference.dialogTitle">
-<!ENTITY preference.applicationPref             "preference.applicationPref">
-<!ENTITY preference.userPref                    "preference.userPref">
+<!ENTITY preference.dialogTitle                 "Préférences">
+<!ENTITY preference.applicationPref             "Application">
+<!ENTITY preference.userPref                    "Utilisateur">
