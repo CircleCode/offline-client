@@ -74,7 +74,7 @@
             <caption>
                 <label value="&authent.error.label;" />
             </caption>
-            <label id="authent.errorLabel" />
+            <description id="authent.errorLabel"></description>
         </groupbox>
     </vbox>
 </overlay>

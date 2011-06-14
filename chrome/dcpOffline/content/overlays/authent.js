@@ -55,9 +55,8 @@ function onAuthentSuccess() {
 
 function onAuthentError(reason) {
     logIHM("onLogError "+reason);
-
     if (reason) {
-        document.getElementById('authent.errorLabel').value = reason;
+        document.getElementById('authent.errorLabel').textContent = reason;
         document.getElementById('authent.errorGroup').style.visibility = "visible";
         document.getElementById('authent.progressGroup').hidden = true;
     }

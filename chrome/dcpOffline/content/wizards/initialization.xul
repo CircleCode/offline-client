@@ -18,7 +18,7 @@
         src="chrome://dcpoffline/content/wizards/initialization.js" />
         
     <wizardpage id="welcome">
-        <label value="&wizard.initialization.welcome;" />
+        <description style="white-space: pre;">&wizard.initialization.welcome; </description>
     </wizardpage>
     <wizardpage pageid="firstAuthent" onpageshow="initFirstAuthent();">
         <label value="&wizard.first.login;" />
