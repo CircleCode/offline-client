@@ -63,8 +63,7 @@
                                 anonid="document-toolbar-system-revert"
                                 label="&document.toolbar.button.revert;"
                                 tooltiptext="&document.toolbar.button.revert.tooltip;"
-                                icon="clear"
-                                oncommand="alert('(FIXME) revert');">
+                                icon="clear">
                             </xul:menuitem>
                         </xul:menupopup>
                     </xul:toolbarbutton>
