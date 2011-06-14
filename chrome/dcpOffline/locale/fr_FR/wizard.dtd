@@ -1,6 +1,17 @@
 <!-- initialization-->
-<!ENTITY wizard.initialization.title                "wizard.initialization.title">
-<!ENTITY wizard.initialization.welcome              "wizard.initialization.welcome">
+<!ENTITY wizard.initialization.title                "Dynacase Offline : assistant d'initialisation">
+<!ENTITY wizard.initialization.welcome              "Bienvenue, merci d'utiliser Dynacase Offline.
+
+Cet assistant vous guide pour l'initialisation de Dynacase Offline.
+Cette initialisation consiste à réaliser la première connexion authentifiée au serveur Dynacase,
+puis à synchroniser votre domaine de travail.
+
+Pour réaliser cette phase, vous devez êtes connecté à Internet et le serveur Dynacase doit être
+accessible. En cas de doute, contactez votre administrateur.
+
+ Pour commencer, utilisez le bouton ci-dessous...">
 <!ENTITY wizard.initialization.domain               "wizard.initialization.domain">
-<!ENTITY wizard.first.login                         "wizard.first.login">
-<!ENTITY wizard.try.authent                         "wizard.try.authent">
+<!ENTITY wizard.first.login                         "Première connexion">
+<!ENTITY wizard.try.authent                         "cliquez ici pour tester la connexion...">
+<!ENTITY wizard.initialization.selectDomain         "Sélectionnez le domaine à utiliser">
+<!ENTITY wizard.try.synchronize                     "Lancer le test de synchronisation...">
