@@ -402,6 +402,11 @@ offlineSynchronize.prototype.pushFiles = function(config) {
                         attributeId : attrid
                     });
                     logConsole('pushfile :'+attrid, file);
+                } else {
+                    // file parasite to delete
+                    //logConsole('need delete', {initid:file.initid, attrid:attrid, localIndex:file.index});
+                    //fileManager.deleteFile({initid:file.initid, attrid:attrid, localIndex:file.index});
+                    
                 }
             }
             // this.filesToUpload.splice(i, 1); // in asynchronous
