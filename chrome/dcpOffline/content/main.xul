@@ -112,7 +112,7 @@
                             	WHERE documents.initid = docsbydomain.initid 
                             		AND documents.fromid = :famIdParam
                             		AND docsbydomain.domainid = :domainIdParam
-                            		AND documents.title LIKE :searchTitleParam
+                            		AND documents.title LIKE :searchTitleParam order by lower(documents.title)
                         ]]>
                             <param id="abstractDomainIdParam" name="domainIdParam" type="integer">0</param>
                             <param id="famIdParam" name="famIdParam" type="integer">0</param>
@@ -121,7 +121,7 @@
                         <action>
                             <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument({documentId : this.value});'>
                                 <hbox flex="1">
-                                    <label value="?title" flex="1"/>
+                                    <label crop="center" tooltiptext="?title" value="?title" flex="1"></label>
                                     <image src="chrome://dcpoffline/content/images/isEditable?editable^.png" class="abstractIsEditable?editable , abstractIsEditable"/>
                                 </hbox>
                             </richlistitem>
