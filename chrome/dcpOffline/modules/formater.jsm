@@ -22,7 +22,7 @@ ProtoFormater.prototype = {
  * @returns
  */
 ProtoFormater.prototype.getEnumLabel = function(config) {
-    if (config && config.key && config.attrid && config.famid) {
+    if (config && config.hasOwnProperty('key') && config.attrid && config.famid) {
 
         var r = storageManager
                 .execQuery({

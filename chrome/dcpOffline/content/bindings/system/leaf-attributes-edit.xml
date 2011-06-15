@@ -487,13 +487,11 @@
                         var value = this.getValue();
                         var menuList = this.getChild('displayValue');
                         var nbItems = menuList.itemCount;
-                        if(value){
-                            for(var i = 0; i < nbItems; i++) {
-                                var item = menuList.getItemAtIndex(i);
-                                if( (item.localName == 'menuitem') && (item.value == value) ){
-                                    menuList.selectedIndex = i;
-                                    return;
-                                }
+                        for(var i = 0; i < nbItems; i++) {
+                            var item = menuList.getItemAtIndex(i);
+                            if( (item.localName == 'menuitem') && (item.value == value) ){
+                                menuList.selectedIndex = i;
+                                return;
                             }
                         }
                     }

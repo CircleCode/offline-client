@@ -14,7 +14,7 @@
             
             <method name="reloadValue">
                 <body><![CDATA[
-                    if (this.getValue() == '') {
+                    if (this.getValue() === '') {
                        var cn=document.getAnonymousNodes(this);
                        for (var i=0;i<cn.length;i++) {
                          cn[i].style.display='none';
