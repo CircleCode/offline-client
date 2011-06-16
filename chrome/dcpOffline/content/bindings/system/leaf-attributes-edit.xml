@@ -34,6 +34,11 @@
                 ]]></setter>
             </property>
 
+            <property name="bindingValue"
+                readonly="true"
+                onget="return this.inputField.value">
+            </property>
+
             <property name="value"
                 onget="this.getValue();"
                 onset="this.setValue(val);">
@@ -103,9 +108,7 @@
         
         <handlers>
             <handler event="change"><![CDATA[
-                if(event.originalTarget == this.inputField){
-                    this.setValue(this.inputField.value);
-                }
+                this.setValue(this.bindingValue);
             ]]></handler>
         </handlers>
     </binding>
@@ -266,6 +269,33 @@
                 var nsIFilePicker = Components.interfaces.nsIFilePicker;
                 nsIFilePicker.filterAll | nsIFilePicker.filterApps;
             </field>
+
+            <property name="bindingValue"
+                readonly="true">
+                <getter><![CDATA[
+                    Components.utils.import("resource://modules/fileManager.jsm");
+                    try{
+                        var aFile = fileManager.getFile({
+                            initid: this.doc.getInitid(),
+                            attrid: this.attrid,
+                            index: this.index
+                        });
+                        if(aFile && aFile.exists()){
+                            return aFile.path;
+                        }
+                    } catch(e) {
+                        logError(e,
+                            "bindingValue of attribute ["
+                            + this.attrid
+                            + "] on document ["
+                            + this.doc.getInitid()
+                            + "] at index ["
+                            + this.index
+                            +"]"
+                        );
+                    }
+                ]]></getter>
+            </property>
 
             <method name="setValue">
                 <!-- value is a path -->
