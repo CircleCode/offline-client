@@ -122,7 +122,12 @@ dcpDocument dcpAttribute[type=money],dcpDocument[mode=view] dcpAttribute[type=mo
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#int-attr-view");
 }
 
-dcpDocument dcpAttribute[type=timestamp],dcpDocument[mode=view] dcpAttribute[type=timestamp],
+dcpDocument dcpAttribute[type=timestamp],dcpDocument[mode=view] dcpAttribute[type=timestamp]
+    {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#timestamp-attr-view");
+}
+
 dcpDocument dcpAttribute[type=date],dcpDocument[mode=view] dcpAttribute[type=date]
     {
     -moz-binding:
@@ -232,9 +237,24 @@ dcpDocument[mode=edit] dcpAttribute[type=int] {
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#int-attr-edit");
 }
 
+dcpDocument[mode=edit] dcpAttribute[type=time] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#time-attr-edit");
+}
+
 dcpDocument[mode=edit] dcpAttribute[type=date] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#date-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpAttribute[type=timestamp] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#timestamp-attr-edit");
+}
+
+dcpDocument[mode=edit] dcpDateTimePicker {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/dateTimePicker.xml#dateTimePicker");
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=file] {

@@ -51,6 +51,11 @@ dcpAttribute[type=image] {
     -moz-box-align: center;
 }
 
+dcpDateTimePicker {
+    display: -moz-box;
+    -moz-box-orient: horizontal;
+}
+
 dcpAttribute[type=longtext] textbox textarea{
     resize:vertical;
 }

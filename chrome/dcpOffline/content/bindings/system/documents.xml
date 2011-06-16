@@ -79,7 +79,7 @@
                 ]]></body>
             </method>
             
-            <method name="onPreLocalSave">
+            <method name="onBeforeLocalSave">
                 <body><![CDATA[return true;]]></body>
             </method>
             
@@ -90,7 +90,7 @@
             <method name="save">
                 <body><![CDATA[
                     try {
-                        this.onPreLocalSave();
+                        this.onBeforeLocalSave();
                         this.doc.save();
                         this.onAfterLocalSave();
                         this.switchMode("view");

@@ -33,12 +33,12 @@
                     this.reloadValue();
                 ]]></setter>
             </property>
-
+            
             <property name="bindingValue"
                 readonly="true"
                 onget="return this.inputField.value">
             </property>
-
+            
             <property name="value"
                 onget="this.getValue();"
                 onset="this.setValue(val);">
@@ -74,7 +74,7 @@
                         valueNode.value = this.getValue();
                     } else {
                         Components.utils.import("resource://modules/exceptions.jsm");
-                        throw BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.initid + "]");
+                        throw BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.getInitid() + "]");
                     }
                 ]]></body>
             </method>
@@ -228,13 +228,50 @@
     
     <!-- Date attributes -->
     
+    <binding id="time-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute time">
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
+                <xul:timepicker anonid="displayValue" class="dcpValue"/>
+            </xul:hbox>
+        </content>
+            
+        <implementation>
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+        </implementation>
+        
+    </binding>
+    
     <binding id="date-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
             <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:datepicker anonid="displayValue" class="dcpValue" value=""/>
+                <xul:datepicker anonid="displayValue" class="dcpValue" type="popup"/>
             </xul:hbox>
         </content>
+            
+        <implementation>
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+        </implementation>
+    </binding>
+    
+    <binding id="timestamp-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
+                <dcpDateTimePicker anonid="displayValue" class="dcpValue"/>
+            </xul:hbox>
+        </content>
+            
+        <implementation>
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+        </implementation>
     </binding>
     
     <!-- File attributes -->
@@ -269,7 +306,7 @@
                 var nsIFilePicker = Components.interfaces.nsIFilePicker;
                 nsIFilePicker.filterAll | nsIFilePicker.filterApps;
             </field>
-
+            
             <property name="bindingValue"
                 readonly="true">
                 <getter><![CDATA[

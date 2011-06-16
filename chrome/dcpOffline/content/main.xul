@@ -19,9 +19,9 @@
 <window id="main" title="Dynacase offline" width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     onclose="return tryToClose()">
-    <!--
+    
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
-    -->
+    
     <script type="application/javascript" src="chrome://dcpoffline/content/bindings/hacks/date.js" />
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
     
