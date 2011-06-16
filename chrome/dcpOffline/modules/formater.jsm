@@ -73,6 +73,7 @@ ProtoFormater.prototype.getURI = function(config) {
 };
 
 /*
+ * @deprecated
  * @param string isoDate YYYY-MM-DD
  */
 ProtoFormater.prototype.getLocaleDate = function(isoDate) {

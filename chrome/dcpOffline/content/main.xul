@@ -22,6 +22,7 @@
     <!--
     <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
     -->
+    <script type="application/javascript" src="chrome://dcpoffline/content/bindings/hacks/date.js" />
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
     
     <toolbox id="main-toolbox">
