@@ -88,7 +88,11 @@ localDocument.prototype = {
                     }
                     var arrayValue = this.getValue(id);
                     if( Array.isArray(arrayValue) ){
-                        return arrayValue[index];
+                        var value = arrayValue[index];
+                        if(value === undefined){
+                            value = '';
+                        }
+                        return value;
                     } else {
                         return arrayValue;
                     }
