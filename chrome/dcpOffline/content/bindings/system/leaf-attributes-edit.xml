@@ -524,10 +524,11 @@
     
     <binding id="enum-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute file">
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
                 <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
                 <xul:menulist anonid="displayValue" class="dcpValue">
                     <xul:menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
+                        <xul:menuitem value="" label="&attribute.enum.empty;"/>
                         <xul:template>
                             <xul:query><![CDATA[
                                 SELECT key, label 
@@ -548,15 +549,19 @@
         
         <implementation>
             
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+            
             <method name="reloadValue">
                 <body><![CDATA[
                     if(this.constructed){
-                        var value = this.getValue();
+                        var value = this.getValue().toString();
                         var menuList = this.getChild('displayValue');
                         var nbItems = menuList.itemCount;
                         for(var i = 0; i < nbItems; i++) {
                             var item = menuList.getItemAtIndex(i);
-                            if( (item.localName == 'menuitem') && (item.value == value) ){
+                            if( (item.localName == 'menuitem') && (item.value === value) ){
                                 menuList.selectedIndex = i;
                                 return;
                             }
@@ -565,23 +570,162 @@
                 ]]></body>
             </method>
             
+            <method name="rebuildList">
+                <body><![CDATA[
+                    this.getChild('attrid').textContent = this.attrid;
+                    this.getChild('famid').textContent = this.doc.getProperty('fromid');
+                    this.getChild('displayValue').menupopup.builder.rebuild();
+                ]]></body>
+            </method>
+            
+            <method name="_init">
+                <body><![CDATA[
+                    this.rebuildList();
+                    this.constructed = true;
+                    this.reloadValue();
+                ]]></body>
+            </method>
+            
+            <method name="_onItemSelected">
+                <body><![CDATA[
+                    this.setValue(this.bindingValue);
+                ]]></body>
+            </method>
+            
             <constructor><![CDATA[
-                this.getChild('attrid').textContent = this.attrid;
-                this.getChild('famid').textContent = this.doc.getProperty('fromid');
-                this.getChild('displayValue').menupopup.builder.rebuild();
-                this.constructed = true;
-                this.reloadValue();
+                this._init();
             ]]></constructor>
             
         </implementation>
 
         <handlers>
             <handler event="command"><![CDATA[
-                this.setValue(this.getChild('displayValue').value);
+                this._onItemSelected();
             ]]></handler>
         </handlers>
     </binding>
-
     
+    <binding id="enum-multiple-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#enum-attr-edit">
+        <content>
+            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
+                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
+                <xul:vbox flex="1">
+                    <xul:richlistbox anonid="multiBox" seltype="multiple"/>
+                    <xul:hbox>
+                        <xul:menulist anonid="displayValue" class="dcpValue">
+                            <xul:menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
+                                <xul:menuitem value="" label="&attribute.enum.empty;"/>
+                                <xul:template>
+                                    <xul:query><![CDATA[
+                                        SELECT key, label 
+                                        FROM enums
+                                        WHERE famid = :famid AND attrid = :attrid 
+                                    ]]>
+                                        <xul:param anonid="attrid" name="attrid"/>
+                                        <xul:param anonid="famid" name="famid" type="integer"/>
+                                    </xul:query>
+                                    <xul:action>
+                                        <xul:menuitem uri="?" value="?key" label="?label"/>
+                                    </xul:action>
+                                </xul:template>
+                            </xul:menupopup>
+                        </xul:menulist>
+                        <xul:button anonid="deleteSelectionButton" class="delete" tooltiptext="&attribute.enum.multiple.button.clear.selection;"/>
+                    </xul:hbox>
+                </xul:vbox>
+            </xul:hbox>
+        </content>
+        
+        <implementation>
+            
+            <field name="multiBox"><![CDATA[
+                this.getChild('multiBox');
+            ]]></field>
+            
+            <field name="deleteSelectionButton"><![CDATA[
+                this.getChild('deleteSelectionButton');
+            ]]></field>
+            
+            <property name="bindingValue"
+                readonly="true">
+                <getter><![CDATA[
+                    var items = [];
+                    for(var i = 0; i < this.multiBox.itemCount; i++){
+                        items.push(this.multiBox.getItemAtIndex(i).value);
+                    }
+                    return items;
+                ]]></getter>
+            </property>
+            
+            <method name="reloadValue">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/formater.jsm");
+                    
+                    for(var i = this.multiBox.itemCount-1; i >=0 ; i--){
+                        this.multiBox.removeItemAt(i);
+                    }
+                    
+                    var values = this.getValue();
+                    if(values !== ''){
+                        if( !Array.isArray(values) ){
+                            values = [values];
+                        }
+                        values.forEach(function(value){
+                            var item = this.multiBox.appendItem(formater.getEnumLabel({
+                                attrid:this.attrid,
+                                famid:this.doc.getProperty('fromid'),
+                                key:value
+                            }), value);
+                            //item.doStg();
+                        }, this);
+                    }
+                    this.inputField.selectedIndex=0;
+                ]]></body>
+            </method>
+            
+            <method name="deleteSelection">
+                <body><![CDATA[
+                    for ( var i = this.multiBox.selectedItems.length -1; i>=0; i--){
+                        this.multiBox.removeItemAt(this.multiBox.getIndexOfItem(this.multiBox.selectedItems[i]));
+                    }
+                    this.setValue(this.bindingValue);
+                ]]></body>
+            </method>
+            
+            <method name="_onItemSelected">
+                <body><![CDATA[
+                    var selectedItem = this.inputField.selectedItem;
+                    if(selectedItem.value !== ''){
+                        var addItem = true;
+                        for(var i = 0; i < this.multiBox.itemCount; i++){
+                            if( this.multiBox.getItemAtIndex(i).value === selectedItem.value ){
+                                addItem = false;
+                                break;
+                            }
+                        }
+                        
+                        if(addItem){
+                            var value = this.bindingValue;
+                            value.push(selectedItem.value);
+                            this.setValue(value);
+                            this.reloadValue();
+                        } else {
+                            this.inputField.selectedIndex=0;
+                        }
+                    }
+                ]]></body>
+            </method>
+            
+        </implementation>
+        
+        <handlers>
+            <handler event="click" button="0"><![CDATA[
+                if(event.originalTarget == this.deleteSelectionButton){
+                    this.deleteSelection();
+                }
+            ]]></handler>
+        </handlers>
+        
+    </binding>
     
 </bindings>

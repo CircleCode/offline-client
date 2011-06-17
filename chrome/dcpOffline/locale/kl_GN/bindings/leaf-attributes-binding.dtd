@@ -2,3 +2,5 @@
 <!ENTITY  attribute.file.button.delete                      "attribute.file.button.delete">
 <!ENTITY  attribute.image.button.modify                     "attribute.image.button.modify">
 <!ENTITY  attribute.image.button.delete                     "attribute.image.button.delete">
+<!ENTITY  attribute.enum.empty                              "attribute.enum.empty">
+<!ENTITY  attribute.enum.multiple.button.clear.selection    "attribute.enum.multiple.button.clear.selection">
