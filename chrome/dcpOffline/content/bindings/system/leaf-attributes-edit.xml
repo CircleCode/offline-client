@@ -7,20 +7,26 @@
       %leaf-attributes-bindingDTD;
 ]>
 
-<bindings id="leaf-attributes-binding"
+<bindings
+    id="leaf-attributes-binding"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl"
     xmlns:html="http://www.w3.org/1999/xhtml">
-    
-    <binding id="leaf-attr-edit" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
+
+    <binding
+        id="leaf-attr-edit"
+        extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
-            
-            <field name="inputField"><![CDATA[
+
+            <field
+                name="inputField"><![CDATA[
                 this.getChild('displayValue').inputField;
             ]]></field>
-            
-            <property name="index" readonly="false">
+
+            <property
+                name="index"
+                readonly="false">
                 <getter><![CDATA[
                     if(this.hasAttribute('index')){
                         return this.getAttribute('index');
@@ -33,26 +39,32 @@
                     this.reloadValue();
                 ]]></setter>
             </property>
-            
-            <property name="bindingValue"
+
+            <property
+                name="bindingValue"
                 readonly="true"
                 onget="return this.inputField.value">
             </property>
-            
-            <property name="value"
+
+            <property
+                name="value"
                 onget="this.getValue();"
                 onset="this.setValue(val);">
             </property>
-            
-            <method name="checkValue">
-                <parameter name="value" />
+
+            <method
+                name="checkValue">
+                <parameter
+                    name="value" />
                 <body><![CDATA[
                     return value;
                 ]]></body>
             </method>
-            
-            <method name="setValue">
-                <parameter name="value" />
+
+            <method
+                name="setValue">
+                <parameter
+                    name="value" />
                 <body><![CDATA[
                     try{
                         var value = this.checkValue(value);
@@ -66,8 +78,9 @@
                     return false;
                 ]]></body>
             </method>
-            
-            <method name="reloadValue">
+
+            <method
+                name="reloadValue">
                 <body><![CDATA[
                     var valueNode = this.getChild('displayValue');
                     if(valueNode){
@@ -78,9 +91,11 @@
                     }
                 ]]></body>
             </method>
-            
-            <method name="setCustomValidity">
-                <parameter name="message"/>
+
+            <method
+                name="setCustomValidity">
+                <parameter
+                    name="message" />
                 <body><![CDATA[
                     this.inputField.setCustomValidity(message);
                     if(message){
@@ -90,7 +105,7 @@
                     }
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
                  var visibility = this.getAttribute('visibility');
                  if (visibility == 'S') {
@@ -103,45 +118,80 @@
 
                 this.reloadValue();
             ]]></constructor>
-            
+
         </implementation>
-        
+
         <handlers>
-            <handler event="change"><![CDATA[
+            <handler
+                event="change"><![CDATA[
                 this.setValue(this.bindingValue);
             ]]></handler>
         </handlers>
     </binding>
-    
+
     <!-- Text attributes -->
-    
-    <binding id="text-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="text-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute text">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:textbox anonid="displayValue" class="dcpValue" multiline="false" xbl:inherits="disabled"/>
+            <xul:hbox
+                xbl:inherits="attrid,collapsed"
+                flex="1"
+                class="dcpAttribute text">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:textbox
+                    anonid="displayValue"
+                    class="dcpValue"
+                    multiline="false"
+                    xbl:inherits="disabled" />
             </xul:hbox>
         </content>
     </binding>
-    
-    <binding id="longtext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="longtext-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute longtext">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:textbox anonid="displayValue" class="dcpValue" multiline="true" xbl:inherits="disabled"/>
+            <xul:hbox
+                xbl:inherits="attrid,collapsed"
+                flex="1"
+                class="dcpAttribute longtext">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:textbox
+                    anonid="displayValue"
+                    class="dcpValue"
+                    multiline="true"
+                    xbl:inherits="disabled" />
             </xul:hbox>
         </content>
     </binding>
-    
-    <binding id="htmltext-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="htmltext-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:vbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:iframe anonid="displayValue" src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html" class="dcpValue" flex="1"/>
+            <xul:vbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute longtext">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:iframe
+                    anonid="displayValue"
+                    src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html"
+                    class="dcpValue"
+                    flex="1" />
             </xul:vbox>
         </content>
         <implementation>
-            <method name="reloadValue">
+            <method
+                name="reloadValue">
                 <body><![CDATA[
                     var contentWindow = this.getChild('displayValue').contentWindow;
 
@@ -168,20 +218,32 @@
             </method>
         </implementation>
     </binding>
-    
+
     <!-- Numeric attributes -->
-    
-    <binding id="int-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="int-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute numeric int">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:textbox anonid="displayValue" class="dcpValue" xbl:inherits="disabled"/>
+            <xul:hbox
+                xbl:inherits="attrid,collapsed"
+                flex="1"
+                class="dcpAttribute numeric int">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:textbox
+                    anonid="displayValue"
+                    class="dcpValue"
+                    xbl:inherits="disabled" />
             </xul:hbox>
         </content>
-        
+
         <implementation>
-            <method name="checkValue">
-                <parameter name="value"/>
+            <method
+                name="checkValue">
+                <parameter
+                    name="value" />
                 <body><![CDATA[
                     if( isNaN(value) ){
                         Components.utils.import("resource://modules/events.jsm");
@@ -196,18 +258,30 @@
             </method>
         </implementation>
     </binding>
-    
-    <binding id="double-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="double-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute numeric double">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:textbox anonid="displayValue" class="dcpValue" xbl:inherits="disabled"/>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute numeric double">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:textbox
+                    anonid="displayValue"
+                    class="dcpValue"
+                    xbl:inherits="disabled" />
             </xul:hbox>
         </content>
-        
+
         <implementation>
-            <method name="checkValue">
-                <parameter name="value"/>
+            <method
+                name="checkValue">
+                <parameter
+                    name="value" />
                 <body><![CDATA[
                     //XXX: do a better sanitization (spaces, english format, etc...)
                     var parse_double = /^[0-9]+([.,][0-9]+)?$/
@@ -221,93 +295,148 @@
             </method>
         </implementation>
     </binding>
-    
-    <binding id="money-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#double-attr-edit">
+
+    <binding
+        id="money-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#double-attr-edit">
         <!-- For now, money attributes are the same as double -->
     </binding>
-    
+
     <!-- Date attributes -->
-    
-    <binding id="time-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="time-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute time">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:timepicker anonid="displayValue" class="dcpValue"/>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute time">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:timepicker
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
-            
+
         <implementation>
-            <field name="inputField"><![CDATA[
+            <field
+                name="inputField"><![CDATA[
                 this.getChild('displayValue');
             ]]></field>
         </implementation>
-        
+
     </binding>
-    
-    <binding id="date-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="date-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:datepicker anonid="displayValue" class="dcpValue" type="popup"/>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute date">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:datepicker
+                    anonid="displayValue"
+                    class="dcpValue"
+                    type="popup" />
             </xul:hbox>
         </content>
-            
+
         <implementation>
-            <field name="inputField"><![CDATA[
+            <field
+                name="inputField"><![CDATA[
                 this.getChild('displayValue');
             ]]></field>
         </implementation>
     </binding>
-    
-    <binding id="timestamp-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="timestamp-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <dcpDateTimePicker anonid="displayValue" class="dcpValue"/>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute date">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <dcpDateTimePicker
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
-            
+
         <implementation>
-            <field name="inputField"><![CDATA[
+            <field
+                name="inputField"><![CDATA[
                 this.getChild('displayValue');
             ]]></field>
         </implementation>
     </binding>
-    
+
     <!-- File attributes -->
-    
-    <binding id="file-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="file-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute file">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue text-link"/>
-                <xul:box anonid="buttons">
-                    <xul:button anonid="modifyButton" label="&attribute.file.button.modify;" crop="center"/>
-                    <xul:button anonid="deleteButton" class="delete" tooltiptext="&attribute.file.button.delete;"/>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute file">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue text-link" />
+                <xul:box
+                    anonid="buttons">
+                    <xul:button
+                        anonid="modifyButton"
+                        label="&attribute.file.button.modify;"
+                        crop="center" />
+                    <xul:button
+                        anonid="deleteButton"
+                        class="delete"
+                        tooltiptext="&attribute.file.button.delete;" />
                 </xul:box>
             </xul:hbox>
         </content>
-        
+
         <implementation>
-            
-            <field name="inputField"><![CDATA[
+
+            <field
+                name="inputField"><![CDATA[
                 this.getChild('displayValue');
             ]]></field>
-            
-            <field name="modifyButton"><![CDATA[
+
+            <field
+                name="modifyButton"><![CDATA[
                 this.getChild('modifyButton');
             ]]></field>
-            
-            <field name="deleteButton"><![CDATA[
+
+            <field
+                name="deleteButton"><![CDATA[
                 this.getChild('deleteButton');
             ]]></field>
 
-            <field name="filters">
-                var nsIFilePicker = Components.interfaces.nsIFilePicker;
+            <field
+                name="filters">
+                var nsIFilePicker =
+                Components.interfaces.nsIFilePicker;
                 nsIFilePicker.filterAll | nsIFilePicker.filterApps;
             </field>
-            
-            <property name="bindingValue"
+
+            <property
+                name="bindingValue"
                 readonly="true">
                 <getter><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
@@ -334,9 +463,11 @@
                 ]]></getter>
             </property>
 
-            <method name="setValue">
+            <method
+                name="setValue">
                 <!-- value is a path -->
-                <parameter name="value" />
+                <parameter
+                    name="value" />
                 <body><![CDATA[
                     try{
                         Components.utils.import("resource://modules/fileManager.jsm");
@@ -366,8 +497,10 @@
                 ]]></body>
             </method>
 
-            <method name="checkValue">
-                <parameter name="value" />
+            <method
+                name="checkValue">
+                <parameter
+                    name="value" />
                 <body><![CDATA[
                     var aFile = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
                     aFile.initWithPath(value);
@@ -379,7 +512,8 @@
                 ]]></body>
             </method>
 
-            <method name="reloadValue">
+            <method
+                name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
                     try{
@@ -398,8 +532,9 @@
                     }
                 ]]></body>
             </method>
-            
-            <method name="chooseFile">
+
+            <method
+                name="chooseFile">
                 <body><![CDATA[
                     const nsIFilePicker = Components.interfaces.nsIFilePicker;
 
@@ -417,8 +552,9 @@
                     }
                 ]]></body>
             </method>
-            
-            <method name="deleteFile">
+
+            <method
+                name="deleteFile">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
                     try{
@@ -436,8 +572,9 @@
                     }
                 ]]></body>
             </method>
-            
-            <method name="openFile">
+
+            <method
+                name="openFile">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
                     fileManager.openFile({
@@ -447,11 +584,13 @@
                     });
                 ]]></body>
             </method>
-            
+
         </implementation>
-        
+
         <handlers>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                 switch(event.originalTarget) {
                     case this.modifyButton :
                         this.chooseFile();
@@ -466,33 +605,54 @@
             ]]></handler>
         </handlers>
     </binding>
-    
-    <binding id="image-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#file-attr-edit">
+
+    <binding
+        id="image-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#file-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <html:div class="dcpValue">
-                    <html:img class="dcpImage" anonid="imageField" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute image">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <html:div
+                    class="dcpValue">
+                    <html:img
+                        class="dcpImage"
+                        anonid="imageField" />
                 </html:div>
-                <xul:box anonid="buttons">
-                    <xul:button anonid="modifyButton" label="&attribute.image.button.modify;" crop="center"/>
-                    <xul:button anonid="deleteButton" class="delete" tooltiptext="&attribute.image.button.delete;"/>
+                <xul:box
+                    anonid="buttons">
+                    <xul:button
+                        anonid="modifyButton"
+                        label="&attribute.image.button.modify;"
+                        crop="center" />
+                    <xul:button
+                        anonid="deleteButton"
+                        class="delete"
+                        tooltiptext="&attribute.image.button.delete;" />
                 </xul:box>
             </xul:hbox>
         </content>
-        
+
         <implementation>
-            
-            <field name="inputField"><![CDATA[
+
+            <field
+                name="inputField"><![CDATA[
                 this.getChild('imageField');
             ]]></field>
 
-            <field name="filters">
-                var nsIFilePicker = Components.interfaces.nsIFilePicker;
+            <field
+                name="filters">
+                var nsIFilePicker =
+                Components.interfaces.nsIFilePicker;
                 nsIFilePicker.filterAll | nsIFilePicker.filterImages;
             </field>
-            
-            <method name="reloadValue">
+
+            <method
+                name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/fileManager.jsm");
                     try{
@@ -516,44 +676,123 @@
                     }
                 ]]></body>
             </method>
+
+        </implementation>
+    </binding>
+
+    <!-- color attributes -->
+
+    <binding
+        id="color-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+        <content>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute enum">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+            </xul:hbox>
+            <xul:colorpicker
+                anonid="displayValue"
+                type="button" />
+        </content>
+
+        <implementation>
+        
+            <field
+                name="inputField"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+
+            <property
+                name="bindingValue"
+                readonly="true"
+                onget="return this.inputField.color">
+            </property>
+
+            <method
+                name="reloadValue">
+                <body><![CDATA[
+                    var color = this.getValue();
+                    dump("will set color at "+color+" for "+this.attrid+"\n");
+                    var valueNode = this.getChild('displayValue');
+                    if(valueNode){
+                        setTimeout(function(){
+                            document.getAnonymousElementByAttribute(valueNode, "anonid", 'colorbox')
+                                    .setAttribute("style", "background-color: " + color);
+                                    //Hack for https://bugzilla.mozilla.org/show_bug.cgi?id=497442
+                        }, 100);
+                        valueNode.color = this.getValue();
+                    } else {
+                        Components.utils.import("resource://modules/exceptions.jsm");
+                        throw BindException("no displayValue child for attr ["+ this.attrid + "] in doc ["+this.doc.getInitid() + "]");
+                    }
+                ]]></body>
+            </method>
             
         </implementation>
     </binding>
-    
+
     <!-- enum attributes -->
-    
-    <binding id="enum-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+
+    <binding
+        id="enum-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:menulist anonid="displayValue" class="dcpValue">
-                    <xul:menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
-                        <xul:menuitem value="" label="&attribute.enum.empty;"/>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute enum">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:menulist
+                    anonid="displayValue"
+                    class="dcpValue">
+                    <xul:menupopup
+                        datasources="profile:storage.sqlite"
+                        ref="*"
+                        querytype="storage">
+                        <xul:menuitem
+                            value=""
+                            label="&attribute.enum.empty;" />
                         <xul:template>
                             <xul:query><![CDATA[
                                 SELECT key, label 
                                 FROM enums
                                 WHERE famid = :famid AND attrid = :attrid 
                             ]]>
-                                <xul:param anonid="attrid" name="attrid"/>
-                                <xul:param anonid="famid" name="famid" type="integer"/>
+                                <xul:param
+                                    anonid="attrid"
+                                    name="attrid" />
+                                <xul:param
+                                    anonid="famid"
+                                    name="famid"
+                                    type="integer" />
                             </xul:query>
                             <xul:action>
-                                <xul:menuitem uri="?" value="?key" label="?label"/>
+                                <xul:menuitem
+                                    uri="?"
+                                    value="?key"
+                                    label="?label" />
                             </xul:action>
                         </xul:template>
                     </xul:menupopup>
                 </xul:menulist>
             </xul:hbox>
         </content>
-        
+
         <implementation>
-            
-            <field name="inputField"><![CDATA[
+
+            <field
+                name="inputField"><![CDATA[
                 this.getChild('displayValue');
             ]]></field>
-            
-            <method name="reloadValue">
+
+            <method
+                name="reloadValue">
                 <body><![CDATA[
                     if(this.constructed){
                         var value = this.getValue().toString();
@@ -569,84 +808,119 @@
                     }
                 ]]></body>
             </method>
-            
-            <method name="rebuildList">
+
+            <method
+                name="rebuildList">
                 <body><![CDATA[
                     this.getChild('attrid').textContent = this.attrid;
                     this.getChild('famid').textContent = this.doc.getProperty('fromid');
                     this.getChild('displayValue').menupopup.builder.rebuild();
                 ]]></body>
             </method>
-            
-            <method name="_init">
+
+            <method
+                name="_init">
                 <body><![CDATA[
                     this.rebuildList();
                     this.constructed = true;
                     this.reloadValue();
                 ]]></body>
             </method>
-            
-            <method name="_onItemSelected">
+
+            <method
+                name="_onItemSelected">
                 <body><![CDATA[
                     this.setValue(this.bindingValue);
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
                 this._init();
             ]]></constructor>
-            
+
         </implementation>
 
         <handlers>
-            <handler event="command"><![CDATA[
+            <handler
+                event="command"><![CDATA[
                 this._onItemSelected();
             ]]></handler>
         </handlers>
     </binding>
-    
-    <binding id="enum-multiple-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#enum-attr-edit">
+
+    <binding
+        id="enum-multiple-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#enum-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:vbox flex="1">
-                    <xul:richlistbox anonid="multiBox" seltype="multiple"/>
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute enum">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:vbox
+                    flex="1">
+                    <xul:richlistbox
+                        anonid="multiBox"
+                        seltype="multiple" />
                     <xul:hbox>
-                        <xul:menulist anonid="displayValue" class="dcpValue">
-                            <xul:menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
-                                <xul:menuitem value="" label="&attribute.enum.empty;"/>
+                        <xul:menulist
+                            anonid="displayValue"
+                            class="dcpValue">
+                            <xul:menupopup
+                                datasources="profile:storage.sqlite"
+                                ref="*"
+                                querytype="storage">
+                                <xul:menuitem
+                                    value=""
+                                    label="&attribute.enum.empty;" />
                                 <xul:template>
                                     <xul:query><![CDATA[
                                         SELECT key, label 
                                         FROM enums
                                         WHERE famid = :famid AND attrid = :attrid 
                                     ]]>
-                                        <xul:param anonid="attrid" name="attrid"/>
-                                        <xul:param anonid="famid" name="famid" type="integer"/>
+                                        <xul:param
+                                            anonid="attrid"
+                                            name="attrid" />
+                                        <xul:param
+                                            anonid="famid"
+                                            name="famid"
+                                            type="integer" />
                                     </xul:query>
                                     <xul:action>
-                                        <xul:menuitem uri="?" value="?key" label="?label"/>
+                                        <xul:menuitem
+                                            uri="?"
+                                            value="?key"
+                                            label="?label" />
                                     </xul:action>
                                 </xul:template>
                             </xul:menupopup>
                         </xul:menulist>
-                        <xul:button anonid="deleteSelectionButton" class="delete" tooltiptext="&attribute.enum.multiple.button.clear.selection;"/>
+                        <xul:button
+                            anonid="deleteSelectionButton"
+                            class="delete"
+                            tooltiptext="&attribute.enum.multiple.button.clear.selection;" />
                     </xul:hbox>
                 </xul:vbox>
             </xul:hbox>
         </content>
-        
+
         <implementation>
-            
-            <field name="multiBox"><![CDATA[
+
+            <field
+                name="multiBox"><![CDATA[
                 this.getChild('multiBox');
             ]]></field>
-            
-            <field name="deleteSelectionButton"><![CDATA[
+
+            <field
+                name="deleteSelectionButton"><![CDATA[
                 this.getChild('deleteSelectionButton');
             ]]></field>
-            
-            <property name="bindingValue"
+
+            <property
+                name="bindingValue"
                 readonly="true">
                 <getter><![CDATA[
                     var items = [];
@@ -656,8 +930,9 @@
                     return items;
                 ]]></getter>
             </property>
-            
-            <method name="reloadValue">
+
+            <method
+                name="reloadValue">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/formater.jsm");
                     
@@ -682,8 +957,9 @@
                     this.inputField.selectedIndex=0;
                 ]]></body>
             </method>
-            
-            <method name="deleteSelection">
+
+            <method
+                name="deleteSelection">
                 <body><![CDATA[
                     for ( var i = this.multiBox.selectedItems.length -1; i>=0; i--){
                         this.multiBox.removeItemAt(this.multiBox.getIndexOfItem(this.multiBox.selectedItems[i]));
@@ -691,8 +967,9 @@
                     this.setValue(this.bindingValue);
                 ]]></body>
             </method>
-            
-            <method name="_onItemSelected">
+
+            <method
+                name="_onItemSelected">
                 <body><![CDATA[
                     var selectedItem = this.inputField.selectedItem;
                     if(selectedItem.value !== ''){
@@ -715,17 +992,19 @@
                     }
                 ]]></body>
             </method>
-            
+
         </implementation>
-        
+
         <handlers>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                 if(event.originalTarget == this.deleteSelectionButton){
                     this.deleteSelection();
                 }
             ]]></handler>
         </handlers>
-        
+
     </binding>
-    
+
 </bindings>
