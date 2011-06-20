@@ -381,6 +381,9 @@ var fileManager = {
                     }
                 }
             };
+            const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
+            const flags = nsIWBP.PERSIST_FLAGS_AUTODETECT_APPLY_CONVERSION;
+            persist.persistFlags = flags;
             persist.saveURI(obj_URI, null, null, null, "", file.aFile);
         }
     },
