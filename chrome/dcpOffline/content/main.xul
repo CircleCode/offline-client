@@ -21,32 +21,42 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     onclose="return tryToClose()">
     
-    <script type="application/javascript" src="chrome://venkman/content/venkman-overlay.js" />
-    
     <script type="application/javascript" src="chrome://dcpoffline/content/bindings/hacks/date.js" />
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
     
+    <commandset id="main-commands">
+        <command id="main:openSynchro"
+            oncommand="openSynchro();"/>
+        <command id="main:openPreferences"
+            oncommand="openPreferences();"/>
+        <command id="main:openCloseDialog"
+            oncommand="openCloseDialog();"/>
+    </commandset>
+    
     <toolbox id="main-toolbox">
         <toolbar flex="1">
-            <menubar flex="1">
+            <menubar flex="1" id="main-menubar">
                 <menu id="main-menu" label="&main.actionmenu;">
                     <menupopup >
                         <!--<menuitem label="&main.newDocument;"
                             oncommand="openNewDocumentDialog();"/>
                         <menuseparator/>-->
                         <menuitem id="synchro-button" label="&main.synchro;"
-                            oncommand="openSynchro();"/>
+                            command="main:openSynchro"/>
                         <menuitem id="preferences-button" label="&main.preference;"
-                            oncommand="openPreferences();"/>
+                            command="main:openPreferences"/>
                         <menuseparator/>
                         <menuitem label="&main.close;"
-                            oncommand="openCloseDialog();"/>
+                            command="main:openCloseDialog"/>
                     </menupopup>
                 </menu>
                 
                 <spacer flex="1" />
-                <!--  <textbox type="search" searchbutton="true" /> -->
-                <!--<menu id="help-menu" label="&main.helpmenu;">
+                <!--
+                <textbox type="search" searchbutton="true" />
+                -->
+                <!--
+                <menu id="help-menu" label="&main.helpmenu;">
                     <menupopup >
                         <menuitem label="&main.help;"/>
                         <menuitem label="&main.log;"
@@ -55,17 +65,6 @@
                         <menuitem label="&main.about;"
                             oncommand="openAbout();"/>
                     </menupopup >
-                </menu> -->
-                <!--
-                <menu id="debug-menu" label="&debug;">
-                    <menupopup>
-                        <menuitem id="debug-launch-debugger" label="&menu.debug.launch.venkman;"
-                            oncommand="start_venkman()" />
-                        <menuitem id="debug-launch-method" label="&menu.debug.eric;"
-                            oncommand='window.open("chrome://dcpoffline/content/debug/debug-eric.xul","Eric", "chrome,centerscreen");' />
-                        <menuitem id="debug-launch-method" label="&menu.debug.matthieu;"
-                            oncommand='window.open("chrome://dcpoffline/content/debug/debug-mat.xul","Mat", "chrome,centerscreen");' />
-                    </menupopup>
                 </menu>
                 -->
             </menubar>
