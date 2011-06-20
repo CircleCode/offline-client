@@ -16,7 +16,8 @@
 
 <?xml-stylesheet href="chrome://dcpoffline/content/css/main.css" type="text/css"?>
 
-<window id="main" title="Dynacase offline" width="800px" height="600px"
+<window id="main" title="Dynacase offline" windowtype="dcpoffline-main"
+    width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     onclose="return tryToClose()">
     

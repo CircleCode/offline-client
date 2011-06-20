@@ -5,13 +5,8 @@
  */
 
 pref("toolkit.defaultChromeURI", "chrome://dcpoffline/content/main.xul");
-// pref("toolkit.defaultChromeFeatures", "");
-// pref("toolkit.singletonWindowType", "MyDomain");
-
-/* enabling password manager */
-// pref("signon.rememberSignons", true);
-// pref("signon.expireMasterPassword", false);
-// pref("signon.SignonFileName", "signons.txt");
+pref("toolkit.defaultChromeFeatures", "chrome,resizable=yes,dialog=no");
+pref("toolkit.singletonWindowType", "dcpoffline-main");
 
 /* debugging prefs */
 pref("browser.dom.window.dump.enabled", true);
