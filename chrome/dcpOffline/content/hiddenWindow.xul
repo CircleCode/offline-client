@@ -1,0 +1,33 @@
+<window id="hiddenWindow"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <script type="application/javascript">
+    <![CDATA[
+Components.utils.import("resource://modules/events.jsm");
+
+function tryQuit() {
+	 return applicationEvent.publish('askForCloseApplication');
+}
+    ]]>
+    </script>
+
+    <commandset id="main-commands">
+        <command id="cmd:quit" oncommand="tryQuit();"/>
+    </commandset>
+
+    <keyset id="ui-keys">
+        <key id="key:quitApp" key="Q" modifiers="accel" command="cmd:quit"/>
+        <key id="key:hideApp" key="H" modifiers="accel"/>
+        <key id="key:hideOthersApp" key="H" modifiers="accel,alt"/>
+    </keyset>
+
+    <menubar id="main-menubar" hidden="true">
+        <menu id="mac-menu">
+            <menupopup>
+                <menuitem id="menu_mac_hide_app" label="Hide Dynacase Offline" key="key:hideApp"/>
+                <menuitem id="menu_mac_hide_others" label="Hide Others" key="key:hideOthersApp"/>
+                <menuitem id="menu_mac_show_all" label="Show All"/>
+                <menuitem id="menu_FileQuitItem" label="Quit" key="key:quitApp" command="cmd:quit"/>
+            </menupopup>
+        </menu>
+    </menubar>
+</window>
