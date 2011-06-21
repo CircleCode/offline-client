@@ -7,6 +7,7 @@
 pref("toolkit.defaultChromeURI", "chrome://dcpoffline/content/main.xul");
 // pref("toolkit.defaultChromeFeatures", "");
 // pref("toolkit.singletonWindowType", "MyDomain");
+pref("browser.hiddenWindowChromeURL", "chrome://dcpOffline/content/hiddenWindow.xul");
 
 /* enabling password manager */
 // pref("signon.rememberSignons", true);

@@ -113,6 +113,8 @@ function initListeners() {
 	applicationEvent.subscribe("closeDocument", removeDocumentFromOpenList);
 	applicationEvent.subscribe("postCloseDocument", closeDocument);
 
+        applicationEvent.subscribe("askForCloseApplication", tryToClose);
+
     // applicationEvent.subscribe("preCloseAllDocuments", FIXME);
     applicationEvent.subscribe("closeAllDocuments", closeAllDocuments);
     // applicationEvent.subscribe("postCloseAllDocuments", FIXME);
