@@ -6,9 +6,6 @@ Components.utils.import("resource://modules/exceptions.jsm");
 
 var EXPORTED_SYMBOLS = [ "localDocument" ];
 
-var cc = cc;
-var ci = ci;
-
 var _propertyNames = null;
 function localDocument(config) {
     if (config) {
@@ -17,12 +14,11 @@ function localDocument(config) {
             this.retrieve(config);
         } else if (config.fromid) {
             // new document
-            this.create();
+            this.create(config);
         } else {
             // FIXME
             throw "missing arguments";
         }
-
     }
 }
 localDocument.prototype = {
@@ -67,10 +63,25 @@ localDocument.prototype = {
                 throw (e);
             }
         },
-        create : function() {
+        create : function(config) {
             // FIXME
-            this._initid = cc["@mozilla.org/uuid-generator;1"].getService(
-                    ci.nsIUUIDGenerator).generateUUID().toString();
+            this._initid = 'DLID-' + Components.classes["@mozilla.org/uuid-generator;1"].getService(
+                    Components.interfaces.nsIUUIDGenerator).generateUUID().toString().slice(1,-1);
+            this.properties.initid = this._initid;
+            this.properties.title = this._initid;
+            this.properties.fromid = config.fromid;
+            var r = storageManager.execQuery({
+                query : 'select name from families where famid=:famId',
+                params : {
+                    famId : config.fromid
+                }
+            });
+            
+            if (r.length == 1) {
+                this.properties.fromname = r[0].name;
+            } else {
+                throw "unknown famid: "+config.fromid;
+            }
         },
 
         getInitid : function() {
@@ -80,8 +91,11 @@ localDocument.prototype = {
         getValue : function(id, index) {
             if (id) {
                 if( (index === undefined) || (index === -1) ){
-                    return this.values[id];// not need it is do by storageManager (may
-                    // be JSON.stringify )
+                    var value = this.values[id];
+                    if(value === undefined){
+                        value = '';
+                    }
+                    return value;
                 } else {
                     if( isNaN(index) ){
                         throw new ArgException("setValue :: given index is not a number");
@@ -217,6 +231,7 @@ localDocument.prototype = {
          * @return boolean true if can
          */
         canEdit : function() {
+            return true;
             if (!this.domainId) {
                 throw new ArgException("canEdit :: missing arguments");
             }
@@ -270,6 +285,7 @@ localDocument.prototype = {
             if(file.exists()){
                 return fileURI.spec+'#document-'+famName+'-'+mode;
             } else {
+                //FIXME: throw an exception
                 return null;
             }
         },
