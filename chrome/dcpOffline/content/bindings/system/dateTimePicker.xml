@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bindings>
+<bindings id="datTimePicker"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+    
+    <binding id="dateTimePicker">
+        
+        <content>
+            <xul:datepicker anonid="displayDateValue" class="dcpValue" type="popup"/>
+            <xul:timepicker anonid="displayTimeValue" class="dcpValue"/>
+        </content>
+        
+        <implementation>
+            <property name="value">
+                <getter><![CDATA[
+                    var dateValue = this.getChild('displayDateValue').value;
+                    var addLeadingZero = '';
+                    if(this.getChild('displayTimeValue').hour < 10){
+                        addLeadingZero = '0'
+                    }
+                    var timeValue = this.getChild('displayTimeValue').value;
+                    return dateValue+' '+addLeadingZero+timeValue;
+                ]]></getter>
+                <setter><![CDATA[
+                    if(val !== ''){
+                        var dateValue = new Date(val);
+                        this.getChild('displayDateValue').dateValue = dateValue;
+                        this.getChild('displayTimeValue').dateValue = dateValue;
+                    }
+                ]]></setter>
+            </property>
+            
+            <method name="getChild">
+                <parameter name="aChildName" />
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+            
+        </implementation>
+        
+        <!--<handlers/> -->
+    </binding>
+    
+</bindings>

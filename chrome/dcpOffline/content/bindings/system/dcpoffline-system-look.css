@@ -202,13 +202,15 @@ dcpDocument[mode=edit] dcpAttribute[type=image] hbox {
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=file] button,
-dcpDocument[mode=edit] dcpAttribute[type=image] button {
+dcpDocument[mode=edit] dcpAttribute[type=image] button,
+dcpDocument[mode=edit] dcpAttribute[type=enum] button {
     min-width: 0;
     -moz-box-pack: center;
 }
 
 dcpDocument[mode=edit] dcpAttribute[type=file] button.delete,
-dcpDocument[mode=edit] dcpAttribute[type=image] button.delete {
+dcpDocument[mode=edit] dcpAttribute[type=image] button.delete,
+dcpDocument[mode=edit] dcpAttribute[type=enum] button.delete {
     list-style-image: url("chrome://dcpoffline/content/images/button_cancel-16.png");
 }
 /***********************************************************

@@ -11,7 +11,7 @@ locale      dcpoffline      en_US           locale/en_US/
 locale      dcpoffline      kl_GN           locale/kl_GN/
 
 ## customizable skin
-skin        dcpoffline      custom-skin     skins/custom/
+#skin        dcpoffline      custom-skin     skins/custom/
 
 ## single customizations
 ## [SAMPLE] overlay chrome://dcpoffline/content/origin.xul chrome://dcpoffline/content/custom-origin.xul

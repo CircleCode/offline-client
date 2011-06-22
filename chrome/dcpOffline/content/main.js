@@ -16,10 +16,82 @@ Cu.import("resource://gre/modules/Services.jsm");
 /* Add window binding onLoad and onClose */
 window.onload = function() {
     window.setTimeout(function(){
-	initNetworkCheck();
-	initApplication();
+        try{
+            initNetworkCheck();
+            initListeners();
+            upgradeProfile();
+            initApplication();
+        } catch(e) {
+            logError(e, "application could not initialize - exiting\n");
+            applicationEvent.publish("askForCloseApplication");
+        };
     }, 100);
 }
+/**
+ * Check if the profile need upgrade
+ *
+ * @private
+ */
+function upgradeProfile(){
+    // compare current profile version against application version
+    var xulAppInfo = Components.classes["@mozilla.org/xre/app-info;1"]
+            .getService(Components.interfaces.nsIXULAppInfo);
+    var appVersion = xulAppInfo.version;
+    var profileVersion = Preferences.get('offline.application.profileVersion', 0);
+
+    var versionComparator = Components.classes["@mozilla.org/xpcom/version-comparator;1"]
+            .getService(Components.interfaces.nsIVersionComparator);
+    var profileNeedUpgrade = versionComparator.compare(appVersion, profileVersion) > 0;
+
+    // launch migration functions if needed
+    if(profileNeedUpgrade){
+        try{
+            // get migration script file
+            // (%installation%/defaults/migration/migration.js)
+            var migrationScriptFile = Components.classes["@mozilla.org/file/directory_service;1"]
+                    .getService(Components.interfaces.nsIProperties)
+                    .get("DefRt", Components.interfaces.nsIFile); // %installation%/defaults/
+            migrationScriptFile.append('migration'); // %installation%/defaults/migration/
+            migrationScriptFile.append('migration.js'); // %installation%/defaults/migration/migration.js
+            if(migrationScriptFile.exists()){
+                // import migration.js in a clean object
+                var migrationWrapper = {};
+                Components.utils.import("resource://modules/formater.jsm");
+                var migrationScriptURI = formater.getURI({
+                    file: migrationScriptFile
+                }).spec;
+                Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                        .getService(Components.interfaces.mozIJSSubScriptLoader)
+                        .loadSubScript(migrationScriptURI, migrationWrapper);
+                // run migrate if function exists
+                if(migrationWrapper.migrate){
+                    var defaultMigrationMessage = "Your profile is required to migrate.\n"
+                            + "Do you want to continue?\n"
+                            + "(it may take some times, and the application can be restared)\n"
+                            + "\n"
+                            + "(The application will stop if you cancel)";
+                    var migrationMessage = migrationWrapper.message || defaultMigrationMessage;
+                    var continueMigration = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Components.interfaces.nsIPromptService)
+                            .confirm(null, "Migration required", migrationMessage);
+                    if(continueMigration){
+                        migrationWrapper.migrate(profileVersion, appVersion);
+                    } else {
+                        throw "migration from [" + profileVersion + "] to [" + appVersion + "] aborted by user";
+                    };
+                } else {
+                    throw "migration file [" + migrationScriptFile.path + "] was found but it does not contains a migrate function";
+                };
+                // upgrade profile version
+                Preferences.set('offline.application.profileVersion', appVersion);
+            };
+        } catch(e) {
+            throw(e);
+        };
+    };
+    return true;
+}
+
 /**
  * Init the network check Private method : you should never use it
  * 
@@ -46,8 +118,6 @@ function initApplication() {
 	var firstRun = Preferences.get("offline.application.firstRun", true);
 	var fullyInitialised = Preferences.get(
 			"offline.application.fullyInitialised", false);
-
-	initListeners();
 
 	if (firstRun) {
 		window.openDialog(

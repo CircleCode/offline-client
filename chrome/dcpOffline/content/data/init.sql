@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS "families" (
 );
 
 CREATE TABLE IF NOT EXISTS "documents" (
-    "initid"            INTEGER NOT NULL,
+    "initid"            TEXT NOT NULL,
     "name"              TEXT,
     "title"             TEXT NOT NULL,
     "fromid"            TEXT NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS "documents" (
 );
 
 CREATE TABLE IF NOT EXISTS "templates" (
-    "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
+    "initid"            TEXT NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "viewtemplate"      TEXT,
     "edittemplate"      TEXT,
 
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS "templates" (
 );
 
 CREATE TABLE IF NOT EXISTS "synchrotimes" (
-    "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
+    "initid"            TEXT NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "lastsyncremote"    DATETIME,
     "lastsynclocal"     DATETIME,
     "lastsavelocal"     DATETIME,
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS "synchrotimes" (
 );
 
 CREATE TABLE IF NOT EXISTS "docsbydomain" (
-    "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
+    "initid"            TEXT NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "domainid"          INTEGER NOT NULL REFERENCES domains("id") ON UPDATE CASCADE,
     "editable"          BOOLEAN NOT NULL DEFAULT false,
     "isshared"          BOOLEAN ,
@@ -130,14 +130,14 @@ CREATE TABLE IF NOT EXISTS "enums" (
 CREATE TABLE IF NOT EXISTS "doctitles" (
   --  "famid"             INTEGER, -- REFERENCES families("famid") ON UPDATE CASCADE
     "famname"           TEXT,  
-    "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
+    "initid"            TEXT NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "title"             TEXT NOT NULL,
     
     PRIMARY KEY ("initid") ON CONFLICT REPLACE
 );
 
 CREATE TABLE IF NOT EXISTS "files" (
-    "initid"            INTEGER NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
+    "initid"            TEXT NOT NULL REFERENCES documents("initid") ON UPDATE CASCADE,
     "attrid"            TEXT NOT NULL REFERENCES attrmappings("attrid") ON UPDATE CASCADE,
     "index"             TEXT,
     "basename"          TEXT NOT NULL,

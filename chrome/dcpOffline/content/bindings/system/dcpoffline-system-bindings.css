@@ -257,6 +257,11 @@ dcpDocument[mode=edit] dcpDateTimePicker {
         url("chrome://dcpoffline/content/bindings/system/dateTimePicker.xml#dateTimePicker");
 }
 
+dcpDocument[mode=edit] dcpAttribute[type=color] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#color-attr-edit");
+}
+
 dcpDocument[mode=edit] dcpAttribute[type=file] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#file-attr-edit");
@@ -271,7 +276,10 @@ dcpDocument[mode=edit] dcpAttribute[type=enum] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#enum-attr-edit");
 }
-
+dcpDocument[mode=edit] dcpAttribute[type=enum][multiple=true] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#enum-multiple-attr-edit");
+}
 
 dcpDocument[mode=edit] dcpAttribute[type=docid][multiple=false] {
     -moz-binding:
