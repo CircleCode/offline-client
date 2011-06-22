@@ -570,7 +570,6 @@ var storageManager = {
                     
                     var params = {};
                     var columns = [];
-                    
                     for( let propertyId in properties ){
                         
                         var value = properties[propertyId];

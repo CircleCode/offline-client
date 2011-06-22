@@ -4,6 +4,7 @@ Components.utils.import("resource://modules/storageManager.jsm");
 Components.utils.import("resource://modules/localDocument.jsm");
 Components.utils.import("resource://modules/localDocumentList.jsm");
 Components.utils.import("resource://modules/fdl-data-debug.jsm");
+Components.utils.import("resource://modules/utils.jsm");
 
 Components.utils.import("resource://modules/events.jsm");
 
@@ -94,6 +95,69 @@ docManagerSingleton.prototype = {
 
 
     /**
+     * create local document
+     * 
+     * @access public
+     * @param config
+     *            fromname family name
+     *            fromid family identificator
+     * @return localDocument
+     */
+    createLocalDocument: function(config) {
+        if (config && config.fromname) {
+            config.fromid=this.familyNameToInitid(config.fromname);
+            
+        }
+        if (config && config.fromid) {
+                if (!config.domain) {
+                    config.domain = this.getActiveDomain();
+                }
+                var doc=new localDocument(config);
+                doc.domainId=config.domain;
+
+                config.force=true;
+
+                doc.save(config);
+                storageManager.execQuery({
+                    query : "insert into docsbydomain "+
+                            "( initid,  domainid,  editable,  isshared,  isusered) values "+
+                            "(:initid, :domainid, :editable, :isshared, :isusered)",
+                    params:{
+                        initid:doc.getInitid(),
+                        domainid:config.domain,
+                        editable:1, isshared:0, isusered:1
+                    }
+                });
+                storageManager.execQuery({
+                    query : "insert into doctitles "+
+                            "( famname,  initid,  title) values "+
+                            "(:famname, :initid, :title)",
+                    params:{
+                        initid:doc.getInitid(),
+                        title:doc.getTitle(),
+                        famname:doc.getProperty('fromname')
+                    }
+                });
+                storageManager.execQuery({
+                    query : "insert into synchrotimes "+
+                            "( lastsynclocal,  lastsavelocal,  lastsyncremote,  initid) values "+
+                            "(:lastsynclocal, :lastsavelocal, :lastsyncremote, :initid)",
+                    params:{
+                        initid:doc.getInitid(),
+                        lastsynclocal:0,
+                        lastsyncremote:0,
+                        lastsavelocal:utils.toIso8601(new Date())
+                    }
+                });
+
+                return doc;
+           
+        } else {
+            throw "createLocalDocument :: need fromname or fromid parameter";
+        }
+    },
+
+    /**
      * get document from local database
      * 
      * @access public
@@ -133,6 +197,18 @@ docManagerSingleton.prototype = {
         return 0;
     },
 
+    familyNameToInitid : function (name) {
+        var r = storageManager.execQuery({
+            query : 'select famid from families where name=:name',
+            params: {
+                name:name
+            }
+        });
+        if (r.length > 0) {
+            return r[0].famid;
+        }
+        return 0;
+    },
     /**
      * convert local document to server document
      * 

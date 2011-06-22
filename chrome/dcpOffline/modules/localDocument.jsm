@@ -68,8 +68,16 @@ localDocument.prototype = {
             this._initid = 'DLID-' + Components.classes["@mozilla.org/uuid-generator;1"].getService(
                     Components.interfaces.nsIUUIDGenerator).generateUUID().toString().slice(1,-1);
             this.properties.initid = this._initid;
+            this.properties.id = this._initid;
             this.properties.title = this._initid;
             this.properties.fromid = config.fromid;
+            if (config.values) {
+                for (var aid in config.values) {
+                    logConsole("setvale:"+aid);
+                    this.setValue(aid, config.values[aid]);
+                }
+            }
+            
             var r = storageManager.execQuery({
                 query : 'select name from families where famid=:famId',
                 params : {
@@ -231,11 +239,10 @@ localDocument.prototype = {
          * @return boolean true if can
          */
         canEdit : function() {
-            return true;
             if (!this.domainId) {
                 throw new ArgException("canEdit :: missing arguments");
             }
-            logConsole('editable ? ' + this._initid + this.domainId);
+            
             var r = storageManager
             .execQuery({
                 query : 'select docsbydomain.editable from documents, docsbydomain where docsbydomain.initid = documents.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',

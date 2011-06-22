@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS "documents" (
     "initid"            TEXT NOT NULL,
     "name"              TEXT,
     "title"             TEXT NOT NULL,
-    "fromid"            TEXT NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
+    "fromid"            INTEGER NOT NULL REFERENCES families("famid") ON UPDATE CASCADE,
     "fromname"          TEXT NOT NULL REFERENCES families("name") ON UPDATE CASCADE,
 
     PRIMARY KEY ("initid") ON CONFLICT REPLACE
