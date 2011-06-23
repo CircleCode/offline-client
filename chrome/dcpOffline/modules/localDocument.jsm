@@ -341,5 +341,48 @@ localDocument.prototype = {
          */
         getRowNumber: function (attrid) {
             
+        },
+        /**
+         * test if document has been localy created and never synchronized
+         */
+        isOnlyLocal: function () {
+            var id=this.getInitid();
+            if (id != null) return (id.substr(0,5)=='DLID-');
+            return false;
+        },
+        /**
+         * delete local document is never synchronized
+         */
+        remove: function() {
+            if (this.isOnlyLocal()) {
+                logConsole('removing:'+this.getTitle());
+                log('removing:'+this.getTitle());
+                storageManager.execQuery({
+                    query : 'delete from documents where initid=:initid',
+                    params : {
+                        initid : this.getInitid()
+                    }
+                });
+                storageManager.execQuery({
+                    query : 'delete from doctitles where initid=:initid',
+                    params : {
+                        initid : this.getInitid()
+                    }
+                });
+                storageManager.execQuery({
+                    query : 'delete from docsbydomain where initid=:initid',
+                    params : {
+                        initid : this.getInitid()
+                    }
+                });
+                storageManager.execQuery({
+                    query : 'delete from files where initid=:initid',
+                    params : {
+                        initid : this.getInitid()
+                    }
+                });
+            } else {
+                throw this.getTitle()+":not a new local document";
+            }
         }
 };

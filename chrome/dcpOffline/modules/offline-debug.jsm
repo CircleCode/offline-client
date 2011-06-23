@@ -567,17 +567,17 @@ Fdl.OfflineSync.prototype = {
 			if (parseInt(config.transaction) > 0) {
 				var data = this.callSyncMethod(config);
 				if (data) {
-					if (!data.error) {
-					    if (data.properties.id > 0) {
-						return this.context.getDocument({
-							data : data
-						});
-					    } else {
-					        // new document: not already activated so return temporary document
-					        return config.document;
-					    }
-					}
-				}
+                    if (!data.error) {
+                        if (data.properties.id > 0) {
+                        return this.context.getDocument({
+                            data : data
+                        });
+                        } else {
+                            // new document: not already activated so return temporary document
+                            return config.document;
+                        }
+                    }
+                }
 			} else {
 				this.context.setErrorMessage("no transaction id found");
 			}
@@ -706,7 +706,7 @@ Fdl.OfflineSync.prototype.getSharedDocuments = function(config) {
 	var data = this.callSyncMethod({
 		method : 'getSharedDocuments',
 		until : until,
-		stillRecorded : config.stillRecorded
+		stillRecorded : (config)?config.stillRecorded:null
 	});
 	if (data) {
 		data.acknowledgement=this.callSyncMethod({
@@ -746,7 +746,7 @@ Fdl.OfflineSync.prototype.getUserDocuments = function(config) {
 	}
 	var data = this.callSyncMethod({
 		method : 'getUserDocuments',until:until,
-        stillRecorded : config.stillRecorded
+        stillRecorded : (config)?config.stillRecorded:null
 	});
 	if (data) {
 		data.acknowledgement=this.callSyncMethod({

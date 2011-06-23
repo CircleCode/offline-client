@@ -269,20 +269,22 @@
             Components.utils.import("resource://modules/docManager.jsm");
             var valueNode = this.getChild('displayValue');
             
-            var title=formater.getDocumentTitle({initid:this.docid});
-            
-            valueNode.value=title;
-            try {
-              var rdoc=docManager.getLocalDocument({initid:this.docid});
-              if (rdoc) {
-                valueNode.classList.add('link');
-                var oicon=this.getChild("docIcon");
-                var icon=rdoc.getIcon();
-                if (icon) {
-                    oicon.src='file://'+icon;
-                }
-              }
-            } catch (e) {}
+            if (this.docid) {
+                var title=formater.getDocumentTitle({initid:this.docid});
+                
+                valueNode.value=title;
+                try {
+                  var rdoc=docManager.getLocalDocument({initid:this.docid});
+                  if (rdoc) {
+                    valueNode.classList.add('link');
+                    var oicon=this.getChild("docIcon");
+                    var icon=rdoc.getIcon();
+                    if (icon) {
+                        oicon.src='file://'+icon;
+                    }
+                  }
+                } catch (e) {}
+            }
             
             ]]>
             </constructor>

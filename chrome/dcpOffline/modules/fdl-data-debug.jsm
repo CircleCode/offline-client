@@ -1,4 +1,5 @@
 var EXPORTED_SYMBOLS = [ "Fdl" , "JSON" ];
+Components.utils.import("resource://modules/logger.jsm");
 
 /**
  * @author Anakeen
@@ -1196,7 +1197,7 @@ Fdl.Context.prototype.loadCatalog = function(locale) {
 		} else locale='fr';
 	}
 	var url='locale/'+locale+'/js/catalog.js';
-	console.log("load catalog"+url);
+	logConsole("load catalog"+url);
 	var c=this.retrieveData('', '', true, url);
 	if (c) {
 		this.catalog=c;
@@ -1616,11 +1617,11 @@ Fdl.Context.prototype.retrieveData = function(urldata, parameters,
 		                if (this.debug) r["evalDebugTime"]=(new Date().getTime())-db1;
 		                if (r.error) this.setErrorMessage(r.error);
 		                if (r.log) {
-		                    console.log('datalog:',r.log);
+		                    logConsole('datalog:',r.log);
 		                    delete r.log;
 		                }
 		                if (r.spentTime)
-		                    console.log( {
+		                    logConsole( {
 		                        time : r.spentTime
 		                    });
 		                delete r.spentTime;
@@ -1749,7 +1750,7 @@ Fdl.Context.prototype.stringToFunction = function(str) {
 				orderBy : 'title desc'
 			}
 		});
-		if (d.isAlive()) {
+		if (d && d.isAlive()) {
 			var dl = d.getStoredContent(); // document list object			
 			var p = dl.getDocuments();  // array of Fdl.Documents   
  *            </code></pre>
@@ -1935,7 +1936,7 @@ Fdl.Context.prototype.getHomeFolder = function(config) {
 		if (! config) config={};
 		config.id=idhome;
 		var h = this.getDocument(config);
-		if (h.isAlive()) {
+		if (h!=null && h.isAlive()) {
 			this._homeFolder = h;
 			return h;
 		}
@@ -1945,7 +1946,7 @@ Fdl.Context.prototype.getHomeFolder = function(config) {
 /**
  * get desktop folder of current user
  * 
- * @return {Fdl.Collection} the home folder, null is no home
+ * @return {Fdl.Collection} the home folder, null is no desktop folder
  */
 Fdl.Context.prototype.getDesktopFolder = function(config) {
 	if (this._desktopFolder)
@@ -1956,7 +1957,7 @@ Fdl.Context.prototype.getDesktopFolder = function(config) {
 		if (! config) config={};
 		config.id=idhome;
 		var h = this.getDocument(config);
-		if (h.isAlive()) {
+		if (h!=null && h.isAlive()) {
 			this._desktopFolder = h;
 			return h;
 		}
@@ -1966,7 +1967,7 @@ Fdl.Context.prototype.getDesktopFolder = function(config) {
 /**
  * get offline folder of current user
  * 
- * @return {Fdl.Collection} the home folder, null is no home
+ * @return {Fdl.Collection} the home folder, null is no offline folder
  */
 Fdl.Context.prototype.getOfflineFolder = function(config) {
 	if (this._offlineFolder)
@@ -1977,7 +1978,7 @@ Fdl.Context.prototype.getOfflineFolder = function(config) {
 		if (! config) config={};
 		config.id=idhome;
 		var h = this.getDocument(config);
-		if (h.isAlive()) {
+		if (h!=null && h.isAlive()) {
 			this._offlineFolder = h;
 			return h;
 		}
@@ -1998,7 +1999,7 @@ Fdl.Context.prototype.getBasketFolder = function(config) {
 		if (! config) config={};
 		config.id=idhome;
 		var h = this.getDocument(config);
-		if (h.isAlive()) {
+		if (h!=null && h.isAlive()) {
 			this._basketFolder = h;
 			return h;
 		} else {
@@ -2996,7 +2997,7 @@ Fdl.Document.prototype.savefromform = function(config) {
 		}
 		//	if (t.contentDocument.body.firstChild) throw(t.contentDocument.body.firstChild.innerHTML);
 
-		//	console.log(document.getElementById(f.target));
+		//	logConsole(document.getElementById(f.target));
 		f.action=oriaction;
 		f.target=oritarget;
 		return true;
@@ -3868,7 +3869,7 @@ Fdl.Collection.prototype.insertDocuments = function(config) {
 		if (config.norequest) {
 			data=this._data;
 		} else {
-			console.log('insert',config);
+			logConsole('insert',config);
 			if (config.selection) config.selection=JSON.stringify(config.selection);
 			data=this.context.retrieveData({app:'DATA',action:'DOCUMENT',method:'insertdocuments',
 				id:this.getProperty('initid')},config);
@@ -4116,7 +4117,7 @@ Fdl.Collection.prototype.getFilters = function(filter) {
 		return filters;
 	} else {
 		var se_attrids=this.getValue('se_attrids');
-		console.log("old",se_attrids);
+		logConsole("old",se_attrids);
 	}
 };
 
@@ -4129,7 +4130,7 @@ Fdl.getHomeFolder = function() {
   if (u != null && u.id) {
     var idhome='FLDHOME_'+u.id;
     var h=new Fdl.Collection({id:idhome});
-    if (h.isAlive()) return h;
+    if (h && h.isAlive()) return h;
   }
   return null;
 };
@@ -4140,7 +4141,7 @@ Fdl.getDesktopFolder = function() {
   if (u != null && u.id) {
     var idhome='FLDDESKTOP_'+u.id;
     var h=new Fdl.Collection({id:idhome});
-    if (h.isAlive()) {
+    if (h && h.isAlive()) {
       Fdl._desktopFolder=h;
       return h;
     }
@@ -4154,7 +4155,7 @@ Fdl.getOfflineFolder = function() {
   if (u != null && u.id) {
     var idhome='FLDOFFLINE_'+u.id;
     var h=new Fdl.Collection({id:idhome});
-    if (h.isAlive()) {
+    if (h && h.isAlive()) {
       Fdl._offlineFolder=h;
       return h;
     }
@@ -4331,7 +4332,7 @@ Fdl.DocumentFilter.prototype = {
 				if (c[i].or)  ln=this.linearize(c[i].or,'or');
 				else if (c[i].and) ln=this.linearize(c[i].and,'and');
 				else if (c[i].length) ln=this.linearize(c[i],'and');
-				else console.log("ERROR ADD",c[i]);
+				else logConsole("ERROR ADD",c[i]);
 				
 				if (ln.length> 0) {
 					if (!ln[0].lp) {
@@ -4357,7 +4358,7 @@ Fdl.DocumentFilter.prototype = {
 	unLinearize: function(la,level) {
 		if (!level) level=0;
 		if (level > 4) {
-			console.log('recursion detect');
+			logConsole('recursion detect');
 			return;
 		}
 		var l=Fdl.cloneObject(la);
@@ -4424,7 +4425,7 @@ Fdl.DocumentFilter.prototype = {
 						bp=false;
 					} 
 				}
-				//console.log('mix orand',n2s(l));
+				//logConsole('mix orand',n2s(l));
 				// search or
 				var cp=0;
 				var lu;
@@ -4432,7 +4433,7 @@ Fdl.DocumentFilter.prototype = {
 				var wi=0;
 				var nl=[];
 				for (var i=0;i<l.length;i++) {
-					//console.log(l[i],cp);
+					//logConsole(l[i],cp);
 					if ((l[i].lp) ) {
 						wi=i;
 						
@@ -4440,7 +4441,7 @@ Fdl.DocumentFilter.prototype = {
 					if ((l[i].rp)) {
 						wu=l.slice(wi,i+1);
 						lu=this.unLinearize(wu,level+1);
-						//console.log('wu',wu,'lu',lu);
+						//logConsole('wu',wu,'lu',lu);
 						nl.push({ol:l[wi].ol,ul:lu});
 					}
 					if ((!l[i].lp) && (!l[i].rp) && (cp==0)) {
@@ -4449,7 +4450,7 @@ Fdl.DocumentFilter.prototype = {
 					if (l[i].lp) cp++;
 					if (l[i].rp) cp--;					
 				}
-				//console.log('second pass',nl);
+				//logConsole('second pass',nl);
 				return this.unLinearize(nl,level+1);
 			}
 		}

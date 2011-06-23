@@ -998,7 +998,6 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
         docManager.setActiveDomain({
             domain : domain.id
         });
-        //logConsole("active domain" + docManager.getActiveDomain());
         // update file modification date
         var modifiedFiles = fileManager.getModifiedFiles({
             domain : domain.id
@@ -1041,12 +1040,19 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                         me.log('end transaction : ' + me.synchroResults.status);
                         logConsole('final Results', me.synchroResults);
                         for ( var docid in me.synchroResults.detailStatus) {
-                            if (me.synchroResults.detailStatus[docid].isValid) {
+                            var detail=me.synchroResults.detailStatus[docid];
+                            if (detail.isValid) {
+                                if (detail.localId) {
+                                    var lddoc=docManager.getLocalDocument({initid:detail.localId});
+                                    if (lddoc) {
+                                        lddoc.remove();
+                                    }
+                                }
                                 // update local document
-                              /*  me.revertDocument({
+                                me.revertDocument({
                                     domain : domain,
                                     initid : docid
-                                });*/
+                                });
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {
