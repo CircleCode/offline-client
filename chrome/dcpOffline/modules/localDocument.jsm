@@ -251,7 +251,7 @@ localDocument.prototype = {
                     initid : this._initid
                 }
             });
-            logConsole('editable', r);
+           
             if (r.length == 1) {
                 return (r[0].editable == 1);
             }

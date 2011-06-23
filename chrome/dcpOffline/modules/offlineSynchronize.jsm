@@ -282,6 +282,7 @@ offlineSynchronize.prototype.pushDocument = function(config) {
                 context : domain.context,
                 document : document
             });
+            logConsole('pushing', updateDocument.getTitle());
             if (!updateDocument) {
                 throw new SyncException("pushDocument");
             } else {
@@ -633,7 +634,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
         var document = config.document;
         this.callObserver('onAddDocumentsToRecord', 1);
         this.callObserver('onDetailLabel',"pulling document :"+document.getTitle());
-
+        logConsole('pull', config.document.getTitle());
         var me = this;
         storageManager
                 .saveDocumentValues({
@@ -1042,10 +1043,10 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                         for ( var docid in me.synchroResults.detailStatus) {
                             if (me.synchroResults.detailStatus[docid].isValid) {
                                 // update local document
-                                me.revertDocument({
+                              /*  me.revertDocument({
                                     domain : domain,
                                     initid : docid
-                                });
+                                });*/
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {

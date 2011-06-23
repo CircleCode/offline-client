@@ -8,6 +8,7 @@ Components.utils.import("resource://modules/logger.jsm");
 
 function ProtoFormater(config) {
 
+    Components.utils.import("resource://modules/exceptions.jsm");
 };
 
 ProtoFormater.prototype = {
