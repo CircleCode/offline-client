@@ -63,13 +63,13 @@
                                 anonid="document-toolbar-system-revert"
                                 label="&document.toolbar.button.revert;"
                                 tooltiptext="&document.toolbar.button.revert.tooltip;"
-                                icon="clear">
+                                icon="clear" collapsed="true">
                             </xul:menuitem>
                             <xul:menuitem
                                 anonid="document-toolbar-system-remove"
                                 label="&document.toolbar.button.remove;"
                                 tooltiptext="&document.toolbar.button.remove.tooltip;"
-                                icon="remove">
+                                icon="remove" collapsed="true">
                             </xul:menuitem>
                         </xul:menupopup>
                     </xul:toolbarbutton>
@@ -133,6 +133,20 @@
                             }
                         }
                     }
+                }
+                
+                if (mode == 'view' ) {
+                   var bremove=this.getChild("document-toolbar-system-remove");
+                   var brevert=this.getChild("document-toolbar-system-revert");
+                   if (this.doc.isOnlyLocal()) {
+                       if (bremove) {
+                           bremove.collapsed=false;
+                       }
+                   } else {
+                       if (brevert) {
+                           brevert.collapsed=false;
+                       }
+                   }
                 }
                 
                 if( (mode !== 'edit') && (!this.doc.canEdit()) ){
