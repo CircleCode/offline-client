@@ -94,6 +94,26 @@
                         this.doc.save();
                         this.onAfterLocalSave();
                         this.switchMode("view");
+                        var param = {
+                          documentId : this.initid
+                        };
+                        applicationEvent.publish("askForSaveDocument", param);
+                    } catch(e) {
+                        logError(e, "error on document ["+this.initid+"] save");
+                        alert('(FIXME) ' + e);
+                    }
+                ]]></body>
+            </method>
+            
+            <method name="remove">
+                <body><![CDATA[
+                    try {
+                        this.doc.remove(); 
+                        var param = {
+                         documentId : this.initid
+                        };
+                        applicationEvent.publish("askForRemoveDocument", param);
+                        this.close();
                     } catch(e) {
                         logError(e, "error on document ["+this.initid+"] save");
                         alert('(FIXME) ' + e);

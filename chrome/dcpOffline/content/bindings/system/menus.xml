@@ -65,6 +65,12 @@
                                 tooltiptext="&document.toolbar.button.revert.tooltip;"
                                 icon="clear">
                             </xul:menuitem>
+                            <xul:menuitem
+                                anonid="document-toolbar-system-remove"
+                                label="&document.toolbar.button.remove;"
+                                tooltiptext="&document.toolbar.button.remove.tooltip;"
+                                icon="remove">
+                            </xul:menuitem>
                         </xul:menupopup>
                     </xul:toolbarbutton>
                     
@@ -160,6 +166,20 @@
                     case this.getChild('document-toolbar-system-revert') :
                         this.documentNode.revert();
                         break;
+                    case this.getChild('document-toolbar-system-remove') :
+                       
+                       Components.utils.import("resource://modules/StringBundle.jsm");
+                       var translate = new StringBundle( "chrome://dcpoffline/locale/bindings/menu-binding.properties");
+                       var msgTitle=translate.get("document.confirm.remove.title");
+                       var msgText=translate.get("document.confirm.remove.message",[this.doc.getTitle()]);
+                       var wantDelete = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Components.interfaces.nsIPromptService)
+                            .confirm(null, msgTitle, msgText);
+                       if(wantDelete){
+                           this.documentNode.remove();
+                       }
+                       break;
+                        
                 }
             ]]></handler>
         </handlers>

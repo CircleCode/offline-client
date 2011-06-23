@@ -9,7 +9,11 @@
 <!ENTITY  document.toolbar.button.advanced.tooltip          "Avancé">
 <!ENTITY  document.toolbar.button.properties                "Propriétés">
 <!ENTITY  document.toolbar.button.properties.tooltip        "Propriétés">
-<!ENTITY  document.toolbar.button.revert                    "Revert">
+<!ENTITY  document.toolbar.button.revert                    "Rétablir">
 <!ENTITY  document.toolbar.button.revert.tooltip            "Abandonner les modifications locales">
 <!ENTITY  document.toolbar.button.close                     "Fermer">
 <!ENTITY  document.toolbar.button.close.tooltip             "Fermer">
+<!ENTITY  document.toolbar.button.remove                     "Supprimer">
+<!ENTITY  document.toolbar.button.remove.tooltip             "Suppression du document local">
+<!ENTITY  document.confirm.remove.title                     "Remove confirm">
+<!ENTITY  document.confirm.remove.message                   "Sure Remove ?">

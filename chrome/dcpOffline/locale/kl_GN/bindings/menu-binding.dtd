@@ -13,3 +13,5 @@
 <!ENTITY  document.toolbar.button.revert.tooltip            "Revert">
 <!ENTITY  document.toolbar.button.close                     "Fermer">
 <!ENTITY  document.toolbar.button.close.tooltip             "Fermer">
+<!ENTITY  document.toolbar.button.remove                     "Remove">
+<!ENTITY  document.toolbar.button.remove.tooltip             "Remove">

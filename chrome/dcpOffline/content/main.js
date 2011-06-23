@@ -73,7 +73,7 @@ function upgradeProfile(){
                     var migrationMessage = migrationWrapper.message || defaultMigrationMessage;
                     var continueMigration = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                             .getService(Components.interfaces.nsIPromptService)
-                            .confirm(null, "Migration required", migrationMessage);
+                            .confirm(null, "Migration required", "");
                     if(continueMigration){
                         migrationWrapper.migrate(profileVersion, appVersion);
                     } else {
@@ -151,6 +151,8 @@ function initListeners() {
 	applicationEvent.subscribe("postChangeSelectedDomain",
 			tryToUpdateCurrentDocument);
 
+    applicationEvent.subscribe("askForRemoveDocument", updateAbstractList);
+    applicationEvent.subscribe("askForSaveDocument", updateAbstractList);
 	applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
 	applicationEvent.subscribe("postChangeSelectedFamily",
 			updateCurrentFamilyPreference);

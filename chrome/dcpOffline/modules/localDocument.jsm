@@ -192,6 +192,7 @@ localDocument.prototype = {
                         attributes : this.values,
                         properties : this.properties
                 };
+                this.recomputeTitle();
                 storageManager.saveDocumentValues(saveConfig);
                 if ((!config) || (! config.noModificationDate)) {
                    storageManager.execQuery({
@@ -202,6 +203,14 @@ localDocument.prototype = {
                         }
                    });
                 }
+                // update doctitles also
+                storageManager.execQuery({
+                     query : 'update doctitles set title=:title where initid=:initid',
+                     params : {
+                         title : this.getTitle(),
+                         initid : this._initid
+                     }
+                });
             } else {
                 throw "document " + this._initid + " is not editable";
             }
@@ -347,7 +356,7 @@ localDocument.prototype = {
          */
         isOnlyLocal: function () {
             var id=this.getInitid();
-            if (id != null) return (id.substr(0,5)=='DLID-');
+            if (typeof id == 'string') return (id.substr(0,5)=='DLID-');
             return false;
         },
         /**
@@ -384,5 +393,26 @@ localDocument.prototype = {
             } else {
                 throw this.getTitle()+":not a new local document";
             }
+        },
+        recomputeTitle: function() {
+            var r=storageManager.execQuery({
+                query : 'select attrid from attrmappings where famid=:fromid and istitle = 1',
+                params : {
+                    fromid : this.getProperty('fromid')
+                }
+            });
+            if (r.length > 0) {
+                var title='';
+                for (var i=0;i<r.length; i++) {
+                    title+=this.getValue(r[i].attrid)+' ';
+                }
+                title=title.trim();
+                if (title != '') {
+                   this.properties.title=title;
+                }
+                logConsole('new title'+title);
+            }
+            
+            logConsole('recomputer',r);
         }
 };
