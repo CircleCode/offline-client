@@ -6,29 +6,58 @@
       <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       %leaf-attributes-bindingDTD;
 ]>
-<bindings id="docid-attributes-binding" xmlns="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl"
->
+<bindings
+    id="docid-attributes-binding"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
     <!-- docid attributes -->
-    <binding id="docid-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+    <binding
+        id="docid-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute docid">
-            
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:menulist xbl:inherits="disabled" editable="false" disableautoselect="true" anonid="displayValue" class="dcpValue">
-                    <xul:menupopup anonid="queryList" datasources="profile:storage.sqlite" ref="*" querytype="storage">
-                        <xul:menuitem anonid="choose" value="" class="dcpChooseDocid" label="choose document" />
+            <xul:hbox
+                xbl:inherits="attrid,collapsed"
+                flex="1"
+                class="dcpAttribute docid">
+
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
+                <xul:menulist
+                    xbl:inherits="disabled"
+                    editable="false"
+                    disableautoselect="true"
+                    anonid="displayValue"
+                    class="dcpValue">
+                    <xul:menupopup
+                        anonid="queryList"
+                        datasources="profile:storage.sqlite"
+                        ref="*"
+                        querytype="storage">
+                        <xul:menuitem
+                            anonid="choose"
+                            value=""
+                            class="dcpChooseDocid"
+                            label="choose document" />
                         <xul:template>
                             <xul:query><![CDATA[
                                 SELECT initid, title 
                                 FROM doctitles
                                 WHERE famname = :famid and initid like :filterid order by title
                             ]]>
-                                <xul:param anonid="famid" name="famid" />
-                                <xul:param anonid="filterid" name="filterid" />
+                                <xul:param
+                                    anonid="famid"
+                                    name="famid" />
+                                <xul:param
+                                    anonid="filterid"
+                                    name="filterid" />
                             </xul:query>
                             <xul:action>
-                                <xul:menuitem uri="?" value="?initid" label="?title" />
+                                <xul:menuitem
+                                    uri="?"
+                                    value="?initid"
+                                    label="?title" />
                             </xul:action>
                         </xul:template>
                     </xul:menupopup>
@@ -36,6 +65,11 @@
             </xul:hbox>
         </content>
         <implementation>
+
+            <field name="inputField"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
+
             <method name="reloadValue">
                 <body><![CDATA[
                   if (this.constructed) {
@@ -96,7 +130,7 @@
                     return menuList.label;
                 ]]></body>
             </method>
-            
+
         </implementation>
         <handlers>
             <handler event="change"><![CDATA[
@@ -121,22 +155,43 @@
             ]]></handler>
         </handlers>
     </binding>
-    <binding id="docid-multiple-attr-edit" extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
+    <binding
+        id="docid-multiple-attr-edit"
+        extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
         <content>
-            <xul:hbox xbl:inherits="attrid,collapsed" flex="1" class="dcpAttribute docid">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
+            <xul:hbox
+                xbl:inherits="attrid,collapsed"
+                flex="1"
+                class="dcpAttribute docid">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="value=label" />
                 <xul:hbox>
                     <xul:vbox>
-                        <xul:listbox xbl:inherits="disabled" anonid="multiBox" flex="1" seltype="multiple">
+                        <xul:listbox
+                            xbl:inherits="disabled"
+                            anonid="multiBox"
+                            flex="1"
+                            seltype="multiple">
                         </xul:listbox>
-                        <dcpAttribute  anonid="selector" xbl:inherits="attrid,label,relationFamily,visibility,type,disabled"
-                            nolabel="true" noset="true" multiple="false" />
+                        <dcpAttribute
+                            anonid="selector"
+                            xbl:inherits="attrid,label,relationFamily,visibility,type,disabled"
+                            nolabel="true"
+                            noset="true"
+                            multiple="false" />
                     </xul:vbox>
-                    <xul:button anonid="clearSelection" disabled="true" label="Clear selection" />
+                    <xul:button
+                        anonid="clearSelection"
+                        disabled="true"
+                        label="Clear selection" />
                 </xul:hbox>
             </xul:hbox>
         </content>
         <implementation>
+            <field name="selector"><![CDATA[
+                this.getChild('displayValue');
+            ]]></field>
             <field name="clearSelection"><![CDATA[
                 this.getChild('clearSelection');
             ]]></field>
@@ -183,7 +238,9 @@
             <handler event="change"><![CDATA[
                 alert('change');
             ]]></handler>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                 if(event.originalTarget == this.clearSelection){
                   
                     
@@ -235,14 +292,17 @@
             ]]></handler>
         </handlers>
     </binding>
-    <binding id="docid-multiple2-attr-edit" extends="&systemBindingsDirPath;/docid-attributes-edit.xml#docid-multiple-attr-edit">
+    <binding
+        id="docid-multiple2-attr-edit"
+        extends="&systemBindingsDirPath;/docid-attributes-edit.xml#docid-multiple-attr-edit">
         <implementation>
             <method name="getDocIds">
                 <body><![CDATA[
                 if (! this.getValue()) return '';
                     return this.getValue().split('<BR>');
                 ]]></body>
-            </method><method name="checkValue">
+            </method>
+            <method name="checkValue">
                 <parameter name="value" />
                 <body><![CDATA[
                     return value.join('<BR>');
