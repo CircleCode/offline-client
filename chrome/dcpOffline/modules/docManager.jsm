@@ -115,42 +115,9 @@ docManagerSingleton.prototype = {
                 var doc=new localDocument(config);
                 doc.domainId=config.domain;
 
-                config.force=true;
+                this._docInstances[config.domain][doc.getInitid()] = doc;
 
-                doc.save(config);
-                storageManager.execQuery({
-                    query : "insert into docsbydomain "+
-                            "( initid,  domainid,  editable,  isshared,  isusered) values "+
-                            "(:initid, :domainid, :editable, :isshared, :isusered)",
-                    params:{
-                        initid:doc.getInitid(),
-                        domainid:config.domain,
-                        editable:1, isshared:0, isusered:1
-                    }
-                });
-                storageManager.execQuery({
-                    query : "insert into doctitles "+
-                            "( famname,  initid,  title) values "+
-                            "(:famname, :initid, :title)",
-                    params:{
-                        initid:doc.getInitid(),
-                        title:doc.getTitle(),
-                        famname:doc.getProperty('fromname')
-                    }
-                });
-                storageManager.execQuery({
-                    query : "insert into synchrotimes "+
-                            "( lastsynclocal,  lastsavelocal,  lastsyncremote,  initid) values "+
-                            "(:lastsynclocal, :lastsavelocal, :lastsyncremote, :initid)",
-                    params:{
-                        initid:doc.getInitid(),
-                        lastsynclocal:0,
-                        lastsyncremote:0,
-                        lastsavelocal:utils.toIso8601(new Date())
-                    }
-                });
-
-                return doc;
+                return this._docInstances[config.domain][doc.getInitid()];
            
         } else {
             throw "createLocalDocument :: need fromname or fromid parameter";

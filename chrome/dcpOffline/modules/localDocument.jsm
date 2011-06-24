@@ -3,12 +3,15 @@ Components.utils.import("resource://modules/storageManager.jsm");
 Components.utils.import("resource://modules/utils.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://modules/exceptions.jsm");
+Components.utils.import("resource://modules/events.jsm");
 
 var EXPORTED_SYMBOLS = [ "localDocument" ];
 
 var _propertyNames = null;
 function localDocument(config) {
     if (config) {
+        this.values = {};
+        this.properties = {};
         if (config.initid) {
             // existing document
             this.retrieve(config);
@@ -25,10 +28,11 @@ localDocument.prototype = {
         _initid : null,
         _dirty : false,
         _modified : null,
-        properties : {},
-        values : {},
+        properties : null,
+        values : null,
         labels : null,
         domainId : 0, // set by manager
+        inMemoryDoc: false,
         retrieve : function(config) {
             try {
                 var docRecord = null;
@@ -40,8 +44,6 @@ localDocument.prototype = {
                     });
                 }
                 var props = this.getPropertiesName(docRecord.fromid);
-                this.properties = {};
-                this.values = {};
                 var val;
                 for ( var id in docRecord) {
                     try {
@@ -64,12 +66,12 @@ localDocument.prototype = {
             }
         },
         create : function(config) {
-            // FIXME
+            //True while the doc hasn't been saved
+            this.inMemoryDoc = true;
             this._initid = 'DLID-' + Components.classes["@mozilla.org/uuid-generator;1"].getService(
                     Components.interfaces.nsIUUIDGenerator).generateUUID().toString().slice(1,-1);
             this.properties.initid = this._initid;
             this.properties.id = this._initid;
-            this.properties.title = this._initid;
             this.properties.fromid = config.fromid;
             if (config.values) {
                 for (var aid in config.values) {
@@ -182,6 +184,9 @@ localDocument.prototype = {
         },
 
         save : function(config) {
+            if (this.inMemoryDoc){
+                throw "This is an inMemoryDoc. You must store it before saving";
+            };
             if (this.canEdit() || (config && config.force)) {
                 var now = new Date();
                 if ((!config) || (! config.noModificationDate)) {
@@ -219,6 +224,47 @@ localDocument.prototype = {
             return this;
         },
         
+        store: function(config){
+            storageManager.execQuery({
+                query : "insert into docsbydomain "+
+                        "( initid,  domainid,  editable,  isshared,  isusered) values "+
+                        "(:initid, :domainid, :editable, :isshared, :isusered)",
+                params:{
+                    initid:this.getInitid(),
+                    domainid:this.domainId,
+                    editable:1, //XXX: why not boolean?
+                    isshared:0, //XXX: why not boolean?
+                    isusered:1 //XXX: why not boolean?
+                }
+            });
+            storageManager.execQuery({
+                query : "insert into doctitles "+
+                        "( famname,  initid,  title) values "+
+                        "(:famname, :initid, :title)",
+                params:{
+                    initid:this.getInitid(),
+                    title:this.getTitle(),
+                    famname:this.getProperty('fromname')
+                }
+            });
+            storageManager.execQuery({
+                query : "insert into synchrotimes "+
+                        "( lastsynclocal,  lastsavelocal,  lastsyncremote,  initid) values "+
+                        "(:lastsynclocal, :lastsavelocal, :lastsyncremote, :initid)",
+                params:{
+                    initid:this.getInitid(),
+                    lastsynclocal:0, //XXX: why not boolean?
+                    lastsyncremote:0, //XXX: why not boolean?
+                    lastsavelocal:utils.toIso8601(new Date())
+                }
+            });
+
+            //says the doc has been saved in DB
+            this.inMemoryDoc = false;
+            this.save(config);
+            applicationEvent.publish('postStoreDocument', {documentId: this.getInitid()});
+        },
+        
         /*
          * Check if the document has been modified and not saved
          */
@@ -248,6 +294,9 @@ localDocument.prototype = {
          * @return boolean true if can
          */
         canEdit : function() {
+            if(this.isOnlyLocal()){
+                return true;
+            }
             if (!this.domainId) {
                 throw new ArgException("canEdit :: missing arguments");
             }

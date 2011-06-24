@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE bindings>
-<bindings id="documentBindings"
+<bindings
+    id="documentBindings"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
-    
+
     <binding id="document">
         <!--<ressources>
-                <stylesheet src="chrome://dcpoffline/skin/document.css"/>
-            </ressources>-->
-        
+            <stylesheet src="chrome://dcpoffline/skin/document.css"/>
+            </ressources> -->
+
         <implementation>
-            
+
             <property
                 name="initid"
                 readonly="true">
@@ -24,7 +25,7 @@
                     }
                 ]]></getter>
             </property>
-            
+
             <!-- mode: "edit" or "view", default is "view" -->
             <property
                 name="mode"
@@ -33,7 +34,7 @@
                     return this.getAttribute('mode');
                 ]]></getter>
             </property>
-            
+
             <property
                 name="localDocument"
                 readonly="true">
@@ -41,10 +42,9 @@
                     return this.doc;
                 ]]></getter>
             </property>
-            
-            <method
-                name="switchMode">
-                <parameter name="mode"/>
+
+            <method name="switchMode">
+                <parameter name="mode" />
                 <body><![CDATA[
                 if(mode){
                     var currentMode = this.getAttribute('mode');
@@ -64,40 +64,54 @@
                 }
                 ]]></body>
             </method>
-            
+
             <method name="getValue">
-                <parameter name="attrid"/>
+                <parameter name="attrid" />
                 <body><![CDATA[
                     return this.doc.getvalue({attrid: attrid});
                 ]]></body>
             </method>
-            
+
             <method name="getProperty">
-                <parameter name="propertyid"/>
+                <parameter name="propertyid" />
                 <body><![CDATA[
                     return this.doc.getProperty({propertyid: propertyid});
                 ]]></body>
             </method>
-            
+
             <method name="onBeforeLocalSave">
                 <body><![CDATA[return true;]]></body>
             </method>
-            
+
             <method name="onAfterLocalSave">
                 <body><![CDATA[return true;]]></body>
             </method>
-            
+
+            <method name="onBeforeLocalCreate">
+                <body><![CDATA[return true;]]></body>
+            </method>
+
+            <method name="onAfterLocalCreate">
+                <body><![CDATA[return true;]]></body>
+            </method>
+
             <method name="save">
                 <body><![CDATA[
                     try {
-                        this.onBeforeLocalSave();
-                        this.doc.save();
-                        this.onAfterLocalSave();
+                        if(this.doc.inMemoryDoc){
+                            this.onBeforeLocalCreate();
+                            this.doc.store();
+                            this.onAfterLocalCreate();
+                        } else {
+                            this.onBeforeLocalSave();
+                            this.doc.save();
+                            this.onAfterLocalSave();
+                        }
                         this.switchMode("view");
                         var param = {
                           documentId : this.initid
                         };
-                        applicationEvent.publish("askForSaveDocument", param);
+                        applicationEvent.publish("postSaveDocument", param);
                     } catch(e) {
                         logError(e, "error on document ["+this.initid+"] save");
                         alert('(FIXME) ' + e);
@@ -116,7 +130,7 @@
                                 .getService(Components.interfaces.nsIPromptService)
                                 .confirm(null, msgTitle, msgText);
                         if(wantDelete){
-                            this.doc.remove();
+                            this.doc.remove(); 
                             var param = {
                                 documentId : this.initid
                             };
@@ -139,7 +153,7 @@
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
             </method>
-            
+
             <method name="reinit">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
@@ -154,9 +168,9 @@
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
             </method>
-            
+
             <method name="preClose">
-                <parameter name="config"/>
+                <parameter name="config" />
                 <body><![CDATA[
                     if(this.doc.isDirty()){
                         try {
@@ -206,7 +220,7 @@
                     }
                 ]]></body>
             </method>
-            
+
             <method name="revert">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/network.jsm");
@@ -233,7 +247,7 @@
                     }
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
                 try{
                     Components.utils.import("resource://modules/events.jsm");
@@ -271,7 +285,7 @@
                 }
                 return true;
             ]]></constructor>
-            
+
             <destructor><![CDATA[
                 try{
                     Components.utils.import("resource://modules/events.jsm");
@@ -284,13 +298,13 @@
                     logConsole(e);
                 }
             ]]></destructor>
-            
+
         </implementation>
         <!--
             <handlers>
 
             </handlers>
-            -->
+        -->
     </binding>
-    
+
 </bindings>
