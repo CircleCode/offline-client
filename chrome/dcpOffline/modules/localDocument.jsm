@@ -225,44 +225,49 @@ localDocument.prototype = {
         },
         
         store: function(config){
-            storageManager.execQuery({
-                query : "insert into docsbydomain "+
-                        "( initid,  domainid,  editable,  isshared,  isusered) values "+
-                        "(:initid, :domainid, :editable, :isshared, :isusered)",
-                params:{
-                    initid:this.getInitid(),
-                    domainid:this.domainId,
-                    editable:1, //XXX: why not boolean?
-                    isshared:0, //XXX: why not boolean?
-                    isusered:1 //XXX: why not boolean?
-                }
-            });
-            storageManager.execQuery({
-                query : "insert into doctitles "+
-                        "( famname,  initid,  title) values "+
-                        "(:famname, :initid, :title)",
-                params:{
-                    initid:this.getInitid(),
-                    title:this.getTitle(),
-                    famname:this.getProperty('fromname')
-                }
-            });
-            storageManager.execQuery({
-                query : "insert into synchrotimes "+
-                        "( lastsynclocal,  lastsavelocal,  lastsyncremote,  initid) values "+
-                        "(:lastsynclocal, :lastsavelocal, :lastsyncremote, :initid)",
-                params:{
-                    initid:this.getInitid(),
-                    lastsynclocal:0, //XXX: why not boolean?
-                    lastsyncremote:0, //XXX: why not boolean?
-                    lastsavelocal:utils.toIso8601(new Date())
-                }
-            });
-
-            //says the doc has been saved in DB
-            this.inMemoryDoc = false;
-            this.save(config);
-            applicationEvent.publish('postStoreDocument', {documentId: this.getInitid()});
+            try{
+                this.recomputeTitle();
+                storageManager.execQuery({
+                    query : "insert into docsbydomain "+
+                            "( initid,  domainid,  editable,  isshared,  isusered) values "+
+                            "(:initid, :domainid, :editable, :isshared, :isusered)",
+                    params:{
+                        initid:this.getInitid(),
+                        domainid:this.domainId,
+                        editable:1, //XXX: why not boolean?
+                        isshared:0, //XXX: why not boolean?
+                        isusered:1 //XXX: why not boolean?
+                    }
+                });
+                storageManager.execQuery({
+                    query : "insert into doctitles "+
+                            "( famname,  initid,  title) values "+
+                            "(:famname, :initid, :title)",
+                    params:{
+                        initid:this.getInitid(),
+                        title:this.getTitle(),
+                        famname:this.getProperty('fromname')
+                    }
+                });
+                storageManager.execQuery({
+                    query : "insert into synchrotimes "+
+                            "( lastsynclocal,  lastsavelocal,  lastsyncremote,  initid) values "+
+                            "(:lastsynclocal, :lastsavelocal, :lastsyncremote, :initid)",
+                    params:{
+                        initid:this.getInitid(),
+                        lastsynclocal:0, //XXX: why not boolean?
+                        lastsyncremote:0, //XXX: why not boolean?
+                        lastsavelocal:utils.toIso8601(new Date())
+                    }
+                });
+    
+                //says the doc has been saved in DB
+                this.inMemoryDoc = false;
+                this.save(config);
+                applicationEvent.publish('postStoreDocument', {documentId: this.getInitid()});
+            } catch(e) {
+                throw(e);
+            }
         },
         
         /*
