@@ -98,6 +98,7 @@
             <method name="save">
                 <body><![CDATA[
                     try {
+                        this.checkRequiredAttributes();
                         if(this.doc.inMemoryDoc){
                             this.onBeforeLocalCreate();
                             this.doc.store();
@@ -118,7 +119,7 @@
                     }
                 ]]></body>
             </method>
-            
+
             <method name="remove">
                 <body><![CDATA[
                     try {
@@ -243,6 +244,23 @@
                             this.reinit();
                         } catch(e) {
                             logError(e, "error when reverting document "+this.initid);
+                        }
+                    }
+                ]]></body>
+            </method>
+
+            <method name="checkRequiredAttributes">
+                <body><![CDATA[
+                    var requiredAttributes = this.querySelectorAll('dcpAttribute[required=true]');
+                    var mustFillAttributes = [];
+                    for (var i = 0; i < requiredAttributes.length; ++i) {
+                        var attribute = requiredAttributes[i];
+                        if(attribute.getValue() == ''){
+                            mustFillAttributes.push(attribute);
+                        }
+                        if(mustFillAttributes.length){
+                            mustFillAttributes[0].inputField.focus();
+                            throw "you must fill all required attributes";
                         }
                     }
                 ]]></body>
