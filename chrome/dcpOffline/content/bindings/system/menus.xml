@@ -30,8 +30,7 @@
                         label="&document.toolbar.button.cancel;"
                         tooltiptext="&document.toolbar.button.cancel.tooltip;"
                         icon="cancel"
-                        mode="edit"
-                        oncommand="alert('(FIXME) do cancel');">
+                        mode="edit">
                     </xul:toolbarbutton>
                     
                     <xul:toolbarbutton

@@ -401,7 +401,6 @@ function tryToCloseDocument(param) {
     }
     if (!applicationEvent.publish("preCloseDocument", param)) {
         // TODO add alert message
-        alert("unable to close selected document");
         return false;
     } else {
         applicationEvent.publish("closeDocument", param);

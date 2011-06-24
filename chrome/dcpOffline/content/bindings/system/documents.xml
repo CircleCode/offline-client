@@ -115,7 +115,7 @@
                         applicationEvent.publish("postSaveDocument", param);
                     } catch(e) {
                         logError(e, "error on document ["+this.initid+"] save");
-                        alert('(FIXME) ' + e);
+                        alert(e);
                     }
                 ]]></body>
             </method>

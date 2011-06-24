@@ -75,7 +75,6 @@ localDocument.prototype = {
             this.properties.fromid = config.fromid;
             if (config.values) {
                 for (var aid in config.values) {
-                    logConsole("setvale:"+aid);
                     this.setValue(aid, config.values[aid]);
                 }
             }
