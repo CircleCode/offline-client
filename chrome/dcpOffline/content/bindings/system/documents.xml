@@ -253,15 +253,24 @@
                 <body><![CDATA[
                     var requiredAttributes = this.querySelectorAll('dcpAttribute[required=true]');
                     var mustFillAttributes = [];
+                    var mustFillAttributeTitles = [];
                     for (var i = 0; i < requiredAttributes.length; ++i) {
                         var attribute = requiredAttributes[i];
                         if(attribute.getValue() == ''){
                             mustFillAttributes.push(attribute);
+                            mustFillAttributeTitles.push(attribute.label);
                         }
-                        if(mustFillAttributes.length){
+                    }
+                    if(mustFillAttributes.length){
+                        if(mustFillAttributes[0].inputField.focus){
                             mustFillAttributes[0].inputField.focus();
-                            throw "you must fill all required attributes";
                         }
+                        Components.utils.import("resource://modules/StringBundle.jsm");
+                        var translate = new StringBundle( "chrome://dcpoffline/locale/bindings/document-binding.properties");
+                        var msg = translate.get("document.mustFillAttributes.popup.intro")
+                            + "\n"
+                            + mustFillAttributeTitles.join("\n");
+                        throw msg;
                     }
                 ]]></body>
             </method>
