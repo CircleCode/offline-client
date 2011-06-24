@@ -108,19 +108,28 @@
             <method name="remove">
                 <body><![CDATA[
                     try {
-                        this.doc.remove(); 
-                        var param = {
-                         documentId : this.initid
-                        };
-                        applicationEvent.publish("askForRemoveDocument", param);
-                        this.close();
+                        Components.utils.import("resource://modules/StringBundle.jsm");
+                        var translate = new StringBundle( "chrome://dcpoffline/locale/bindings/document-binding.properties");
+                        var msgTitle=translate.get("document.confirm.remove.title");
+                        var msgText=translate.get("document.confirm.remove.message",[this.doc.getTitle()]);
+                        var wantDelete = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                .getService(Components.interfaces.nsIPromptService)
+                                .confirm(null, msgTitle, msgText);
+                        if(wantDelete){
+                            this.doc.remove();
+                            var param = {
+                                documentId : this.initid
+                            };
+                            applicationEvent.publish("postRemoveDocument", param);
+                            this.close();
+                        }
                     } catch(e) {
                         logError(e, "error on document ["+this.initid+"] save");
                         alert('(FIXME) ' + e);
                     }
                 ]]></body>
             </method>
-            
+
             <method name="close">
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
