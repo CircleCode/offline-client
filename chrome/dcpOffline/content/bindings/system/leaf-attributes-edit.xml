@@ -107,16 +107,22 @@
             </method>
 
             <constructor><![CDATA[
-                 var visibility = this.getAttribute('visibility');
-                 if (visibility == 'S') {
+                var visibility = this.getAttribute('visibility');
+                if (visibility == 'S') {
                     this.setAttribute('disabled', true);
-                 } else if( visibility == 'W' || visibility == 'O' ){
+                } else if( visibility == 'W' || visibility == 'O' ){
                     this.removeAttribute('disabled', false);
-                 } else {
+                } else {
                     this.setAttribute('collapsed', true);
-                 }
+                }
 
-                this.reloadValue();
+                if(this.doc.inMemoryDoc){
+                    if(this.hasAttribute('defaultValue')){
+                        this.setValue(this.getAttribute('defaultValue'));
+                    }
+                } else {
+                    this.reloadValue();
+                }
             ]]></constructor>
 
         </implementation>
