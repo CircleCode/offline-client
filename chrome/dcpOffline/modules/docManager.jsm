@@ -118,7 +118,6 @@ docManagerSingleton.prototype = {
                 this._docInstances[config.domain][doc.getInitid()] = doc;
 
                 return this._docInstances[config.domain][doc.getInitid()];
-           
         } else {
             throw "createLocalDocument :: need fromname or fromid parameter";
         }

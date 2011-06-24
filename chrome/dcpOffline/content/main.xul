@@ -50,7 +50,7 @@
                                     <query><![CDATA[
                                         SELECT title, icon, famid 
                                         FROM families 
-                                        WHERE creatable = 1
+                                        WHERE creatable
                                         ORDER BY title
                                     ]]></query>
                                     <action>

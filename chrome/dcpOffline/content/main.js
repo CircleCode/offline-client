@@ -139,27 +139,24 @@ function initListeners() {
     logIHM("initListeners");
 
     applicationEvent.subscribe("initializationWizardEnd", initValues);
+    applicationEvent.subscribe("initializationWizardEnd", reloadCreatableFamilies);
 
     applicationEvent.subscribe("changeSelectedDomain", updateDomainPreference);
-    applicationEvent.subscribe("postChangeSelectedDomain",
-            updateOpenDocumentList);
-    applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
     applicationEvent.subscribe("changeSelectedDomain", updateFamilyList);
     applicationEvent.subscribe("changeSelectedDomain", updateAbstractList);
-    applicationEvent.subscribe("postChangeSelectedDomain",
-            tryToUpdateOpenFamily);
-    applicationEvent.subscribe("postChangeSelectedDomain",
-            tryToUpdateCurrentDocument);
+    
+    applicationEvent.subscribe("postChangeSelectedDomain", updateOpenDocumentList);
+    applicationEvent.subscribe("postChangeSelectedDomain", updateDocManager);
+    applicationEvent.subscribe("postChangeSelectedDomain", tryToUpdateOpenFamily);
+    applicationEvent.subscribe("postChangeSelectedDomain", reloadCreatableFamilies);
+    applicationEvent.subscribe("postChangeSelectedDomain", tryToUpdateCurrentDocument);
 
     applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
-    applicationEvent.subscribe("postChangeSelectedFamily",
-            updateCurrentFamilyPreference);
-    applicationEvent.subscribe("postChangeSelectedFamily",
-            cleanCurrentDocSearch);
+    applicationEvent.subscribe("postChangeSelectedFamily", updateCurrentFamilyPreference);
+    applicationEvent.subscribe("postChangeSelectedFamily", cleanCurrentDocSearch);
 
     applicationEvent.subscribe("preOpenDocument", prepareDoc);
-    applicationEvent.subscribe("openDocument",
-            updateCurrentOpenDocumentPreference);
+    applicationEvent.subscribe("openDocument", updateCurrentOpenDocumentPreference);
     applicationEvent.subscribe("openDocument", addDocumentToOpenList);
     applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
     applicationEvent.subscribe("postOpenDocument", openDocument);
@@ -167,12 +164,11 @@ function initListeners() {
     applicationEvent.subscribe("preSynchronize", tryToCloseAllDocuments);
     applicationEvent.subscribe("postSynchronize", updateFamilyList);
     applicationEvent.subscribe("postSynchronize", updateAbstractList);
+    applicationEvent.subscribe("postSynchronize", reloadCreatableFamilies);
 
-    applicationEvent.subscribe("postUpdateFamilyList",
-            setPrefCurrentSelectedFamily);
+    applicationEvent.subscribe("postUpdateFamilyList", setPrefCurrentSelectedFamily);
 
-    applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference",
-            updateOpenDocumentList);
+    applicationEvent.subscribe("postUpdateListOfOpenDocumentsPreference", updateOpenDocumentList);
 
     applicationEvent.subscribe("askForCloseDocument", tryToCloseDocument);
 
@@ -1008,6 +1004,10 @@ function getListOfOpenDocuments() {
     }
     return openList;
 }
+
+function reloadCreatableFamilies() {
+    document.getElementById('creation-menu').menupopup.builder.rebuild();
+}
 /**
  * Shortcut to the logConsole
  * 
@@ -1016,17 +1016,4 @@ function logIHM(message, object) {
     logConsole(message, object);
 }
 
-/* debug stuff */
 
-/* required for venkman */
-function toOpenWindowByType(inType, uri) {
-    var winopts = "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar";
-    window.open(uri, "_blank", winopts);
-}
-
-function debugDisplayDoc(initid) {
-    document.getElementById("document").value = JSON.stringify(docManager
-            .getLocalDocument({
-                initid : initid
-            }));
-}
