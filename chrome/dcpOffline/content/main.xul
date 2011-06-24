@@ -38,13 +38,31 @@
             <menubar flex="1" id="main-menubar">
                 <menu id="main-menu" label="&main.actionmenu;">
                     <menupopup >
-                        <!--<menuitem label="&main.newDocument;"
-                            oncommand="openNewDocumentDialog();"/>
-                        <menuseparator/>-->
+                        <menuseparator/>
                         <menuitem id="synchro-button" label="&main.synchro;"
                             command="main:openSynchro"/>
                         <menuitem id="preferences-button" label="&main.preference;"
                             command="main:openPreferences"/>
+                        <menuseparator/>
+                        <menu id="creation-menu" label="&main.newDocument;">
+                            <menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
+                                <template>
+                                    <query><![CDATA[
+                                        SELECT title, icon, famid 
+                                        FROM families 
+                                        WHERE creatable = 1
+                                        ORDER BY title
+                                    ]]></query>
+                                    <action>
+                                        <menuitem uri="?" id="creation-menu-?famid"
+                                            value="?famid" label="?title"
+                                            oncommand="applicationEvent.publish('askForCreateDocument',{famId: ?famid })"
+                                            crop="center"
+                                            tooltiptext="?title"/>
+                                    </action>
+                                </template>
+                            </menupopup>
+                        </menu>
                         <menuseparator/>
                         <menuitem label="&main.close;"
                             command="main:openCloseDialog"/>
@@ -102,7 +120,6 @@
                         
                     </menupopup>
                 </menulist>
-                <!--  <button label="&main.newDocument;" onclick="openNewDocumentDialog()"/>-->
                 <hbox flex="1">
                     <textbox type="search" id="abstractSearchTitle" value="" oncommand="updateAbstractList( { searchValue : this.value} );" placeholder="&main.abstract.search;" />
                 </hbox>
