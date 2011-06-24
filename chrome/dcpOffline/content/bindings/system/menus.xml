@@ -169,15 +169,19 @@
                         }
                         break;
                     case this.getChild('document-toolbar-system-close') :
+                        document.commandDispatcher.advanceFocus();
                         this.documentNode.close();
                         break;
                     case this.getChild('document-toolbar-system-cancel') :
+                        document.commandDispatcher.advanceFocus();
                         this.documentNode.reinit();
                         break;
                     case this.getChild('document-toolbar-system-save') :
+                        document.commandDispatcher.advanceFocus();
                         this.documentNode.save();
                         break;
                     case this.getChild('document-toolbar-system-revert') :
+                        document.commandDispatcher.advanceFocus();
                         this.documentNode.revert();
                         break;
                     case this.getChild('document-toolbar-system-remove') :
