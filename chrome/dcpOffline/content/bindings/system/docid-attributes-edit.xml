@@ -23,7 +23,7 @@
 
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:menulist
                     xbl:inherits="disabled"
                     editable="false"

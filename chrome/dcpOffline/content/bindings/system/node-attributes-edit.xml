@@ -296,7 +296,7 @@
     <binding id="array-table-tools">
         <content>
             <xul:hbox class="array-table-tools">
-                <xul:button anonid="button-add" class="add" tooltiptext="&array.table.tools.add;" />
+                <xul:button anonid="button-add" class="add add-row simple-button" tooltiptext="&array.table.tools.add;" />
             </xul:hbox>
         </content>
         
@@ -338,8 +338,8 @@
         <content>
             
             <xul:hbox class="array-row-tools">
-                <xul:button anonid="button-delete" class="delete" tooltiptext="&array.row.tools.delete;" />
-                <xul:button anonid="button-add" class="add" tooltiptext="&array.row.tools.add;" />
+                <xul:button anonid="button-delete" class="delete delete-row simple-button" tooltiptext="&array.row.tools.delete;" />
+                <xul:button anonid="button-add" class="add add-row simple-button" tooltiptext="&array.row.tools.add;" />
             </xul:hbox>
             
         </content>

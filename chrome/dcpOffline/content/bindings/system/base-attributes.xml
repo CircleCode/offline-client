@@ -6,23 +6,56 @@
       <!ENTITY separator "&#160;:&#160;" >
       %base-attributes-bindingDTD;
 ]>
-<bindings id="base-attributes-binding" xmlns="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl"
->
+<bindings
+    id="base-attributes-binding"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
     <!-- Anonymous implementation of base attributes. -->
-    <binding id="base-attr">
+    <binding
+        id="base-attr">
         <implementation>
-            <property name="type" readonly="true" onget="return this.getAttribute('type');">
+
+            <!-- mode: "edit" or "view", default is "view" -->
+            <property
+                name="mode"
+                readonly="true"
+                onget="return this.getAttribute('mode');">
             </property>
-            <property name="attrid" readonly="true" onget="return this.getAttribute('attrid');">
+
+            <property
+                name="type"
+                readonly="true"
+                onget="return this.getAttribute('type');">
             </property>
-            <property name="localDocument" readonly="true" onget="return this.doc;">
+
+            <property
+                name="attrid"
+                readonly="true"
+                onget="return this.getAttribute('attrid');">
             </property>
-            <property name="label" readonly="true" onget="return this.doc.getLabel(this.attrid);">
+
+            <property
+                name="localDocument"
+                readonly="true"
+                onget="return this.doc;">
             </property>
-            <property name="value" onget="this.getValue();" readonly="true">
+
+            <property
+                name="label"
+                readonly="true"
+                onget="return this.doc.getLabel(this.attrid);">
             </property>
-            <property name="index" readonly="true">
+
+            <property
+                name="value"
+                onget="this.getValue();"
+                readonly="true">
+            </property>
+
+            <property
+                name="index"
+                readonly="true">
                 <getter><![CDATA[
                     if(this.hasAttribute('index')){
                         return this.getAttribute('index');
@@ -31,34 +64,57 @@
                     }
                 ]]></getter>
             </property>
-            <method name="getDocumentNode">
+
+            <method
+                name="getDocumentNode">
                 <body><![CDATA[
-                    Components.utils.import("resource://modules/domUtils.jsm");
-                    return domUtils.getParentByTagName(this, 'dcpDocument');
+                    if(this.documentNode){
+                        return this.documentNode;
+                    } else {
+                        Components.utils.import("resource://modules/domUtils.jsm");
+                        return domUtils.getParentByTagName(this, 'dcpDocument');
+                    }
                 ]]></body>
             </method>
-            <method name="getChild">
-                <parameter name="aChildName" />
+
+            <method
+                name="getChild">
+                <parameter
+                    name="aChildName" />
                 <body><![CDATA[
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
-            <method name="getValue">
+
+            <method
+                name="getValue">
                 <body><![CDATA[
                     return this.doc.getValue(this.attrid, this.index);
                 ]]></body>
             </method>
+
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
             ]]></constructor>
+
             <destructor><![CDATA[
             ]]></destructor>
+
         </implementation>
     </binding>
-    <binding id="label-attribute">
+
+    <binding
+        id="label-attribute">
         <content>
-            <xul:label anonid="label" class="dcpLabel" xbl:inherits="xbl:text=value" />
-            <xul:label anonid="separator" class="dcpSeparator" value="&separator;" />
+            <xul:label
+                anonid="label"
+                class="dcpLabel"
+                xbl:inherits="mode,required,xbl:text=value" />
+            <xul:label
+                anonid="separator"
+                class="dcpSeparator"
+                value="&separator;"
+                xbl:inherits="mode,required" />
         </content>
     </binding>
 </bindings>

@@ -1,34 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE bindings>
-<bindings id="docFooterBindings"
+<bindings
+    id="docFooterBindings"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
-    
-    <binding id="doc-footer">
-        <!--<ressources/>-->
-        
+
+    <binding
+        id="doc-footer">
+        <!--<ressources/> -->
+
         <content>
-            <xul:statusbar flex="1">
-                <xul:hbox flex="1">
-                    <xul:statusbarpanel anonid="document-initid"/>
-                    <xul:spacer flex="1"/>
-                    <children/><!--
-                    <statusbarpanel anonid="document-status" class="statusbarpanel-iconic-text"/>
-                    -->
+            <xul:statusbar
+                flex="1">
+                <xul:hbox
+                    flex="1">
+                    <xul:statusbarpanel
+                        anonid="document-initid" />
+                    <xul:spacer
+                        flex="1" />
+                    <children /><!-- <statusbarpanel anonid="document-status" class="statusbarpanel-iconic-text"/> -->
                 </xul:hbox>
             </xul:statusbar>
         </content>
-        
+
         <implementation>
-            
+
             <property
                 name="localDocument"
                 readonly="true"
                 onget="return this.doc;">
             </property>
-            
-            <method name="getDocumentNode">
+
+            <method
+                name="getDocumentNode">
                 <body><![CDATA[
                     if(this.documentNode){
                         return this.documentNode;
@@ -38,23 +43,25 @@
                     }
                 ]]></body>
             </method>
-            
-            <method name="getChild">
-                <parameter name="aChildName"/>
+
+            <method
+                name="getChild">
+                <parameter
+                    name="aChildName" />
                 <body><![CDATA[
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
                 
                 this.getChild('document-initid').label = this.doc.getInitid();
             ]]></constructor>
-            
+
         </implementation>
-        
+
         <!--<handlers/> -->
     </binding>
-    
+
 </bindings>

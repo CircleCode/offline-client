@@ -147,7 +147,7 @@
                 class="dcpAttribute text">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:textbox
                     anonid="displayValue"
                     class="dcpValue"
@@ -167,7 +167,7 @@
                 class="dcpAttribute longtext">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:textbox
                     anonid="displayValue"
                     class="dcpValue"
@@ -187,7 +187,7 @@
                 class="dcpAttribute longtext">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:iframe
                     anonid="displayValue"
                     src="chrome://ckeditor/content/bindings/ckeditor/ckeditor.html"
@@ -237,7 +237,7 @@
                 class="dcpAttribute numeric int">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:textbox
                     anonid="displayValue"
                     class="dcpValue"
@@ -275,7 +275,7 @@
                 class="dcpAttribute numeric double">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:textbox
                     anonid="displayValue"
                     class="dcpValue"
@@ -320,7 +320,7 @@
                 class="dcpAttribute time">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:timepicker
                     anonid="displayValue"
                     class="dcpValue" />
@@ -346,7 +346,7 @@
                 class="dcpAttribute date">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:datepicker
                     anonid="displayValue"
                     class="dcpValue"
@@ -372,7 +372,7 @@
                 class="dcpAttribute date">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <dcpDateTimePicker
                     anonid="displayValue"
                     class="dcpValue" />
@@ -399,7 +399,7 @@
                 class="dcpAttribute file">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:label
                     anonid="displayValue"
                     class="dcpValue text-link" />
@@ -408,10 +408,11 @@
                     <xul:button
                         anonid="modifyButton"
                         label="&attribute.file.button.modify;"
+                        class="simple-button"
                         crop="center" />
                     <xul:button
                         anonid="deleteButton"
-                        class="delete"
+                        class="delete simple-button"
                         tooltiptext="&attribute.file.button.delete;" />
                 </xul:box>
             </xul:hbox>
@@ -622,7 +623,7 @@
                 class="dcpAttribute image">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <html:div
                     class="dcpValue">
                     <html:img
@@ -634,10 +635,11 @@
                     <xul:button
                         anonid="modifyButton"
                         label="&attribute.image.button.modify;"
+                        class="simple-button"
                         crop="center" />
                     <xul:button
                         anonid="deleteButton"
-                        class="delete"
+                        class="delete simple-button"
                         tooltiptext="&attribute.image.button.delete;" />
                 </xul:box>
             </xul:hbox>
@@ -698,7 +700,7 @@
                 class="dcpAttribute enum">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
             </xul:hbox>
             <xul:colorpicker
                 anonid="displayValue"
@@ -753,7 +755,7 @@
                 class="dcpAttribute enum">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:menulist
                     anonid="displayValue"
                     class="dcpValue">
@@ -864,7 +866,7 @@
                 class="dcpAttribute enum">
                 <dcpAttributeLabel
                     anonid="attrLabel"
-                    xbl:inherits="value=label" />
+                    xbl:inherits="mode,required,value=label" />
                 <xul:vbox
                     flex="1">
                     <xul:richlistbox
@@ -906,7 +908,7 @@
                         </xul:menulist>
                         <xul:button
                             anonid="deleteSelectionButton"
-                            class="delete"
+                            class="delete simple-button"
                             tooltiptext="&attribute.enum.multiple.button.clear.selection;" />
                     </xul:hbox>
                 </xul:vbox>

@@ -1,6 +1,3 @@
-/***********************************************************
-        Box model
-************************************************************/
 dcpDocument {
     display: -moz-box;
     -moz-box-orient: vertical;
@@ -9,19 +6,19 @@ dcpDocument {
     background-color: white;
 }
 
-dcpDocument dcpDocMenu {
+dcpDocMenu {
     display: -moz-box;
     width: 100%;
     -moz-box-orient: horizontal;
 }
 
-dcpDocument dcpDocHeader {
+dcpDocHeader {
     display: -moz-box;
     -moz-box-orient: horizontal;
     width: 100%;
 }
 
-dcpDocument dcpDocHeader .title{
+document-title{
     -moz-box-flex: 1;
     border-bottom: 1px solid #CCCCCC;
     color: #003366;
@@ -29,10 +26,14 @@ dcpDocument dcpDocHeader .title{
     font-weight: normal;
 }
 
-dcpDocument dcpAttribute {
+dcpAttribute {
     display: -moz-box;
     -moz-box-orient: horizontal;
     width: 100%;
+}
+
+.dcpLabel[mode=edit][required=true] {
+    font-weight: bold;
 }
 
 dcpAttribute[type=text],
@@ -56,76 +57,73 @@ dcpDateTimePicker {
     -moz-box-orient: horizontal;
 }
 
-dcpAttribute[type=longtext] textbox textarea{
+dcpAttribute[type=longtext] textarea{
     resize:vertical;
 }
-dcpDocument dcpAttribute[type=array] dcpRow{
+
+dcpRow{
     display: -moz-grid-line
 }
 
-dcpDocument dcpAttribute[type=array] dcpRow dcpArrayRowTools,
-dcpDocument dcpAttribute[type=array] dcpArrayTableTools{
+dcpArrayRowTools,
+dcpArrayTableTools{
     display: -moz-inline-box;
     min-width: 0;
 }
 
-dcpDocument dcpAttribute[type=array] dcpAttribute {
+dcpAttribute[type=array] dcpAttribute {
     min-height: 24px;
 }
 
-dcpDocument dcpAttribute[type=frame] {
+dcpAttribute[type=frame] {
     -moz-box-orient: vertical;
 }
 
-dcpDocument dcpAttribute[type=frame] groupbox {
+dcpAttribute[type=frame] groupbox {
     width: 100%;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=htmltext]{
+dcpAttribute[mode=edit][type=htmltext]{
     min-height: 350px;
 }
 
-dcpDocument dcpAttribute .dcpLabel {
+.dcpLabel {
     width: 100px;
 }
 
-dcpDocument dcpAttribute .link {
+dcpAttribute .link {
     color: #2d1b9b; /* dark blue */
     cursor: pointer;
 }
 
-dcpDocument dcpAttribute[type=htmltext] a{
+dcpAttribute[type=htmltext] a{
     color: #2d1b9b; /* dark blue */
 }
 
-dcpDocument dcpAttribute .dcpImage {
+.dcpImage {
     max-width:100px;
    
 }
 
-dcpDocument dcpAttribute .dcpValue { 
+.dcpValue { 
     -moz-box-flex: 1;
 }
 
-dcpDocument dcpDocFooter {
+dcpDocFooter {
     display: -moz-box;
     width: 100%;
 }
 
-dcpDocument .dcpIcon {
+.dcpIcon {
     width:16px;
     height:16px;    
 }
-dcpDocument dcpAttribute[type=docid] image {
+dcpAttribute[type=docid] image {
     width:20px;
     height:20px;
 }
 
-dcpDocument dcpAttribute[type=array] grid {
-    /*border-top-width: 2px;
-    border-top-style: solid;
-    border-top-color: -moz-use-text-color;*/
-    
+dcpAttribute[type=array] grid {
     border-bottom-width: 2px;
     border-bottom-style: solid;
     border-bottom-color: -moz-use-text-color;
@@ -140,8 +138,7 @@ dcpDocument dcpAttribute[type=array] grid {
     color: -moz-fieldtext;
 }
 
-dcpDocument dcpAttribute[type=array] grid dcpRow{
-    
+dcpRow{
     border-bottom-width: 2px;
     border-bottom-style: solid;
     border-bottom-color: -moz-use-text-color;
@@ -156,14 +153,14 @@ dcpDocument dcpAttribute[type=array] grid dcpRow{
     color: -moz-fieldtext;
 }
 
-dcpDocument dcpAttribute[nolabel=true] .dcpLabel,
-dcpDocument dcpAttribute[nolabel=true] .dcpSeparator,
-dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpLabel,
-dcpDocument dcpAttribute[type=enum] grid dcpAttribute .dcpSeparator,
-dcpDocument dcpAttribute[type=array] grid dcpAttribute .dcpLabel,
-dcpDocument dcpAttribute[type=array] grid dcpAttribute .dcpSeparator,
-dcpDocument dcpAttribute[type=docid] grid dcpAttribute .dcpLabel,
-dcpDocument dcpAttribute[type=docid] grid dcpAttribute .dcpSeparator {
+dcpAttribute[nolabel=true] .dcpLabel,
+dcpAttribute[nolabel=true] .dcpSeparator,
+dcpAttribute[type=enum] grid .dcpLabel,
+dcpAttribute[type=enum] grid .dcpSeparator,
+dcpAttribute[type=array] grid .dcpLabel,
+dcpAttribute[type=array] grid .dcpSeparator,
+dcpAttribute[type=docid] grid .dcpLabel,
+dcpAttribute[type=docid] grid .dcpSeparator {
     visibility: collapse;
 }
 
@@ -176,57 +173,29 @@ dcpDocument .dcpChooseDocid {
     font-style: italic;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools,
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools {
+.array-row-tools,
+.array-table-tools {
     -moz-box-align: center;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button,
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button {
+.simple-button {
     min-width: 0;
     -moz-box-pack: center;
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.delete {
+dcpAttribute[mode=edit][type=file] hbox,
+dcpAttribute[mode=edit][type=image] hbox {
+    -moz-box-align: center;
+}
+
+button.delete {
+    list-style-image: url("chrome://dcpoffline/content/images/button_cancel-16.png");
+}
+
+button.delete-row {
     list-style-image: url("chrome://dcpoffline/content/images/delete_table_row-16.png");
 }
 
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-table-tools button.add,
-dcpDocument[mode=edit] dcpAttribute[type=array] .array-row-tools button.add {
+button.add-row {
     list-style-image: url("chrome://dcpoffline/content/images/insert_table_row-16.png");
 }
-
-dcpDocument[mode=edit] dcpAttribute[type=file] hbox,
-dcpDocument[mode=edit] dcpAttribute[type=image] hbox {
-    -moz-box-align: center;
-}
-
-dcpDocument[mode=edit] dcpAttribute[type=file] button,
-dcpDocument[mode=edit] dcpAttribute[type=image] button,
-dcpDocument[mode=edit] dcpAttribute[type=enum] button {
-    min-width: 0;
-    -moz-box-pack: center;
-}
-
-dcpDocument[mode=edit] dcpAttribute[type=file] button.delete,
-dcpDocument[mode=edit] dcpAttribute[type=image] button.delete,
-dcpDocument[mode=edit] dcpAttribute[type=enum] button.delete {
-    list-style-image: url("chrome://dcpoffline/content/images/button_cancel-16.png");
-}
-/***********************************************************
-        Validity
-************************************************************/
-/*
-span.validator {
-   width: 16px;
-   height: 16px;
-   display: inline-block;
-   background-size: 100%, 100%;
- }
- :-moz-ui-valid + span {
-   background-image: url("images/valid.png");
- }
- :-moz-ui-invalid + span {
-   background-image: url("images/invalid.png");
- }
-*/

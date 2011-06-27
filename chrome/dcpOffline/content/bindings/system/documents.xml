@@ -13,6 +13,13 @@
 
         <implementation>
 
+            <!-- mode: "edit" or "view", default is "view" -->
+            <property
+                name="mode"
+                readonly="true"
+                onget="return this.getAttribute('mode');">
+            </property>
+
             <property
                 name="initid"
                 readonly="true">
@@ -23,15 +30,6 @@
                     } else {
                         return this.getAttribute('initid');
                     }
-                ]]></getter>
-            </property>
-
-            <!-- mode: "edit" or "view", default is "view" -->
-            <property
-                name="mode"
-                readonly="true">
-                <getter><![CDATA[
-                    return this.getAttribute('mode');
                 ]]></getter>
             </property>
 
@@ -284,7 +282,7 @@
                     
                     var flex = this.getAttribute('flex') || 1;
                     this.setAttribute('flex', flex);
-                    
+                    /*
                     var hasMode = this.hasAttribute('mode');
                     if(! hasMode ){
                         this.setAttribute('mode', 'view');
@@ -294,6 +292,7 @@
                             this.setAttribute('mode', 'view');
                         }
                     }
+                    */
                     this.hooks = this.hooks || {};
                     this.hooks.preClose = function preCloseHook(config){
                         if(config.documentId == this.initid){
@@ -322,7 +321,7 @@
                     //TODO: unregister as a render
                     return true;
                 } catch(e){
-                    logConsole(e);
+                    logError(e, "destructor for document ["+this.initid+"] in mode "+this.mode);
                 }
             ]]></destructor>
 

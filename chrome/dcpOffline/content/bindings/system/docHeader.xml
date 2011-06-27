@@ -1,32 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE bindings>
-<bindings id="docHeaderBindings"
+<bindings
+    id="docHeaderBindings"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
-    
-    <binding id="doc-header">
-        <!--<ressources/>-->
-        
+
+    <binding
+        id="doc-header">
+        <!--<ressources/> -->
+
         <content>
-                <xul:hbox class="document-header" flex="1">
-                    <xul:hbox flex="1">
-                        <xul:image anonid="document-icon"/>
-                        <xul:label anonid="document-title" class="title"/>
-                    </xul:hbox>
-                    <children/>
+            <xul:hbox
+                class="document-header"
+                flex="1">
+                <xul:hbox
+                    flex="1">
+                    <xul:image
+                        anonid="document-icon" />
+                    <xul:label
+                        anonid="document-title"
+                        class="document-title" />
                 </xul:hbox>
+                <children />
+            </xul:hbox>
         </content>
-        
+
         <implementation>
-            
+
             <property
                 name="localDocument"
                 readonly="true"
                 onget="return this.doc;">
             </property>
-                
-            <method name="getDocumentNode">
+
+            <method
+                name="getDocumentNode">
                 <body><![CDATA[
                     if(this.documentNode){
                         return this.documentNode;
@@ -36,14 +45,16 @@
                     }
                 ]]></body>
             </method>
-            
-            <method name="getChild">
-                <parameter name="aChildName"/>
+
+            <method
+                name="getChild">
+                <parameter
+                    name="aChildName" />
                 <body><![CDATA[
                       return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
                 this.doc = this.getDocumentNode().localDocument;
                 
@@ -58,8 +69,8 @@
                 
             ]]></constructor>
         </implementation>
-        
+
         <!--<handlers/> -->
     </binding>
-    
+
 </bindings>

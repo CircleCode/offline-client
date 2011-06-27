@@ -6,12 +6,17 @@
       <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
       %leaf-attributes-bindingDTD;
 ]>
-<bindings id="leaf-attributes-binding" xmlns="http://www.mozilla.org/xbl" xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    xmlns:xbl="http://www.mozilla.org/xbl" xmlns:html="http://www.w3.org/1999/xhtml"
->
-    <binding id="leaf-attr-view" extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
+<bindings
+    id="leaf-attributes-binding"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+    <binding
+        id="leaf-attr-view"
+        extends="&systemBindingsDirPath;/base-attributes.xml#base-attr">
         <implementation>
-            
+
             <method name="reloadValue">
                 <body><![CDATA[
                     if (this.getValue() === '') {
@@ -34,43 +39,71 @@
                     }
                 ]]></body>
             </method>
-            
+
             <method name="getDisplayValue">
                 <body><![CDATA[
                     return this.getValue()
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
                 this.reloadValue();
             ]]></constructor>
         </implementation>
     </binding>
     <!-- Text attributes -->
-    <binding id="text-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="text-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute text">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute text">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
     </binding>
-    <binding id="longtext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="longtext-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" style="white-space:pre-line;">
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute longtext">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue"
+                    style="white-space:pre-line;">
                 </xul:label>
             </xul:hbox>
         </content>
         <implementation>
         </implementation>
     </binding>
-    <binding id="htmltext-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="htmltext-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute longtext">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <html:div anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute longtext">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <html:div
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
         <implementation>
@@ -112,7 +145,9 @@
             ]]></constructor>
         </implementation>
         <handlers>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                 if(this.link!=''){
                    
                     // first construct an nsIURI object using the ioservice
@@ -131,15 +166,24 @@
             ]]></handler>
         </handlers>
     </binding>
-    
+
     <!-- Color attributes -->
-    <binding id="color-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="color-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute color">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute color">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
-        </content> 
+        </content>
         <implementation>
             <field name="displayValue"><![CDATA[
                 this.getChild('displayValue')
@@ -152,36 +196,72 @@
         </implementation>
     </binding>
     <!-- Numeric attributes -->
-    <binding id="int-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="int-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute int">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute int">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
     </binding>
-    <binding id="double-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="double-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute double">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute double">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
     </binding>
-    <binding id="money-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="money-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute money">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute money">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
     </binding>
     <!-- Date attributes -->
-    <binding id="time-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="time-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute time">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute time">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
         <implementation>
@@ -192,11 +272,20 @@
             </method>
         </implementation>
     </binding>
-    <binding id="date-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="date-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute date">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute date">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
         <implementation>
@@ -207,11 +296,20 @@
             </method>
         </implementation>
     </binding>
-    <binding id="timestamp-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="timestamp-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute timestamp">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute timestamp">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
         <implementation>
@@ -222,15 +320,27 @@
             </method>
         </implementation>
     </binding>
-    
+
     <!-- Relation attributes -->
-    <binding id="docid-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="docid-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute docid">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
                 <html:div>
-                <html:img anonid="docIcon" class="dcpIcon" /></html:div>
-                <xul:label anonid="displayValue" class="dcpValue" />
+                    <html:img
+                        anonid="docIcon"
+                        class="dcpIcon" />
+                </html:div>
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
         <implementation>
@@ -240,8 +350,8 @@
             <field name="docid"><![CDATA[
                 this.getDocid();
             ]]></field>
-            
-           
+
+
             <method name="getDocid">
                 <body><![CDATA[
                 var docid=this.getValue();
@@ -290,18 +400,29 @@
             </constructor>
         </implementation>
         <handlers>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                 if(event.originalTarget == this.displayValue){
                     this.openDoc();
                 }
             ]]></handler>
         </handlers>
     </binding>
-    <binding id="docid-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="docid-multiple-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:grid flex="1" inherited="attrid">
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute docid">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:grid
+                    flex="1"
+                    inherited="attrid">
                     <xul:columns anonid="columns" />
                     <xul:rows anonid="rows" />
                 </xul:grid>
@@ -323,17 +444,26 @@
             </constructor>
         </implementation>
     </binding>
-    
-    <binding id="docid-multiple2-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+
+    <binding
+        id="docid-multiple2-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-            
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:grid flex="1" inherited="attrid">
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute docid">
+
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:grid
+                    flex="1"
+                    inherited="attrid">
                     <xul:columns anonid="columns" />
                     <xul:rows anonid="rows" />
                 </xul:grid>
-               
+
             </xul:hbox>
         </content>
         <implementation>
@@ -354,13 +484,22 @@
             </constructor>
         </implementation>
     </binding>
-    
+
     <!-- Enum attributes -->
-    <binding id="enum-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="enum-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="displayValue" class="dcpValue" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute enum">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="displayValue"
+                    class="dcpValue" />
             </xul:hbox>
         </content>
         <implementation>
@@ -372,11 +511,20 @@
             </method>
         </implementation>
     </binding>
-    <binding id="enum-multiple-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="enum-multiple-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute enum">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:grid flex="1" inherited="attrid">
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute enum">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:grid
+                    flex="1"
+                    inherited="attrid">
                     <xul:columns anonid="columns" />
                     <xul:rows anonid="rows" />
                 </xul:grid>
@@ -399,11 +547,20 @@
         </implementation>
     </binding>
     <!-- file attributes -->
-    <binding id="file-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="file-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute docid">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
-                <xul:label anonid="fileName" class="dcpValue plain" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute docid">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
+                <xul:label
+                    anonid="fileName"
+                    class="dcpValue plain" />
             </xul:hbox>
         </content>
         <implementation>
@@ -440,7 +597,9 @@
             </constructor>
         </implementation>
         <handlers>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                
                 if(event.originalTarget == this.fileName){
                     this.openFile();
@@ -448,12 +607,21 @@
             ]]></handler>
         </handlers>
     </binding>
-    <binding id="image-attr-view" extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
+    <binding
+        id="image-attr-view"
+        extends="&systemBindingsDirPath;/leaf-attributes-view.xml#leaf-attr-view">
         <content>
-            <xul:hbox xbl:inherits="attrid" flex="1" class="dcpAttribute image">
-                <dcpAttributeLabel anonid="attrLabel" xbl:inherits="value=label" />
+            <xul:hbox
+                xbl:inherits="attrid"
+                flex="1"
+                class="dcpAttribute image">
+                <dcpAttributeLabel
+                    anonid="attrLabel"
+                    xbl:inherits="mode,required,value=label" />
                 <html:div class="dcpValue">
-                    <html:img class="dcpImage" anonid="imageField" />
+                    <html:img
+                        class="dcpImage"
+                        anonid="imageField" />
                 </html:div>
             </xul:hbox>
         </content>
@@ -490,7 +658,9 @@
             </constructor>
         </implementation>
         <handlers>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                
                 if(event.originalTarget == this.imageField){
                     this.openFile();
