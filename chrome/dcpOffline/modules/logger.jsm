@@ -25,11 +25,11 @@ var logDebug = function logDebug(msg) {
     logFile.write({message:msg, priority:logFile.DEBUG});
 };
 
-var logConsole = function logConsole(msg, obj) {
+var logConsole = function logConsole(msg, obj, maxDepth) {
     var dloc=new Date().getTime();
     var prefix= (dloc - dinit)/1000 + 's['+(dloc-dlast)/1000+']:';
     if (obj) {
-        _log(obj, prefix+msg);
+        _log(obj, prefix+msg, maxDepth);
     }
     else {
         _log( prefix+msg);
@@ -89,11 +89,12 @@ var _log = function() {
         dump("[ERROR]" + text + "\n");
     };
 
-    return function(aMessage, name) {
+    return function(aMessage, name, maxDepth) {
         switch (typeof aMessage) {
         case 'function' :
         case 'object' :
-            ddumpObject(aMessage, name?name:'', debugMaxDepth);
+            if (!maxDepth) maxDepth=debugMaxDepth;
+            ddumpObject(aMessage, name?name:'', maxDepth);
             break;
         default :
             ddump((name ? (name + ': ') : '') + aMessage);
