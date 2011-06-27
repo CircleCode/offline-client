@@ -46,18 +46,26 @@ offlineSynchronize.prototype.getCore = function() {
 
 };
 offlineSynchronize.prototype.resetAll = function(config) {
-    storageManager.execQuery({query : "delete from docsbydomain"});
-    storageManager.execQuery({query : "delete from documents"});
-    storageManager.execQuery({query : "delete from synchrotimes"});
-    storageManager.execQuery({query : "delete from files"});
-    storageManager.execQuery({query : "delete from families"});
-    storageManager.execQuery({query : "delete from attrmappings"});
-    
 
-    var filesRoot = Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
-    filesRoot.append('Files');
-    filesRoot.remove(true);
+    if (config && config.domain) {
+        storageManager.execQuery({query : "delete from docsbydomain"});
+        storageManager.execQuery({query : "delete from documents"});
+        storageManager.execQuery({query : "delete from synchrotimes"});
+        storageManager.execQuery({query : "delete from files"});
+        storageManager.execQuery({query : "delete from doctitles"});
+        storageManager.execQuery({query : "delete from families"});
+        storageManager.execQuery({query : "delete from attrmappings"});
 
+
+        var filesRoot = Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
+        filesRoot.append('Files');
+        filesRoot.remove(true);
+        if ( !config.domain.resetWaitingDocs()) {
+            throw new SyncException("resetWaitingDocs");
+        }
+    } else {
+        throw new ArgException("resetAll need domain parameter");
+    }
 
 };
 offlineSynchronize.prototype.recordOfflineDomains = function(config) {
@@ -1038,7 +1046,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                     if (thisIsTheEnd) {
                         me.synchroResults = domain.sync().getTransactionStatus();
                         me.log('end transaction : ' + me.synchroResults.status);
-                        logConsole('final Results', me.synchroResults);
+                        logConsole('final Results', me.synchroResults,10);
                         for ( var docid in me.synchroResults.detailStatus) {
                             var detail=me.synchroResults.detailStatus[docid];
                             if (detail.isValid) {
@@ -1048,6 +1056,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                                         lddoc.remove();
                                     }
                                 }
+                                logConsole('refresh;'+docid);
                                 // update local document
                                 me.revertDocument({
                                     domain : domain,
