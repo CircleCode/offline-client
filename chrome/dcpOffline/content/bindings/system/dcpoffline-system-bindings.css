@@ -59,20 +59,6 @@ dcpDocument dcpAttribute[type=array],dcpDocument[mode=view] dcpAttribute[type=ar
         url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-view");
 }
 
-/*
-dcpDocument[mode=view] dcpAttribute[type=array]  dcpAttribute[inhead=true]
-    {
-    -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-header");
-}
-
-dcpDocument[mode=view] dcpAttribute[type=array] dcpAttribute[inbody=true]
-    {
-    -moz-binding:
-        url("chrome://dcpoffline/content/bindings/system/node-attributes-view.xml#array-attr-body");        
-    
-}
-*/
 /***********************************************************
         Leaf Attributes (view)
 ************************************************************/
@@ -178,8 +164,6 @@ dcpDocument dcpAttribute[type=image],dcpDocument[mode=view] dcpAttribute[type=im
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#image-attr-view");
 }
-
-
 
 /***********************************************************
         Node Attributes (edit)
@@ -293,15 +277,4 @@ dcpDocument[mode=edit] dcpAttribute[type=array] dcpAttribute[type=docid][multipl
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/docid-attributes-edit.xml#docid-multiple2-attr-edit");
 }
-/*
-dcpDocument[mode=edit] dcpAttribute[visibility=I] vbox,
-dcpDocument[mode=edit] dcpAttribute[visibility=I] vbox,
-dcpDocument[mode=edit] dcpAttribute[visibility=R] vbox,
-dcpDocument[mode=edit] dcpAttribute[visibility=H] vbox,
-dcpDocument[mode=edit] dcpAttribute[visibility=R] hbox,
-dcpDocument[mode=edit] dcpAttribute[visibility=H] hbox {
-    visibility:collapse;
-}
-*/
-
 
