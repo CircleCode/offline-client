@@ -321,7 +321,7 @@
                 <dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
-                <xul:timepicker
+                <dcpTimePicker
                     anonid="displayValue"
                     class="dcpValue" />
             </xul:hbox>
@@ -347,7 +347,7 @@
                 <dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
-                <xul:datepicker
+                <dcpDatePicker
                     anonid="displayValue"
                     class="dcpValue"
                     type="popup" />

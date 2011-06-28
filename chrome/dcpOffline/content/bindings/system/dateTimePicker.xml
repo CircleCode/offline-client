@@ -1,20 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE bindings>
-<bindings id="datTimePicker"
+
+<!DOCTYPE bindings [
+      <!ENTITY % dateTimePicker-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/datetimePicker-binding.dtd" >
+      <!ENTITY separator "&#160;:&#160;" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+      %dateTimePicker-bindingDTD;
+]>
+
+<bindings
+    id="datTimePicker"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
-    
-    <binding id="dateTimePicker">
-        
-        <content>
-            <xul:datepicker anonid="displayDateValue" class="dcpValue" type="popup"/>
-            <xul:timepicker anonid="displayTimeValue" class="dcpValue"/>
-        </content>
-        
+
+    <binding id="dateTimePicker-base">
+
         <implementation>
+
+            <field
+                name="checkbox"
+                readonly="true">
+                this.getChild('emptyValue-checkbox')
+            </field>
+
+            <property name="emptyValue">
+                <getter><![CDATA[
+                    return this.checkbox.checked;
+                ]]></getter>
+                <setter><![CDATA[
+                    val = val && true;
+                    this.checkbox.checked = val
+                    this.getChild('displayValue').collapsed = val;
+                    this._fireEvent('change', this.checkbox);
+                ]]></setter>
+            </property>
+
             <property name="value">
                 <getter><![CDATA[
+                    if(this.emptyValue){
+                        return '';
+                    } else {
+                        return this.getChild('displayValue').value
+                    }
+                ]]></getter>
+                <setter><![CDATA[
+                    if(val !== ''){
+                        var dateValue = new Date(val);
+                        this.getChild('displayValue').dateValue = dateValue;
+                    } else {
+                        this.checkbox.checked = true;
+                    }
+                ]]></setter>
+            </property>
+
+            <method name="getChild">
+                <parameter name="aChildName" />
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+
+            <method name="_fireEvent">
+                <parameter name="aEventName" />
+                <parameter name="aTarget" />
+                <body>
+                    var event = document.createEvent("Events");
+                    event.initEvent(aEventName, true, true);
+                    return !aTarget.dispatchEvent(event);
+                </body>
+            </method>
+
+        </implementation>
+
+        <handlers>
+            <handler event="CheckboxStateChange"><![CDATA[
+                switch(event.originalTarget){
+                    case this.getChild('emptyValue-checkbox') :
+                        this.emptyValue = this.checkbox.checked;
+                        break;
+                }
+            ]]></handler>
+        </handlers>
+
+    </binding>
+
+    <binding
+        id="datePicker"
+        extends="&systemBindingsDirPath;/dateTimePicker.xml#dateTimePicker-base">
+
+        <content>
+            <xul:datepicker
+                anonid="displayValue"
+                class="dcpValue"
+                type="popup" />
+            <xul:checkbox
+                anonid="emptyValue-checkbox"
+                label="&dateTimePicker.empty;"
+                tooltiptext="&dateTimePicker.empty.tooltiptext;" />
+        </content>
+
+    </binding>
+
+    <binding
+        id="timePicker"
+        extends="&systemBindingsDirPath;/dateTimePicker.xml#dateTimePicker-base">
+
+        <content>
+            <xul:datepicker
+                anonid="displayValue"
+                class="dcpValue"
+                type="popup" />
+            <xul:checkbox
+                anonid="emptyValue-checkbox"
+                label="&dateTimePicker.empty;"
+                tooltiptext="&dateTimePicker.empty.tooltiptext;" />
+        </content>
+
+    </binding>
+
+    <binding
+        id="dateTimePicker"
+        extends="&systemBindingsDirPath;/dateTimePicker.xml#dateTimePicker-base">
+
+        <content>
+            <xul:hbox anonid="displayValue">
+                <xul:datepicker
+                    anonid="displayDateValue"
+                    class="dcpValue"
+                    type="popup" />
+                <xul:timepicker
+                    anonid="displayTimeValue"
+                    class="dcpValue" />
+            </xul:hbox>
+            <xul:checkbox
+                anonid="emptyValue-checkbox"
+                label="&dateTimePicker.empty;"
+                tooltiptext="&dateTimePicker.empty.tooltiptext;" />
+        </content>
+
+        <implementation>
+
+            <property name="value">
+                <getter><![CDATA[
+                    if(this.emptyValue){
+                        return '';
+                    }
                     var dateValue = this.getChild('displayDateValue').value;
                     var addLeadingZero = '';
                     if(this.getChild('displayTimeValue').hour < 10){
@@ -28,20 +158,14 @@
                         var dateValue = new Date(val);
                         this.getChild('displayDateValue').dateValue = dateValue;
                         this.getChild('displayTimeValue').dateValue = dateValue;
+                    } else {
+                        this.getChild('emptyValue-checkbox').checked = true;
                     }
                 ]]></setter>
             </property>
-            
-            <method name="getChild">
-                <parameter name="aChildName" />
-                <body><![CDATA[
-                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
-                ]]></body>
-            </method>
-            
+
         </implementation>
-        
-        <!--<handlers/> -->
+
     </binding>
-    
+
 </bindings>

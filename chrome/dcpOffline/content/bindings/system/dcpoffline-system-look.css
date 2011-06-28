@@ -52,7 +52,9 @@ dcpAttribute[type=image] {
     -moz-box-align: center;
 }
 
-dcpDateTimePicker {
+dcpDateTimePicker,
+dcpDatePicker,
+dcpTimePicker {
     display: -moz-box;
     -moz-box-orient: horizontal;
 }

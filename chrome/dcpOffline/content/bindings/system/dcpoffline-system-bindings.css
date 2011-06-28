@@ -257,6 +257,16 @@ dcpDocument[mode=edit] dcpDateTimePicker {
         url("chrome://dcpoffline/content/bindings/system/dateTimePicker.xml#dateTimePicker");
 }
 
+dcpDocument[mode=edit] dcpDatePicker {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/dateTimePicker.xml#datePicker");
+}
+
+dcpDocument[mode=edit] dcpTimePicker {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/dateTimePicker.xml#timePicker");
+}
+
 dcpDocument[mode=edit] dcpAttribute[type=color] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#color-attr-edit");
