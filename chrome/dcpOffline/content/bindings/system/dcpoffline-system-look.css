@@ -18,7 +18,7 @@ dcpDocHeader {
     width: 100%;
 }
 
-document-title{
+.document-title {
     -moz-box-flex: 1;
     border-bottom: 1px solid #CCCCCC;
     color: #003366;
