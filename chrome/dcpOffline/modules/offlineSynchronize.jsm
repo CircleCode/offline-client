@@ -56,11 +56,15 @@ offlineSynchronize.prototype.resetAll = function(config) {
         storageManager.execQuery({query : "delete from families"});
         storageManager.execQuery({query : "delete from attrmappings"});
 
-
+        try {
         var filesRoot = Services.dirsvc.get("ProfD", Components.interfaces.nsILocalFile);
         filesRoot.append('Files');
         filesRoot.remove(true);
-        if ( !config.domain.resetWaitingDocs()) {
+        } catch (e) {
+            
+        }
+       
+        if ( ! config.domain.sync().resetWaitingDocs()) {
             throw new SyncException("resetWaitingDocs");
         }
     } else {
@@ -283,7 +287,7 @@ offlineSynchronize.prototype.pushDocument = function(config) {
             localDocument : localDocument
         });
         if (document) {
-            // put document and modifies files
+            // put document and modified files
             
             this.callObserver('onDetailLabel',"pushing document :"+document.getTitle());
             var updateDocument = domain.sync().pushDocument({
@@ -343,7 +347,7 @@ offlineSynchronize.prototype.setObservers = function(config) {
 };
 
 offlineSynchronize.prototype.callObserver = function(fn, arg) {
-    if (this.observers && (typeof this.observers == 'object') && this.observers[fn]) {
+    if ((this.observers != null) && (typeof this.observers == 'object') && this.observers[fn]) {
         try {
             this.observers[fn](arg);
         } catch (e) {
@@ -652,6 +656,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                         handleCompletion : function() {
                             var domainRef=domain.getValue("off_ref");
                             var domainFolders=document.getProperty("domainid");
+                            logConsole("extra", document.getProperties().pullextradata);
                             var isShared=false;
                             var isUsered=false;
                             if (domainFolders.indexOf('offshared_'+domainRef) >=0) {

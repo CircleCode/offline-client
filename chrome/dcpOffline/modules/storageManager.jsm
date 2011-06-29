@@ -302,6 +302,8 @@ var storageManager = {
                 
                 // Here we go across all properties this family has
                 var properties = family.getProperties();
+                properties.pushextradata=true;
+                properties.pullextradata=true;
                 for( let property in properties ){
                     columnId = property;
                     if(propertiesColumns.indexOf(property) === -1){
@@ -573,7 +575,7 @@ var storageManager = {
                     for( let propertyId in properties ){
                         
                         var value = properties[propertyId];
-                        if (Array.isArray(value)) {
+                        if (value && (Array.isArray(value) || typeof value=='object')) {
                             value = JSON.stringify(value);
                         } 
                         columns.push(propertyId);

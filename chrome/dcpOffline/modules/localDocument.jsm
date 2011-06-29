@@ -158,6 +158,27 @@ localDocument.prototype = {
             }
             return _propertyNames;
         },
+        
+        getPullExtraData : function () {
+            return this.getProperty('pullextradata');
+        },
+        getPushExtraData : function () {
+            return this.getProperty('pushextradata');
+        },
+        /**
+         * add extra data values to be use in server hook when pushing document
+         * @param string key
+         * @param any value (can be object/string)
+         * @returns {localDocument}
+         */
+        setPushExtraData : function (key,value) {
+            if (this.properties.pushextradata == null) this.properties.pushextradata={};
+            this.properties.pushextradata[key]=value;
+            return this;
+        },
+        setChangeState : function (newState) {
+            return this.setPushExtraData('changeState', newState);
+        },
         setValue : function(id, value, index) {
             if (id && (value !== undefined)) {
                 if( (index === undefined) || (index === -1) ){
