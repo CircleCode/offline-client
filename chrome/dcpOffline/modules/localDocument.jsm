@@ -48,6 +48,10 @@ localDocument.prototype = {
                 for ( var id in docRecord) {
                     try {
                         val = JSON.parse(docRecord[id]);
+                        if(typeof val !== 'object'){
+                            //FIXME: this is a ugly workaround, please add json in attributesMapping
+                            val = docRecord[id];
+                        }
                         // val = eval('(' + docRecord[id] + ')');
                     } catch (e) {
                         val = docRecord[id];
