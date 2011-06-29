@@ -40,35 +40,94 @@
                             value=""
                             class="dcpChooseDocid"
                             label="choose document" />
-                        <xul:template>
-                            <xul:query><![CDATA[
-                                SELECT initid, title 
-                                FROM doctitles
-                                WHERE famname = :famid and initid like :filterid order by title
-                            ]]>
-                                <xul:param
-                                    anonid="famid"
-                                    name="famid" />
-                                <xul:param
-                                    anonid="filterid"
-                                    name="filterid" />
-                            </xul:query>
-                            <xul:action>
-                                <xul:menuitem
-                                    uri="?"
-                                    value="?initid"
-                                    label="?title" />
-                            </xul:action>
-                        </xul:template>
                     </xul:menupopup>
                 </xul:menulist>
             </xul:hbox>
         </content>
+
         <implementation>
 
             <field name="inputField"><![CDATA[
                 this.getChild('displayValue');
             ]]></field>
+
+            <property
+                name="queryTemplate"
+                readonly="true">
+                <getter><![CDATA[
+                    var query = this.queryQuery;
+                    var params = this.queryParams;
+                    var action = this.queryAction;
+                    
+                    var template = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "template");
+                    
+                    query.appendChild(params);
+                    
+                    template.appendChild(query);
+                    
+                    template.appendChild(action);
+                    
+                    return template;
+                ]]></getter>
+            </property>
+
+            <property
+                name="queryQuery"
+                readonly="true">
+                <getter><![CDATA[
+                    var query = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "query");
+                    query.textContent = "SELECT initid, title"
+                            + " FROM doctitles"
+                            + " WHERE famname = :famid and initid like :filterid order by title";
+                    return query;
+                ]]></getter>
+            </property>
+
+            <property
+                name="queryParams"
+                readonly="true">
+                <getter><![CDATA[
+                    var paramsFragment = document.createDocumentFragment();
+                    var params = this.queryParamsList;
+                    params.forEach(function(paramId){
+                        var param = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "param");
+                        param.setAttribute('anonid', paramId);
+                        param.setAttribute('name', paramId);
+                        paramsFragment.appendChild(param);
+                    });
+                    return paramsFragment;
+                ]]></getter>
+            </property>
+            
+            <property name="queryParamsList" readonly="true">
+                <getter><![CDATA[
+                    return ['famid', 'filterid'];
+                ]]></getter>
+            </property>
+
+            <property
+                name="queryAction"
+                readonly="true">
+                <getter><![CDATA[
+                    var action = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "action");
+                    
+                    var menuItem = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "menuitem");
+                    menuItem.setAttribute('uri', '?');
+                    menuItem.setAttribute('value', '?initid');
+                    menuItem.setAttribute('label', '?title');
+                    
+                    action.appendChild(menuItem);
+                    
+                    return action;
+                ]]></getter>
+            </property>
+
+            <method name="fillParameters">
+                <body><![CDATA[
+                    this.getChild('famid').textContent = this.getAttribute('relationFamily');
+                    this.getChild('filterid').textContent = this.getValue();
+                ]]></body>
+            </method>
 
             <method name="reloadValue">
                 <body><![CDATA[
@@ -99,8 +158,8 @@
                   } else {
                      // first call
                      if (this.getAttribute('relationFamily')) {
-                        this.getChild('famid').textContent = this.getAttribute('relationFamily');
-                        this.getChild('filterid').textContent = this.getValue();
+                        this.getChild('queryList').appendChild(this.queryTemplate);
+                        this.fillParameters();
                         this.getChild('displayValue').menupopup.builder.rebuild(); 
                         this.constructed = true;
                         if (this.getAttribute('relationFamily')) {
