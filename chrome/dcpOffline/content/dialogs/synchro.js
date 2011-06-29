@@ -16,10 +16,9 @@ function displayError(error) {
 }
 
 function displayEndOfSynchronize(result) {
-    var translate = new StringBundle("chrome://dcpoffline/locale/main.properties");
     suppressListener();
     openDialog("chrome://dcpoffline/content/dialogs/endOfSynchronize.xul", "", "chrome,modal,close=false", result);
-    window.close();
+    window.letClose();
 }
 
 function suppressListener() {
