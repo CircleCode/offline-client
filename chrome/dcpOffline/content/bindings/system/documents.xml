@@ -99,11 +99,11 @@
                         this.checkRequiredAttributes();
                         if(this.doc.inMemoryDoc){
                             this.onBeforeLocalCreate();
-                            this.doc.store();
+                            this.doc.store({recomputeTitle:true});
                             this.onAfterLocalCreate();
                         } else {
                             this.onBeforeLocalSave();
-                            this.doc.save();
+                            this.doc.save({recomputeTitle:true});
                             this.onAfterLocalSave();
                         }
                         this.switchMode("view");
