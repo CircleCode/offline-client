@@ -656,7 +656,6 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                         handleCompletion : function() {
                             var domainRef=domain.getValue("off_ref");
                             var domainFolders=document.getProperty("domainid");
-                            logConsole("extra", document.getProperties().pullextradata);
                             var isShared=false;
                             var isUsered=false;
                             if (domainFolders.indexOf('offshared_'+domainRef) >=0) {

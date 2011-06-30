@@ -221,7 +221,9 @@ localDocument.prototype = {
                         attributes : this.values,
                         properties : this.properties
                 };
-                this.recomputeTitle();
+                if (config && config.recomputeTitle) {
+                   this.recomputeTitle();
+                }
                 storageManager.saveDocumentValues(saveConfig);
                 if ((!config) || (! config.noModificationDate)) {
                    storageManager.execQuery({
@@ -250,7 +252,9 @@ localDocument.prototype = {
         
         store: function(config){
             try{
-                this.recomputeTitle();
+                if (config && config.recomputeTitle) {
+                   this.recomputeTitle();
+                }
                 storageManager.execQuery({
                     query : "insert into docsbydomain "+
                             "( initid,  domainid,  editable,  isshared,  isusered) values "+
