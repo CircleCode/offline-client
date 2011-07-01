@@ -7,188 +7,481 @@
       %menu-bindingDTD;
 ]>
 
-<bindings id="menuBindings"
+<bindings
+    id="menuBindings"
     xmlns="http://www.mozilla.org/xbl"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     xmlns:xbl="http://www.mozilla.org/xbl">
-    
-    <binding id="doc-main-menu">
-        <!--<ressources/>-->
-        
-        <content>
-            <xul:toolbox id="document-toolbox" flex="1">
-                <xul:toolbar anonid="document-toolbar" flex="1">
-                
-                    <xul:toolbarbutton anonid="document-toolbar-system-save"
-                        label="&document.toolbar.button.save;"
-                        tooltiptext="&document.toolbar.button.save.tooltip;"
-                        icon="save"
-                        mode="edit">
-                    </xul:toolbarbutton>
-                    
-                    <xul:toolbarbutton anonid="document-toolbar-system-cancel"
-                        label="&document.toolbar.button.cancel;"
-                        tooltiptext="&document.toolbar.button.cancel.tooltip;"
-                        icon="cancel"
-                        mode="edit">
-                    </xul:toolbarbutton>
-                    
-                    <xul:toolbarbutton
-                        anonid="document-toolbar-system-edit"
-                        label="&document.toolbar.button.modify;"
-                        tooltiptext="&document.toolbar.button.modify.tooltip;"
-                        mode="view">
-                    </xul:toolbarbutton>
-                    
-                    <xul:spacer flex="1"/>
-                    
-                    <children/>
-                    
-                    <xul:toolbarbutton
-                        anonid="document-menu-advanced"
-                        type="menu"
-                        label="&document.toolbar.button.advanced;"
-                        tooltiptext="&document.toolbar.button.advanced.tooltip;">
-                        <xul:menupopup>
-                            <xul:menuitem
-                                anonid="document-toolbar-system-properties"
-                                label="&document.toolbar.button.properties;"
-                                tooltiptext="&document.toolbar.button.properties.tooltip;"
-                                icon="properties"
-                                oncommand="alert('(FIXME) open properties');">
-                            </xul:menuitem>
-                            <xul:menuseparator/>
-                            <xul:menuitem
-                                anonid="document-toolbar-system-revert"
-                                label="&document.toolbar.button.revert;"
-                                tooltiptext="&document.toolbar.button.revert.tooltip;"
-                                icon="clear" collapsed="true">
-                            </xul:menuitem>
-                            <xul:menuitem
-                                anonid="document-toolbar-system-remove"
-                                label="&document.toolbar.button.remove;"
-                                tooltiptext="&document.toolbar.button.remove.tooltip;"
-                                icon="remove" collapsed="true">
-                            </xul:menuitem>
-                        </xul:menupopup>
-                    </xul:toolbarbutton>
-                    
-                    
-                    
-                    <xul:toolbarbutton
-                        anonid="document-toolbar-system-close"
-                        label="&document.toolbar.button.close;"
-                        tooltiptext="&document.toolbar.button.close.tooltip;"
-                        icon="close">
-                    </xul:toolbarbutton>
-                
-                </xul:toolbar>
-            </xul:toolbox>
-        </content>
-        
+
+    <binding
+        id="doc-main-menu-toolbarbutton"
+        extends="&systemBindingsDirPath;/doc-item.xml#doc-item">
+
         <implementation>
-            
-            
-            <field name="documentNode" readonly="true"><![CDATA[
-                var parent = this.parentNode;
-                while (parent) {
-                    if (parent.localName == "dcpDocument")
-                        break;
-                    parent = parent.parentNode;
-                }
-                parent;
-            ]]></field>
-            
+
+            <field name="button">
+                this.getChild('button');
+            </field>
+
             <property
-                name="localDocument"
+                name="customDisableCondition"
                 readonly="true"
-                onget="return this.doc;">
-            </property>
-            
-            <method name="getChild">
-                <parameter name="aChildName"/>
+                onget="return false;" />
+
+            <property
+                name="customHideCondition"
+                readonly="true"
+                onget="return false;" />
+
+            <method name="doAction">
                 <body><![CDATA[
-                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                    throw "there is no action for this button";
                 ]]></body>
             </method>
-            
+
             <constructor><![CDATA[
-            
-                this.doc = this.documentNode.localDocument;
-                
                 var mode = documentNode.mode;
                 
-                var children = this.getChild("document-toolbar").children;
-                if (children)
-                {
-                    for (var i = 0; i < children.length; i++)
-                    {
-                        var childMode = children[i].getAttribute('mode');
-                        if (childMode){
-                            if(childMode == mode) {
-                                children[i].collapsed = false;
-                            } else {
-                                children[i].collapsed = true;
-                            }
+                var button = this.button;
+                
+                var disabled = this.customDisableCondition;
+                
+                if(button){
+                    
+                    if( button.hasAttribute('mode') ){
+                        if( button.getAttribute('mode') != mode ){
+                            disabled = true;
+                            button.collapsed = true;
                         }
+                        if( this.customHideCondition ){
+                            disabled = true;
+                            this.collapsed = true;
+                        }
+                    }
+                    
+                    if( (button.hasAttribute('enabledMode') 
+                            && (button.getAttribute('enabledMode') != mode)) 
+                        || disabled ){
+                        disabled = true;
+                        button.disabled = true;
                     }
                 }
                 
-                if (mode == 'view' ) {
-                   var bremove=this.getChild("document-toolbar-system-remove");
-                   var brevert=this.getChild("document-toolbar-system-revert");
-                   if (this.doc.isOnlyLocal()) {
-                       if (bremove) {
-                           bremove.collapsed=false;
-                       }
-                   } else {
-                       if (brevert) {
-                           brevert.collapsed=false;
-                       }
-                   }
-                }
-                
-                if( (mode !== 'edit') && (!this.doc.canEdit()) ){
-                
-                    Components.utils.import("resource://modules/StringBundle.jsm");
-                    var translate = new StringBundle("chrome://dcpoffline/locale/menu-binding.properties");
-            
-                    this.getChild('document-toolbar-system-edit').disabled = true;
-                    this.getChild('document-toolbar-system-edit').tooltipText = translate.get("document.toolbar.button.modify.disabled.tooltip");
-                }
+                this.disabled = disabled;
             ]]></constructor>
+
         </implementation>
-        
+
         <handlers>
-            <handler event="click"  button="0"><![CDATA[
-                switch(event.originalTarget){
-                    case this.getChild('document-toolbar-system-edit') :
-                        if(! this.getChild('document-toolbar-system-edit').disabled){
-                            this.documentNode.switchMode('edit');
-                        }
-                        break;
-                    case this.getChild('document-toolbar-system-close') :
-                        document.commandDispatcher.advanceFocus();
-                        this.documentNode.close();
-                        break;
-                    case this.getChild('document-toolbar-system-cancel') :
-                        document.commandDispatcher.advanceFocus();
-                        this.documentNode.reinit();
-                        break;
-                    case this.getChild('document-toolbar-system-save') :
-                        document.commandDispatcher.advanceFocus();
-                        this.documentNode.save();
-                        break;
-                    case this.getChild('document-toolbar-system-revert') :
-                        document.commandDispatcher.advanceFocus();
-                        this.documentNode.revert();
-                        break;
-                    case this.getChild('document-toolbar-system-remove') :
-                        this.documentNode.remove();
-                        break;
+            <handler event="click" button="0"><![CDATA[
+                if(!this.disabled){
+                    if( event.originalTarget == this.button ){
+                        this.doAction();
+                    }
                 }
             ]]></handler>
         </handlers>
+
     </binding>
-    
+
+    <binding
+        id="doc-main-menu-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
+
+        <implementation>
+
+            <property
+                name="buttonParentContainer"
+                readonly="true">
+                <getter><![CDATA[
+                    for (var parent = this.parentNode; parent; parent = parent.parentNode) {
+                        if( parent.localName == 'dcpChangeStateMenu' ){
+                            return parent;
+                        }
+                    }
+                    return null;
+                ]]></getter>
+            </property>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="save-button"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
+
+        <content>
+            <xul:toolbarbutton
+                anonid="button"
+                label="&document.toolbar.button.save;"
+                tooltiptext="&document.toolbar.button.save.tooltip;"
+                icon="save"
+                mode="edit">
+            </xul:toolbarbutton>
+        </content>
+
+        <implementation>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.save();
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="cancel-button"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
+
+        <content>
+            <xul:toolbarbutton
+                anonid="button"
+                label="&document.toolbar.button.cancel;"
+                tooltiptext="&document.toolbar.button.cancel.tooltip;"
+                icon="cancel"
+                mode="edit">
+            </xul:toolbarbutton>
+        </content>
+
+        <implementation>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.reinit();
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="edit-button"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
+
+        <content>
+            <xul:toolbarbutton
+                anonid="button"
+                label="&document.toolbar.button.modify;"
+                tooltiptext="&document.toolbar.button.modify.tooltip;"
+                mode="view">
+            </xul:toolbarbutton>
+        </content>
+
+        <implementation>
+
+            <property
+                name="customDisableCondition"
+                readonly="true">
+                <getter><![CDATA[
+                    return !(this.doc.canEdit() && true);
+                ]]></getter>
+            </property>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    this.documentNode.switchMode('edit');
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="close-button"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
+
+        <content>
+            <xul:toolbarbutton
+                anonid="button"
+                label="&document.toolbar.button.close;"
+                tooltiptext="&document.toolbar.button.close.tooltip;"
+                icon="close">
+            </xul:toolbarbutton>
+        </content>
+
+        <implementation>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.close();
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="changeState-cancel-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.button.changeState.cancel;"
+                tooltiptext="&document.button.changeState.cancel.tooltip;"
+                icon="cancel" />
+        </content>
+
+        <implementation>
+
+            <property
+                name="customDisableCondition"
+                readonly="true">
+                <getter><![CDATA[
+                    return !(this.localDocument.getChangeState() && true);
+                ]]></getter>
+            </property>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    this.localDocument.unsetChangeState();
+                    this.localDocument.save({force: true});
+                    this.buttonParentContainer.init();
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="changeState-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+
+        <content>
+            <xul:menuitem
+                anonid="button"
+                xbl:inherits="label=transition,tooltiptext=activity,style,state,disabled" />
+        </content>
+
+        <implementation>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    this.localDocument.setChangeState(event.originalTarget.getAttribute('state'));
+                    this.localDocument.save({force: true});
+                    this.buttonParentContainer.init();
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="changeState-menu"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
+
+        <content>
+            <xul:toolbarbutton
+                anonid="button"
+                type="menu"
+                label="&document.toolbar.menu.changeState;"
+                tooltiptext="&document.toolbar.menu.changeState.tooltip;"
+                mode="view">
+                <xul:menupopup anonid="document-menu-changeState-menupopup">
+                </xul:menupopup>
+            </xul:toolbarbutton>
+        </content>
+
+        <implementation>
+        
+            <method name="doAction">
+                <body></body>
+            </method>
+
+            <method name="init">
+                <body><![CDATA[
+                    var menupopup = this.getChild('document-menu-changeState-menupopup');
+                    if (menupopup.hasChildNodes()){
+                        var menuItems = menupopup.childNodes;
+                        for (var i = 0; i < menuItems.length; i++) {
+                            menuItems[i].hidden = true;
+                            menuItems[i].hidden = false;
+                        }
+                    } else {
+                        var hasNextState = this.localDocument.getChangeState() && true;
+                        
+                        var states = this.localDocument.getFollowingStates();
+                        var buttons = document.createDocumentFragment();
+                        buttons.appendChild(document.createElement("dcpCancelTransitionMenuItem"));
+                        buttons.appendChild(document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "menuseparator"));
+                        for(var state in states){
+                            var button = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "dcpTransitionMenuItem");
+                            button.setAttribute('anonid', 'document-button-changeState-to-' + state);
+                            button.setAttribute('state', state);
+                            button.setAttribute('transition', states[state].transition);
+                            button.setAttribute('style', 'background-color: ' + states[state].color + "; width: 100%;");
+                            button.setAttribute('activity', states[state].activity);
+                            button.setAttribute('disabled', hasNextState);
+                            
+                            buttons.appendChild(button);
+                        }
+                        menupopup.appendChild(buttons);
+                    }
+                ]]></body>
+            </method>
+
+            <constructor><![CDATA[
+                this.init();
+            ]]></constructor>
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="properties-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.properties;"
+                tooltiptext="&document.toolbar.button.properties.tooltip;"
+                icon="properties" />
+        </content>
+
+        <implementation>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    alert('(FIXME) open properties');
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="revert-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.revert;"
+                tooltiptext="&document.toolbar.button.revert.tooltip;"
+                icon="clear"
+                collapsed="true" />
+        </content>
+
+        <implementation>
+
+            <property
+                name="customDisableCondition"
+                readonly="true">
+                <getter><![CDATA[
+                    return this.doc.isOnlyLocal() && true;
+                ]]></getter>
+            </property>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.revert();
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="remove-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.revert;"
+                tooltiptext="&document.toolbar.button.revert.tooltip;"
+                icon="clear"
+                collapsed="true" />
+        </content>
+
+        <implementation>
+
+            <property
+                name="customDisableCondition"
+                readonly="true">
+                <getter><![CDATA[
+                    return !(this.doc.isOnlyLocal() && true);
+                ]]></getter>
+            </property>
+
+            <method name="doAction">
+                <body><![CDATA[
+                    this.documentNode.remove();
+                ]]></body>
+            </method>
+
+        </implementation>
+
+    </binding>
+
+    <binding
+        id="advanced-menu"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
+
+        <content>
+            <xul:toolbarbutton
+                anonid="button"
+                type="menu"
+                label="&document.toolbar.button.advanced;"
+                tooltiptext="&document.toolbar.button.advanced.tooltip;">
+                <xul:menupopup>
+                    <dcpPropertiesMenuItem />
+                    <xul:menuseparator />
+                    <dcpRevertMenuItem />
+                    <dcpRemoveMenuItem />
+                </xul:menupopup>
+            </xul:toolbarbutton>
+        </content>
+
+    </binding>
+
+    <binding
+        id="doc-main-menu"
+        extends="&systemBindingsDirPath;/doc-item.xml#doc-item">
+
+        <content>
+            <xul:toolbox
+                id="document-toolbox"
+                flex="1">
+                <xul:toolbar
+                    anonid="document-toolbar"
+                    flex="1">
+
+                    <dcpSaveButton />
+
+                    <dcpCancelButton />
+
+                    <dcpEditButton />
+
+                    <xul:spacer flex="1" />
+
+                    <children />
+
+                    <dcpChangeStateMenu mode="view" />
+
+                    <dcpAdvancedMenu />
+
+                    <dcpCloseButton />
+
+                </xul:toolbar>
+            </xul:toolbox>
+        </content>
+    </binding>
+
 </bindings>

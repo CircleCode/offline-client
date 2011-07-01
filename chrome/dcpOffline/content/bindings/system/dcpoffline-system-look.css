@@ -12,6 +12,20 @@ dcpDocMenu {
     -moz-box-orient: horizontal;
 }
 
+dcpSaveButton,
+dcpCancelButton,
+dcpEditButton,
+dcpCloseButton,
+dcpChangeStateMenu,
+dcpAdvancedMenu,
+dcpPropertiesMenuItem,
+dcpRevertMenuItem,
+dcpRemoveMenuItem,
+dcpCancelTransitionMenuItem,
+dcpTransitionMenuItem {
+    display: -moz-box;
+}
+
 dcpDocHeader {
     display: -moz-box;
     -moz-box-orient: horizontal;

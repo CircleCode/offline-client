@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bindings [
+      <!ENTITY % menu-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/menu-binding.dtd" >
+      <!ENTITY separator "&#160;:&#160;" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+      %menu-bindingDTD;
+]>
+
+<bindings
+    id="menuBindings"
+    xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+
+    <binding id="doc-item">
+
+        <implementation>
+
+            <property
+                name="documentNode"
+                readonly="true">
+                <getter><![CDATA[
+                    if(! this.hasOwnProperty('_documentNode') ){
+                        var parent = this.parentNode;
+                        while (parent) {
+                            if (parent.localName == "dcpDocument")
+                                break;
+                            parent = parent.parentNode;
+                        }
+                        this._documentNode = parent;
+                    }
+                    return this._documentNode;
+                ]]></getter>
+            </property>
+
+            <property
+                name="localDocument"
+                readonly="true"
+                onget="return this.doc;">
+            </property>
+
+            <method name="getChild">
+                <parameter name="aChildName" />
+                <body><![CDATA[
+                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
+                ]]></body>
+            </method>
+
+            <constructor><![CDATA[
+                this.doc = this.documentNode.localDocument;
+            ]]></constructor>
+
+        </implementation>
+
+    </binding>
+
+</bindings>

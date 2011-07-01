@@ -9,9 +9,53 @@ dcpDocument {
 /***********************************************************
         Menu
 ************************************************************/
-dcpDocument dcpDocMenu {
+dcpDocMenu {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/menus.xml#doc-main-menu");
+}
+dcpSaveButton {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#save-button");
+}
+dcpCancelButton {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#cancel-button");
+}
+dcpEditButton {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#edit-button");
+}
+dcpCloseButton {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#close-button");
+}
+dcpChangeStateMenu {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#changeState-menu");
+}
+dcpAdvancedMenu {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#advanced-menu");
+}
+dcpPropertiesMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#properties-menuitem");
+}
+dcpRevertMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#revert-menuitem");
+}
+dcpRemoveMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#remove-menuitem");
+}
+dcpCancelTransitionMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#changeState-cancel-menuitem");
+}
+dcpTransitionMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#changeState-menuitem");
 }
 
 /***********************************************************

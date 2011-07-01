@@ -183,6 +183,23 @@ localDocument.prototype = {
         setChangeState : function (newState) {
             return this.setPushExtraData('changeState', newState);
         },
+        getChangeState : function () {
+            var extraData = this.getPushExtraData();
+            if(extraData){
+                return extraData.changeState;
+            }
+            else return null;
+        },
+        unsetChangeState : function () {
+            return this.setPushExtraData('changeState', '');
+        },
+        getFollowingStates : function () {
+            var extraData = this.getPullExtraData();
+            if(extraData){
+                return extraData.followingStates;
+            }
+            else return null;
+        },
         setValue : function(id, value, index) {
             if (id && (value !== undefined)) {
                 if( (index === undefined) || (index === -1) ){
@@ -327,7 +344,12 @@ localDocument.prototype = {
          * @return boolean true if can
          */
         canEdit : function() {
+            if(this.getChangeState()){
+                //documents marked for change state are read-only
+                return false;
+            }
             if(this.isOnlyLocal()){
+                //non syncronized documents are editable
                 return true;
             }
             if (!this.domainId) {

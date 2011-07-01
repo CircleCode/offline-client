@@ -1,17 +1,23 @@
-<!ENTITY  document.toolbar.button.save                      "Sauver">
-<!ENTITY  document.toolbar.button.save.tooltip              "Sauver">
-<!ENTITY  document.toolbar.button.cancel                    "Annuler">
-<!ENTITY  document.toolbar.button.cancel.tooltip            "Annuler">
-<!ENTITY  document.toolbar.button.modify                    "Modifier">
-<!ENTITY  document.toolbar.button.modify.tooltip            "Modifier">
-<!ENTITY  document.toolbar.button.modify.disabled.tooltip   "Vous n'avez pas les droits d'édition sur ce document">
-<!ENTITY  document.toolbar.button.advanced                  "Avancé">
-<!ENTITY  document.toolbar.button.advanced.tooltip          "Avancé">
-<!ENTITY  document.toolbar.button.properties                "Propriétés">
-<!ENTITY  document.toolbar.button.properties.tooltip        "Propriétés">
-<!ENTITY  document.toolbar.button.revert                    "Revert">
-<!ENTITY  document.toolbar.button.revert.tooltip            "Revert">
-<!ENTITY  document.toolbar.button.close                     "Fermer">
-<!ENTITY  document.toolbar.button.close.tooltip             "Fermer">
-<!ENTITY  document.toolbar.button.remove                     "Remove">
-<!ENTITY  document.toolbar.button.remove.tooltip             "Remove">
+<!ENTITY document.toolbar.button.save                      "Sauver">
+<!ENTITY document.toolbar.button.save.tooltip              "Sauver">
+<!ENTITY document.toolbar.button.cancel                    "Annuler">
+<!ENTITY document.toolbar.button.cancel.tooltip            "Annuler">
+<!ENTITY document.toolbar.button.modify                    "Modifier">
+<!ENTITY document.toolbar.button.modify.tooltip            "Modifier">
+<!ENTITY document.toolbar.button.modify.disabled.tooltip   "Vous n'avez pas les droits d'édition sur ce document">
+
+<!ENTITY document.toolbar.menu.changeState                 "document.toolbar.menu.changeState">
+<!ENTITY document.toolbar.menu.changeState.tooltip         "document.toolbar.menu.changeState.tooltip">
+<!ENTITY document.button.changeState.cancel                "document.button.changeState.cancel">
+<!ENTITY document.button.changeState.cancel.tooltip        "document.button.changeState.cancel.tooltip">
+
+<!ENTITY document.toolbar.button.advanced                  "Avancé">
+<!ENTITY document.toolbar.button.advanced.tooltip          "Avancé">
+<!ENTITY document.toolbar.button.properties                "Propriétés">
+<!ENTITY document.toolbar.button.properties.tooltip        "Propriétés">
+<!ENTITY document.toolbar.button.revert                    "Revert">
+<!ENTITY document.toolbar.button.revert.tooltip            "Revert">
+<!ENTITY document.toolbar.button.close                     "Fermer">
+<!ENTITY document.toolbar.button.close.tooltip             "Fermer">
+<!ENTITY document.toolbar.button.remove                    "Remove">
+<!ENTITY document.toolbar.button.remove.tooltip            "Remove">
