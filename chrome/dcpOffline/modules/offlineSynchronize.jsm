@@ -634,6 +634,39 @@ offlineSynchronize.prototype.getRecordedDocuments = function(config) {
     }
 };
 
+offlineSynchronize.prototype.retrieveReport = function(config) {
+
+    if (config && config.domain ) {
+        var report = config.domain.sync().getReport();
+        var reportFile=this.getReportFile({domainId:config.domain.id});
+        this.writeFile({
+            content : report,
+            dirname : "Logs",
+            basename : reportFile.leafName
+        });
+        
+    } else {
+        throw new ArgException("retrieveReport need domain parameter");
+    }
+};
+offlineSynchronize.prototype.getReportFile = function(config) {
+
+    if (config && config.domainId ) {
+        var reportFile = Services.dirsvc.get("ProfD",
+                Components.interfaces.nsILocalFile);
+        reportFile.append("Logs");
+        if (!reportFile.exists() || !reportFile.isDirectory()) { 
+            // it doesn't exist, create
+            reportFile.create(
+                    Components.interfaces.nsIFile.DIRECTORY_TYPE, 0750);
+        }
+       
+        reportFile.append("report-" + config.domainId + ".html");
+        return reportFile;
+    } else {
+        throw new ArgException("getReportFile need domainId parameter");
+    }
+};
 /**
  * 
  * @param domain
