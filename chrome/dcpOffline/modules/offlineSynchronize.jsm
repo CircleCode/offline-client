@@ -99,7 +99,7 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
                     query : "insert into domains(id, name, description, mode,  transactionpolicy, sharepolicy, lastsyncremote) values(:initid, :name, :description, :mode,  :transactionPolicies, :sharePolicies, :lastsyncremote)",
                     params : {
                         initid : domain.getProperty('initid'),
-                        name : domain.getProperty('initid'),
+                        name : domain.getProperty('name'),
                         description : domain.getTitle(),
                         mode : 'mode',
                         transactionPolicies : domain
@@ -634,6 +634,51 @@ offlineSynchronize.prototype.getRecordedDocuments = function(config) {
     }
 };
 
+offlineSynchronize.prototype.retrieveReport = function(config) {
+
+    if (config && config.domain ) {
+        var report = config.domain.sync().getReport();
+        var reportFile=this.getReportFile({domainId:config.domain.id});
+        this.writeFile({
+            content : report,
+            dirname : "Logs",
+            basename : reportFile.leafName
+        });
+        
+    } else {
+        throw new ArgException("retrieveReport need domain parameter");
+    }
+};
+offlineSynchronize.prototype.getReportFile = function(config) {
+
+    if (config && config.domainId ) {
+        var reportFile = Services.dirsvc.get("ProfD",
+                Components.interfaces.nsILocalFile);
+        reportFile.append("Logs");
+        if (!reportFile.exists() || !reportFile.isDirectory()) { 
+            // it doesn't exist, create
+            reportFile.create(
+                    Components.interfaces.nsIFile.DIRECTORY_TYPE, 0750);
+        }
+       
+        var r=storageManager.execQuery({
+            query : "select name from domains where id=:domainid",
+                params:{
+                    domainid:config.domainId
+                }
+        });
+        var fileId=config.domainId;
+        if (r.length > 0) {
+            if (r[0].name != '') {
+              fileId=r[0].name;
+            }
+        }
+        reportFile.append("report-" + fileId + ".html");
+        return reportFile;
+    } else {
+        throw new ArgException("getReportFile need domainId parameter");
+    }
+};
 /**
  * 
  * @param domain
@@ -810,7 +855,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
          * clientDate : clientDate, serverDate : serverDate } });
          */
         this.recordFiles({domain:domain});
-
+        this.retrieveReport({domain:domain});
         this.deleteDocuments({origin:'user', domain:domain, deleteList:domain.sync().getUserDocumentsToDelete()});
         storageManager.lockDatabase({
             lock : false
@@ -1077,6 +1122,8 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                            
                             if (onComplete) {
                                 onComplete(); // pull documents
+                            } else {
+                                me.retrieveReport({domain:domain});
                             }
                         }
                         return true;
