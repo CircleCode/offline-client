@@ -99,7 +99,7 @@ offlineSynchronize.prototype.recordOfflineDomains = function(config) {
                     query : "insert into domains(id, name, description, mode,  transactionpolicy, sharepolicy, lastsyncremote) values(:initid, :name, :description, :mode,  :transactionPolicies, :sharePolicies, :lastsyncremote)",
                     params : {
                         initid : domain.getProperty('initid'),
-                        name : domain.getProperty('initid'),
+                        name : domain.getProperty('name'),
                         description : domain.getTitle(),
                         mode : 'mode',
                         transactionPolicies : domain
@@ -661,7 +661,19 @@ offlineSynchronize.prototype.getReportFile = function(config) {
                     Components.interfaces.nsIFile.DIRECTORY_TYPE, 0750);
         }
        
-        reportFile.append("report-" + config.domainId + ".html");
+        var r=storageManager.execQuery({
+            query : "select name from domains where id=:domainid",
+                params:{
+                    domainid:config.domainId
+                }
+        });
+        var fileId=config.domainId;
+        if (r.length > 0) {
+            if (r[0].name != '') {
+              fileId=r[0].name;
+            }
+        }
+        reportFile.append("report-" + fileId + ".html");
         return reportFile;
     } else {
         throw new ArgException("getReportFile need domainId parameter");
