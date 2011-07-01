@@ -855,7 +855,7 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
          * clientDate : clientDate, serverDate : serverDate } });
          */
         this.recordFiles({domain:domain});
-
+        this.retrieveReport({domain:domain});
         this.deleteDocuments({origin:'user', domain:domain, deleteList:domain.sync().getUserDocumentsToDelete()});
         storageManager.lockDatabase({
             lock : false
@@ -1122,6 +1122,8 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                            
                             if (onComplete) {
                                 onComplete(); // pull documents
+                            } else {
+                                me.retrieveReport({domain:domain});
                             }
                         }
                         return true;
