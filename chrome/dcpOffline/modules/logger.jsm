@@ -93,7 +93,7 @@ var _log = function() {
         switch (typeof aMessage) {
         case 'function' :
         case 'object' :
-            if (!maxDepth) maxDepth=debugMaxDepth;
+            if (!maxDepth && (maxDepth !== 0)) maxDepth=debugMaxDepth;
             ddumpObject(aMessage, name?name:'', maxDepth);
             break;
         default :
