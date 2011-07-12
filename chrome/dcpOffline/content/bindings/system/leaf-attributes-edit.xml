@@ -117,19 +117,17 @@
                 }
 
                 if(this.doc.inMemoryDoc){
-                    if(this.hasAttribute('defaultValue')){
+                    if(this.hasAttribute('defaultValue') && (this.getAttribute('defaultValue')!=='') ){
                         this.setValue(this.getAttribute('defaultValue'));
                     }
-                } else {
-                    this.reloadValue();
                 }
+                this.reloadValue();
             ]]></constructor>
 
         </implementation>
 
         <handlers>
-            <handler
-                event="change"><![CDATA[
+            <handler event="change"><![CDATA[
                 this.setValue(this.bindingValue);
             ]]></handler>
         </handlers>
