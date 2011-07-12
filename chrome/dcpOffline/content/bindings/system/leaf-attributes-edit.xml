@@ -191,7 +191,7 @@
             <method name="reloadValue">
                 <body><![CDATA[
                     if(this.loaded){
-                        this.editorWrapper.innerHTML = this.getValue();
+                        this.editor.setData(this.getValue());
                     } else {
                         logConsole('frame not yet loaded');
                     }
@@ -205,10 +205,8 @@
                 if(event.originalTarget == this.getChild('displayValue').contentDocument ){
                     //alert("frame loaded");
                     var contentWindow = this.getChild('displayValue').contentWindow;
-                    var editor = contentWindow.initEditor();
-                    editor.on('blur', function(){this.setValue(editor.getData())}, this);
-                    
-                    this.editorWrapper = contentWindow.getEditorWrapper();
+                    this.editor = contentWindow.initEditor();
+                    this.editor.on('blur', function(){this.setValue(editor.getData())}, this);
                     
                     this.loaded = true;
                     this.reloadValue();
