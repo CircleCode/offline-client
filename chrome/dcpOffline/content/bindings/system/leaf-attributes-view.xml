@@ -351,7 +351,6 @@
                 this.getDocid();
             ]]></field>
 
-
             <method name="getDocid">
                 <body><![CDATA[
                 var docid=this.getValue();
@@ -379,12 +378,14 @@
             Components.utils.import("resource://modules/docManager.jsm");
             var valueNode = this.getChild('displayValue');
             
-            if (this.docid) {
-                var title=formater.getDocumentTitle({initid:this.docid});
+            var docid = this.docid
+            
+            if ( docid && !(Array.isArray(docid)) ) {
+                var title=formater.getDocumentTitle({initid:docid});
                 
                 valueNode.value=title;
                 try {
-                  var rdoc=docManager.getLocalDocument({initid:this.docid});
+                  var rdoc=docManager.getLocalDocument({initid:docid});
                   if (rdoc) {
                     valueNode.classList.add('link');
                     var oicon=this.getChild("docIcon");
