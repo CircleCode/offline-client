@@ -20,13 +20,16 @@
             <xul:hbox
                 class="document-header"
                 flex="1">
-                <xul:hbox
-                    flex="1">
-                    <xul:image
-                        anonid="document-icon" />
-                    <xul:label
-                        anonid="document-title"
-                        class="document-title" />
+                <xul:hbox flex="1">
+                    <xul:image anonid="document-icon" />
+                    <xul:hbox class="header-text">
+                        <xul:label
+                            anonid="document-title"
+                            class="document-title" />
+                        <xul:label
+                            anonid="document-state"
+                            class="document-state" />
+                    </xul:hbox>
                 </xul:hbox>
                 <children />
             </xul:hbox>
@@ -34,8 +37,23 @@
 
         <implementation>
 
+            <field
+                name="icon"
+                readonly="true">
+                this.getChild("document-icon");
+            </field>
 
+            <field
+                name="title"
+                readonly="true">
+                this.getChild("document-title");
+            </field>
 
+            <field
+                name="state"
+                readonly="true">
+                this.getChild("document-state");
+            </field>
 
             <constructor><![CDATA[
                 var icon = this.doc.getIcon();
@@ -44,8 +62,17 @@
                     icon = "file://" + icon;
                 }
                 
-                this.getChild('document-icon').src = icon;
-                this.getChild('document-title').value = this.doc.getTitle();
+                this.icon.src = icon;
+                this.title.value = this.doc.getTitle();
+                this.title.tooltipText = this.doc.getTitle();
+                var state = this.doc.getProperty('labelstate');
+                if(state){
+                    var activity = this.doc.getProperty('activitystate');
+                    if(activity){
+                        state += ' ( '+activity+' )';
+                    }
+                    this.state.value = state;
+                }
                 
             ]]></constructor>
         </implementation>
