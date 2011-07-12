@@ -24,6 +24,23 @@
             </field>
 
             <property
+                name="docMenu"
+                readonly="true">
+                <getter><![CDATA[
+                    if(! this.hasOwnProperty('_docMenu') ){
+                        var parent = this.parentNode;
+                        while (parent) {
+                            if (parent.localName == "dcpDocMenu")
+                                break;
+                            parent = parent.parentNode;
+                        }
+                        this._docMenu = parent;
+                    }
+                    return this._docMenu;
+                ]]></getter>
+            </property>
+
+            <property
                 name="customDisableCondition"
                 readonly="true"
                 onget="return false;" />
@@ -34,6 +51,7 @@
                 onget="return false;" />
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     throw "there is no action for this button";
                 ]]></body>
@@ -73,10 +91,12 @@
         </implementation>
 
         <handlers>
-            <handler event="click" button="0"><![CDATA[
+            <handler
+                event="click"
+                button="0"><![CDATA[
                 if(!this.disabled){
                     if( event.originalTarget == this.button ){
-                        this.doAction();
+                        this.doAction(event);
                     }
                 }
             ]]></handler>
@@ -124,6 +144,7 @@
         <implementation>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     document.commandDispatcher.advanceFocus();
                     this.documentNode.save();
@@ -151,6 +172,7 @@
         <implementation>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     document.commandDispatcher.advanceFocus();
                     this.documentNode.reinit();
@@ -185,6 +207,7 @@
             </property>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     this.documentNode.switchMode('edit');
                 ]]></body>
@@ -210,6 +233,7 @@
         <implementation>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     document.commandDispatcher.advanceFocus();
                     this.documentNode.close();
@@ -243,10 +267,11 @@
             </property>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     this.localDocument.unsetChangeState();
                     this.localDocument.save({force: true});
-                    this.buttonParentContainer.init();
+                    this.docMenu.reload();
                 ]]></body>
             </method>
 
@@ -267,10 +292,11 @@
         <implementation>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     this.localDocument.setChangeState(event.originalTarget.getAttribute('state'));
                     this.localDocument.save({force: true});
-                    this.buttonParentContainer.init();
+                    this.docMenu.reload();
                 ]]></body>
             </method>
 
@@ -295,40 +321,41 @@
         </content>
 
         <implementation>
-        
+
+            <property
+                name="customHideCondition"
+                readonly="true">
+                <getter><![CDATA[
+                    return ! this.localDocument.getFollowingStates() && true
+                ]]></getter>
+            </property>
+
             <method name="doAction">
+                <parameter name="event" />
                 <body></body>
             </method>
 
             <method name="init">
                 <body><![CDATA[
                     var menupopup = this.getChild('document-menu-changeState-menupopup');
-                    if (menupopup.hasChildNodes()){
-                        var menuItems = menupopup.childNodes;
-                        for (var i = 0; i < menuItems.length; i++) {
-                            menuItems[i].hidden = true;
-                            menuItems[i].hidden = false;
-                        }
-                    } else {
-                        var hasNextState = this.localDocument.getChangeState() && true;
+                    var hasNextState = this.localDocument.getChangeState() && true;
+                    
+                    var states = this.localDocument.getFollowingStates();
+                    var buttons = document.createDocumentFragment();
+                    buttons.appendChild(document.createElement("dcpCancelTransitionMenuItem"));
+                    buttons.appendChild(document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "menuseparator"));
+                    for(var state in states){
+                        var button = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "dcpTransitionMenuItem");
+                        button.setAttribute('anonid', 'document-button-changeState-to-' + state);
+                        button.setAttribute('state', state);
+                        button.setAttribute('transition', states[state].transition);
+                        button.setAttribute('style', 'background-color: ' + states[state].color + "; width: 100%;");
+                        button.setAttribute('activity', states[state].activity);
+                        button.setAttribute('disabled', hasNextState);
                         
-                        var states = this.localDocument.getFollowingStates();
-                        var buttons = document.createDocumentFragment();
-                        buttons.appendChild(document.createElement("dcpCancelTransitionMenuItem"));
-                        buttons.appendChild(document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "menuseparator"));
-                        for(var state in states){
-                            var button = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "dcpTransitionMenuItem");
-                            button.setAttribute('anonid', 'document-button-changeState-to-' + state);
-                            button.setAttribute('state', state);
-                            button.setAttribute('transition', states[state].transition);
-                            button.setAttribute('style', 'background-color: ' + states[state].color + "; width: 100%;");
-                            button.setAttribute('activity', states[state].activity);
-                            button.setAttribute('disabled', hasNextState);
-                            
-                            buttons.appendChild(button);
-                        }
-                        menupopup.appendChild(buttons);
+                        buttons.appendChild(button);
                     }
+                    menupopup.appendChild(buttons);
                 ]]></body>
             </method>
 
@@ -354,6 +381,7 @@
         <implementation>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     alert('(FIXME) open properties');
                 ]]></body>
@@ -387,6 +415,7 @@
             </property>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     document.commandDispatcher.advanceFocus();
                     this.documentNode.revert();
@@ -421,6 +450,7 @@
             </property>
 
             <method name="doAction">
+                <parameter name="event" />
                 <body><![CDATA[
                     this.documentNode.remove();
                 ]]></body>
@@ -441,10 +471,10 @@
                 label="&document.toolbar.button.advanced;"
                 tooltiptext="&document.toolbar.button.advanced.tooltip;">
                 <xul:menupopup>
-                    <dcpPropertiesMenuItem />
+                    <xul:dcpPropertiesMenuItem />
                     <xul:menuseparator />
-                    <dcpRevertMenuItem />
-                    <dcpRemoveMenuItem />
+                    <xul:dcpRevertMenuItem />
+                    <xul:dcpRemoveMenuItem />
                 </xul:menupopup>
             </xul:toolbarbutton>
         </content>
@@ -463,25 +493,33 @@
                     anonid="document-toolbar"
                     flex="1">
 
-                    <dcpSaveButton />
+                    <xul:dcpSaveButton />
 
-                    <dcpCancelButton />
+                    <xul:dcpCancelButton />
 
-                    <dcpEditButton />
+                    <xul:dcpEditButton />
 
                     <xul:spacer flex="1" />
 
-                    <children />
+                    <xul:dcpChangeStateMenu mode="view" />
 
-                    <dcpChangeStateMenu mode="view" />
+                    <xul:dcpAdvancedMenu />
 
-                    <dcpAdvancedMenu />
-
-                    <dcpCloseButton />
+                    <xul:dcpCloseButton />
 
                 </xul:toolbar>
             </xul:toolbox>
         </content>
+
+        <implementation>
+
+            <method name="reload">
+                <body><![CDATA[
+                    this.documentNode.reloadMenu();
+                ]]></body>
+            </method>
+
+        </implementation>
     </binding>
 
 </bindings>
