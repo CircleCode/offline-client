@@ -193,34 +193,37 @@
                     flex="1" />
             </xul:vbox>
         </content>
+
         <implementation>
-            <method
-                name="reloadValue">
+
+            <method name="reloadValue">
                 <body><![CDATA[
-                    var contentWindow = this.getChild('displayValue').contentWindow;
-
-                    var contentDocument = this.getChild('displayValue').contentDocument;
-
-                    var value = this.getValue();
-
-                    var that = this;
-
-                    //XXX: this is suboptimal (should use DOMFrameContentLoaded)
-                    var initEditor = function(){                        
-                        if(contentWindow.getEditorWrapper){
-                            var editorWrapper = contentWindow.getEditorWrapper();
-                            editorWrapper.innerHTML = value;
-                            var editor = contentWindow.initEditor();
-                            editor.on('blur', function(){this.setValue(editor.getData())}, that);
-                        } else {
-                            setTimeout(initEditor,50);
-                        }
-                    };
-
-                    setTimeout(initEditor,50);
+                    if(this.loaded){
+                        this.editorWrapper.innerHTML = this.getValue();
+                    } else {
+                        logConsole('frame not yet loaded');
+                    }
                 ]]></body>
             </method>
+
         </implementation>
+
+        <handlers>
+            <handler event="DOMContentLoaded"><![CDATA[
+                if(event.originalTarget == this.getChild('displayValue').contentDocument ){
+                    //alert("frame loaded");
+                    var contentWindow = this.getChild('displayValue').contentWindow;
+                    var editor = contentWindow.initEditor();
+                    editor.on('blur', function(){this.setValue(editor.getData())}, this);
+
+                    this.editorWrapper = contentWindow.getEditorWrapper();
+
+                    this.loaded = true;
+                    this.reloadValue();
+                    //alert("value reloaded");
+                }
+            ]]></handler>
+        </handlers>
     </binding>
 
     <!-- Numeric attributes -->
