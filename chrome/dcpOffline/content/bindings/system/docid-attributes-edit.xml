@@ -98,8 +98,10 @@
                     return paramsFragment;
                 ]]></getter>
             </property>
-            
-            <property name="queryParamsList" readonly="true">
+
+            <property
+                name="queryParamsList"
+                readonly="true">
                 <getter><![CDATA[
                     return ['famid', 'filterid'];
                 ]]></getter>
@@ -123,17 +125,43 @@
             </property>
 
             <method name="fillParameters">
+                <parameter name="value" />
                 <body><![CDATA[
-                    this.getChild('famid').textContent = this.getAttribute('relationFamily');
-                    this.getChild('filterid').textContent = this.getValue();
+                    var needRebuild = false;
+                    if( (value === undefined) || (value === null) ){
+                        needRebuild = true;
+                        value = '%';
+                    }
+                    var relationFamily = this.getAttribute('relationFamily');
+                    var famidParam = this.getChild('famid');
+                    var filteridParam = this.getChild('filterid');
+                    
+                    if( famidParam.textContent != relationFamily ){
+                        famidParam.textContent = relationFamily;
+                        needRebuild = true;
+                    }
+                    
+                    if( filteridParam.textContent != value ){
+                        filteridParam.textContent = value;
+                        needRebuild = true;
+                    }
+                    return needRebuild;
                 ]]></body>
             </method>
 
             <method name="reloadValue">
                 <body><![CDATA[
-                  if (this.constructed) {
-                    var value = this.getDocId();
-                    if (! value) value=this.getValue();
+                    if( !this.constructed ){
+                        this.getChild('queryList').appendChild(this.queryTemplate);
+                        this.constructed = true;
+                    }
+                    
+                    var value = this.getDocId() || this.getValue();
+                    
+                    if( this.fillParameters(value) ){
+                        this.getChild('displayValue').menupopup.builder.rebuild();
+                    }
+                    
                     var menuList = this.getChild('displayValue');
                     var nbItems = menuList.itemCount;
                     for(var i = 0; i < nbItems; i++) {
@@ -144,45 +172,34 @@
                         }
                     }
                     var icon=null;
-                    if (value) {
+                    
+                    if(value){
                         var sdoc=docManager.getLocalDocument({initid:value});
                         if (! sdoc) sdoc=docManager.getLocalDocument({name:this.getAttribute('relationFamily')});
                         if (sdoc) {
-                          icon=sdoc.getIcon();
+                            icon=sdoc.getIcon();
                         }
-                        
                         if (icon) {
-                              menuList.image='file://'+icon;
+                            menuList.image='file://'+icon;
                         }
                     }
-                  } else {
-                     // first call
-                     if (this.getAttribute('relationFamily')) {
-                        this.getChild('queryList').appendChild(this.queryTemplate);
-                        this.fillParameters();
-                        this.getChild('displayValue').menupopup.builder.rebuild(); 
-                        this.constructed = true;
-                        if (this.getAttribute('relationFamily')) {
-                            var choose=this.getChild('choose');
-                            choose.label='choose '+docManager.getFamilyTitle({name:this.getAttribute('relationFamily')});
-                        }
-                        this.reloadValue();
-                      } 
-                  }
                 ]]></body>
             </method>
+
             <method name="unSelect">
                 <body><![CDATA[
                     var menuList = this.getChild('displayValue');
                     menuList.selectedIndex=0;
                 ]]></body>
             </method>
+
             <method name="getDocId">
                 <body><![CDATA[
                     var menuList = this.getChild('displayValue');
                     return menuList.value;
                 ]]></body>
             </method>
+
             <method name="getDocTitle">
                 <body><![CDATA[
                     var menuList = this.getChild('displayValue');
@@ -191,29 +208,29 @@
             </method>
 
         </implementation>
+
         <handlers>
-            <handler event="change"><![CDATA[
-                //alert('change');
-            ]]></handler>
-            <handler event="focus"><![CDATA[
-                if (this.getChild('filterid').textContent != '%') {
-                 // optimize : call complete query when use it
-                   this.getChild('filterid').textContent='%';
-                   var menuList = this.getChild('queryList');
-                   menuList.builder.rebuild();
-                   this.reloadValue();
-                }
-            ]]>
-            </handler>
             <handler event="command"><![CDATA[
-              if (this.getAttribute("noset") != "true") {
-                this.setValue(this.getDocId());
-              } else {
-                this.reloadValue();
-              }
+                if (this.getAttribute("noset") != "true") {
+                    this.setValue(this.getDocId());
+                } else {
+                    this.reloadValue();
+                }
+            ]]></handler>
+
+            <handler event="popupshowing"><![CDATA[
+                if( !this.constructed ){
+                    this.getChild('queryList').appendChild(this.queryTemplate);
+                    this.constructed = true;
+                }
+                    
+                this.fillParameters();
+                this.getChild('displayValue').menupopup.builder.rebuild();
             ]]></handler>
         </handlers>
+
     </binding>
+
     <binding
         id="docid-multiple-attr-edit"
         extends="&systemBindingsDirPath;/leaf-attributes-edit.xml#leaf-attr-edit">
