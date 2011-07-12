@@ -345,7 +345,7 @@ function tryToChangeFamily(value) {
  */
 function tryToCreateDocument(param) {
     logIHM("try to create document", param);
-    if(param && param.famId){
+    if(param && ( param.famId || param.fromname ) ){
         if (!applicationEvent.publish("preCreateDocument", param)) {
             // TODO add alert message
             alert("unable to create document");
@@ -360,7 +360,7 @@ function tryToCreateDocument(param) {
 }
 function createDocument(param) {
     logIHM("create document", param);
-    if(param && param.famId){
+    if(param && ( param.famId || param.fromname ) ){
         param.documentId = docManager.createLocalDocument(param).getInitid();
     }
     return true;
