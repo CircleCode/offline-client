@@ -114,7 +114,7 @@ dcpAttribute[mode=edit][type=htmltext]{
 }
 
 .dcpLabel {
-    width: 100px;
+    width: 150px;
 }
 
 dcpAttribute .link {
@@ -225,4 +225,14 @@ button.delete-row {
 
 button.add-row {
     list-style-image: url("chrome://dcpoffline/content/images/insert_table_row-16.png");
+}
+
+dcpAttribute[visibility=R],
+dcpAttribute[visibility=S],
+dcpAttribute[visibility=H],
+dcpAttribute[mode=edit][type=htmltext][visibility=R],
+dcpAttribute[mode=edit][type=htmltext][visibility=S],
+dcpAttribute[mode=edit][type=htmltext][visibility=H]{
+    min-height: 0;
+    min-width: 0;
 }
