@@ -206,6 +206,7 @@
                 for (var i = 0; i < this.childAttributes.length; ++i) {
                     var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
                     clabel.setAttribute("value", this.childAttributes[i].getAttribute('label'));
+                    clabel.setAttribute("tooltiptext", this.childAttributes[i].getAttribute('label'));
                     clabel.classList.add('header');
                     clabel.classList.add('plain');
                     

@@ -31,23 +31,25 @@
             ]]></field>
             <constructor><![CDATA[
                 if (this.tabbox) {
-                var tabs = this.tabbox.tabs;
-                
-                var id = Components.classes["@mozilla.org/uuid-generator;1"]
-                        .getService(Components.interfaces.nsIUUIDGenerator)
-                        .generateUUID()
-                        .toString()
-                        .slice(1,-1);
-                this.setAttribute('id', id);
-                
-                if (tabs) {                   
-                   // be carreful : constructors are called in inverse order of dom order
-                   var tab = tabs.insertItemAt(0,this.getAttribute('label'),this.getAttribute('label'));
-                   tab.setAttribute('linkedpanel', id);
-                } else {
-                    Components.utils.import("resource://modules/exceptions.jsm");
-                    logError(new BindError("there is no 'tabs' tag associated with this tab: " + this.getAttribute("attrid")));
-                }
+                    var tabs = this.tabbox.tabs;
+                    
+                    var id = Components.classes["@mozilla.org/uuid-generator;1"]
+                            .getService(Components.interfaces.nsIUUIDGenerator)
+                            .generateUUID()
+                            .toString()
+                            .slice(1,-1);
+                    this.setAttribute('id', id);
+                    
+                    if (tabs) {                   
+                       // be carreful : constructors are called in inverse order of dom order
+                       var tab = tabs.insertItemAt(0,this.getAttribute('label'),this.getAttribute('label'));
+                       tab.setAttribute('linkedpanel', id);
+                       tab.setAttribute('attrid', this.getAttribute('attrid'));
+                       tab.setAttribute('tooltiptext', this.getAttribute('label'));
+                    } else {
+                        Components.utils.import("resource://modules/exceptions.jsm");
+                        logError(new BindError("there is no 'tabs' tag associated with this tab: " + this.getAttribute("attrid")));
+                    }
                 }
             ]]></constructor>
         </implementation>
@@ -84,17 +86,18 @@
                 var cn=this.childNodes; // these should be the attributes(ie: the columns)
                 
                 for(var i = 0; i < cn.length; i++){
-                     var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
-                     var columnFlex = cn[i].getAttribute('flex');
-                     currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
+                    var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
+                    var columnFlex = cn[i].getAttribute('flex');
+                    currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
                      
                     var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
                     clabel.setAttribute('value', cn[i].getAttribute('label'));
+                    clabel.setAttribute('tooltiptext', cn[i].getAttribute('label'));
+                    clabel.setAttribute('visibility', cn[i].getAttribute('visibility'));
                     clabel.classList.add('header');
                     clabel.classList.add('plain');
                     currentColumn.appendChild(clabel);
                     
-                   
                     var values=this.doc.getValue(cn[i].getAttribute('attrid'));
                     var nbRow=values.length;
                     for (var r=0;r<nbRow; r++) {

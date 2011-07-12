@@ -190,10 +190,11 @@ dcpAttribute[type=docid] grid .dcpSeparator {
     visibility: collapse;
 }
 
-dcpDocument dcpAttribute[type=array] grid .header {
+column .header{
     -moz-appearance: treeheadercell;
     -moz-box-align: center;
     text-align: center;
+    min-width: 50px;
 }
 dcpDocument .dcpChooseDocid {
     font-style: italic;
