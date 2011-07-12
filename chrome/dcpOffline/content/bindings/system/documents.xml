@@ -13,6 +13,12 @@
 
         <implementation>
 
+            <field
+                name="toolbar"
+                readonly="true">
+                this.getElementsByTagNameNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",'dcpDocMenu')[0];
+            </field>
+
             <!-- mode: "edit" or "view", default is "view" -->
             <property
                 name="mode"
@@ -60,6 +66,15 @@
                         }
                     }
                 }
+                ]]></body>
+            </method>
+            
+            <method name="reloadMenu">
+                <body><![CDATA[
+                    var toolbar = this.toolbar;
+                    var oldBinding = window.getComputedStyle(toolbar, null).MozBinding;
+                    toolbar.style.MozBinding = 'url("chrome://dcpoffline/content/bindings/system/empty.xml#empty")';
+                    toolbar.style.MozBinding = oldBinding;
                 ]]></body>
             </method>
 
