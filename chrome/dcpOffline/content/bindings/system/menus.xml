@@ -342,7 +342,7 @@
                     
                     var states = this.localDocument.getFollowingStates();
                     var buttons = document.createDocumentFragment();
-                    buttons.appendChild(document.createElement("dcpCancelTransitionMenuItem"));
+                    buttons.appendChild(document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "dcpCancelTransitionMenuItem"));
                     buttons.appendChild(document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "menuseparator"));
                     for(var state in states){
                         var button = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "dcpTransitionMenuItem");

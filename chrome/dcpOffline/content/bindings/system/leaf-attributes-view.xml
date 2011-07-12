@@ -60,7 +60,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute text">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -77,7 +77,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute longtext">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -98,7 +98,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute longtext">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <html:div
@@ -176,7 +176,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute color">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -204,7 +204,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute int">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -221,7 +221,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute double">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -238,7 +238,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute money">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -256,7 +256,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute time">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -280,7 +280,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute date">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -304,7 +304,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute timestamp">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -330,7 +330,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute docid">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <html:div>
@@ -417,7 +417,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute docid">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:grid
@@ -454,7 +454,7 @@
                 flex="1"
                 class="dcpAttribute docid">
 
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:grid
@@ -494,7 +494,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute enum">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -519,7 +519,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute enum">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:grid
@@ -555,7 +555,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute docid">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:label
@@ -615,7 +615,7 @@
                 xbl:inherits="attrid"
                 flex="1"
                 class="dcpAttribute image">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <html:div class="dcpValue">

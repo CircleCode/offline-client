@@ -21,7 +21,7 @@
                 flex="1"
                 class="dcpAttribute docid">
 
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="mode,required,value=label" />
                 <xul:menulist
@@ -239,7 +239,7 @@
                 xbl:inherits="attrid,collapsed"
                 flex="1"
                 class="dcpAttribute docid">
-                <dcpAttributeLabel
+                <xul:dcpAttributeLabel
                     anonid="attrLabel"
                     xbl:inherits="value=label" />
                 <xul:hbox>
@@ -250,7 +250,7 @@
                             flex="1"
                             seltype="multiple">
                         </xul:listbox>
-                        <dcpAttribute
+                        <xul:dcpAttribute
                             anonid="selector"
                             xbl:inherits="attrid,label,relationFamily,visibility,type,disabled"
                             nolabel="true"
