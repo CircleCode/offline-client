@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE bindings>
+
+<!DOCTYPE bindings [
+      <!ENTITY % footer-bindingDTD SYSTEM "chrome://dcpoffline/locale/bindings/footer-binding.dtd" >
+      <!ENTITY systemBindingsDirPath "chrome://dcpoffline/content/bindings/system" >
+      %footer-bindingDTD;
+]>
+
 <bindings
     id="docFooterBindings"
     xmlns="http://www.mozilla.org/xbl"
@@ -7,55 +13,22 @@
     xmlns:xbl="http://www.mozilla.org/xbl">
 
     <binding
-        id="doc-footer">
-        <!--<ressources/> -->
+        id="doc-footer"
+        extends="&systemBindingsDirPath;/doc-item.xml#doc-item">
 
         <content>
-            <xul:statusbar
-                flex="1">
-                <xul:hbox
-                    flex="1">
-                    <xul:statusbarpanel
-                        anonid="document-initid" />
-                    <xul:spacer
-                        flex="1" />
-                    <children /><!-- <statusbarpanel anonid="document-status" class="statusbarpanel-iconic-text"/> -->
+            <xul:statusbar flex="1">
+                <xul:hbox flex="1">
+                    <xul:statusbarpanel anonid="document-initid" />
+                    <xul:spacer flex="1" />
+                    <children />
                 </xul:hbox>
             </xul:statusbar>
         </content>
 
         <implementation>
 
-            <property
-                name="localDocument"
-                readonly="true"
-                onget="return this.doc;">
-            </property>
-
-            <method
-                name="getDocumentNode">
-                <body><![CDATA[
-                    if(this.documentNode){
-                        return this.documentNode;
-                    } else {
-                        Components.utils.import("resource://modules/domUtils.jsm");
-                        return domUtils.getParentByTagName(this, 'dcpDocument');
-                    }
-                ]]></body>
-            </method>
-
-            <method
-                name="getChild">
-                <parameter
-                    name="aChildName" />
-                <body><![CDATA[
-                      return document.getAnonymousElementByAttribute(this, "anonid", aChildName);
-                ]]></body>
-            </method>
-
             <constructor><![CDATA[
-                this.doc = this.getDocumentNode().localDocument;
-                
                 this.getChild('document-initid').label = this.doc.getInitid();
             ]]></constructor>
 

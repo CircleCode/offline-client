@@ -23,11 +23,7 @@
     </binding>
     
     <binding id="array-attr-edit" inheritstyle="true" extends="&systemBindingsDirPath;/node-attributes-edit.xml#node-attr-edit">
-        
-        <resources>
-            <stylesheet src="chrome://dcpoffline/content/bindings/system/dcpoffline-array-system.css" />
-        </resources>
-        
+
         <content>
             
             <xul:groupbox class="dcpAttribute array" flex="1">
