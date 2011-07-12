@@ -872,7 +872,7 @@ offlineSynchronize.prototype.deleteDocuments = function(config) {
     if (config && config.domain && config.origin && config.deleteList && (config.origin == 'user' || config.origin == 'shared')) {
 
         if (config.deleteList.length > 0) {
-            var sinitids=config.deleteList.join(',');
+            var sinitids="'"+config.deleteList.join("','")+"'";
             this.log("delete documents :"+sinitids);
             var callback={
                     handleCompletion : function() {
