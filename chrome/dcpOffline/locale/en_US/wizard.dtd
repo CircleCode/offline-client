@@ -1,0 +1,15 @@
+<!-- initialization-->
+<!ENTITY wizard.initialization.title                "Dynacase Offline : Installation wizard">
+<!ENTITY wizard.initialization.welcome              "Welcome, thank you for using Dynacase Offline.
+
+This wizard helps you to initialise your first use of Dynacase Offline.
+This initialisation will perform your first connection to your Domain on your Dynacase server, and then will synchronise this domain.
+You have to be connected to internet or to your company network and the dynacase server must be reachable to permform this first initialisation.
+Don't Panic ! Contact your IT administrator if you have any problem.
+
+First step, use the following button...">
+<!ENTITY wizard.initialization.domain               "Domain Initialisation">
+<!ENTITY wizard.first.login                         "First connection">
+<!ENTITY wizard.try.authent                         "Clic here to test your connection...">
+<!ENTITY wizard.initialization.selectDomain         "Select your domain">
+<!ENTITY wizard.try.synchronize                     "Start the first synchronisation test...">

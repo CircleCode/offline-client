@@ -2,3 +2,6 @@
 <!ENTITY  attribute.file.button.delete                      "Supprimer">
 <!ENTITY  attribute.image.button.modify                     "Modifier">
 <!ENTITY  attribute.image.button.delete                     "Supprimer">
+<!ENTITY  attribute.enum.empty                              "Non saisi">
+<!ENTITY  attribute.enum.multiple.button.clear.selection    "Effacer la sélection">
+

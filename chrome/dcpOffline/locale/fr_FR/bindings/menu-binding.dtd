@@ -5,6 +5,12 @@
 <!ENTITY  document.toolbar.button.modify                    "Modifier">
 <!ENTITY  document.toolbar.button.modify.tooltip            "Modifier">
 <!ENTITY  document.toolbar.button.modify.disabled.tooltip   "Vous n'avez pas les droits d'édition sur ce document">
+
+<!ENTITY document.toolbar.menu.changeState                 "Changement d'état">
+<!ENTITY document.toolbar.menu.changeState.tooltip         "Changement d'état">
+<!ENTITY document.button.changeState.cancel                "Annulation">
+<!ENTITY document.button.changeState.cancel.tooltip        "Annulation">
+
 <!ENTITY  document.toolbar.button.advanced                  "Avancé">
 <!ENTITY  document.toolbar.button.advanced.tooltip          "Avancé">
 <!ENTITY  document.toolbar.button.properties                "Propriétés">
@@ -15,5 +21,3 @@
 <!ENTITY  document.toolbar.button.close.tooltip             "Fermer">
 <!ENTITY  document.toolbar.button.remove                     "Supprimer">
 <!ENTITY  document.toolbar.button.remove.tooltip             "Suppression du document local">
-<!ENTITY  document.confirm.remove.title                     "Remove confirm">
-<!ENTITY  document.confirm.remove.message                   "Sure Remove ?">

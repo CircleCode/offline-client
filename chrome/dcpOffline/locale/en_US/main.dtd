@@ -1,3 +1,4 @@
+<!-- debug key : to remove-->
 <!ENTITY  debug                         "Debug">
 <!ENTITY  menu.debug.launch.venkman     "Run Venkman">
 <!ENTITY  menu.debug.launch.method      "Run debugging method">
@@ -6,20 +7,21 @@
 
 
 <!ENTITY  welcome                       "Welcome">
-<!ENTITY  welcome.message               "Have a nice job with Dynacase Offline">
+<!ENTITY  welcome.message               "Dynacase Offline">
 
 
 <!-- Login traduction-->
-<!ENTITY authent.login.groupbox                 "Authentication">
+<!ENTITY authent.login.groupbox                 "Connection">
 <!ENTITY authent.login                          "Login">
 <!ENTITY authent.password                       "Password">
 <!ENTITY authent.login.option                   "Options">
-<!ENTITY authent.applicationURL                 "Danacase server URL">
+<!ENTITY authent.applicationURL                 "Dynacase server URL">
 <!ENTITY authent.remember.login.mdp             "Remenber login and password">
-<!ENTITY authent.dialog                         "Dynacase Offline Connection">
-<!ENTITY authent.login.progress                 "Connection in progress">
-<!ENTITY authent.work.offline                   "Force standalone mode">
+<!ENTITY authent.dialog                         "Connection">
+<!ENTITY authent.login.progress                 "in progress">
+<!ENTITY authent.work.offline                   "Force offline mode">
 <!ENTITY authent.error.label                    "Informations">
+<!ENTITY authent.autologin                      "Allow automatic login">
 
 <!-- main -->
 <!ENTITY main.actionmenu                "Offline">
@@ -32,7 +34,7 @@
 <!ENTITY main.log                       "Log">
 <!ENTITY main.about                     "About">
 <!ENTITY main.abstract.search           "Search">
-<!ENTITY main.domain.choose             "Choose">
+<!ENTITY main.domain.choose             "Choose your domain">
 
 <!-- synchronize -->
 <!ENTITY synchronize.dialogTitle        "Synchronisation">
@@ -55,6 +57,12 @@
 <!ENTITY synchro.client.server          "Upload (from client to the server)">
 <!ENTITY synchro.server.client          "Dowload (from server to the client)">
 <!ENTITY synchro.progress               "Progress">
+<!ENTITY synchro.status                 "status">
+<!ENTITY synchronize.report             "report">
+<!ENTITY synchro.result                 "result">
+
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle         "Preferences">
+<!ENTITY preference.applicationPref     "Application">
+<!ENTITY preference.userPref            "User">
