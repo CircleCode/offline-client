@@ -10,7 +10,7 @@ Pour réaliser cette phase, vous devez êtes connecté à Internet et le serveur
 accessible. En cas de doute, contactez votre administrateur.
 
  Pour commencer, utilisez le bouton ci-dessous...">
-<!ENTITY wizard.initialization.domain               "Initialisation du Domain">
+<!ENTITY wizard.initialization.domain               "Initialisation du Domaine">
 <!ENTITY wizard.first.login                         "Première connexion">
 <!ENTITY wizard.try.authent                         "cliquez ici pour tester la connexion...">
 <!ENTITY wizard.initialization.selectDomain         "Sélectionnez le domaine à utiliser">

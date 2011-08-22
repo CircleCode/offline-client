@@ -3,7 +3,7 @@
 <!ENTITY  menu.debug.launch.venkman     "Run Venkman">
 <!ENTITY  menu.debug.launch.method      "Run debugging method">
 <!ENTITY  menu.debug.eric               "Run Eric's debug session">
-<!ENTITY  menu.debug.matthieu           "Lancer Matthieu's debug session">
+<!ENTITY  menu.debug.matthieu           "Run Matthieu's debug session">
 
 
 <!ENTITY  welcome                       "Welcome">
@@ -11,17 +11,17 @@
 
 
 <!-- Login traduction-->
-<!ENTITY authent.login.groupbox                 "Connection">
-<!ENTITY authent.login                          "Login">
-<!ENTITY authent.password                       "Password">
-<!ENTITY authent.login.option                   "Options">
-<!ENTITY authent.applicationURL                 "Dynacase server URL">
-<!ENTITY authent.remember.login.mdp             "Remenber login and password">
-<!ENTITY authent.dialog                         "Connection">
-<!ENTITY authent.login.progress                 "in progress">
-<!ENTITY authent.work.offline                   "Force offline mode">
-<!ENTITY authent.error.label                    "Informations">
-<!ENTITY authent.autologin                      "Allow automatic login">
+<!ENTITY authent.login.groupbox         "Connection">
+<!ENTITY authent.login                  "Login">
+<!ENTITY authent.password               "Password">
+<!ENTITY authent.login.option           "Options">
+<!ENTITY authent.applicationURL         "Dynacase server URL">
+<!ENTITY authent.remember.login.mdp     "Remenber login and password">
+<!ENTITY authent.dialog                 "Connection">
+<!ENTITY authent.login.progress         "in progress">
+<!ENTITY authent.work.offline           "Force offline mode">
+<!ENTITY authent.error.label            "Informations">
+<!ENTITY authent.autologin              "Allow automatic login">
 
 <!-- main -->
 <!ENTITY main.actionmenu                "Offline">

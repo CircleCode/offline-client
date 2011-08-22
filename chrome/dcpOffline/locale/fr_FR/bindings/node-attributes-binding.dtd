@@ -1,3 +1,3 @@
 <!ENTITY  array.row.tools.delete                      "Supprimer">
-<!ENTITY  array.row.tools.add                         "Ajouter">
-<!ENTITY  array.table.tools.add                       "Ajouter">
+<!ENTITY  array.row.tools.add                         "Ajouter une ligne au dessus">
+<!ENTITY  array.table.tools.add                       "Ajouter une ligne à la fin du tableau">

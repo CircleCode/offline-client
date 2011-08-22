@@ -1,23 +1,23 @@
 <!ENTITY  document.toolbar.button.save                      "Enregistrer">
-<!ENTITY  document.toolbar.button.save.tooltip              "Enregistrer les modifications">
-<!ENTITY  document.toolbar.button.cancel                    "Annuler">
-<!ENTITY  document.toolbar.button.cancel.tooltip            "Annuler les modifications">
-<!ENTITY  document.toolbar.button.modify                    "Modifier">
-<!ENTITY  document.toolbar.button.modify.tooltip            "Modifier">
-<!ENTITY  document.toolbar.button.modify.disabled.tooltip   "Vous n'avez pas les droits d'édition sur ce document">
+<!ENTITY document.toolbar.button.save.tooltip              "Enregistrer les modifications">
+<!ENTITY document.toolbar.button.cancel                    "Annuler">
+<!ENTITY document.toolbar.button.cancel.tooltip            "Annuler les modifications">
+<!ENTITY document.toolbar.button.modify                    "Modifier">
+<!ENTITY document.toolbar.button.modify.tooltip            "Modifier">
+<!ENTITY document.toolbar.button.modify.disabled.tooltip   "Vous n'avez pas les droits d'édition sur ce document">
 
 <!ENTITY document.toolbar.menu.changeState                 "Changement d'état">
 <!ENTITY document.toolbar.menu.changeState.tooltip         "Changement d'état">
 <!ENTITY document.button.changeState.cancel                "Annulation">
 <!ENTITY document.button.changeState.cancel.tooltip        "Annulation">
 
-<!ENTITY  document.toolbar.button.advanced                  "Avancé">
-<!ENTITY  document.toolbar.button.advanced.tooltip          "Avancé">
-<!ENTITY  document.toolbar.button.properties                "Propriétés">
-<!ENTITY  document.toolbar.button.properties.tooltip        "Propriétés">
-<!ENTITY  document.toolbar.button.revert                    "Rétablir">
-<!ENTITY  document.toolbar.button.revert.tooltip            "Abandonner les modifications locales">
-<!ENTITY  document.toolbar.button.close                     "Fermer">
-<!ENTITY  document.toolbar.button.close.tooltip             "Fermer">
-<!ENTITY  document.toolbar.button.remove                     "Supprimer">
-<!ENTITY  document.toolbar.button.remove.tooltip             "Suppression du document local">
+<!ENTITY document.toolbar.button.advanced                  "Avancé">
+<!ENTITY document.toolbar.button.advanced.tooltip          "Avancé">
+<!ENTITY document.toolbar.button.properties                "Propriétés">
+<!ENTITY document.toolbar.button.properties.tooltip        "Propriétés">
+<!ENTITY document.toolbar.button.revert                    "Rétablir">
+<!ENTITY document.toolbar.button.revert.tooltip            "Abandonner les modifications locales">
+<!ENTITY document.toolbar.button.close                     "Fermer">
+<!ENTITY document.toolbar.button.close.tooltip             "Fermer">
+<!ENTITY document.toolbar.button.remove                     "Supprimer">
+<!ENTITY document.toolbar.button.remove.tooltip             "Suppression du document local">
