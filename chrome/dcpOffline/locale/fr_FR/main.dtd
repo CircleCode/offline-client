@@ -7,21 +7,21 @@
 
 
 <!ENTITY  welcome                       "Bienvenue">
-<!ENTITY  welcome.message               "Message de Bienvenue">
+<!ENTITY  welcome.message               "Dynacase Offline">
 
 
 <!-- Login traduction-->
-<!ENTITY authent.login.groupbox                 "Informations d'authentification">
-<!ENTITY authent.login                          "Compte">
-<!ENTITY authent.password                       "Mot de passe">
-<!ENTITY authent.login.option                   "Options de connexion">
-<!ENTITY authent.applicationURL                 "URL du serveur Dynacase">
-<!ENTITY authent.remember.login.mdp             "Mémoriser les information de connexion">
-<!ENTITY authent.dialog                         "login">
-<!ENTITY authent.login.progress                 "Connexion au serveur Dynacase en cours...">
-<!ENTITY authent.work.offline                   "Fonctionnement en mode déconnecté par défaut">
-<!ENTITY authent.error.label                    "Résultat de la phase d'authentification">
-<!ENTITY authent.autologin                      "Autoriser l'authentification automatique">
+<!ENTITY authent.login.groupbox      "Connexion">
+<!ENTITY authent.login               "Compte">
+<!ENTITY authent.password            "Mot de passe">
+<!ENTITY authent.login.option        "Options">
+<!ENTITY authent.applicationURL      "URL du serveur Dynacase">
+<!ENTITY authent.remember.login.mdp  "Mémoriser les information de connexion">
+<!ENTITY authent.dialog              "login">
+<!ENTITY authent.login.progress      "Connexion en cours...">
+<!ENTITY authent.work.offline        "Fonctionnement en mode déconnecté">
+<!ENTITY authent.error.label         "Résultat de la phase d'authentification">
+<!ENTITY authent.autologin           "Autoriser l'authentification automatique">
 
 <!-- main -->
 <!ENTITY main.actionmenu                        "Offline...">
@@ -33,33 +33,33 @@
 <!ENTITY main.help                              "Aide">
 <!ENTITY main.log                               "Journal">
 <!ENTITY main.about                             "A propos">
-<!ENTITY main.abstract.search                   "recherche">
-<!ENTITY main.domain.choose                     "main.domain.choose">
+<!ENTITY main.abstract.search                   "Recherche">
+<!ENTITY main.domain.choose                     "Choix du domaine">
 
 <!-- synchronize -->
-<!ENTITY synchronize.dialogTitle                "Synchronisation du domaine">
-<!ENTITY synchronize.cancel                     "Annuler">
-<!ENTITY synchronize.synchronize                "Synchroniser">
-<!ENTITY synchro.progress                       "Avancement">
-<!ENTITY synchro.progressGlobal                 "global">
-<!ENTITY synchro.progressDetail                 "détail">
-<!ENTITY synchro.progressMessages               "Message de la synchronisation">
-<!ENTITY synchro.domain                         "Domaine de synchronisation">
-<!ENTITY synchro.detail                         "Détails">
-<!ENTITY synchro.documents.record               "documents à enregistrer">
-<!ENTITY synchro.documents.recorded             "documents enregistrés">
-<!ENTITY synchro.files.record                   "fichiers à enregistrer">
-<!ENTITY synchro.files.recorded                 "fichiers enregistrés">
-<!ENTITY synchro.documents.save                 "documents à récupérer">
-<!ENTITY synchro.documents.saved                "documents récupérés">
-<!ENTITY synchro.files.save                     "fichiers à récupérer">
-<!ENTITY synchro.files.saved                    "fichiers récupérés">
-<!ENTITY synchro.client.server                  "Téléversement (local vers serveur)">
-<!ENTITY synchro.server.client                  "Téléchargement (serveur vers local)">
-<!ENTITY synchro.progress                       "progression">
-<!ENTITY synchro.status                         "status">
-<!ENTITY synchronize.report                     "rapport">
-<!ENTITY synchro.result                         "résultat">
+<!ENTITY synchronize.dialogTitle         "Synchronisation du domaine">
+<!ENTITY synchronize.cancel              "Annuler">
+<!ENTITY synchronize.synchronize         "Synchroniser">
+<!ENTITY synchro.progress                "Avancement">
+<!ENTITY synchro.progressGlobal          "global">
+<!ENTITY synchro.progressDetail          "détail">
+<!ENTITY synchro.progressMessages        "Messages de la synchronisation">
+<!ENTITY synchro.domain                  "Domaine de synchronisation">
+<!ENTITY synchro.detail                  "Détails">
+<!ENTITY synchro.documents.record        "documents à enregistrer">
+<!ENTITY synchro.documents.recorded      "documents enregistrés">
+<!ENTITY synchro.files.record            "fichiers à enregistrer">
+<!ENTITY synchro.files.recorded          "fichiers enregistrés">
+<!ENTITY synchro.documents.save          "documents à récupérer">
+<!ENTITY synchro.documents.saved         "documents récupérés">
+<!ENTITY synchro.files.save              "fichiers à récupérer">
+<!ENTITY synchro.files.saved             "fichiers récupérés">
+<!ENTITY synchro.client.server           "Téléversement (local vers serveur)">
+<!ENTITY synchro.server.client           "Téléchargement (serveur vers local)">
+<!ENTITY synchro.progress                "progression">
+<!ENTITY synchro.status                  "statut">
+<!ENTITY synchronize.report              "rapport">
+<!ENTITY synchro.result                  "résultat">
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle                 "Préférences">

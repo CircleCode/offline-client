@@ -1,0 +1,23 @@
+<!ENTITY  document.toolbar.button.save                      "Save">
+<!ENTITY  document.toolbar.button.save.tooltip              "Save changes">
+<!ENTITY  document.toolbar.button.cancel                    "Undo">
+<!ENTITY  document.toolbar.button.cancel.tooltip            "Undo changes">
+<!ENTITY  document.toolbar.button.modify                    "Update">
+<!ENTITY  document.toolbar.button.modify.tooltip            "Update changes">
+<!ENTITY  document.toolbar.button.modify.disabled.tooltip   "You are not allowed to modify this document">
+
+<!ENTITY document.toolbar.menu.changeState                 "Change">
+<!ENTITY document.toolbar.menu.changeState.tooltip         "Change">
+<!ENTITY document.button.changeState.cancel                "Cancel">
+<!ENTITY document.button.changeState.cancel.tooltip        "Cancel">
+
+<!ENTITY  document.toolbar.button.advanced                  "Plus">
+<!ENTITY  document.toolbar.button.advanced.tooltip          "Plus">
+<!ENTITY  document.toolbar.button.properties                "Properties">
+<!ENTITY  document.toolbar.button.properties.tooltip        "Properties">
+<!ENTITY  document.toolbar.button.revert                    "Restore">
+<!ENTITY  document.toolbar.button.revert.tooltip            "Abandon local changes">
+<!ENTITY  document.toolbar.button.close                     "Close">
+<!ENTITY  document.toolbar.button.close.tooltip             "Close">
+<!ENTITY  document.toolbar.button.remove                     "Delete">
+<!ENTITY  document.toolbar.button.remove.tooltip             "Delete local document">

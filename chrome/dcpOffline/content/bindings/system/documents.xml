@@ -74,7 +74,7 @@
                     var toolbar = this.toolbar;
                     var oldBinding = window.getComputedStyle(toolbar, null).MozBinding;
                     toolbar.style.MozBinding = 'url("chrome://dcpoffline/content/bindings/system/empty.xml#empty")';
-                    toolbar.style.MozBinding = oldBinding;
+                    setTimeout(function() {toolbar.style.MozBinding = oldBinding;}, 5);
                 ]]></body>
             </method>
 
