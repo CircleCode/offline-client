@@ -63,25 +63,29 @@ function upgradeProfile(){
                 Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                 .getService(Components.interfaces.mozIJSSubScriptLoader)
                 .loadSubScript(migrationScriptURI, migrationWrapper);
-                // run migrate if function exists
-                if(migrationWrapper.migrate){
-                    var defaultMigrationMessage = "Your profile is required to migrate.\n"
-                            + "Do you want to continue?\n"
-                            + "(it may take some times, and the application can be restared)\n"
-                            + "\n"
-                            + "(The application will stop if you cancel)";
-                    var migrationMessage = migrationWrapper.message || defaultMigrationMessage;
-                    var continueMigration = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                            .getService(Components.interfaces.nsIPromptService)
-                            .confirm(null, "Migration required", "");
-                    if(continueMigration){
-                        migrationWrapper.migrate(profileVersion, appVersion);
+
+                //check if migration must occur
+                if(migrationWrapper.migrationRequired && migrationWrapper.migrationRequired(profileVersion, appVersion)){
+                    // run migrate if function exists
+                    if(migrationWrapper.migrate){
+                        var defaultMigrationMessage = "Your profile is required to migrate.\n"
+                                + "Do you want to continue?\n"
+                                + "(it may take some times, and the application can be restarted)\n"
+                                + "\n"
+                                + "(The application will stop if you cancel)";
+                        var migrationMessage = migrationWrapper.message || defaultMigrationMessage;
+                        var continueMigration = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                .getService(Components.interfaces.nsIPromptService)
+                                .confirm(null, "Migration required", "");
+                        if(continueMigration){
+                            migrationWrapper.migrate(profileVersion, appVersion);
+                        } else {
+                            throw "migration from [" + profileVersion + "] to [" + appVersion + "] aborted by user";
+                        };
                     } else {
-                        throw "migration from [" + profileVersion + "] to [" + appVersion + "] aborted by user";
+                        throw "migration file [" + migrationScriptFile.path + "] was found but it does not contains a migrate function";
                     };
-                } else {
-                    throw "migration file [" + migrationScriptFile.path + "] was found but it does not contains a migrate function";
-                };
+                }
                 // upgrade profile version
                 Preferences.set('offline.application.profileVersion', appVersion);
             };
