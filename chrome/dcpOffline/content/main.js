@@ -63,7 +63,7 @@ function upgradeProfile(){
                 Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                 .getService(Components.interfaces.mozIJSSubScriptLoader)
                 .loadSubScript(migrationScriptURI, migrationWrapper);
-
+                
                 //check if migration must occur
                 if(migrationWrapper.migrationRequired && migrationWrapper.migrationRequired(profileVersion, appVersion)){
                     // run migrate if function exists
@@ -1019,4 +1019,18 @@ function logIHM(message, object) {
     logConsole(message, object);
 }
 
+function checkForUpdate(){
+    var um = 
+        Components.classes["@mozilla.org/updates/update-service;1"].
+        getService(Components.interfaces.nsIUpdateManager);
+    var prompter = 
+        Components.classes["@mozilla.org/updates/update-prompt;1"].
+        createInstance(Components.interfaces.nsIUpdatePrompt);
+    
+    if(um.activeUpdate && um.activeUpdate.state == "pending"){
+        prompter.showUpdateDownloaded(um.activeUpdate);
+    } else {
+        prompter.checkForUpdates();
+    };
+};
 
