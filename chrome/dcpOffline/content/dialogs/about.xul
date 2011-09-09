@@ -31,13 +31,16 @@
             <vbox
                 id="rightBox"
                 flex="1">
-                <label id="productName" />
+                <label id="productName" value="&brandFullName;"/>
                 <label
                     id="appVersion"
                     value="&about.appVersion;"/>
                 <label
                     id="platformVersion"
                     value="&about.platformVersion;"/>
+                <label
+                    id="serverVersion"
+                    value="&about.serverVersion;"/>
                 <vbox id="detailsBox">
                     <description
                         class="text-blurb"
@@ -92,6 +95,7 @@
             </vbox>
         </hbox>
         <vbox id="bottomBox">
+            <!-- 
             <hbox pack="center">
                 <label
                     class="text-link bottom-link"
@@ -106,6 +110,7 @@
                     href="">&about.policy;
                 </label>
             </hbox>
+             -->
             <description id="trademark">
                 <label class="trademark-label">&trademarkInfo.part1;
                 </label>
