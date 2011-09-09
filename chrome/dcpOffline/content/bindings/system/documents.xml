@@ -188,7 +188,9 @@
                 <body><![CDATA[
                     if(this.doc.isDirty()){
                         try {
+                            Components.utils.import("resource://modules/StringBundle.jsm");
                             Components.utils.import("resource://modules/events.jsm");
+                            var translate = new StringBundle( "chrome://dcpoffline/locale/bindings/document-binding.properties");
                             applicationEvent.publish("askForOpenDocument", {documentId : this.initid});
                             
                             var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
@@ -201,11 +203,13 @@
                                         prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_CANCEL  +
                                         prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_DONT_SAVE;
                             
+                            var msgTitle=translate.get("document.confirm.remove.title");
+                            var msgText=translate.get("document.confirm.remove.message",[this.doc.getTitle()]);
+                            
                             var button = prompts.confirmEx(
                                 null,
-                                "Confirm close document",
-                                "Document ["+this.doc.getTitle()+"] has been modified since its last save.\n"
-                                        + "What do you want to do?",
+                                msgTitle,
+                                msgText,
                                 flags,
                                 "",
                                 "",
