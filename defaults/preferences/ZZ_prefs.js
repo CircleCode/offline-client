@@ -37,3 +37,6 @@ pref("javascript.options.strict", true);
 pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 pref("dom.report_all_js_exceptions", true);
+
+pref("network.protocol-handler.expose.http", false);
+pref("network.protocol-handler.warn-external.http", false);
