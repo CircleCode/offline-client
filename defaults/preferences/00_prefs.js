@@ -8,4 +8,4 @@
  * Last loaded prefs file - Can NOT be overloaded
  */
 
-pref("offline.application.profileVersion", "@VERSION@");
+pref("offline.application.profileVersion", "1.1.0");
