@@ -12,6 +12,9 @@ pref("toolkit.defaultChromeURI", "chrome://dcpoffline/content/main.xul");
 pref("toolkit.defaultChromeFeatures", "chrome,resizable=yes,dialog=no");
 pref("toolkit.singletonWindowType", "dcpoffline-main");
 
+/* enable js strict mode */
+pref("javascript.options.strict", true);
+
 
 /* application prefs */
 // TODO all notations to update and merge with recent
@@ -38,7 +41,6 @@ pref("general.useragent.locale", "kl_GN");
 
 pref("browser.dom.window.dump.enabled", true);
 pref("javascript.options.showInConsole", true);
-pref("javascript.options.strict", true);
 pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 pref("dom.report_all_js_exceptions", true);
