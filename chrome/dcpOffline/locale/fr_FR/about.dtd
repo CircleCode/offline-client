@@ -1,7 +1,7 @@
 <!ENTITY  about.dialogTitle        "À propos">
 <!ENTITY  about.appVersion         "Version du client offline : ">
 <!ENTITY  about.platformVersion    "Version de xulrunner : ">
-<!ENTITY  about.serverVersion      "Version du serveur offline: ">
+<!ENTITY  about.serverVersion      "Version du serveur offline : ">
 <!ENTITY about.description.1       "Droits d'utilisation accordés en accord avec la licence concédée par Anakeen.">
 <!ENTITY about.description.2       "La version Entreprise est garantie et permet l'accès aux corrections d'anomalies au travers d'un dépôt privé.">
 <!ENTITY about.description.3       "La version Entreprise peut être obtenue sous une licence d'utilisation différente en accord avec Anakeen.">
