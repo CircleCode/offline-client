@@ -203,8 +203,8 @@
                                         prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_CANCEL  +
                                         prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_DONT_SAVE;
                             
-                            var msgTitle=translate.get("document.confirm.remove.title");
-                            var msgText=translate.get("document.confirm.remove.message",[this.doc.getTitle()]);
+                            var msgTitle=translate.get("document.confirm.abandon.changes.title");
+                            var msgText=translate.get("document.confirm.abandon.changes",[this.doc.getTitle()]);
                             
                             var button = prompts.confirmEx(
                                 null,
