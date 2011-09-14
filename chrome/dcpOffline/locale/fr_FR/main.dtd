@@ -32,6 +32,7 @@
 <!ENTITY main.helpmenu                          "Information">
 <!ENTITY main.help                              "Aide">
 <!ENTITY main.log                               "Journal">
+<!ENTITY main.openSynchroReport                 "Afficher le rapport de synchro">
 <!ENTITY main.checkForUpdate                    "Rechercher les mises à jour">
 <!ENTITY main.about                             "A propos">
 <!ENTITY main.abstract.search                   "Recherche">

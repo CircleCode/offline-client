@@ -5,6 +5,7 @@ const Cu = Components.utils;
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/exceptions.jsm");
 Cu.import("resource://modules/docManager.jsm");
+Cu.import("resource://modules/storageManager.jsm");
 Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/events.jsm");
 Cu.import("resource://modules/preferences.jsm");
@@ -1034,3 +1035,31 @@ function checkForUpdate(){
     };
 };
 
+function openSynchroReport(domainName){
+    if(!domainName){
+        var domainId = getCurrentDomain();
+        var r=storageManager
+                .execQuery({
+                    query : "select * from domains where id=:domainid",
+                        params:{
+                            domainid:domainId
+                        }
+                });
+        if (r.length == 1) {
+            domainName = r[0].name;
+        } else {
+            logIHM("openSynchroReport : could not get domain name (domain id is "+domainId+')');
+        };
+    };
+    var reportFile = Components.classes["@mozilla.org/file/directory_service;1"]
+            .getService(Components.interfaces.nsIProperties)
+            .get("ProfD", Components.interfaces.nsILocalFile);
+    reportFile.append('Logs');
+    reportFile.append('report-' + domainName + '.html');
+
+    if(reportFile.exists()){
+        reportFile.launch();
+    } else {
+        logIHM("openSynchroReport : report file does not exists: " + reportFile.path);
+    };
+};

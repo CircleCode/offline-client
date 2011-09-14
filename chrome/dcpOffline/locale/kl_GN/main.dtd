@@ -5,7 +5,7 @@
 <!ENTITY  menu.debug.eric               "Lancer le débogage d'Éric">
 <!ENTITY  menu.debug.matthieu           "Lancer le débogage de Matthieu">
 
-
+<!-- Welcome -->
 <!ENTITY  welcome                       "Bienvenue">
 <!ENTITY  welcome.message               "Message de Bienvenue">
 
@@ -32,6 +32,7 @@
 <!ENTITY main.helpmenu                          "main.helpmenu">
 <!ENTITY main.help                              "main.help...">
 <!ENTITY main.log                               "main.log...">
+<!ENTITY main.openSynchroReport                 "main.openSynchroReport">
 <!ENTITY main.about                             "main.about...">
 <!ENTITY main.checkForUpdate                    "main.checkForUpdate">
 <!ENTITY main.abstract.search                   "main.abstract.search">
