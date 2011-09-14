@@ -74,6 +74,9 @@ offlineSynchronize.prototype.resetAll = function(config) {
 };
 offlineSynchronize.prototype.recordOfflineDomains = function(config) {
     var domains = this.getCore().getOfflineDomains();
+    if (domains == null) {
+        throw new SyncException("noPrivileges");
+    }
     // TODO record in database
     var domain = null;
 
