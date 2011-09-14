@@ -86,8 +86,10 @@ var fileManager = {
                         storeFile(config);
                         if( (config.uuid) && (config.attrid != 'icon') ){
                             var localDoc = docManager.getLocalDocument({initid: config.initid});
-                            localDoc.setValue(config.attrid, config.uuid, index);
-                            localDoc.save({force: true, noModificationDate:true});
+                            if (localDoc) {
+                                localDoc.setValue(config.attrid, config.uuid, index);
+                                localDoc.save({force: true, noModificationDate:true});
+                            }
                         }
                     } catch(e){
                         throw e;
