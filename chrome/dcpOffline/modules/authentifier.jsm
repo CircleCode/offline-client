@@ -74,7 +74,6 @@ var authentificator = function() {
                     var currentProfile;
                     var user;
                     
-                    logConsole("authentOnline");
                     
                     user = context.setAuthentification({
                         login : that.currentLogin,
@@ -82,38 +81,43 @@ var authentificator = function() {
                     });
                     
                     if (user) {
-                        offlineSync.recordOfflineDomains();
-                        if (user.id) {
-                            Preferences.set("offline.user.id", user.id);
-                        }
-                        if (user.firstname){
-                            Preferences.set("offline.user.firstName", user.firstname);
-                        }
-                        if (user.lastname) {
-                            Preferences.set("offline.user.lastName", user.lastname);
-                        }
-                        if (user.locale) {
-                            if (!Preferences.get("offline.application.debug.locale", false)) {
-                                if (Preferences.get("general.useragent.locale") != user.locale) {
-                                     if (that.switchLocale(user.locale)) {
-                                         applicationEvent.publish("needRestart", "changeLocal");
-                                     }else {
-                                         logDebug("unable to switch local because it doesn't exist "+user.locale);
-                                     }
-                                }
-                            }else {
-                                logConsole("debuglocal");
-                                if (Preferences.get("offline.application.debug.locale") != Preferences.get("general.useragent.locale")) {
-                                    that.switchLocale(Preferences.get("offline.application.debug.locale"));
-                                }
+                        try {
+                            offlineSync.recordOfflineDomains();
+                            logConsole("authentOnline user :"+user.login);
+                            if (user.id) {
+                                Preferences.set("offline.user.id", user.id);
                             }
-                            Preferences.set("offline.user.serverLocale", user.locale);
+                            if (user.firstname){
+                                Preferences.set("offline.user.firstName", user.firstname);
+                            }
+                            if (user.lastname) {
+                                Preferences.set("offline.user.lastName", user.lastname);
+                            }
+                            if (user.locale) {
+                                if (!Preferences.get("offline.application.debug.locale", false)) {
+                                    if (Preferences.get("general.useragent.locale") != user.locale) {
+                                        if (that.switchLocale(user.locale)) {
+                                            applicationEvent.publish("needRestart", "changeLocal");
+                                        }else {
+                                            logDebug("unable to switch local because it doesn't exist "+user.locale);
+                                        }
+                                    }
+                                }else {
+                                    logConsole("debuglocal");
+                                    if (Preferences.get("offline.application.debug.locale") != Preferences.get("general.useragent.locale")) {
+                                        that.switchLocale(Preferences.get("offline.application.debug.locale"));
+                                    }
+                                }
+                                Preferences.set("offline.user.serverLocale", user.locale);
+                            }
+                            if (user.getLocaleFormat()){
+                                Preferences.set("offline.user.localeFormat", JSON.stringify(user.getLocaleFormat()));
+                            }
+                            passwordManager.updatePassword(that.currentLogin, that.currentPassword);
+                            that.onSuccess();
+                        } catch (ex) {
+                            that.onError(that.translate.get("authent.serverDenied"));
                         }
-                        if (user.getLocaleFormat()){
-                            Preferences.set("offline.user.localeFormat", JSON.stringify(user.getLocaleFormat()));
-                        }
-                        passwordManager.updatePassword(that.currentLogin, that.currentPassword);
-                        that.onSuccess();
                     }else {
                         that.onError(that.translate.get("authent.serverDisagree"));
                     }
