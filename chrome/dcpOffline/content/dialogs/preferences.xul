@@ -1,32 +1,49 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE window [
-<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
-%mainDTD;
+<!ENTITY % preferencesDTD SYSTEM "chrome://dcpoffline/locale/preferences.dtd" >
+%preferencesDTD;
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <prefwindow
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     title="&preference.dialogTitle;">
-    <script type="application/javascript"
+    <script
+        type="application/javascript"
         src="chrome://dcpoffline/content/dialogs/preferences.js" />
-    <prefpane id="userPrefPane" label="&preference.userPref;">
+    <prefpane
+        id="userPrefPane"
+        label="&preference.userPref;">
         <preferences>
-            <preference id="offline.user.login" name="offline.user.login"
+            <preference
+                id="offline.user.login"
+                name="offline.user.login"
+                type="string"
+                disabled="true" />
+            <preference
+                id="offline.user.applicationURL"
+                name="offline.user.applicationURL"
+                type="string"
+                disabled="true" />
+            <preference
+                id="offline.user.currentSelectedDomain"
+                name="offline.user.currentSelectedDomain"
                 type="string" />
-            <preference id="offline.user.applicationURL"
-                name="offline.user.applicationURL" type="string" />
-            <preference id="offline.user.currentSelectedDomain"
-                name="offline.user.currentSelectedDomain" type="string" />
-            <preference id="offline.user.id" name="offline.user.id"
+            <preference
+                id="offline.user.id"
+                name="offline.user.id"
                 type="string" />
-            <preference id="offline.user.locale" name="offline.user.locale"
-                type="string" />
-            <preference id="offline.user.firstName" name="offline.user.firstName"
-                type="string" />
-            <preference id="offline.user.lastName" name="offline.user.lastName"
-                type="string" />
+            <preference
+                id="offline.user.firstName"
+                name="offline.user.firstName"
+                type="string"
+                disabled="true" />
+            <preference
+                id="offline.user.lastName"
+                name="offline.user.lastName"
+                type="string"
+                disabled="true" />
         </preferences>
         <grid>
             <columns>
@@ -34,73 +51,113 @@
                 <column flex="1" />
             </columns>
             <rows>
-                <row>
+                <!-- <row>
                     <label value="offline.user.login" />
-                    <textbox id="login" preference="offline.user.login"
+                    <textbox
+                        id="login"
+                        preference="offline.user.login"
                         label="offline.user.login" />
-                </row>
+                </row> -->
                 <row>
-                    <label value="offline.user.applicationURL" />
-                    <textbox id="applicationURL" preference="offline.user.applicationURL" />
+                    <label value="&offline.user.applicationURL;" />
+                    <textbox
+                        id="applicationURL"
+                        preference="offline.user.applicationURL"
+                        disabled="true" />
                 </row>
-                <row>
+                <!-- <row>
                     <label value="offline.user.currentSelectedDomain" />
-                    <textbox id="currentSelectedDomain"
+                    <textbox
+                        id="currentSelectedDomain"
                         preference="offline.user.currentSelectedDomain" />
-                </row>
-                <row>
+                </row> -->
+                <!-- <row>
                     <label value="offline.user.id" />
-                    <textbox id="user.id" preference="offline.user.id" />
-                </row>
-                <row>
-                    <label value="offline.user.locale" />
-                    <textbox id="user.locale" preference="offline.user.locale" />
-                </row>
-                <row>
+                    <textbox
+                        id="user.id"
+                        preference="offline.user.id" />
+                </row> -->
+                <!-- <row>
                     <label value="offline.user.firstName" />
-                    <textbox id="user.firstName" preference="offline.user.firstName" />
-                </row>
-                <row>
+                    <textbox
+                        id="user.firstName"
+                        preference="offline.user.firstName" />
+                </row> -->
+                <!-- <row>
                     <label value="offline.user.lastName" />
-                    <textbox id="user.lastName" preference="offline.user.lastName" />
-                </row>
+                    <textbox
+                        id="user.lastName"
+                        preference="offline.user.lastName" />
+                </row> -->
             </rows>
         </grid>
     </prefpane>
-    <prefpane id="applicationPrefPane" label="&preference.applicationPref;">
+    <prefpane
+        id="applicationPrefPane"
+        label="&preference.applicationPref;">
         <preferences>
-            <preference id="offline.application.firstRun"
-                name="offline.application.firstRun" type="bool" />
-            <preference id="offline.application.fullyInitialised"
-                name="offline.application.fullyInitialised" type="bool" />
-            <preference id="offline.application.modeOffline"
-                name="offline.application.modeOffline" type="bool" />
-            <preference id="offline.application.rememberLogin"
-                name="offline.application.rememberLogin" type="bool" />
-            <preference id="offline.application.autoLogin"
-                name="offline.application.autoLogin" type="bool" />
-            <preference id="offline.application.debug.locale"
-                name="offline.application.debug.locale" type="string" />
-            <preference id="general.useragent.locale" name="general.useragent.locale"
+            <preference
+                id="offline.application.firstRun"
+                name="offline.application.firstRun"
+                type="bool"
+                disabled="true" />
+            <preference
+                id="offline.application.fullyInitialised"
+                name="offline.application.fullyInitialised"
+                type="bool"
+                disabled="true" />
+            <preference
+                id="offline.application.modeOffline"
+                name="offline.application.modeOffline"
+                type="bool" />
+            <preference
+                id="offline.application.rememberLogin"
+                name="offline.application.rememberLogin"
+                type="bool" />
+            <preference
+                id="offline.application.autoLogin"
+                name="offline.application.autoLogin"
+                type="bool" />
+            <preference
+                id="offline.application.debug.locale"
+                name="offline.application.debug.locale"
+                type="string" />
+            <preference
+                id="general.useragent.locale"
+                name="general.useragent.locale"
                 type="string" />
         </preferences>
-        <checkbox id="firstRun" preference="offline.application.firstRun"
-            label="offline.application.firstRun" />
-        <checkbox id="fullyInitialised" preference="offline.application.fullyInitialised"
-            label="offline.application.fullyInitialised" />
-        <checkbox id="modeOffline" preference="offline.application.modeOffline"
-            label="offline.application.modeOffline" />
-        <checkbox id="rememberLogin" preference="offline.application.rememberLogin"
-            label="offline.application.rememberLogin" />
-        <checkbox id="autologin" preference="offline.application.autoLogin"
-            label="offline.application.autoLogin" />
-        <hbox>
+        <!-- <checkbox
+            id="firstRun"
+            preference="offline.application.firstRun"
+            label="offline.application.firstRun" /> -->
+        <!-- <checkbox
+            id="fullyInitialised"
+            preference="offline.application.fullyInitialised"
+            label="offline.application.fullyInitialised" /> -->
+        <checkbox
+            id="modeOffline"
+            preference="offline.application.modeOffline"
+            label="&offline.application.modeOffline;" />
+        <checkbox
+            id="rememberLogin"
+            preference="offline.application.rememberLogin"
+            label="&offline.application.rememberLogin;" />
+        <checkbox
+            id="autologin"
+            preference="offline.application.autoLogin"
+            label="&offline.application.autoLogin;" />
+        <!-- <hbox>
             <label value="offline.application.debug.locale" />
-            <textbox id="debug.locale" preference="offline.application.debug.locale" />
-        </hbox>
-        <hbox>
+            <textbox
+                id="debug.locale"
+                preference="offline.application.debug.locale" />
+        </hbox> -->
+        <!-- <hbox>
             <label value="general.useragent.locale" />
-            <textbox id="useragent.locale" preference="general.useragent.locale" />
-        </hbox>
+            <textbox
+                id="useragent.locale"
+                preference="general.useragent.locale" />
+        </hbox> -->
     </prefpane>
 </prefwindow>

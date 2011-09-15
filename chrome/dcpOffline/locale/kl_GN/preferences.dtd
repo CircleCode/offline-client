@@ -1,0 +1,10 @@
+<!ENTITY preference.dialogTitle               "preference.dialogTitle">
+
+<!ENTITY preference.userPref                  "preference.userPref">
+<!ENTITY offline.user.applicationURL          "offline.user.applicationURL">
+<!ENTITY offline.user.locale                  "offline.user.locale">
+
+<!ENTITY preference.applicationPref           "preference.applicationPref">
+<!ENTITY offline.application.modeOffline      "offline.application.modeOffline">
+<!ENTITY offline.application.rememberLogin    "offline.application.rememberLogin">
+<!ENTITY offline.application.autoLogin        "offline.application.autoLogin">

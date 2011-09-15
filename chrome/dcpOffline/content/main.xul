@@ -31,6 +31,10 @@
             oncommand="openPreferences();"/>
         <command id="main:openCloseDialog"
             oncommand="openCloseDialog();"/>
+        <command id="main:checkForUpdate"
+            oncommand="checkForUpdate();"/>
+        <command id="log:openSynchroReport"
+            oncommand="openSynchroReport();"/>
     </commandset>
     
     <toolbox id="main-toolbox">
@@ -38,7 +42,6 @@
             <menubar flex="1" id="main-menubar">
                 <menu id="main-menu" label="&main.actionmenu;">
                     <menupopup >
-                        <menuseparator/>
                         <menuitem id="synchro-button" label="&main.synchro;"
                             command="main:openSynchro"/>
                         <menuitem id="preferences-button" label="&main.preference;"
@@ -73,18 +76,22 @@
                 <!--
                 <textbox type="search" searchbutton="true" />
                 -->
-                <!--
+                
                 <menu id="help-menu" label="&main.helpmenu;">
                     <menupopup >
-                        <menuitem label="&main.help;"/>
-                        <menuitem label="&main.log;"
-                            oncommand="openLog();"/>
+                        <!-- <menuitem label="&main.help;"/> -->
+                        <!-- <menuitem label="&main.log;"
+                            oncommand="openLog();"/> -->
+                        <menuitem label="&main.openSynchroReport;"
+                            command="log:openSynchroReport"/>
                         <menuseparator/>
+                        <menuitem label="&main.checkForUpdate;"
+                            command="main:checkForUpdate"/>
                         <menuitem label="&main.about;"
                             oncommand="openAbout();"/>
                     </menupopup >
                 </menu>
-                -->
+                
             </menubar>
         </toolbar>
     </toolbox>

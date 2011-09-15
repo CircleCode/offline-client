@@ -1,0 +1,15 @@
+<!ENTITY  about.dialogTitle        "about.dialogTitle">
+<!ENTITY  about.appVersion         "about.appVersion : ">
+<!ENTITY  about.platformVersion    "about.platformVersion : ">
+<!ENTITY  about.serverVersion      "about.serverVersion : ">
+<!ENTITY  about.description.1      "All rights reserved under the granted license by Anakeen.">
+<!ENTITY  about.description.2      "The enterprise edition is guaranteed and allows access to corrective patch on private repository.">
+<!ENTITY  about.description.3      "The enterprise edition allows the customer to change the license in agreement with Anakeen.">
+<!ENTITY  about.description.4      "The community edition is not guaranteed and necessarily under GNU Affero General Public License V3 - AGPL V3.">
+<!ENTITY  about.technos.begin       "Dynacase Offline is written in XUL.
+Dynacase Offline uses the following open source components :">
+<!ENTITY  about.technos.license       "licence">
+
+<!ENTITY  about.license            "about.license">
+<!ENTITY  about.rights             "about.rights">
+<!ENTITY  about.policy             "about.policy">

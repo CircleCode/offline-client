@@ -34,6 +34,4 @@ AC_MSG_NOTICE([PubRule located at $PUBRULE])
 AC_OUTPUT(Makefile \
           info.xml \
           application.ini \
-          defaults/preferences/00_prefs.js \
-          defaults/preferences/ZZ_prefs.js \
          )

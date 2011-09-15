@@ -5,6 +5,7 @@ const Cu = Components.utils;
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/exceptions.jsm");
 Cu.import("resource://modules/docManager.jsm");
+Cu.import("resource://modules/storageManager.jsm");
 Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/events.jsm");
 Cu.import("resource://modules/preferences.jsm");
@@ -63,25 +64,29 @@ function upgradeProfile(){
                 Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                 .getService(Components.interfaces.mozIJSSubScriptLoader)
                 .loadSubScript(migrationScriptURI, migrationWrapper);
-                // run migrate if function exists
-                if(migrationWrapper.migrate){
-                    var defaultMigrationMessage = "Your profile is required to migrate.\n"
-                            + "Do you want to continue?\n"
-                            + "(it may take some times, and the application can be restared)\n"
-                            + "\n"
-                            + "(The application will stop if you cancel)";
-                    var migrationMessage = migrationWrapper.message || defaultMigrationMessage;
-                    var continueMigration = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                            .getService(Components.interfaces.nsIPromptService)
-                            .confirm(null, "Migration required", "");
-                    if(continueMigration){
-                        migrationWrapper.migrate(profileVersion, appVersion);
+                
+                //check if migration must occur
+                if(migrationWrapper.migrationRequired && migrationWrapper.migrationRequired(profileVersion, appVersion)){
+                    // run migrate if function exists
+                    if(migrationWrapper.migrate){
+                        var defaultMigrationMessage = "Your profile is required to migrate.\n"
+                                + "Do you want to continue?\n"
+                                + "(it may take some times, and the application can be restarted)\n"
+                                + "\n"
+                                + "(The application will stop if you cancel)";
+                        var migrationMessage = migrationWrapper.message || defaultMigrationMessage;
+                        var continueMigration = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                                .getService(Components.interfaces.nsIPromptService)
+                                .confirm(null, "Migration required", "");
+                        if(continueMigration){
+                            migrationWrapper.migrate(profileVersion, appVersion);
+                        } else {
+                            throw "migration from [" + profileVersion + "] to [" + appVersion + "] aborted by user";
+                        };
                     } else {
-                        throw "migration from [" + profileVersion + "] to [" + appVersion + "] aborted by user";
+                        throw "migration file [" + migrationScriptFile.path + "] was found but it does not contains a migrate function";
                     };
-                } else {
-                    throw "migration file [" + migrationScriptFile.path + "] was found but it does not contains a migrate function";
-                };
+                }
                 // upgrade profile version
                 Preferences.set('offline.application.profileVersion', appVersion);
             };
@@ -1015,4 +1020,46 @@ function logIHM(message, object) {
     logConsole(message, object);
 }
 
+function checkForUpdate(){
+    var um = 
+        Components.classes["@mozilla.org/updates/update-service;1"].
+        getService(Components.interfaces.nsIUpdateManager);
+    var prompter = 
+        Components.classes["@mozilla.org/updates/update-prompt;1"].
+        createInstance(Components.interfaces.nsIUpdatePrompt);
+    
+    if(um.activeUpdate && um.activeUpdate.state == "pending"){
+        prompter.showUpdateDownloaded(um.activeUpdate);
+    } else {
+        prompter.checkForUpdates();
+    };
+};
 
+function openSynchroReport(domainName){
+    if(!domainName){
+        var domainId = getCurrentDomain();
+        var r=storageManager
+                .execQuery({
+                    query : "select * from domains where id=:domainid",
+                        params:{
+                            domainid:domainId
+                        }
+                });
+        if (r.length == 1) {
+            domainName = r[0].name;
+        } else {
+            logIHM("openSynchroReport : could not get domain name (domain id is "+domainId+')');
+        };
+    };
+    var reportFile = Components.classes["@mozilla.org/file/directory_service;1"]
+            .getService(Components.interfaces.nsIProperties)
+            .get("ProfD", Components.interfaces.nsILocalFile);
+    reportFile.append('Logs');
+    reportFile.append('report-' + domainName + '.html');
+
+    if(reportFile.exists()){
+        reportFile.launch();
+    } else {
+        logIHM("openSynchroReport : report file does not exists: " + reportFile.path);
+    };
+};

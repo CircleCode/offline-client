@@ -1,0 +1,10 @@
+<!ENTITY preference.dialogTitle               "Préférences">
+
+<!ENTITY preference.userPref                  "Préférences de l'utilisateur">
+<!ENTITY offline.user.applicationURL          "URL de connection">
+<!ENTITY offline.user.locale                  "Langue de l'utilisateur">
+
+<!ENTITY preference.applicationPref           "Préférences de l'application">
+<!ENTITY offline.application.modeOffline      "Déconnectée ?">
+<!ENTITY offline.application.rememberLogin    "Se souvenir du login ?">
+<!ENTITY offline.application.autoLogin        "Se connecter automatiquement ?">
