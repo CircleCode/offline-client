@@ -30,7 +30,12 @@ pref("offline.user.applicationURL", "");
 
 pref("offline.application.modeOffline", false);
 
+/* let the OS handle http links */
+pref("network.protocol-handler.expose.http", false);
+pref("network.protocol-handler.warn-external.http", false);
+
 /* debug prefs */
+/*
 pref("offline.application.debug.locale", "kl_GN");
 pref("general.useragent.locale", "kl_GN");
 
@@ -39,6 +44,4 @@ pref("javascript.options.showInConsole", true);
 pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 pref("dom.report_all_js_exceptions", true);
-
-pref("network.protocol-handler.expose.http", false);
-pref("network.protocol-handler.warn-external.http", false);
+*/

@@ -1,0 +1,10 @@
+<!ENTITY preference.dialogTitle               "Preferences">
+
+<!ENTITY preference.userPref                  "User's preferences">
+<!ENTITY offline.user.applicationURL          "server URL">
+<!ENTITY offline.user.locale                  "Language">
+
+<!ENTITY preference.applicationPref           "Application's preferences">
+<!ENTITY offline.application.modeOffline      "Offline ?">
+<!ENTITY offline.application.rememberLogin    "Remember login ?">
+<!ENTITY offline.application.autoLogin        "Auto login ?">

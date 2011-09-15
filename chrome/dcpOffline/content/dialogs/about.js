@@ -6,13 +6,12 @@ function init(aEvent) {
 
     var version = Services.appinfo.version;
     var buildID = Services.appinfo.appBuildID;
-    document.getElementById("appVersion").value += version + " (" + buildID + ")";
+    document.getElementById("appVersion").value += version + " (build " + buildID + ")";
 
-    var version = Services.appinfo.platformVersion;
-    var buildID = Services.appinfo.platformBuildID;
-    document.getElementById("platformVersion").value += version + " (" + buildID + ")";
+    version = Services.appinfo.platformVersion;
+    buildID = Services.appinfo.platformBuildID;
+    document.getElementById("platformVersion").value += version + " (build " + buildID + ")";
 
-    var productName = Services.appinfo.name;
-    var productVendor = Services.appinfo.vendor;
-    document.getElementById("productName").value = productName + " by " + productVendor;
+    version = Services.prefs.getCharPref('offline.server.version');
+    document.getElementById("serverVersion").value += version;
 }

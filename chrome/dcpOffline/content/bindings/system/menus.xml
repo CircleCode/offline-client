@@ -471,7 +471,7 @@
                 label="&document.toolbar.button.advanced;"
                 tooltiptext="&document.toolbar.button.advanced.tooltip;">
                 <xul:menupopup>
-                    <xul:dcpPropertiesMenuItem />
+                    <!-- <xul:dcpPropertiesMenuItem /> -->
                     <xul:menuseparator />
                     <xul:dcpRevertMenuItem />
                     <xul:dcpRemoveMenuItem />
