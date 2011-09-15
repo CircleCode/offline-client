@@ -33,6 +33,7 @@
 <!ENTITY main.help                              "main.help...">
 <!ENTITY main.log                               "main.log...">
 <!ENTITY main.about                             "main.about...">
+<!ENTITY main.checkForUpdate                    "main.checkForUpdate">
 <!ENTITY main.abstract.search                   "main.abstract.search">
 <!ENTITY main.domain.choose                     "main.domain.choose">
 

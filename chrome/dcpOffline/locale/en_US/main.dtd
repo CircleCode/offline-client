@@ -32,6 +32,7 @@
 <!ENTITY main.helpmenu                  "Help">
 <!ENTITY main.help                      "Help">
 <!ENTITY main.log                       "Log">
+<!ENTITY main.checkForUpdate            "Check for updates">
 <!ENTITY main.about                     "About">
 <!ENTITY main.abstract.search           "Search">
 <!ENTITY main.domain.choose             "Choose your domain">

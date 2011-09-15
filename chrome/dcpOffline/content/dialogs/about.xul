@@ -1,19 +1,116 @@
 <?xml version="1.0"?>
 
 <!DOCTYPE dialog [
-<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
-%mainDTD;
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
+%brandDTD;
+<!ENTITY % aboutDTD SYSTEM "chrome://dcpoffline/locale/about.dtd" >
+%aboutDTD;
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://dcpoffline/content/dialogs/about.css" type="text/css"?>
 
-<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    title="&login.dialogTitle;"
-    buttons="accept,cancel">
-    
-    <stringbundleset id="stringbundleset">
-        <stringbundle id="mainBundle" src="chrome://dcpoffline/locale/main.properties"/>
-    </stringbundleset>
-    
-    
+<dialog
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&about.dialogTitle;"
+    id="aboutDialog"
+    windowtype="Application:About"
+    onload="init(event);"
+    buttons="accept">
+
+    <script
+        type="application/javascript"
+        src="chrome://dcpoffline/content/dialogs/about.js" />
+
+    <vbox id="aboutDialogContainer">
+        <hbox id="descriptionBox">
+            <vbox
+                id="leftBox"
+                flex="1" />
+            <vbox
+                id="rightBox"
+                flex="1">
+                <label id="productName" />
+                <label
+                    id="appVersion"
+                    value="&about.appVersion;"/>
+                <label
+                    id="platformVersion"
+                    value="&about.platformVersion;"/>
+                <vbox id="detailsBox">
+                    <description
+                        class="text-blurb"
+                        id="desc">
+                        &about.description.1;
+                    </description>
+                    <description
+                        class="text-blurb"
+                        id="desc">
+                        &about.description.2;
+                    </description>
+                    <description
+                        class="text-blurb"
+                        id="desc">
+                        &about.description.3;
+                    </description>
+                    <description
+                        class="text-blurb"
+                        id="desc">
+                        &about.description.4;
+                    </description>
+                    <description
+                        class="text-blurb"
+                        id="technos">
+                        &about.technos.begin;
+                        <html:ul>
+                            <html:li>
+                                <label
+                                    class="text-link"
+                                    href="http://www.ckeditor.com/">CKEditor</label>
+                                (
+                                <label
+                                    class="text-link"
+                                    href="http://ckeditor.com/license">&about.technos.license;
+                                </label>
+                                )
+                            </html:li>
+                            <html:li>
+                                <label
+                                    class="text-link"
+                                    href="http://wiki.mozilla.org/XUL:Home_Page">XUL</label>
+                                (
+                                <label
+                                    class="text-link"
+                                    href="http://www.mozilla.com/fr/legal/eula/firefox.txt">&about.technos.license;
+                                </label>
+                                )
+                            </html:li>
+                        </html:ul>
+                    </description>
+                </vbox>
+            </vbox>
+        </hbox>
+        <vbox id="bottomBox">
+            <hbox pack="center">
+                <label
+                    class="text-link bottom-link"
+                    href="">&about.license;
+                </label>
+                <label
+                    class="text-link bottom-link"
+                    href="">&about.rights;
+                </label>
+                <label
+                    class="text-link bottom-link"
+                    href="">&about.policy;
+                </label>
+            </hbox>
+            <description id="trademark">
+                <label class="trademark-label">&trademarkInfo.part1;
+                </label>
+            </description>
+        </vbox>
+    </vbox>
+
 </dialog>
