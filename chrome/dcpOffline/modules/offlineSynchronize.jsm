@@ -617,7 +617,7 @@ offlineSynchronize.prototype.updateWorkTables = function() {
  */
 offlineSynchronize.prototype.getRecordedDocuments = function(config) {
     if (config && config.domain && config.origin && (config.origin == 'user' || config.origin == 'shared')) {
-        var query="select documents.initid, documents.revdate from documents, docsbydomain ";
+        var query="select documents.initid, documents.revdate, documents.locked, documents.lockdomainid from documents, docsbydomain ";
         query += "where documents.initid = docsbydomain.initid and docsbydomain.domainid=:domainid";
         if (config.origin == 'user' ) {
             query += " and docsbydomain.isusered ";
@@ -638,7 +638,6 @@ offlineSynchronize.prototype.getRecordedDocuments = function(config) {
 };
 
 offlineSynchronize.prototype.retrieveReport = function(config) {
-
     if (config && config.domain ) {
         var report = config.domain.sync().getReport();
         var reportFile=this.getReportFile({domainId:config.domain.id});
@@ -1117,7 +1116,6 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {
-                            
                             me.callObserver('onError', me.synchroResults);
                             return false;
                         } else {
