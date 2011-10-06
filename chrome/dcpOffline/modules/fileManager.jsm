@@ -1,6 +1,9 @@
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
+const
+Cc = Components.classes;
+const
+Ci = Components.interfaces;
+const
+Cu = Components.utils;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/storageManager.jsm");
@@ -8,16 +11,24 @@ Cu.import("resource://modules/utils.jsm");
 Cu.import("resource://modules/docManager.jsm");
 
 var EXPORTED_SYMBOLS = ["fileManager"];
-const STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
-const STATE_STOP = Components.interfaces.nsIWebProgressListener.STATE_STOP;
-const PATH_FILES = "Files";
+const
+STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
+const
+STATE_STOP = Components.interfaces.nsIWebProgressListener.STATE_STOP;
+const
+PATH_FILES = "Files";
 
-const PERMISSIONS_WRITABLE = 0660;
-const PERMISSIONS_NOT_WRITABLE = 0440;
+const
+PERMISSIONS_WRITABLE = 0660;
+const
+PERMISSIONS_NOT_WRITABLE = 0440;
 
-const TABLE_FILES = 'files';
-const STATUS_DONE = 1;
-const STATUS_UNDEF = -1;
+const
+TABLE_FILES = 'files';
+const
+STATUS_DONE = 1;
+const
+STATUS_UNDEF = -1;
 
 var filesRoot = Services.dirsvc.get("ProfD", Ci.nsILocalFile);
 filesRoot.append(PATH_FILES);
@@ -26,7 +37,7 @@ var fileDwldProgress = {};
 
 var fileManager = {
     saveFile : function saveFile(config) {
-        
+
         if (config && config.initid && config.attrid && config.basename
                 && config.aFile) {
             try {
@@ -36,19 +47,19 @@ var fileManager = {
                 if (!config.hasOwnProperty('index')) {
                     config.index = -1;
                 }
-                
+
                 var index = config.index;
-                
+
                 var destDir = null;
                 try {
                     destDir = this.getFile(config).parent;
-                } catch(e) {
-                    config.uuid = config.uuid || Components.classes["@mozilla.org/uuid-generator;1"]
-                            .getService(Components.interfaces.nsIUUIDGenerator)
-                            .generateUUID()
-                            .toString()
-                            .slice(1,-1);
-                    
+                } catch (e) {
+                    config.uuid = config.uuid
+                            || Components.classes["@mozilla.org/uuid-generator;1"]
+                                    .getService(
+                                            Components.interfaces.nsIUUIDGenerator)
+                                    .generateUUID().toString().slice(1, -1);
+
                     destDir = filesRoot.clone();
                     destDir.append(config.initid);
                     destDir.append(config.attrid);
@@ -82,16 +93,22 @@ var fileManager = {
                             ? PERMISSIONS_WRITABLE
                             : PERMISSIONS_NOT_WRITABLE;
                     // set ref in database
-                    try{
+                    try {
                         storeFile(config);
-                        if( (config.uuid) && (config.attrid != 'icon') ){
-                            var localDoc = docManager.getLocalDocument({initid: config.initid});
+                        if ((config.uuid) && (config.attrid != 'icon')) {
+                            var localDoc = docManager.getLocalDocument({
+                                initid : config.initid
+                            });
                             if (localDoc) {
-                                localDoc.setValue(config.attrid, config.uuid, index);
-                                localDoc.save({force: true, noModificationDate:true});
+                                localDoc.setValue(config.attrid, config.uuid,
+                                        index);
+                                localDoc.save({
+                                    force : true,
+                                    noModificationDate : true
+                                });
                             }
                         }
-                    } catch(e){
+                    } catch (e) {
                         throw e;
                     }
                 }
@@ -107,7 +124,8 @@ var fileManager = {
     },
 
     deleteFile : function(config) {
-        if (config && config.initid && config.attrid && (config.index || config.localIndex)) {
+        if (config && config.initid && config.attrid
+                && (config.index || config.localIndex)) {
             if (!config.hasOwnProperty('index')) {
                 config.index = -1;
             }
@@ -115,20 +133,21 @@ var fileManager = {
             var destDir = filesRoot.clone();
             destDir.append(config.initid);
             destDir.append(config.attrid);
-            
-            if (! config.localIndex) {
-                config.localIndex = docManager.getLocalDocument({initid: config.initid})
-                .getValue(config.attrid, config.index);
+
+            if (!config.localIndex) {
+                config.localIndex = docManager.getLocalDocument({
+                    initid : config.initid
+                }).getValue(config.attrid, config.index);
             }
             if (config.localIndex) {
-                
+
                 destDir.append(config.localIndex);
                 try {
-                destDir.remove(true);
+                    destDir.remove(true);
                 } catch (e) {
 
                     dropFile(config);
-                   // logConsole("file delete:",destDir );
+                    // logConsole("file delete:",destDir );
                 }
             }
 
@@ -158,7 +177,7 @@ var fileManager = {
             // logConsole('error', config);
         }
     },
-    
+
     /**
      * init recorddate when files were downloaded
      */
@@ -173,21 +192,21 @@ var fileManager = {
         for ( var i = 0; i < r.length; i++) {
             file.initWithPath(r[i].path);
             try {
-            storageManager
-                    .execQuery({
-                        query : 'update '
-                                + TABLE_FILES
-                                + ' set recorddate=:recorddate, modifydate=:recorddate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
-                        params : {
-                            recorddate : utils.toIso8601(new Date(
-                                    file.lastModifiedTime)),
-                            initid : r[i].initid,
-                            index : r[i].index,
-                            attrid : r[i].attrid
-                        }
-                    });
+                storageManager
+                        .execQuery({
+                            query : 'update '
+                                    + TABLE_FILES
+                                    + ' set recorddate=:recorddate, modifydate=:recorddate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
+                            params : {
+                                recorddate : new Date(file.lastModifiedTime)
+                                        .toISOString(),
+                                initid : r[i].initid,
+                                index : r[i].index,
+                                attrid : r[i].attrid
+                            }
+                        });
             } catch (e) {
-                
+
             }
         }
     },
@@ -195,27 +214,33 @@ var fileManager = {
     /**
      * update modifydate from files
      */
-    updateModificationDates : function() {
+    updateModificationDates : function(initid) {
         var r = storageManager.execQuery({
-            query : 'SELECT * from ' + TABLE_FILES
+            query : 'SELECT *' + ' FROM ' + TABLE_FILES
                     + ' WHERE recorddate is not null'
+                    + (initid ? ' AND initid=:initid' : ''),
+            params : {
+                initid : initid
+            }
         });
         var mdate;
         var file = Components.classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
         var localDoc = null;
-        
+
         for ( var i = 0; i < r.length; i++) {
-              file.initWithPath(r[i].path);
+            file.initWithPath(r[i].path);
             try {
-                mdate = utils.toIso8601(new Date(file.lastModifiedTime));
-                
+                mdate = new Date(file.lastModifiedTime).toISOString();
+
                 if (mdate != r[i].modifydate) {
                     storageManager
                             .execQuery({
-                                query : 'update '
-                                        + TABLE_FILES
-                                        + ' set modifydate=:modifydate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
+                                query : 'update ' + TABLE_FILES
+                                        + ' SET modifydate=:modifydate'
+                                        + ' WHERE "initid"=:initid'
+                                        + ' AND "index"=:index'
+                                        + ' AND attrid=:attrid',
                                 params : {
                                     modifydate : mdate,
                                     initid : r[i].initid,
@@ -223,13 +248,14 @@ var fileManager = {
                                     attrid : r[i].attrid
                                 }
                             });
-    
+
                     localDoc = docManager.getLocalDocument({
                         initid : r[i].initid
                     });
                     // logConsole('doclocal', localDoc);
                     try {
-                        localDoc.save(); // to change modification date
+                        localDoc.touch(new Date(file.lastModifiedTime));
+                        // localDoc.save(); // to change modification date
                     } catch (e) {
                         // nothing may be not in good domain
                         // normaly never go here
@@ -237,7 +263,7 @@ var fileManager = {
                     }
                 }
             } catch (e) {
-                //logError(e);
+                // logError(e);
             }
         }
     },
@@ -248,11 +274,12 @@ var fileManager = {
             } else if (config.index === null) {
                 config.index = -1;
             }
-            
-            config.index = docManager.getLocalDocument({initid: config.initid})
-                    .getValue(config.attrid, config.index);
-            
-            if (! config.index) {
+
+            config.index = docManager.getLocalDocument({
+                initid : config.initid
+            }).getValue(config.attrid, config.index);
+
+            if (!config.index) {
                 return null;
                 throw (new Error('file attr [' + config.attrid
                         + '] does not exists'));
@@ -359,7 +386,7 @@ var fileManager = {
                         if (file.writable) {
                             file.aFile.permissions = 0444;
                         }
-                        file.serverFile=true;
+                        file.serverFile = true;
                         me.saveFile(file);
                         for ( var i = 0; i < me.filesToDownLoad.length; i++) {
                             if (me.filesToDownLoad[i]
@@ -369,9 +396,14 @@ var fileManager = {
                                 break;
                             }
                         }
-                        me.updateFileSyncDate({initid:file.initid});
+                        me.updateFileSyncDate({
+                            initid : file.initid
+                        });
                         // TODO Call cleanFileSync
-                        me.cleanFileSync({initid:file.initid, attrid:file.attrid});
+                        me.cleanFileSync({
+                            initid : file.initid,
+                            attrid : file.attrid
+                        });
                         // me.filesToDownLoad.pop();
                         // refreshProgressBar()
                         if (typeof me.acquitFileCallback == "function")
@@ -383,8 +415,10 @@ var fileManager = {
                     }
                 }
             };
-            const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
-            const flags = nsIWBP.PERSIST_FLAGS_AUTODETECT_APPLY_CONVERSION;
+            const
+            nsIWBP = Components.interfaces.nsIWebBrowserPersist;
+            const
+            flags = nsIWBP.PERSIST_FLAGS_AUTODETECT_APPLY_CONVERSION;
             persist.persistFlags = flags;
             persist.saveURI(obj_URI, null, null, null, "", file.aFile);
         }
@@ -392,7 +426,7 @@ var fileManager = {
     updateFileSyncDate : function(config) {
         var now = new Date();
         if (config && config.initid) {
-            var clientDate = utils.toIso8601(now);
+            var clientDate = now.toISOString();
             storageManager
                     .execQuery({
                         query : "update synchrotimes set lastsynclocal=:clientDate where initid=:initid",
@@ -406,33 +440,43 @@ var fileManager = {
         }
     },
     cleanFileSync : function(config) {
-        var localDocument=docManager.getLocalDocument({initid:config.initid});
+        var localDocument = docManager.getLocalDocument({
+            initid : config.initid
+        });
         if (localDocument) {
-            
-            var r=storageManager
-            .execQuery({
+
+            var r = storageManager.execQuery({
                 query : "select * from files where initid=:initid",
-                    params:{
-                        initid:config.initid
-                    }
+                params : {
+                    initid : config.initid
+                }
             });
-            for (var i=0;i<r.length;i++) {
-                var file=r[i];
-                var lvalues=localDocument.getValue(file.attrid);
-                var index=-2;
+            for ( var i = 0; i < r.length; i++) {
+                var file = r[i];
+                var lvalues = localDocument.getValue(file.attrid);
+                var index = -2;
                 if (Array.isArray(lvalues)) {
-                    //logConsole('pusharrayfile :'+file.index, lvalues);
-                    for (var vi=0;vi < lvalues.length; vi++) {
-                        if (lvalues[vi]==file.index) index=vi;
+                    // logConsole('pusharrayfile :'+file.index, lvalues);
+                    for ( var vi = 0; vi < lvalues.length; vi++) {
+                        if (lvalues[vi] == file.index)
+                            index = vi;
                     }
-                }  else {
+                } else {
                     if (lvalues == file.index) {
-                        index=-1;
+                        index = -1;
                     }
                 }
-                if (index==-2) {
-                    logConsole('need delete', {initid:file.initid, attrid:file.attrid, localIndex:file.index});
-                    fileManager.deleteFile({initid:file.initid, attrid:file.attrid, localIndex:file.index});
+                if (index == -2) {
+                    logConsole('need delete', {
+                        initid : file.initid,
+                        attrid : file.attrid,
+                        localIndex : file.index
+                    });
+                    fileManager.deleteFile({
+                        initid : file.initid,
+                        attrid : file.attrid,
+                        localIndex : file.index
+                    });
                 }
             }
         }
@@ -467,35 +511,38 @@ function storeFile(config) {
             });
         } else {
             try {
-            var mdate=utils.toIso8601(new Date(config.aFile.lastModifiedTime));
-            var rdate=mdate;
-            if (config.newFile && (! config.serverFile)) {
-                rdate=utils.toIso8601(new Date(2000));
-            }
-            storageManager
-                    .execQuery({
-                        query : 'insert into '
-                                + TABLE_FILES
-                                + '("initid", "attrid", "serverid", "index", "basename", "path", "writable", "recorddate", "modifydate")'
-                                + ' values (:initid, :attrid, :serverid, :index, :basename, :path, :writable, :recorddate, :modifydate)',
-                        params : {
-                            initid : config.initid,
-                            attrid : config.attrid,
-                            serverid : (config.serverid)?config.serverid:'newFile',
-                            index : config.index,
-                            basename : config.basename,
-                            path : config.aFile.path,
-                            writable : config.writable,
-                            recorddate:rdate,
-                            modifydate:mdate
-                        }
-                    });
+                var mdate = new Date(config.aFile.lastModifiedTime)
+                        .toISOString();
+                var rdate = mdate;
+                if (config.newFile && (!config.serverFile)) {
+                    rdate = new Date(2000).toISOString();
+                }
+                storageManager
+                        .execQuery({
+                            query : 'insert into '
+                                    + TABLE_FILES
+                                    + '("initid", "attrid", "serverid", "index", "basename", "path", "writable", "recorddate", "modifydate")'
+                                    + ' values (:initid, :attrid, :serverid, :index, :basename, :path, :writable, :recorddate, :modifydate)',
+                            params : {
+                                initid : config.initid,
+                                attrid : config.attrid,
+                                serverid : (config.serverid)
+                                        ? config.serverid
+                                        : 'newFile',
+                                index : config.index,
+                                basename : config.basename,
+                                path : config.aFile.path,
+                                writable : config.writable,
+                                recorddate : rdate,
+                                modifydate : mdate
+                            }
+                        });
             } catch (e) {
-                logError('no local file '+config.attrid);
+                logError('no local file ' + config.attrid);
             }
         }
     } else {
-        throw(new ArgException("storeFile : missing arguments"));
+        throw (new ArgException("storeFile : missing arguments"));
     }
 };
 

@@ -225,7 +225,7 @@ localDocument.prototype = {
             this._dirty = true;
             return this;
         },
-
+        
         save : function(config) {
             if (this.inMemoryDoc){
                 throw "This is an inMemoryDoc. You must store it before saving";
@@ -248,7 +248,7 @@ localDocument.prototype = {
                    storageManager.execQuery({
                         query : 'update synchrotimes set lastsavelocal=:mdate where initid=:initid',
                         params : {
-                            mdate : utils.toIso8601(now),
+                            mdate : now.toISOString(),
                             initid : this._initid
                         }
                    });
@@ -304,7 +304,7 @@ localDocument.prototype = {
                         initid:this.getInitid(),
                         lastsynclocal:0, //XXX: why not boolean?
                         lastsyncremote:0, //XXX: why not boolean?
-                        lastsavelocal:utils.toIso8601(new Date())
+                        lastsavelocal:new Date().toISOString()
                     }
                 });
     
@@ -406,8 +406,7 @@ localDocument.prototype = {
                 throw new ArgException("getDisplayValue :: missing arguments");
             }
         },
-     
-    
+        
         /**
          * @param string
          *            mode view|edit
@@ -564,5 +563,47 @@ localDocument.prototype = {
                    this.properties.title=getText('document.no.title');
                 }
             }
+        },
+        touch : function(newDate) {
+            var that = this;
+            if (!newDate || !(Object.prototype.toString.call(newDate) === '[object Date]')) {
+                newDate = new Date();
+            }
+            storageManager.execQuery({
+                query : 'SELECT lastsavelocal'
+                        + ' FROM synchrotimes'
+                        + ' WHERE initid=:initid',
+                params : {
+                    initid : this._initid
+                },
+                callback : function(resultSet) {
+                    var oldDate = resultSet.getNextRow()
+                            .getResultByName('lastsavelocal');
+                    oldDate = new Date(Date.parse(oldDate));
+                    if (newDate > oldDate) {
+                        that.properties.mdate = utils.toIso8601(newDate, true);
+                        that.properties.revdate = parseInt(newDate.getTime() / 1000);
+                        storageManager.execQuery({
+                            query : 'UPDATE synchrotimes'
+                                    + ' SET lastsavelocal=:lastsavelocal'
+                                    + ' WHERE initid=:initid',
+                            params : {
+                                lastsavelocal : newDate.toISOString(),
+                                initid : that._initid
+                            }
+                        });
+                        storageManager.execQuery({
+                            query : 'UPDATE documents'
+                                    + ' SET mdate=:mdate, revdate=:revdate'
+                                    + ' WHERE initid=:initid',
+                            params : {
+                                mdate : utils.toIso8601(newDate, true),
+                                revdate : parseInt(newDate.getTime() / 1000),
+                                initid : that._initid
+                            }
+                        });
+                    }
+                }
+            });
         }
 };

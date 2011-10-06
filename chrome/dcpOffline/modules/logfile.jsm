@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = [ "logFile" ];
+var EXPORTED_SYMBOLS = ["logFile"];
 
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://gre/modules/FileUtils.jsm");
@@ -32,8 +32,7 @@ logFileSingleton.prototype = {
                         Components.interfaces.nsIFile.DIRECTORY_TYPE, 0750);
             }
             var now = new Date();
-            this.logDailyFile.append("trace-" + utils.DateToIso8601(now)
-                    + ".log");
+            this.logDailyFile.append("trace-" + now.toISOString() + ".log");
         }
         return this.logDailyFile;
     },

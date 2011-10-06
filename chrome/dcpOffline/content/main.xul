@@ -130,12 +130,22 @@
                 <richlistbox id="abstractList" datasources="profile:storage.sqlite" ref="*" querytype="storage" flex="1">
                     <template>
                         <query><![CDATA[ 
-                            SELECT documents.title, documents.initid, docsbydomain.editable 
-                            	FROM documents, docsbydomain 
-                            	WHERE documents.initid = docsbydomain.initid 
-                            		AND documents.fromid = :famIdParam
-                            		AND docsbydomain.domainid = :domainIdParam
-                            		AND documents.title LIKE :searchTitleParam order by lower(documents.title)
+                            SELECT documents.title,
+                                documents.initid,
+                                CASE WHEN (docsbydomain.editable) 
+                                    THEN 'editable'
+                                    ELSE 'not-editable'
+                                    END AS editable,
+                                CASE WHEN (synchrotimes.lastsavelocal > synchrotimes.lastsynclocal)
+                                    THEN 'modified'
+                                    ELSE 'not-modified'
+                                    END AS modified 
+                            FROM documents, docsbydomain, synchrotimes 
+                            WHERE documents.initid = docsbydomain.initid 
+                                AND documents.initid = synchrotimes.initid 
+                                AND documents.fromid = :famIdParam
+                                AND docsbydomain.domainid = :domainIdParam
+                                AND documents.title LIKE :searchTitleParam order by lower(documents.title)
                         ]]>
                             <param id="abstractDomainIdParam" name="domainIdParam" type="integer">0</param>
                             <param id="famIdParam" name="famIdParam" type="integer">0</param>
@@ -143,9 +153,8 @@
                         </query>
                         <action>
                             <richlistitem uri="?" value="?initid" onclick='tryToOpenDocument({documentId : this.value});'>
-                                <hbox flex="1">
-                                    <label crop="center" tooltiptext="?title" value="?title" flex="1"></label>
-                                    <image src="chrome://dcpoffline/content/images/isEditable?editable^.png" class="abstractIsEditable?editable , abstractIsEditable"/>
+                                <hbox flex="1" class="?editable ?modified">
+                                    <label crop="center" tooltiptext="?title" value="?title" flex="1" />
                                 </hbox>
                             </richlistitem>
                         </action>

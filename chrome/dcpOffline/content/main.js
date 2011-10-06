@@ -11,6 +11,7 @@ Cu.import("resource://modules/events.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
+Cu.import("resource://modules/fileManager.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
 /* init elements */
@@ -174,6 +175,7 @@ function initListeners() {
     applicationEvent.subscribe("postChangeSelectedDomain", tryToUpdateOpenFamily);
     applicationEvent.subscribe("postChangeSelectedDomain", reloadCreatableFamilies);
     applicationEvent.subscribe("postChangeSelectedDomain", tryToUpdateCurrentDocument);
+    applicationEvent.subscribe("postChangeSelectedDomain", refreshDocumentDate);
 
     applicationEvent.subscribe("postChangeSelectedFamily", updateAbstractList);
     applicationEvent.subscribe("postChangeSelectedFamily", updateCurrentFamilyPreference);
@@ -184,6 +186,7 @@ function initListeners() {
     applicationEvent.subscribe("openDocument", addDocumentToOpenList);
     applicationEvent.subscribe("openDocument", setPrefCurrentOpenDocument);
     applicationEvent.subscribe("postOpenDocument", openDocument);
+    applicationEvent.subscribe("postOpenDocument", refreshDocumentDate);
 
     applicationEvent.subscribe("preSynchronize", tryToCloseAllDocuments);
     applicationEvent.subscribe("postSynchronize", updateFamilyList);
@@ -205,6 +208,7 @@ function initListeners() {
     applicationEvent.subscribe("preCloseDocument", prepareCloseDocument);
     applicationEvent.subscribe("closeDocument", removeDocumentFromOpenList);
     applicationEvent.subscribe("postCloseDocument", closeDocument);
+    applicationEvent.subscribe("postCloseDocument", refreshDocumentDate);
 
     applicationEvent.subscribe("askForCloseApplication", tryToClose);
 
@@ -458,6 +462,15 @@ function tryToUpdateCurrentDocument() {
 function tryToUpdateOpenFamily() {
     logIHM("updateCurrentDocument");
     setPrefCurrentSelectedFamily(true);
+}
+
+function refreshDocumentDate(param){
+    if (param && param.documentId) {
+        var initid = param.documentId;
+    } else {
+        initid = 0;
+    }
+    fileManager.updateModificationDates(initid);
 }
 
 // IHM methods

@@ -574,7 +574,7 @@ offlineSynchronize.prototype.updateDomainSyncDate = function(config) {
 
     if (config && config.domain) {
         var domain = config.domain;
-        var syncDate=utils.toIso8601(this.pullBeginDate);
+        var syncDate=this.pullBeginDate.toISOString();
         storageManager
                 .execQuery({
                     query : "update domains set lastsyncremote=:pulldate where id=:domainid",
@@ -929,7 +929,7 @@ offlineSynchronize.prototype.updateSyncDate = function(config) {
     var now = new Date();
     if (config && config.document) {
         var serverDate = config.document.requestDate.replace(" ", "T");
-        var clientDate = utils.toIso8601(now);
+        var clientDate = now.toISOString();
         storageManager
                 .execQuery({
                     // query : "update synchrotimes set
