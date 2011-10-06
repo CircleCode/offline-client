@@ -638,6 +638,7 @@ offlineSynchronize.prototype.getRecordedDocuments = function(config) {
 };
 
 offlineSynchronize.prototype.retrieveReport = function(config) {
+    logConsole("retrieveReport");
     if (config && config.domain ) {
         var report = config.domain.sync().getReport();
         var reportFile=this.getReportFile({domainId:config.domain.id});
@@ -1116,6 +1117,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {
+                            me.retrieveReport({domain:domain});
                             me.callObserver('onError', me.synchroResults);
                             return false;
                         } else {
