@@ -1,9 +1,8 @@
-Components.utils.import("resource://modules/StringBundle.jsm");
+Components.utils.import("resource://modules/getText.jsm");
 Components.utils.import("resource://modules/logger.jsm");
 
 function initDialog() {
-    var translate = new StringBundle(
-            "chrome://dcpoffline/locale/main.properties");
+   
     var result = window.arguments[0];
 
     logConsole('endSync', result);
@@ -11,11 +10,9 @@ function initDialog() {
         document.getElementById("resultLabel").value = result.description.status;
     } else {
         if (result.result) {
-            document.getElementById("resultLabel").value = translate
-                    .get("synchronize.success");
+            document.getElementById("resultLabel").value = getText("synchronize.success");
         } else {
-            document.getElementById("resultLabel").value = translate
-                    .get("synchronize.fail");
+            document.getElementById("resultLabel").value = getText("synchronize.fail");
         }
     }
     logConsole("Status", result.description);
