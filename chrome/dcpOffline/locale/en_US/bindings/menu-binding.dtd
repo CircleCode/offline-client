@@ -21,3 +21,11 @@
 <!ENTITY  document.toolbar.button.close.tooltip             "Close">
 <!ENTITY  document.toolbar.button.remove                    "Delete">
 <!ENTITY  document.toolbar.button.remove.tooltip            "Delete local document">
+<!ENTITY  document.toolbar.button.removeLocal                    "Delete">
+<!ENTITY  document.toolbar.button.removeLocal.tooltip            "Delete local document">
+<!ENTITY document.toolbar.button.book                    "Book">
+<!ENTITY document.toolbar.button.book.tooltip            "To modify document">
+<!ENTITY document.toolbar.button.unbook                    "unbook">
+<!ENTITY document.toolbar.button.unbook.tooltip            "To set document in read-only mode">
+<!ENTITY document.toolbar.button.unlink                    "unlink">
+<!ENTITY document.toolbar.button.unlink.tooltip            "Unlink document from my space">
