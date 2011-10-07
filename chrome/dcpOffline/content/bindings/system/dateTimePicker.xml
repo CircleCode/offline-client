@@ -92,11 +92,13 @@
             <xul:datepicker
                 anonid="displayValue"
                 class="dcpValue"
-                type="popup" />
+                type="popup"
+                xbl:inherits="disabled" />
             <xul:checkbox
                 anonid="emptyValue-checkbox"
                 label="&dateTimePicker.empty;"
-                tooltiptext="&dateTimePicker.empty.tooltiptext;" />
+                tooltiptext="&dateTimePicker.empty.tooltiptext;"
+                xbl:inherits="disabled" />
         </content>
 
     </binding>
@@ -109,11 +111,13 @@
             <xul:datepicker
                 anonid="displayValue"
                 class="dcpValue"
-                type="popup" />
+                type="popup"
+                xbl:inherits="disabled" />
             <xul:checkbox
                 anonid="emptyValue-checkbox"
                 label="&dateTimePicker.empty;"
-                tooltiptext="&dateTimePicker.empty.tooltiptext;" />
+                tooltiptext="&dateTimePicker.empty.tooltiptext;"
+                xbl:inherits="disabled" />
         </content>
 
     </binding>
@@ -127,15 +131,18 @@
                 <xul:datepicker
                     anonid="displayDateValue"
                     class="dcpValue"
-                    type="popup" />
+                    type="popup"
+                    xbl:inherits="disabled" />
                 <xul:timepicker
                     anonid="displayTimeValue"
-                    class="dcpValue" />
+                    class="dcpValue"
+                    xbl:inherits="disabled" />
             </xul:hbox>
             <xul:checkbox
                 anonid="emptyValue-checkbox"
                 label="&dateTimePicker.empty;"
-                tooltiptext="&dateTimePicker.empty.tooltiptext;" />
+                tooltiptext="&dateTimePicker.empty.tooltiptext;"
+                xbl:inherits="disabled" />
         </content>
 
         <implementation>

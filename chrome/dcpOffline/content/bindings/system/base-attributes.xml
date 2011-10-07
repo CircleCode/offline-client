@@ -65,6 +65,20 @@
                     }
                 ]]></getter>
             </property>
+            
+            <property
+                name="disabled">
+                <getter><![CDATA[
+                    if(this.hasAttribute('disabled')){
+                        return this.getAttribute('disabled');
+                    } else {
+                        return false;
+                    }
+                ]]></getter>
+                <setter><![CDATA[
+                    this.setAttribute('disabled', val);
+                ]]></setter>
+            </property>
 
             <method name="getValue">
                 <body><![CDATA[
