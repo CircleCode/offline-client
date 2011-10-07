@@ -198,6 +198,12 @@
                 ]]></body>
             </method>
             
+            <method name="getCKEditorConfig">
+                <body><![CDATA[
+                    return this.getAttribute('CKEditorConfig');
+                ]]></body>
+            </method>
+            
         </implementation>
         
         <handlers>
@@ -205,7 +211,7 @@
                 if(event.originalTarget == this.getChild('displayValue').contentDocument ){
                     //alert("frame loaded");
                     var contentWindow = this.getChild('displayValue').contentWindow;
-                    this.editor = contentWindow.initEditor();
+                    this.editor = contentWindow.initEditor(this.getCKEditorConfig());
                     this.editor.on('blur', function(){this.setValue(editor.getData())}, this);
                     
                     this.loaded = true;
