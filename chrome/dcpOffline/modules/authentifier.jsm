@@ -6,7 +6,6 @@ Cu.import("resource://modules/logger.jsm");
 Cu.import("resource://modules/network.jsm");
 Cu.import("resource://modules/fdl-data-debug.jsm");
 Cu.import("resource://modules/fdl-context.jsm");
-Cu.import("resource://modules/offlineSynchronize.jsm");
 Cu.import("resource://modules/preferences.jsm");
 Cu.import("resource://modules/passwordManager.jsm");
 Cu.import("resource://modules/StringBundle.jsm");
@@ -82,6 +81,8 @@ var authentificator = function() {
                     
                     if (user) {
                         try {
+                            Cu.import("resource://modules/offlineSynchronize.jsm");
+
                             offlineSync.recordOfflineDomains();
                             logConsole("authentOnline user :"+user.login);
                             if (user.id) {
@@ -172,8 +173,10 @@ var authentificator = function() {
     return ( {
         authent: function(param, onSuccess, onError) {
             var authent = new Authentifier();
-                authent.authentifier(param.modeOffline, param.currentLogin, param.currentPassword, param.currentApplicationURL, onSuccess, onError);
-        }
+            this.currentLogin=param.currentLogin;
+            authent.authentifier(param.modeOffline, param.currentLogin, param.currentPassword, param.currentApplicationURL, onSuccess, onError);
+        },
+        currentLogin:''
     }
     )
 
