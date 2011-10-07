@@ -5,6 +5,7 @@ Components.utils.import("resource://modules/localDocument.jsm");
 Components.utils.import("resource://modules/localDocumentList.jsm");
 Components.utils.import("resource://modules/fdl-data-debug.jsm");
 Components.utils.import("resource://modules/utils.jsm");
+Components.utils.import("resource://modules/network.jsm");
 
 Components.utils.import("resource://modules/events.jsm");
 
@@ -62,6 +63,26 @@ docManagerSingleton.prototype = {
             }
         }
         return this;
+    },
+    getUserDomainMode : function () {
+        var domainId=this._activeDomain;
+
+        if (! this._userMode) {
+            logConsole('getUserDomainMode',domain);
+            if (networkChecker.isOffline()) {
+                this._userMode=Preferences.get("offline.user.userMode."+domainId);
+            } else {
+                Components.utils.import("resource://modules/fdl-context.jsm");
+                var domain = context.getDocument({
+                    id : domainId
+                });
+                this._userMode=domain.getUserMode();
+                Preferences.set("offline.user.userMode."+domainId, this._userMode);
+                logConsole('getUserDomainMode get',this._userMode);
+            }
+        }
+        logConsole('getUserDomainMode cache',this._userMode);
+        return this._userMode;
     },
     /**
      * get document from local database

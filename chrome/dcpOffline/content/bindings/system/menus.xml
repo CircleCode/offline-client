@@ -57,6 +57,19 @@
                 ]]></body>
             </method>
 
+            <method name="translate">
+                <parameter name="text" />
+                <body><![CDATA[
+                      Components.utils.import("resource://modules/StringBundle.jsm");
+                      var stranslate = new StringBundle( "chrome://dcpoffline/locale/bindings/menu-binding.properties");
+                      try {
+                         var msgTitle=stranslate.get(text);
+                         if (msgTitle) return msgTitle;
+                      } catch (ex) {
+                      }
+                      return '(no translation)'+text;
+                ]]></body>
+            </method>
             <constructor><![CDATA[
                 var mode = documentNode.mode;
                 
@@ -175,7 +188,7 @@
                 <parameter name="event" />
                 <body><![CDATA[
                     document.commandDispatcher.advanceFocus();
-                    this.documentNode.reinit();
+                    this.documentNode.reinit(true);
                 ]]></body>
             </method>
 
@@ -395,26 +408,15 @@
     <binding
         id="revert-menuitem"
         extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
-
         <content>
             <xul:menuitem
                 anonid="button"
                 label="&document.toolbar.button.revert;"
                 tooltiptext="&document.toolbar.button.revert.tooltip;"
                 icon="clear"
-                collapsed="true" />
+                collapsed="false" />
         </content>
-
         <implementation>
-
-            <property
-                name="customDisableCondition"
-                readonly="true">
-                <getter><![CDATA[
-                    return this.doc.isOnlyLocal() && true;
-                ]]></getter>
-            </property>
-
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
@@ -423,10 +425,187 @@
                 ]]></body>
             </method>
 
+            <constructor><![CDATA[
+                  if (networkChecker.isOffline()) {
+                     button.disabled = true;
+                     this.disabled=true;
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.nonetwork'));
+                  } else {
+                     if (this.doc.isOnlyLocal()) {
+                         button.disabled = true;
+                         this.disabled=true;
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.onlylocal'));
+                     }
+                  }
+             ]]></constructor>
         </implementation>
+    </binding>
+   <binding
+        id="unlink-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.unlink;"
+                tooltiptext="&document.toolbar.button.unlink.tooltip;"
+                icon="clear"
+                collapsed="false" />
+        </content>
+        <implementation>
+            <property
+                name="customDisableCondition"
+                readonly="true">
+                <getter><![CDATA[
+                  return true;
+                ]]></getter>
+            </property>
 
+            <method name="doAction">
+                <parameter name="event" />
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.unlink();
+                ]]></body>
+            </method>
+
+            <constructor><![CDATA[
+                  if (networkChecker.isOffline()) {
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.nonetwork'));
+                  } else if (this.doc.isOnlyLocal()) {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.onlylocal'));
+                  } else if (this.doc.isModified()) {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.ismodified'));
+                  } else if (! this.doc.isFromUserFolder()) {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.nofromuser'));
+                  } else if (docManager.getUserDomainMode()!='advanced') {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
+                  } else {
+                         button.disabled = false;
+                         this.disabled=false;
+                  }
+
+             ]]></constructor>
+        </implementation>
+    </binding>
+    <binding
+        id="book-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.book;"
+                tooltiptext="&document.toolbar.button.book.tooltip;"
+                icon="clear"
+                collapsed="false" />
+        </content>
+        <implementation>
+            <property
+                name="customDisableCondition"
+                readonly="true">
+                <getter><![CDATA[
+                  return true;
+                ]]></getter>
+            </property>
+
+            <method name="doAction">
+                <parameter name="event" />
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.book();
+                ]]></body>
+            </method>
+
+            <constructor><![CDATA[
+                  if (networkChecker.isOffline()) {
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.nonetwork'));
+                  } else {
+                     if (this.doc.isOnlyLocal()) {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.onlylocal'));
+                     } else if (this.doc.isModified()) {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.ismodified'));
+                     } else if (parseInt(this.doc.getProperty('locked'))==0) {
+                         button.disabled = false;
+                         this.disabled=false;
+                     }  if (docManager.getUserDomainMode()!='advanced') {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
+                     } else {
+                         if (parseInt(this.doc.getProperty('locked'))==parseInt(Preferences.get("offline.user.id"))) {
+                               if (parseInt(this.doc.getProperty('lockdomainid'))==parseInt(this.doc.domainId)) {
+                                    button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.bookbyme'));
+                               } else {
+                                  if (parseInt(this.doc.getProperty('lockdomainid'))==0) {
+                                    // it is locked by me but not book yet
+                                     button.disabled = false;
+                                     this.disabled=false;
+                                  }
+                               }
+                         } else {
+                                button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.lockedbyanother'));
+                         }
+                     }
+                  }
+             ]]></constructor>
+        </implementation>
     </binding>
 
+    <binding
+        id="unbook-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.unbook;"
+                tooltiptext="&document.toolbar.button.unbook.tooltip;"
+                icon="clear"
+                collapsed="false" />
+        </content>
+        <implementation>
+            <property
+                name="customDisableCondition"
+                readonly="true">
+                <getter><![CDATA[
+
+                    return true;
+                ]]></getter>
+            </property>
+
+            <method name="doAction">
+                <parameter name="event" />
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.unbook();
+                ]]></body>
+            </method>
+            <constructor><![CDATA[
+                  if (networkChecker.isOffline()) {
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.nonetwork'));
+                  } else {
+                     if (this.doc.isOnlyLocal()) {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.onlylocal'));
+                     } else if (this.doc.isModified()) {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.ismodified'));
+                     } else if (parseInt(this.doc.getProperty('locked'))==0) {
+                         button.disabled = false;
+                         this.disabled=false;
+                     }  if (docManager.getUserDomainMode()!='advanced') {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
+                     } else {
+                         if (parseInt(this.doc.getProperty('locked'))==parseInt(Preferences.get("offline.user.id"))) {
+                               if (parseInt(this.doc.getProperty('lockdomainid'))==parseInt(this.doc.domainId)) {
+
+                                    button.disabled = false;
+                                    this.disabled=false;
+                               }
+                         } else {
+                              if (parseInt(this.doc.getProperty('lockdomainid'))==0) {
+                                 button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.notbooked'));
+                              }
+                         }
+                     }
+                  }
+             ]]></constructor>
+        </implementation>
+    </binding>
     <binding
         id="remove-menuitem"
         extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
@@ -434,10 +613,10 @@
         <content>
             <xul:menuitem
                 anonid="button"
-                label="&document.toolbar.button.revert;"
-                tooltiptext="&document.toolbar.button.revert.tooltip;"
+                label="&document.toolbar.button.removeLocal;"
+                tooltiptext="&document.toolbar.button.removeLocal.tooltip;"
                 icon="clear"
-                collapsed="true" />
+                collapsed="false" />
         </content>
 
         <implementation>
@@ -446,7 +625,7 @@
                 name="customDisableCondition"
                 readonly="true">
                 <getter><![CDATA[
-                    return !(this.doc.isOnlyLocal() && true);
+                    return true;
                 ]]></getter>
             </property>
 
@@ -456,7 +635,15 @@
                     this.documentNode.remove();
                 ]]></body>
             </method>
+            <constructor><![CDATA[
 
+                     if (this.doc.isOnlyLocal()) {
+                            button.disabled = false;
+                            this.disabled=false;
+                     } else {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.remove.disabled.onlylocal'));
+                    }
+             ]]></constructor>
         </implementation>
 
     </binding>
@@ -475,7 +662,10 @@
                     <!-- <xul:dcpPropertiesMenuItem /> -->
                     <xul:menuseparator />
                     <xul:dcpRevertMenuItem />
+                    <xul:dcpBookMenuItem />
+                    <xul:dcpUnbookMenuItem />
                     <xul:dcpRemoveMenuItem />
+                    <xul:dcpUnlinkMenuItem />
                 </xul:menupopup>
             </xul:toolbarbutton>
         </content>

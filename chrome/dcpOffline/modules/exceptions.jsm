@@ -27,9 +27,11 @@ function SyncException(message) {
 }
 SyncException.prototype = {
     code : 'storage',
+    syncMessage : '',
     toString : function() {
         Components.utils.import("resource://modules/fdl-context.jsm");
         if (context) {
+            this.syncMessage=context.getLastErrorMessage();
             this.message += ':' + context.getLastErrorMessage();
         }
         return this.message;
