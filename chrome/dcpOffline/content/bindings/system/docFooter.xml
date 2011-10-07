@@ -17,19 +17,18 @@
         extends="&systemBindingsDirPath;/doc-item.xml#doc-item">
 
         <content>
-            <xul:statusbar flex="1">
-                <xul:hbox flex="1">
-                    <xul:statusbarpanel anonid="document-initid" />
-                    <xul:spacer flex="1" />
-                    <children />
-                </xul:hbox>
-            </xul:statusbar>
+            <xul:toolbar flex="1" anonid="status-bar">
+                <xul:label anonid="document-initid" />
+                <xul:spacer flex="1" />
+                <children />
+            </xul:toolbar>
         </content>
 
         <implementation>
 
             <constructor><![CDATA[
-                this.getChild('document-initid').label = this.doc.getInitid();
+                this.getChild('status-bar').id = 'status-bar-' + this.doc.getInitid();
+                //this.getChild('document-initid').value = this.doc.getInitid();
             ]]></constructor>
 
         </implementation>

@@ -45,6 +45,18 @@ dcpRevertMenuItem {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/menus.xml#revert-menuitem");
 }
+dcpUnlinkMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#unlink-menuitem");
+}
+dcpBookMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#book-menuitem");
+}
+dcpUnbookMenuItem {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/menus.xml#unbook-menuitem");
+}
 dcpRemoveMenuItem {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/menus.xml#remove-menuitem");
