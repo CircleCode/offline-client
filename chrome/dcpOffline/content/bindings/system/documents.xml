@@ -176,13 +176,24 @@
                     docManager.initDocInstance({initid: this.initid});
                     
                     var param = {
-                        documentId : this.initid,
-                        openAfterClose: this.initid
+                        documentId : this.initid
                     };
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
             </method>
 
+
+            <method name="warning">
+                <parameter name="exceptionMessage" />
+                <body><![CDATA[
+                    if (exceptionMessage.syncMessage) {
+                       alert(exceptionMessage.syncMessage);
+                    } else {
+                       alert(exceptionMessage);
+                    }
+                ]]></body>
+            </method>
+            
             <method name="preClose">
                 <parameter name="config" />
                 <body><![CDATA[
@@ -254,18 +265,131 @@
                             var domain = context.getDocument({
                                 id : domainId
                             });
+                            var docid=this.initid;
+                            var me=this;
                             offlineSync.revertDocument({
                                 domain: domain,
-                                initid: this.initid
+                                initid: this.initid,
+                                onAfterRevert:function() {
+                                   me.reinit();
+                                   applicationEvent.publish("postSynchronize",{});
+                                   tryToOpenDocument({documentId : docid});
+                                }
                             });
-                            this.reinit();
+                            
                         } catch(e) {
                             logError(e, "error when reverting document "+this.initid);
+                            this.warning(e);
                         }
                     }
                 ]]></body>
             </method>
 
+            <method name="unlink">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/network.jsm");
+                    Components.utils.import("resource://modules/fdl-context.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    Components.utils.import("resource://modules/offlineSynchronize.jsm");
+                    
+                    if(networkChecker.isOffline()){
+                        alert("(FIXME) you can only unlink when online");
+                    } else {
+                        try{
+                            var domainId = docManager.getActiveDomain();
+                            var domain = context.getDocument({
+                                id : domainId
+                            });
+                            var me=this;
+                            offlineSync.unlinkDocument({
+                                domain: domain,
+                                initid: this.initid,
+                                onAfterUnlink:function() {
+                                   me.reinit();
+                                   applicationEvent.publish("postSynchronize",{});
+                                }
+                            });
+                                                        
+                        } catch(e) {
+                            logError(e, "error when unlink document "+this.initid);
+                            this.warning(e);
+                        }
+                    }
+                ]]></body>
+            </method>
+            <method name="book">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/network.jsm");
+                    Components.utils.import("resource://modules/fdl-context.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    Components.utils.import("resource://modules/offlineSynchronize.jsm");
+                    
+                    if(networkChecker.isOffline()){
+                        alert("(FIXME) you can only book when online");
+                    } else {
+                        try{
+                            var domainId = docManager.getActiveDomain();
+                            var domain = context.getDocument({
+                                id : domainId
+                            });
+                            
+                            var docid=this.initid;
+                            var me=this;
+                            offlineSync.bookDocument({
+                                domain: domain,
+                                initid: this.initid,
+                                onAfterBook:function() {
+                                   me.reinit();
+                                   applicationEvent.publish("postSynchronize",{});
+                                   tryToOpenDocument({documentId : docid});
+                                }
+                            });
+                            
+                        } catch(e) {
+                            logError(e, "error when booking document "+this.initid);
+                            this.warning(e);
+                        }
+                    }
+                ]]></body>
+            </method>
+            
+            <method name="unbook">
+                <body><![CDATA[
+                    Components.utils.import("resource://modules/network.jsm");
+                    Components.utils.import("resource://modules/fdl-context.jsm");
+                    Components.utils.import("resource://modules/docManager.jsm");
+                    Components.utils.import("resource://modules/offlineSynchronize.jsm");
+                    
+                    if(networkChecker.isOffline()){
+                        alert("(FIXME) you can only book when online");
+                    } else {
+                        try{
+                            var domainId = docManager.getActiveDomain();
+                            var domain = context.getDocument({
+                                id : domainId
+                            });
+                            var docid=this.initid;
+                            var me=this;
+                            offlineSync.unbookDocument({
+                                domain: domain,
+                                initid: this.initid,
+                                
+                                onAfterUnbook:function() {
+                                   me.reinit();
+                                   applicationEvent.publish("postSynchronize",{});
+                                   tryToOpenDocument({documentId : docid});
+                                }
+                            });
+                            
+                        
+                        } catch(e) {
+                            logError(e, "error when unbooking document "+this.initid);
+                            this.warning(e);
+                        }
+                    }
+                ]]></body>
+            </method>
+            
             <method name="checkRequiredAttributes">
                 <body><![CDATA[
                     var requiredAttributes = this.querySelectorAll('dcpAttribute[required=true]');

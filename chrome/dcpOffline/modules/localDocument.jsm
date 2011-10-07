@@ -324,7 +324,24 @@ localDocument.prototype = {
         isDirty : function(){
             return this._dirty;
         },
-        
+
+        /*
+         * Check if the document comes from user folder
+         */
+        isFromUserFolder : function(){
+            var r = storageManager.execQuery({
+                query : 'SELECT isusered '
+                        + ' FROM docsbydomain'
+                        + ' WHERE initid = :initid',
+                params : {
+                    initid: this._initid
+                }
+            });
+            if (r.length > 0) {
+                return (r[0].isusered == true);
+            }
+            return false;
+        },
         /*
          * check if the document has been modified and saved since its last synchro
          */
