@@ -260,6 +260,11 @@ dcpDocument[mode=edit] dcpAttribute[type=htmltext] {
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#htmltext-attr-edit");
 }
 
+dcpDocument[mode=edit] dcpAttribute[type=htmltext][visibility=S] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-view.xml#htmltext-attr-view");
+}
+
 dcpDocument[mode=edit] dcpAttribute[type=int] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#int-attr-edit");

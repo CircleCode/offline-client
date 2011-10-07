@@ -316,7 +316,8 @@
                     xbl:inherits="mode,required,value=label" />
                 <xul:dcpTimePicker
                     anonid="displayValue"
-                    class="dcpValue" />
+                    class="dcpValue"
+                    xbl:inherits="disabled" />
             </xul:hbox>
         </content>
 
@@ -342,7 +343,8 @@
                 <xul:dcpDatePicker
                     anonid="displayValue"
                     class="dcpValue"
-                    type="popup" />
+                    type="popup"
+                    xbl:inherits="disabled" />
             </xul:hbox>
         </content>
 
@@ -366,7 +368,8 @@
                     xbl:inherits="mode,required,value=label" />
                 <xul:dcpDateTimePicker
                     anonid="displayValue"
-                    class="dcpValue" />
+                    class="dcpValue"
+                    xbl:inherits="disabled" />
             </xul:hbox>
         </content>
 
@@ -398,11 +401,13 @@
                         anonid="modifyButton"
                         label="&attribute.file.button.modify;"
                         class="simple-button"
-                        crop="center" />
+                        crop="center"
+                        xbl:inherits="disabled" />
                     <xul:button
                         anonid="deleteButton"
                         class="delete simple-button"
-                        tooltiptext="&attribute.file.button.delete;" />
+                        tooltiptext="&attribute.file.button.delete;"
+                        xbl:inherits="disabled" />
                 </xul:box>
             </xul:hbox>
         </content>
@@ -578,13 +583,19 @@
                 button="0"><![CDATA[
                 switch(event.originalTarget) {
                     case this.modifyButton :
-                        this.chooseFile();
+                        if(! this.disabled){
+                            this.chooseFile();
+                        }
                         break;
                     case this.deleteButton :
-                        this.deleteFile();
+                        if(! this.disabled){
+                            this.deleteFile();
+                        }
                         break;
                     case this.inputField :
-                        this.openFile();
+                        if(! this.disabled){
+                            this.openFile();
+                        }
                         break;
                 }
             ]]></handler>
@@ -612,11 +623,13 @@
                         anonid="modifyButton"
                         label="&attribute.image.button.modify;"
                         class="simple-button"
-                        crop="center" />
+                        crop="center"
+                        xbl:inherits="disabled" />
                     <xul:button
                         anonid="deleteButton"
                         class="delete simple-button"
-                        tooltiptext="&attribute.image.button.delete;" />
+                        tooltiptext="&attribute.image.button.delete;"
+                        xbl:inherits="disabled" />
                 </xul:box>
             </xul:hbox>
         </content>
@@ -678,7 +691,8 @@
             </xul:hbox>
             <xul:colorpicker
                 anonid="displayValue"
-                type="button" />
+                type="button"
+                xbl:inherits="disabled" />
         </content>
 
         <implementation>
@@ -730,7 +744,8 @@
                     xbl:inherits="mode,required,value=label" />
                 <xul:menulist
                     anonid="displayValue"
-                    class="dcpValue">
+                    class="dcpValue"
+                    xbl:inherits="disabled">
                     <xul:menupopup
                         datasources="profile:storage.sqlite"
                         ref="*"
@@ -837,11 +852,13 @@
                 <xul:vbox flex="1">
                     <xul:richlistbox
                         anonid="multiBox"
-                        seltype="multiple" />
+                        seltype="multiple"
+                        xbl:inherits="disabled" />
                     <xul:hbox>
                         <xul:menulist
                             anonid="displayValue"
-                            class="dcpValue">
+                            class="dcpValue"
+                            xbl:inherits="disabled">
                             <xul:menupopup
                                 datasources="profile:storage.sqlite"
                                 ref="*"
@@ -876,7 +893,8 @@
                         <xul:button
                             anonid="deleteSelectionButton"
                             class="delete simple-button"
-                            tooltiptext="&attribute.enum.multiple.button.clear.selection;" />
+                            tooltiptext="&attribute.enum.multiple.button.clear.selection;"
+                            xbl:inherits="disabled" />
                     </xul:hbox>
                 </xul:vbox>
             </xul:hbox>
@@ -971,7 +989,9 @@
                 event="click"
                 button="0"><![CDATA[
                 if(event.originalTarget == this.deleteSelectionButton){
-                    this.deleteSelection();
+                    if(! this.disabled){
+                        this.deleteSelection();
+                    }
                 }
             ]]></handler>
         </handlers>
