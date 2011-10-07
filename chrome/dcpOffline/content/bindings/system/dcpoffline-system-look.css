@@ -1,7 +1,6 @@
 dcpDocument {
     display: -moz-box;
     -moz-box-orient: vertical;
-    overflow-y: auto;
     width: 100%;
     background-color: white;
 }
@@ -26,6 +25,13 @@ dcpTransitionMenuItem {
     display: -moz-box;
 }
 
+dcpDocContainer {
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    -moz-box-flex: 1;
+    overflow-y: auto;
+}
+
 dcpDocHeader {
     display: -moz-box;
     -moz-box-orient: horizontal;
@@ -48,6 +54,18 @@ dcpDocHeader {
 .document-state {
     font-size: 1.5em
     font-weight: normal;
+}
+
+dcpDocBody {
+    display: -moz-box;
+    -moz-box-orient: vertical;
+    width: 100%;
+    -moz-box-flex: 1;
+}
+
+dcpDocFooter {
+    display: -moz-box;
+    width: 100%;
 }
 
 dcpAttribute {
@@ -133,11 +151,6 @@ dcpAttribute[type=htmltext] a{
 
 .dcpValue { 
     -moz-box-flex: 1;
-}
-
-dcpDocFooter {
-    display: -moz-box;
-    width: 100%;
 }
 
 .dcpIcon {
