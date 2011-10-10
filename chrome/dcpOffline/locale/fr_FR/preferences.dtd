@@ -1,7 +1,8 @@
 <!ENTITY preference.dialogTitle               "Préférences">
 
 <!ENTITY preference.userPref                  "Préférences de l'utilisateur">
-<!ENTITY offline.user.applicationURL          "URL de connection">
+<!ENTITY dcpoffline.url.data                  "URL de connection (données)">
+<!ENTITY dcpoffline.url.browser               "URL de connection (navigateur)">
 <!ENTITY offline.user.locale                  "Langue de l'utilisateur">
 
 <!ENTITY preference.applicationPref           "Préférences de l'application">

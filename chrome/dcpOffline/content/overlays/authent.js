@@ -44,7 +44,7 @@ function tryToAuthent() {
 }
 
 function onAuthentSuccess() {
-    Preferences.set("offline.user.applicationURL", document.getElementById('authent.applicationURL').value);
+    Preferences.set("dcpoffline.url.data", document.getElementById('authent.applicationURL').value);
     Preferences.set("offline.application.rememberLogin", document.getElementById('authent.remember').checked);
     Preferences.set("offline.application.modeOffline", document.getElementById('authent.modeOffline').checked);
     Preferences.set("offline.application.autoLogin", document.getElementById('authent.autoLogin').checked);
@@ -92,7 +92,7 @@ function initIHM() {
     }
     document.getElementById('authent.remember').checked = Preferences.get("offline.application.rememberLogin", false);
     document.getElementById('authent.modeOffline').checked = Preferences.get("offline.application.modeOffline", false);
-    document.getElementById('authent.applicationURL').value = Preferences.get("offline.user.applicationURL", "");
+    document.getElementById('authent.applicationURL').value = Preferences.get("dcpoffline.url.data", "");
     document.getElementById('authent.autoLogin').checked = autologin;
     
     if (autologin){

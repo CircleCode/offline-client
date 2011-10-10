@@ -18,6 +18,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 window.onload = function() {
     window.setTimeout(function(){
         try{
+            handleCommandLine();
             initNetworkCheck();
             initListeners();
             upgradeProfile();
@@ -28,6 +29,24 @@ window.onload = function() {
         };
     }, 100);
 }
+
+function handleCommandLine(){
+    var cmdLine = window.arguments[0];
+    cmdLine = cmdLine.QueryInterface(Components.interfaces.nsICommandLine);
+    try{
+        var urlDataOverload = cmdLine.handleFlagWithParam("url.data", false);
+        if(urlDataOverload === null){
+            //url.data not found on commandline
+            Preferences.reset('dcpoffline.url.data');
+        } else {
+            Preferences.set('dcpoffline.url.data', urlDataOverload);
+        }
+    } catch(e) {
+        //url.data had no parameter
+        Preferences.reset('dcpoffline.url.data');
+    }
+}
+
 /**
  * Check if the profile need upgrade
  * 
