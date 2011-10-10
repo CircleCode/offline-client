@@ -383,7 +383,8 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    alert('(FIXME) open properties');
+                    var params = {localDocument: this.localDocument};
+                    window.openDialog("chrome://dcpoffline/content/dialogs/documentProperties.xul", "","chrome, dialog", params).focus();
                 ]]></body>
             </method>
 
@@ -502,6 +503,8 @@
                     <xul:spacer flex="1" />
 
                     <xul:dcpChangeStateMenu mode="view" />
+
+                    <xul:dcpPropertiesMenuItem />
 
                     <xul:dcpAdvancedMenu />
 
