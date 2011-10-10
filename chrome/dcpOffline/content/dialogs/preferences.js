@@ -1,10 +1,5 @@
-const Cc = Components.classes;
-const Ci = Components.interfaces;
-const Cu = Components.utils;
-
-
-Cu.import("resource://modules/preferences.jsm");
-Cu.import("resource://modules/events.jsm");
+Components.utils.import("resource://modules/preferences.jsm");
+Components.utils.import("resource://modules/events.jsm");
 
 function deleteUserPref() {
     Preferences.resetBranch("offline.user.");

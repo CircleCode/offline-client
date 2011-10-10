@@ -22,11 +22,11 @@ pref("dcpoffline.storage.fileName", "storage.sqlite");
 pref("dcpoffline.storage.location", "ProfD");
 pref("dcpoffline.domain", "default");
 pref("dcpoffline.context.url", "");
-pref("dcpoffline.online.url", "");
 
 pref("offline.user.login", "");
 pref("offline.user.password", "");
-pref("offline.user.applicationURL", "");
+pref("dcpoffline.url.data", "");
+pref("dcpoffline.url.browser", "");
 
 pref("offline.application.modeOffline", false);
 

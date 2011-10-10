@@ -1,7 +1,8 @@
 <!ENTITY preference.dialogTitle               "preference.dialogTitle">
 
 <!ENTITY preference.userPref                  "preference.userPref">
-<!ENTITY offline.user.applicationURL          "offline.user.applicationURL">
+<!ENTITY dcpoffline.url.data                  "dcpoffline.url.data">
+<!ENTITY dcpoffline.url.browser               "dcpoffline.url.browser">
 <!ENTITY offline.user.locale                  "offline.user.locale">
 
 <!ENTITY preference.applicationPref           "preference.applicationPref">

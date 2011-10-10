@@ -22,8 +22,13 @@
                 type="string"
                 disabled="true" />
             <preference
-                id="offline.user.applicationURL"
-                name="offline.user.applicationURL"
+                id="dcpoffline.url.data"
+                name="dcpoffline.url.data"
+                type="string"
+                disabled="true" />
+            <preference
+                id="dcpoffline.url.browser"
+                name="dcpoffline.url.browser"
                 type="string"
                 disabled="true" />
             <preference
@@ -59,10 +64,17 @@
                         label="offline.user.login" />
                 </row> -->
                 <row>
-                    <label value="&offline.user.applicationURL;" />
+                    <label value="&dcpoffline.url.data;" />
                     <textbox
-                        id="applicationURL"
-                        preference="offline.user.applicationURL"
+                        id="dataURL"
+                        preference="dcpoffline.url.data"
+                        disabled="true" />
+                </row>
+                <row>
+                    <label value="&dcpoffline.url.browser;" />
+                    <textbox
+                        id="browserURL"
+                        preference="dcpoffline.url.browser"
                         disabled="true" />
                 </row>
                 <!-- <row>
