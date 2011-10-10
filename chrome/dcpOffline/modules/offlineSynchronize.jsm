@@ -961,7 +961,7 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                 var mappingParams = mappingStmt.newBindingParamsArray();
                 var oneTitle = false;
                 for ( var i = 0; i < values.length; i++) {
-                    if (titles[i] && values[i]) {
+                    if ((titles[i] && values[i]) && (titles[i]!=values[i])) {
                         var bp = mappingParams.newBindingParams();
                         bp.bindByName("famname", famid);
                         bp.bindByName("title", titles[i]);
