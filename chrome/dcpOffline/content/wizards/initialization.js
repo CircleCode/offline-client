@@ -45,7 +45,7 @@ function wizardInitAuthent() {
 
 function authentNextStep() {
     var translate = new StringBundle("chrome://dcpoffline/locale/wizard.properties");
-    document.getElementById('authent.applicationURL').disabled = false;
+    document.getElementById('authent.applicationURL').disabled = true;
     document.getElementById('wizardTryToAuthent').disabled = false;
     document.getElementById('authent.login').disabled = false;
     document.getElementById('authent.password').disabled = false;
@@ -71,7 +71,7 @@ function prepareAuthent() {
 	Preferences.set("offline.application.modeOffline", false);
 	Preferences.set("offline.application.autoLogin", false);
 	document.getElementById('authent.modeOffline').disabled = true;
-    document.getElementById('authent.applicationURL').disabled = false;
+    document.getElementById('authent.applicationURL').disabled = true;
     document.getElementById('wizardTryToAuthent').disabled = false;
     document.getElementById('theWizard').canAdvance = false;
 }
