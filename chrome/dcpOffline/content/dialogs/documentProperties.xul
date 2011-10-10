@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % documentPropertiesDTD SYSTEM "chrome://dcpoffline/locale/documentProperties.dtd" >
+%documentPropertiesDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<dialog
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&documentProperties.title;"
+    buttons="accept"
+    onload="doLoad()">
+
+    <script
+        type="application/javascript"
+        src="chrome://dcpoffline/content/dialogs/documentProperties.js" />
+
+    <stringbundleset id="stringbundleset">
+        <stringbundle
+            id="mainBundle"
+            src="chrome://dcpoffline/locale/documentProperties.properties" />
+    </stringbundleset>
+
+    <vbox>
+        <hbox
+            class="document-header"
+            flex="1">
+            <hbox flex="1">
+                <image id="document-icon" />
+                <hbox class="header-text">
+                    <label
+                        id="document-title"
+                        class="document-title" />
+                    <label
+                        id="document-state"
+                        class="document-state" />
+                </hbox>
+            </hbox>
+        </hbox>
+
+        <groupbox>
+            <grid>
+                <columns>
+                    <column />
+                    <column />
+                </columns>
+                <rows>
+                    <row>
+                        <label value="&documentProperties.lastSynchroDate; :" />
+                        <label id="lastSynchroDate" />
+                    </row>
+                    <row>
+                        <label value="&documentProperties.lastModifDate; :" />
+                        <label id="lastModifDate" />
+                    </row>
+                    <row>
+                        <label value="&documentProperties.editable; :" />
+                        <label id="editable" />
+                    </row>
+                    <row>
+                        <label value="&documentProperties.locallyModified; :" />
+                        <label id="locallyModified" />
+                    </row>
+                    <row>
+                        <label value="&documentProperties.serverLink; :" />
+                        <label
+                            id="serverLink"
+                            class="text-link" />
+                    </row>
+                </rows>
+            </grid>
+        </groupbox>
+
+    </vbox>
+
+</dialog>
