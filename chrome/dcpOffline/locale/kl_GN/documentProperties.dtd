@@ -1,0 +1,6 @@
+<!ENTITY documentProperties.title                   "documentProperties.title">
+<!ENTITY documentProperties.lastSynchroDate         "documentProperties.lastSynchroDatef">
+<!ENTITY documentProperties.lastModifDate           "documentProperties.lastModifDate">
+<!ENTITY documentProperties.editable                "documentProperties.editable">
+<!ENTITY documentProperties.locallyModified         "documentProperties.locallyModified">
+<!ENTITY documentProperties.serverLink              "documentProperties.serverLink">
