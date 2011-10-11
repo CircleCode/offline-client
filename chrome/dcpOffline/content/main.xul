@@ -16,6 +16,8 @@
 
 <?xml-stylesheet href="chrome://dcpoffline/content/css/main.css" type="text/css"?>
 
+<?xul-overlay href="chrome://dcpoffline/content/overlays/commands.xul"?>
+
 <window id="main" title="Dynacase offline" windowtype="dcpoffline-main"
     width="800px" height="600px"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -25,16 +27,9 @@
     <script type="application/javascript" src="chrome://dcpoffline/content/main.js" />
     
     <commandset id="main-commands">
-        <command id="main:openSynchro"
-            oncommand="openSynchro();"/>
-        <command id="main:openPreferences"
-            oncommand="openPreferences();"/>
-        <command id="main:openCloseDialog"
-            oncommand="openCloseDialog();"/>
-        <command id="main:checkForUpdate"
-            oncommand="checkForUpdate();"/>
-        <command id="log:openSynchroReport"
-            oncommand="openSynchroReport();"/>
+        <command
+            id="openCloseDialog"
+            oncommand="openCloseDialog();" />
     </commandset>
     
     <toolbox id="main-toolbox">
@@ -43,9 +38,9 @@
                 <menu id="main-menu" label="&main.actionmenu;">
                     <menupopup >
                         <menuitem id="synchro-button" label="&main.synchro;"
-                            command="main:openSynchro"/>
+                            command="openSynchro"/>
                         <menuitem id="preferences-button" label="&main.preference;"
-                            command="main:openPreferences"/>
+                            command="openPreferences"/>
                         <menuseparator/>
                         <menu id="creation-menu" label="&main.newDocument;">
                             <menupopup datasources="profile:storage.sqlite" ref="*" querytype="storage">
@@ -68,7 +63,7 @@
                         </menu>
                         <menuseparator/>
                         <menuitem label="&main.close;"
-                            command="main:openCloseDialog"/>
+                            command="openCloseDialog"/>
                     </menupopup>
                 </menu>
                 
@@ -83,12 +78,12 @@
                         <!-- <menuitem label="&main.log;"
                             oncommand="openLog();"/> -->
                         <menuitem label="&main.openSynchroReport;"
-                            command="log:openSynchroReport"/>
+                            command="openSynchroReport"/>
                         <menuseparator/>
                         <menuitem label="&main.checkForUpdate;"
-                            command="main:checkForUpdate"/>
+                            command="checkForUpdate"/>
                         <menuitem label="&main.about;"
-                            oncommand="openAbout();"/>
+                            command="openAbout"/>
                     </menupopup >
                 </menu>
                 

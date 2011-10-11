@@ -6,20 +6,62 @@
 ]>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept" title="&synchro.status;" onload="initDialog();">
-    
-    <script type="application/javascript" src="chrome://dcpoffline/content/dialogs/endOfSynchronize.js" />
+
+<?xul-overlay href="chrome://dcpoffline/content/overlays/commands.xul"?>
+
+<dialog
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept"
+    title="&synchro.status;"
+    onload="initDialog();">
+
+    <script
+        type="application/javascript"
+        src="chrome://dcpoffline/content/dialogs/endOfSynchronize.js" />
+
+    <commandset id="main-commands"/>
+
     <groupbox>
         <caption>
-            <label>&synchro.result;
-            </label>
+            <label value="&synchro.result;" />
         </caption>
         <vbox>
-            <label id="resultLabel" value="toto"/>
-            <label id="report" value="&synchronize.report;" onclick="openServerStatusPage()" class="text-link" hidden="true" />
-            <textbox id="message" multiline="true" rows="10"
-                value="" flex="1" disabled="true" hidden="true" />
+            <grid>
+                <columns>
+                    <column />
+                    <column />
+                </columns>
+                <rows>
+                    <row>
+                        <label value="&synchro.status;" />
+                        <label id="resultLabel" />
+                    </row>
+                    <row>
+                        <label value="&synchronize.report;" />
+                        <label
+                            id="report"
+                            value="&synchronize.report;"
+                            class="text-link"
+                            onclick="doCommand();"
+                            command="openSynchroReport" />
+                    </row>
+                    <row>
+                        <label value="&synchro.accessOnlineSpace;" />
+                        <label
+                            value="&synchro.accessOnlineSpace;"
+                            id="onlineSpaceLink"
+                            class="text-link" />
+                    </row>
+                </rows>
+            </grid>
+            <textbox
+                id="message"
+                multiline="true"
+                rows="10"
+                value=""
+                flex="1"
+                disabled="true"
+                hidden="true" />
         </vbox>
     </groupbox>
 </dialog>

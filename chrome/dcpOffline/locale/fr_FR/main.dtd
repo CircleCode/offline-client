@@ -62,6 +62,7 @@
 <!ENTITY synchro.status                  "statut">
 <!ENTITY synchronize.report              "rapport">
 <!ENTITY synchro.result                  "résultat">
+<!ENTITY synchro.accessOnlineSpace       "Accéder à mon espace en ligne">
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle                 "Préférences">
