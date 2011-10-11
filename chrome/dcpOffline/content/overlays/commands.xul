@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE overlay [
+<!ENTITY % mainDTD SYSTEM "chrome://dcpoffline/locale/main.dtd" >
+%mainDTD;
+]>
+
+<overlay
+    id="commands"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script
+        type="application/javascript"
+        src="chrome://dcpoffline/content/overlays/commands.js" />
+
+    <commandset id="main-commands">
+        <command
+            id="openSynchro"
+            oncommand="openSynchro();" />
+        <command
+            id="openPreferences"
+            oncommand="openPreferences();" />
+        <command
+            id="checkForUpdate"
+            oncommand="checkForUpdate();" />
+        <command
+            id="openSynchroReport"
+            oncommand="openSynchroReport();" />
+        <command
+            id="openAbout"
+            oncommand="openAbout();" />
+    </commandset>
+</overlay>
