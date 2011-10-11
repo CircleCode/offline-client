@@ -188,7 +188,7 @@
                 <parameter name="event" />
                 <body><![CDATA[
                     document.commandDispatcher.advanceFocus();
-                    this.documentNode.reinit();
+                    this.documentNode.reinit(true);
                 ]]></body>
             </method>
 
