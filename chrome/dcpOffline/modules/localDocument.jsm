@@ -4,6 +4,7 @@ Components.utils.import("resource://modules/utils.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
 Components.utils.import("resource://modules/exceptions.jsm");
 Components.utils.import("resource://modules/events.jsm");
+Components.utils.import("resource://modules/getText.jsm");
 
 var EXPORTED_SYMBOLS = [ "localDocument" ];
 
@@ -134,7 +135,8 @@ localDocument.prototype = {
         },
         getProperty : function(id) {
             if (id) {
-                return this.properties[id];
+                if (this.properties) return this.properties[id];
+                return null;
             } else {
                 // FIXME
                 throw new ArgException("getValue :: missing arguments");
@@ -309,6 +311,7 @@ localDocument.prototype = {
                 //says the doc has been saved in DB
                 this.inMemoryDoc = false;
                 this.save(config);
+                logConsole("try create", config);
                 applicationEvent.publish('postStoreDocument', {documentId: this.getInitid()});
             } catch(e) {
                 throw(e);
@@ -321,7 +324,24 @@ localDocument.prototype = {
         isDirty : function(){
             return this._dirty;
         },
-        
+
+        /*
+         * Check if the document comes from user folder
+         */
+        isFromUserFolder : function(){
+            var r = storageManager.execQuery({
+                query : 'SELECT isusered '
+                        + ' FROM docsbydomain'
+                        + ' WHERE initid = :initid',
+                params : {
+                    initid: this._initid
+                }
+            });
+            if (r.length > 0) {
+                return (r[0].isusered == true);
+            }
+            return false;
+        },
         /*
          * check if the document has been modified and saved since its last synchro
          */
@@ -498,6 +518,27 @@ localDocument.prototype = {
                 throw this.getTitle()+":not a new local document";
             }
         },
+        /**
+         * get title of document family
+         * @return string
+         */
+        getFamilyTitle: function() {
+            var fromid=this.getProperty('fromid');
+            logConsole('getFamilyTitle:'+fromid);
+            if (fromid) {
+                var r=storageManager.execQuery({
+                    query : 'select title from families where famid=:fromid',
+                    params : {
+                        fromid : fromid
+                    }
+                });
+                if (r.length > 0) {
+                    logConsole('fam title:'+r[0].title);
+                   return r[0].title;
+                }
+            } 
+            return '';
+        },
         recomputeTitle: function() {
             var r=storageManager.execQuery({
                 query : 'select attrid from attrmappings where famid=:fromid and istitle = 1',
@@ -514,9 +555,20 @@ localDocument.prototype = {
                 if (title != '') {
                    this.properties.title=title;
                 }
-                logConsole('new title'+title);
             }
-            
-            logConsole('recomputer',r);
+            if (! this.properties.title) {
+              
+                var simpleIdentity=this.properties.initid;
+                if (simpleIdentity.substr(0,4)=='DLID') {
+                    simpleIdentity=simpleIdentity.substr(5,4);
+                }
+                var famTitle=this.getFamilyTitle();
+                if (famTitle) {
+                    this.properties.title=famTitle+' '+getText('document.without.title');
+                } else {
+                   this.properties.title=getText('document.no.title');
+                }
+                this.properties.title+=' '+simpleIdentity;
+            }
         }
 };

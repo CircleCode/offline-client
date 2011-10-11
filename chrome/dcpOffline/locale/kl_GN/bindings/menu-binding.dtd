@@ -21,3 +21,11 @@
 <!ENTITY document.toolbar.button.close.tooltip             "Fermer">
 <!ENTITY document.toolbar.button.remove                    "Remove">
 <!ENTITY document.toolbar.button.remove.tooltip            "Remove">
+<!ENTITY document.toolbar.button.removeLocal                    "Remove">
+<!ENTITY document.toolbar.button.removeLocal.tooltip            "Remove">
+<!ENTITY document.toolbar.button.book                    "Book">
+<!ENTITY document.toolbar.button.book.tooltip            "Book">
+<!ENTITY document.toolbar.button.unbook                    "unBook">
+<!ENTITY document.toolbar.button.unbook.tooltip            "unBook">
+<!ENTITY document.toolbar.button.unlink                    "unLink">
+<!ENTITY document.toolbar.button.unlink.tooltip            "unLink">

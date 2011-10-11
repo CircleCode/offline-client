@@ -1,5 +1,6 @@
 Components.utils.import("resource://modules/logger.jsm");
 Components.utils.import("resource://gre/modules/Services.jsm");
+Components.utils.import("resource://modules/authentifier.jsm");
 
 Components.utils.import("resource://modules/preferences.jsm");
 Components.utils.import("resource://modules/docManager.jsm");
@@ -10,8 +11,8 @@ Components.utils.import("resource://modules/fdl-data-debug.jsm");
 Components.utils.import("resource://modules/offline-debug.jsm");
 Components.utils.import("resource://modules/utils.jsm");
 Components.utils.import("resource://modules/exceptions.jsm");
-
 Components.utils.import("resource://modules/localDocument.jsm");
+
 // Components.utils.import("chrome://dcpoffline/content/fdl-data-debug.js");
 
 var EXPORTED_SYMBOLS = [ "offlineSync" ];
@@ -32,6 +33,13 @@ offlineSynchronize.prototype = {
         return 'offlineSynchronize';
     }
 };
+
+offlineSynchronize.prototype.getLogin = function() {
+    if (! this._login) {
+        this._login=authentificator.currentLogin;// to optimize access
+    }
+    return this._login;
+}
 
 offlineSynchronize.prototype.getCore = function() {
     if (!this.offlineCore) {
@@ -617,7 +625,7 @@ offlineSynchronize.prototype.updateWorkTables = function() {
  */
 offlineSynchronize.prototype.getRecordedDocuments = function(config) {
     if (config && config.domain && config.origin && (config.origin == 'user' || config.origin == 'shared')) {
-        var query="select documents.initid, documents.revdate from documents, docsbydomain ";
+        var query="select documents.initid, documents.revdate, documents.locked, documents.lockdomainid from documents, docsbydomain ";
         query += "where documents.initid = docsbydomain.initid and docsbydomain.domainid=:domainid";
         if (config.origin == 'user' ) {
             query += " and docsbydomain.isusered ";
@@ -638,7 +646,7 @@ offlineSynchronize.prototype.getRecordedDocuments = function(config) {
 };
 
 offlineSynchronize.prototype.retrieveReport = function(config) {
-
+    logConsole("retrieveReport");
     if (config && config.domain ) {
         var report = config.domain.sync().getReport();
         var reportFile=this.getReportFile({domainId:config.domain.id});
@@ -709,7 +717,7 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                             if (domainFolders.indexOf('offshared_'+domainRef) >=0) {
                                 isShared=true;
                             }
-                            if (domainFolders.indexOf('offuser_'+domainRef+'_'+me._login) >=0) {
+                            if (domainFolders.indexOf('offuser_'+domainRef+'_'+me.getLogin()) >=0) {
                                 isUsered=true;
                             }
                             storageManager
@@ -746,6 +754,9 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                                                 me.updateTitles({
                                                     document : document
                                                 });
+                                                if (config.onAfterRecord) {
+                                                    config.onAfterRecord(me);
+                                                }
                                             }
                                         }
                                     });
@@ -783,8 +794,9 @@ offlineSynchronize.prototype.recordDocument = function(config) {
  */
 offlineSynchronize.prototype.pullDocuments = function(config) {
     if (config && config.domain) {
-        this._login=Preferences.get("offline.user.login"); // to optimize access
+        
         var domain = config.domain;
+        var j=0;
         // TODO pull all documents and modifies files
         logConsole('pull : ');
         this.pullBeginDate=new Date();
@@ -806,7 +818,6 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
             this.callObserver('onDetailLabel',
                     ('recording shared documents : ' + shared.length));
             var onedoc = null;
-            var j = 0;
             for (j = 0; j < shared.length; j++) {
                 onedoc = shared.getDocument(j);
                 this.recordDocument({
@@ -884,6 +895,9 @@ offlineSynchronize.prototype.deleteDocuments = function(config) {
                             query :"delete from docsbydomain where not docsbydomain.isshared and not docsbydomain.isusered"});
                         storageManager.execQuery({
                             query :"delete from documents where initid not in (select initid from docsbydomain)"});
+                        if (config.onAfterUnlink) {
+                            config.onAfterUnlink(config.deleteList);
+                        }
                     }
             };
 
@@ -953,7 +967,7 @@ offlineSynchronize.prototype.updateTitles = function(config) {
                 var mappingParams = mappingStmt.newBindingParamsArray();
                 var oneTitle = false;
                 for ( var i = 0; i < values.length; i++) {
-                    if (titles[i] && values[i]) {
+                    if ((titles[i] && values[i]) && (titles[i]!=values[i])) {
                         var bp = mappingParams.newBindingParams();
                         bp.bindByName("famname", famid);
                         bp.bindByName("title", titles[i]);
@@ -1024,6 +1038,21 @@ offlineSynchronize.prototype.updateEnumItems = function(config) {
         throw new ArgException("updateTitles need document parameter");
     }
 };
+
+/**
+ * revert a document from server. The local document is replaced by server document
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>domain : </b>{Fdl.OfflineDomain} the domain</li>
+ *            <li><b>initid : </b>{Numeric} the document identificator</li>
+ *            <li><b>onAfterRevert : </b>{Function} a callback called after the revert</li>
+ *            </ul>
+ * @throws SyncException is synchronize error
+ * @throws ArgException if missing argument
+ * @return void
+ */
 offlineSynchronize.prototype.revertDocument = function(config) {
 
     if (config && config.domain && config.initid) {
@@ -1037,7 +1066,8 @@ offlineSynchronize.prototype.revertDocument = function(config) {
         if (document) {
             this.recordDocument({
                 domain : domain,
-                document : document
+                document : document,
+                onAfterRecord:config.onAfterRevert
             });
             this.recordFiles({domain:domain});
         } else {
@@ -1045,6 +1075,123 @@ offlineSynchronize.prototype.revertDocument = function(config) {
         }
     } else {
         throw new ArgException("revertDocument need domain, initid parameter");
+    }
+};
+
+
+/**
+ * unlink a document into user folder space. The local document is deleted
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>domain : </b>{Fdl.OfflineDomain} the domain</li>
+ *            <li><b>initid : </b>{Numeric} the document identificator</li>
+ *            <li><b>onAfterUnlink : </b>{Function} a callback called after the deletion</li>
+ *            </ul>
+ * @throws SyncException is synchronize error
+ * @throws ArgException if missing argument
+ * @return void
+ */
+offlineSynchronize.prototype.unlinkDocument = function(config) {
+
+    if (config && config.domain && config.initid) {
+
+        var domain = config.domain;
+        var document = domain.sync().unlinkDocument({
+            document : {
+                id : config.initid
+            }
+        });
+        if (document) {
+            this.deleteDocuments({
+                domain : domain,
+                origin:'user',
+                deleteList:[document.getProperty('initid')],
+                onAfterUnlink:config.onAfterUnlink
+            });
+        } else {
+            throw new SyncException("removeUserDocument failed");
+        }
+    } else {
+        throw new ArgException("removeUserDocument need domain, initid parameter");
+    }
+};
+
+/**
+ * book a document user folder space. Insert document in user folder if not yet included 
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>domain : </b>{Fdl.OfflineDomain} the domain</li>
+ *            <li><b>initid : </b>{Numeric} the document identificator</li>
+ *            <li><b>onAfterBook : </b>{Function} a callback called after the booking</li>
+ *            </ul>
+ * @throws SyncException is synchronize error
+ * @throws ArgException if missing argument
+ * @return void
+ */
+offlineSynchronize.prototype.bookDocument = function(config) {
+
+    if (config && config.domain && config.initid) {
+
+        var domain = config.domain;
+        var document = domain.sync().bookDocument({
+            document : {
+                id : config.initid
+            }
+        });
+        if (document) {
+            this.recordDocument({
+                domain : domain,
+                document : document,
+                onAfterRecord:config.onAfterBook
+            });
+            this.recordFiles({domain:domain});
+        } else {
+            throw new SyncException("bookDocument failed");
+        }
+    } else {
+        throw new ArgException("bookDocument need domain, initid parameter");
+    }
+};
+/**
+ * unbook a document user folder space. The documentg stay in user folder
+ * 
+ * @param {Object}
+ *            config
+ *            <ul>
+ *            <li><b>domain : </b>{Fdl.OfflineDomain} the domain</li>
+ *            <li><b>initid : </b>{Numeric} the document identificator</li>
+ *            <li><b>onAfterUnbook : </b>{Function} a callback called after the unbooking</li>
+ *            </ul>
+ * @throws SyncException is synchronize error
+ * @throws ArgException if missing argument
+ * @return void
+ */
+offlineSynchronize.prototype.unbookDocument = function(config) {
+
+    if (config && config.domain && config.initid) {
+
+        var domain = config.domain;
+        var document = domain.sync().unbookDocument({
+            document : {
+                id : config.initid
+            }
+        });
+        if (document) {
+            this.recordDocument({
+                domain : domain,
+                document : document,
+                onAfterRecord:config.onAfterUnbook
+            });
+            this.recordFiles({domain:domain});
+        } else {
+            throw new SyncException("unbookDocument failed");
+        }
+    } else {
+        throw new ArgException("unbookDocument need domain, initid parameter");
     }
 };
 /**
@@ -1117,7 +1264,7 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                             }
                         }
                         if (me.synchroResults.status != "successTransaction") {
-                            
+                            me.retrieveReport({domain:domain});
                             me.callObserver('onError', me.synchroResults);
                             return false;
                         } else {
