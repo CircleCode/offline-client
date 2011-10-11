@@ -169,6 +169,7 @@
             </method>
 
             <method name="reinit">
+                <parameter name="reopen" />
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
                     Components.utils.import("resource://modules/docManager.jsm");
@@ -176,7 +177,8 @@
                     docManager.initDocInstance({initid: this.initid});
                     
                     var param = {
-                        documentId : this.initid
+                        documentId : this.initid,
+                        openAfterClose: (reopen)?this.initid:null
                     };
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
