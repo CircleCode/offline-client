@@ -529,7 +529,7 @@
                      } else if (parseInt(this.doc.getProperty('locked'))==0) {
                          button.disabled = false;
                          this.disabled=false;
-                     }  if (docManager.getUserDomainMode()!='advanced') {
+                     } else if (docManager.getUserDomainMode()!='advanced') {
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
                      } else {
                          if (parseInt(this.doc.getProperty('locked'))==parseInt(Preferences.get("offline.user.id"))) {
@@ -588,9 +588,8 @@
                      } else if (this.doc.isModified()) {
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.ismodified'));
                      } else if (parseInt(this.doc.getProperty('locked'))==0) {
-                         button.disabled = false;
-                         this.disabled=false;
-                     }  if (docManager.getUserDomainMode()!='advanced') {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.notbooked'));
+                     } else if (docManager.getUserDomainMode()!='advanced') {
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
                      } else {
                          if (parseInt(this.doc.getProperty('locked'))==parseInt(Preferences.get("offline.user.id"))) {
