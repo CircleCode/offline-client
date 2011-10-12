@@ -47,6 +47,18 @@
                 ]]></getter>
             </property>
 
+            <property
+                name="focusedAttribute"
+                readonly="true">
+                <getter><![CDATA[
+                    var e = document.activeElement;
+                    while(e && (e.localName !== 'dcpAttribute')){
+                        e = document.getBindingParent(e);
+                    }
+                    return e;
+                ]]></getter>
+            </property>
+
             <method name="switchMode">
                 <parameter name="mode" />
                 <body><![CDATA[
@@ -133,6 +145,17 @@
                 ]]></body>
             </method>
 
+            <method name="saveFocusedAttribute">
+                <body><![CDATA[
+                    var focusedAttribute = this.focusedAttribute;
+                    if(focusedAttribute){
+                        return focusedAttribute.saveValue();
+                    } else {
+                        return true;
+                    }
+                ]]></body>
+            </method>
+
             <method name="remove">
                 <body><![CDATA[
                     try {
@@ -182,7 +205,6 @@
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
             </method>
-
 
             <method name="warning">
                 <parameter name="exceptionMessage" />
