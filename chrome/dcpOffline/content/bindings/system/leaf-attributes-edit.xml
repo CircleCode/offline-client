@@ -58,18 +58,29 @@
                 ]]></body>
             </method>
 
+            <method name="saveValue">
+                <body><![CDATA[
+                    return this.setValue(this.bindingValue);
+                ]]></body>
+            </method>
+
             <method name="setValue">
                 <parameter name="value" />
                 <body><![CDATA[
                     try{
-                        var value = this.checkValue(value);
-                        this.doc.setValue(this.attrid, value, this.index);
-                        this.reloadValue();
-                        return true;
+                        if(! this._isSettingValue){
+                            this._isSettingValue = true;
+                            var value = this.checkValue(value);
+                            this.doc.setValue(this.attrid, value, this.index);
+                            this.reloadValue();
+                            this._isSettingValue = false;
+                            return true;
+                        }
                     } catch(e){
                         Components.utils.import("resource://modules/logger.jsm");
                         logError(e);
                     }
+                    this._isSettingValue = false;
                     return false;
                 ]]></body>
             </method>
@@ -120,7 +131,7 @@
 
         <handlers>
             <handler event="change"><![CDATA[
-                this.setValue(this.bindingValue);
+                this.saveValue();
             ]]></handler>
         </handlers>
     </binding>
@@ -834,7 +845,7 @@
 
             <method name="_onItemSelected">
                 <body><![CDATA[
-                    this.setValue(this.bindingValue);
+                    this.saveValue();
                 ]]></body>
             </method>
 
@@ -967,7 +978,7 @@
                     for ( var i = this.multiBox.selectedItems.length -1; i>=0; i--){
                         this.multiBox.removeItemAt(this.multiBox.getIndexOfItem(this.multiBox.selectedItems[i]));
                     }
-                    this.setValue(this.bindingValue);
+                    this.saveValue();
                 ]]></body>
             </method>
 

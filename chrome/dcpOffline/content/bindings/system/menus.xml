@@ -159,8 +159,9 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    document.commandDispatcher.advanceFocus();
-                    this.documentNode.save();
+                    if( this.documentNode.saveFocusedAttribute() ){
+                        this.documentNode.save();
+                    }
                 ]]></body>
             </method>
 
@@ -187,11 +188,7 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    document.commandDispatcher.advanceFocus();
-                    var docid=this.documentNode.initid;
-                    this.documentNode.reinit();
-                    tryToOpenDocument({documentId : docid});
-                    
+                    this.documentNode.reinit(true);
                 ]]></body>
             </method>
 
@@ -251,8 +248,9 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    document.commandDispatcher.advanceFocus();
-                    this.documentNode.close();
+                    if( this.documentNode.saveFocusedAttribute() ){
+                        this.documentNode.close();
+                    }
                 ]]></body>
             </method>
 
@@ -423,8 +421,9 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    document.commandDispatcher.advanceFocus();
-                    this.documentNode.revert();
+                    if( this.documentNode.saveFocusedAttribute() ){
+                        this.documentNode.revert();
+                    }
                 ]]></body>
             </method>
 
@@ -466,8 +465,9 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    document.commandDispatcher.advanceFocus();
-                    this.documentNode.unlink();
+                    if( this.documentNode.saveFocusedAttribute() ){
+                        this.documentNode.unlink();
+                    }
                 ]]></body>
             </method>
 
@@ -513,8 +513,9 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    document.commandDispatcher.advanceFocus();
-                    this.documentNode.book();
+                    if( this.documentNode.saveFocusedAttribute() ){
+                        this.documentNode.book();
+                    }
                 ]]></body>
             </method>
 
@@ -575,8 +576,9 @@
             <method name="doAction">
                 <parameter name="event" />
                 <body><![CDATA[
-                    document.commandDispatcher.advanceFocus();
-                    this.documentNode.unbook();
+                    if( this.documentNode.saveFocusedAttribute() ){
+                        this.documentNode.unbook();
+                    }
                 ]]></body>
             </method>
             <constructor><![CDATA[
