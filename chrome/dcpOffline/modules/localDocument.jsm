@@ -557,18 +557,12 @@ localDocument.prototype = {
                 }
             }
             if (! this.properties.title) {
-
-                var simpleIdentity=this.properties.initid;
-                if (simpleIdentity.substr(0,4)=='DLID') {
-                    simpleIdentity=simpleIdentity.substr(5,4);
-                }
                 var famTitle=this.getFamilyTitle();
                 if (famTitle) {
                     this.properties.title=famTitle+' '+getText('document.without.title');
                 } else {
                    this.properties.title=getText('document.no.title');
                 }
-                this.properties.title+=' '+simpleIdentity;
             }
         }
 };

@@ -175,10 +175,9 @@
                     Components.utils.import("resource://modules/docManager.jsm");
                     
                     docManager.initDocInstance({initid: this.initid});
-                    
                     var param = {
                         documentId : this.initid,
-                        openAfterClose: (reopen)?this.initid:null
+                        openAfterClose: (reopen)?this.initid:0
                     };
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
