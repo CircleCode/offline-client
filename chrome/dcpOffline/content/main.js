@@ -888,7 +888,7 @@ function prepareCloseDocument(param) {
     var currentDocs;
     var stop = false;
 
-    if (param && param.documentId) {
+    if (param && param.documentId && !param.openAfterClose) {
         currentDoc = getCurrentDocument();
         if (param.documentId == currentDoc.documentId) {
             currentDocs = getListOfOpenDocuments();
