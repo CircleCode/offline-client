@@ -188,7 +188,10 @@
                 <parameter name="event" />
                 <body><![CDATA[
                     document.commandDispatcher.advanceFocus();
-                    this.documentNode.reinit(true);
+                    var docid=this.documentNode.initid;
+                    this.documentNode.reinit();
+                    tryToOpenDocument({documentId : docid});
+                    
                 ]]></body>
             </method>
 
