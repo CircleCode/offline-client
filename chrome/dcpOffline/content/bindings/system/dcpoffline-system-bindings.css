@@ -282,6 +282,11 @@ dcpDocument[mode=edit] dcpAttribute[type=int] {
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#int-attr-edit");
 }
 
+dcpDocument[mode=edit] dcpAttribute[type=double] {
+    -moz-binding:
+        url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#double-attr-edit");
+}
+
 dcpDocument[mode=edit] dcpAttribute[type=time] {
     -moz-binding:
         url("chrome://dcpoffline/content/bindings/system/leaf-attributes-edit.xml#time-attr-edit");

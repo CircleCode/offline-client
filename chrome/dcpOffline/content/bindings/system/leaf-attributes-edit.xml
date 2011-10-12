@@ -91,7 +91,7 @@
                 <body><![CDATA[
                     this.inputField.setCustomValidity(message);
                     if(message){
-                        alert ("(FIXME) " + message);
+                        alert(message);
                         this.inputField.focus();
                         //XXX: selectAll could be better
                     }
@@ -246,14 +246,19 @@
             <method name="checkValue">
                 <parameter name="value" />
                 <body><![CDATA[
-                    if( isNaN(value) ){
-                        Components.utils.import("resource://modules/events.jsm");
-                        this.setCustomValidity("'" + value +"' is not a number");
-                        throw new attrCheckException("'" + value +"' is not a number");
-                    } else {
+                    if( ( value === '' ) || 
+                        ( ( ! isNaN(value) ) && 
+                          ( parseInt(value) == value ) ) ){
                         this.setCustomValidity("");
+                    } else {
+                        var translate = new StringBundle(
+                                "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.properties");
+                        var message = translate.get('attr.validity.bad.integer', [value]);
+                        this.setCustomValidity(
+                            message
+                        );
+                        throw new attrCheckException(message);
                     }
-
                     return value;
                 ]]></body>
             </method>
@@ -282,14 +287,22 @@
             <method name="checkValue">
                 <parameter name="value" />
                 <body><![CDATA[
-                    //XXX: do a better sanitization (spaces, english format, etc...)
-                    var parse_double = /^[0-9]+([.,][0-9]+)?$/
-                    if( value.match(parse_double) ){
-                        Components.utils.import("resource://modules/events.jsm");
-                        this.setCustomValidity("'" + value +"' is not a number");
-                        throw new attrCheckException("'" + value +"' is not a number");
+                    var formatedValue = value.replace(/,/,'.');
+                    
+                    if( ( value === '' ) || 
+                        ( ( ! isNaN(formatedValue) ) && 
+                          ( parseFloat(formatedValue) == formatedValue) ) ){
+                        this.setCustomValidity("");
+                    } else {
+                        var translate = new StringBundle(
+                                "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.properties");
+                        var message = translate.get('attr.validity.bad.float', [value]);
+                        this.setCustomValidity(
+                            message
+                        );
+                        throw new attrCheckException(message);
                     }
-                    return value.replace(',','.');
+                    return formatedValue;
                 ]]></body>
             </method>
         </implementation>
