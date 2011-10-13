@@ -63,7 +63,6 @@
                 }
                 
                 this.icon.src = icon;
-                logConsole('id is'+this.doc.id + this.doc.inMemory, this.doc);
                 if (! this.doc.inMemoryDoc) {
                    this.title.value = this.doc.getTitle();
                    this.title.tooltipText = this.doc.getTitle();

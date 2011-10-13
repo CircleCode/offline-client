@@ -196,11 +196,9 @@
                 <body><![CDATA[
                     Components.utils.import("resource://modules/events.jsm");
                     Components.utils.import("resource://modules/docManager.jsm");
-                    
-                    docManager.initDocInstance({initid: this.initid});
+                    docManager.dropDocInstance({initid: this.initid});
                     var param = {
-                        documentId : this.initid,
-                        openAfterClose: (reopen)?this.initid:0
+                        documentId : this.initid
                     };
                     applicationEvent.publish("askForCloseDocument", param);
                 ]]></body>
@@ -445,7 +443,6 @@
                     
                     Components.utils.import("resource://modules/docManager.jsm");
                     this.doc = docManager.getLocalDocument({initid : this.initid});
-                    
                     var flex = this.getAttribute('flex') || 1;
                     this.setAttribute('flex', flex);
                     

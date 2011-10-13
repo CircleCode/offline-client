@@ -539,7 +539,7 @@ offlineSynchronize.prototype.recordFiles = function(config) {
                     me.callObserver('onAddFilesRecorded', 1);
                 },
                 completeFileCallback : function() {
-                   // logConsole('end files', this.filesToDownload);
+                    //logConsole('end files', this.filesToDownload);
                     if (me.synchroResults) {
                         if (me.synchroResults.status != "successTransaction") {
                             me.callObserver('onError', me.synchroResults);
@@ -554,6 +554,10 @@ offlineSynchronize.prototype.recordFiles = function(config) {
                     fileManager.initModificationDates();
                     me.updateWorkTables();
                     me.updateDomainSyncDate(config);
+                    if (config.onAfterRecord) {
+                        logConsole('call end files recod', config);
+                        config.onAfterRecord();
+                    }
                 }
             });
         } else {
@@ -754,8 +758,19 @@ offlineSynchronize.prototype.recordDocument = function(config) {
                                                 me.updateTitles({
                                                     document : document
                                                 });
-                                                if (config.onAfterRecord) {
-                                                    config.onAfterRecord(me);
+                                                if (config.recordFiles) {
+                                                    me.pendingFiles({
+                                                        domain : config.domain,
+                                                        document : config.document
+                                                    });
+                                                }
+                                                if (config.recordFiles && (me.filesToDownload.length > 0)) {
+                                                    me.recordFiles({domain:config.domain, 
+                                                        onAfterRecord:config.onAfterRecord});
+                                                } else {
+                                                    if (config.onAfterRecord) {
+                                                        config.onAfterRecord(me);
+                                                    }
                                                 }
                                             }
                                         }
@@ -776,10 +791,12 @@ offlineSynchronize.prototype.recordDocument = function(config) {
          * me.addDocumentsRecorded(1); } } });
          */
         // this.addDocumentsRecorded(1);
-        this.pendingFiles({
-            domain : domain,
-            document : document
-        });
+        if (! config.recordFiles) {
+            this.pendingFiles({
+                domain : domain,
+                document : document
+            });
+        }
     } else {
         throw new ArgException("recordDocument need domain, document parameter");
     }
@@ -1067,9 +1084,10 @@ offlineSynchronize.prototype.revertDocument = function(config) {
             this.recordDocument({
                 domain : domain,
                 document : document,
+                recordFiles:true,
                 onAfterRecord:config.onAfterRevert
             });
-            this.recordFiles({domain:domain});
+        
         } else {
             throw new SyncException("revertDocument failed");
         }
@@ -1146,9 +1164,9 @@ offlineSynchronize.prototype.bookDocument = function(config) {
             this.recordDocument({
                 domain : domain,
                 document : document,
+                recordFiles:true,
                 onAfterRecord:config.onAfterBook
             });
-            this.recordFiles({domain:domain});
         } else {
             throw new SyncException("bookDocument failed");
         }
@@ -1184,9 +1202,9 @@ offlineSynchronize.prototype.unbookDocument = function(config) {
             this.recordDocument({
                 domain : domain,
                 document : document,
+                recordFiles:true,
                 onAfterRecord:config.onAfterUnbook
             });
-            this.recordFiles({domain:domain});
         } else {
             throw new SyncException("unbookDocument failed");
         }

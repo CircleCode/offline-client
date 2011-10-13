@@ -145,13 +145,14 @@
         extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
 
         <content>
-            <xul:toolbarbutton
+            <xul:menuitem
                 anonid="button"
                 label="&document.toolbar.button.save;"
                 tooltiptext="&document.toolbar.button.save.tooltip;"
                 icon="save"
+                flex="1"
                 mode="edit">
-            </xul:toolbarbutton>
+            </xul:menuitem>
         </content>
 
         <implementation>
@@ -174,13 +175,14 @@
         extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
 
         <content>
-            <xul:toolbarbutton
+            <xul:menuitem
                 anonid="button"
                 label="&document.toolbar.button.cancel;"
+                flex="1"
                 tooltiptext="&document.toolbar.button.cancel.tooltip;"
                 icon="cancel"
                 mode="edit">
-            </xul:toolbarbutton>
+            </xul:menuitem>
         </content>
 
         <implementation>
@@ -201,12 +203,13 @@
         extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-toolbarbutton">
 
         <content>
-            <xul:toolbarbutton
+            <xul:menuitem
                 anonid="button"
                 label="&document.toolbar.button.modify;"
+                flex="1"
                 tooltiptext="&document.toolbar.button.modify.tooltip;"
                 mode="view">
-            </xul:toolbarbutton>
+            </xul:menuitem>
         </content>
 
         <implementation>
@@ -387,6 +390,7 @@
         <content>
             <xul:menuitem
                 anonid="button"
+                flex="1"
                 label="&document.toolbar.button.properties;"
                 tooltiptext="&document.toolbar.button.properties.tooltip;"
                 icon="properties" />
@@ -415,6 +419,8 @@
                 label="&document.toolbar.button.revert;"
                 tooltiptext="&document.toolbar.button.revert.tooltip;"
                 icon="clear"
+                flex="1"
+                enabledMode="view"
                 collapsed="false" />
         </content>
         <implementation>
@@ -432,12 +438,14 @@
                      button.disabled = true;
                      this.disabled=true;
                      button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.nonetwork'));
-                  } else {
-                     if (this.doc.isOnlyLocal()) {
+                  } else if (this.doc.isOnlyLocal()) {
                          button.disabled = true;
                          this.disabled=true;
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.onlylocal'));
-                     }
+                  } else if (! this.doc.isModified()) {
+                         button.disabled = true;
+                         this.disabled=true;
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.notmodified'));
                   }
              ]]></constructor>
         </implementation>
@@ -451,6 +459,8 @@
                 label="&document.toolbar.button.unlink;"
                 tooltiptext="&document.toolbar.button.unlink.tooltip;"
                 icon="clear"
+                flex="1"
+                enabledMode="view"
                 collapsed="false" />
         </content>
         <implementation>
@@ -472,7 +482,11 @@
             </method>
 
             <constructor><![CDATA[
-                  if (networkChecker.isOffline()) {
+                  if (docManager.getUserDomainMode()!='advanced') {
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
+                         this.disabled=false;
+                         this.collapsed=true; 
+                  } else if (networkChecker.isOffline()) {
                      button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.nonetwork'));
                   } else if (this.doc.isOnlyLocal()) {
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.onlylocal'));
@@ -480,9 +494,7 @@
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.ismodified'));
                   } else if (! this.doc.isFromUserFolder()) {
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.nofromuser'));
-                  } else if (docManager.getUserDomainMode()!='advanced') {
-                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
-                  } else {
+                  } else  {
                          button.disabled = false;
                          this.disabled=false;
                   }
@@ -499,6 +511,8 @@
                 label="&document.toolbar.button.book;"
                 tooltiptext="&document.toolbar.button.book.tooltip;"
                 icon="clear"
+                flex="1"
+                enabledMode="view"
                 collapsed="false" />
         </content>
         <implementation>
@@ -520,34 +534,26 @@
             </method>
 
             <constructor><![CDATA[
-                  if (networkChecker.isOffline()) {
-                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.nonetwork'));
-                  } else {
-                     if (this.doc.isOnlyLocal()) {
-                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.onlylocal'));
-                     } else if (this.doc.isModified()) {
-                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.ismodified'));
-                     } else if (parseInt(this.doc.getProperty('locked'))==0) {
-                         button.disabled = false;
-                         this.disabled=false;
-                     } else if (docManager.getUserDomainMode()!='advanced') {
-                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
-                     } else {
-                         if (parseInt(this.doc.getProperty('locked'))==parseInt(Preferences.get("offline.user.id"))) {
-                               if (parseInt(this.doc.getProperty('lockdomainid'))==parseInt(this.doc.domainId)) {
-                                    button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.bookbyme'));
-                               } else {
-                                  if (parseInt(this.doc.getProperty('lockdomainid'))==0) {
-                                    // it is locked by me but not book yet
-                                     button.disabled = false;
-                                     this.disabled=false;
-                                  }
-                               }
-                         } else {
-                                button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.lockedbyanother'));
-                         }
-                     }
-                  }
+            
+if (this.doc.isLocked()) {
+    this.disabled=true;
+    this.collapsed=true; // hide booking
+} else if (docManager.getUserDomainMode()!='advanced') {
+    button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
+    this.disabled=true;
+    this.collapsed=true; // hide booking
+} else if (networkChecker.isOffline()) {
+    button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.nonetwork'));
+} else if (this.documentNode.mode=='edit') {
+    button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.editmode'));
+} else if (this.doc.isOnlyLocal()) {
+    button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.onlylocal'));
+} else if (this.doc.isModified()) {
+    button.setAttribute('tooltiptext',this.translate('document.toolbar.button.book.disabled.ismodified'));
+} else {
+    button.disabled = false;
+    this.disabled=false;
+} 
              ]]></constructor>
         </implementation>
     </binding>
@@ -561,6 +567,8 @@
                 label="&document.toolbar.button.unbook;"
                 tooltiptext="&document.toolbar.button.unbook.tooltip;"
                 icon="clear"
+                flex="1"
+                enabledMode="view"
                 collapsed="false" />
         </content>
         <implementation>
@@ -582,7 +590,14 @@
                 ]]></body>
             </method>
             <constructor><![CDATA[
-                  if (networkChecker.isOffline()) {
+                  if (! this.doc.isLocked()) {
+                     this.disabled=true;
+                     this.collapsed=true;
+                  } else if (docManager.getUserDomainMode()!='advanced') {
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
+                     this.disabled=true;
+                     this.collapsed=true;
+                  } else if (networkChecker.isOffline()) {
                      button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.nonetwork'));
                   } else {
                      if (this.doc.isOnlyLocal()) {
@@ -591,8 +606,6 @@
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.ismodified'));
                      } else if (parseInt(this.doc.getProperty('locked'))==0) {
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.notbooked'));
-                     } else if (docManager.getUserDomainMode()!='advanced') {
-                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
                      } else {
                          if (parseInt(this.doc.getProperty('locked'))==parseInt(Preferences.get("offline.user.id"))) {
                                if (parseInt(this.doc.getProperty('lockdomainid'))==parseInt(this.doc.domainId)) {
@@ -620,6 +633,8 @@
                 label="&document.toolbar.button.removeLocal;"
                 tooltiptext="&document.toolbar.button.removeLocal.tooltip;"
                 icon="clear"
+                flex="1"
+                enabledMode="view"
                 collapsed="false" />
         </content>
 
@@ -629,7 +644,7 @@
                 name="customDisableCondition"
                 readonly="true">
                 <getter><![CDATA[
-                    return true;
+                    return false;
                 ]]></getter>
             </property>
 
@@ -641,11 +656,10 @@
             </method>
             <constructor><![CDATA[
 
-                     if (this.doc.isOnlyLocal()) {
-                            button.disabled = false;
-                            this.disabled=false;
-                     } else {
+                     if (! this.doc.isOnlyLocal()) {
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.remove.disabled.onlylocal'));
+                         this.disabled=true;
+                         this.collapsed=true;
                     }
              ]]></constructor>
         </implementation>
@@ -679,34 +693,29 @@
     <binding
         id="doc-main-menu"
         extends="&systemBindingsDirPath;/doc-item.xml#doc-item">
-
-        <content>
-            <xul:toolbox
-                id="document-toolbox"
-                flex="1">
-                <xul:toolbar
-                    anonid="document-toolbar"
-                    flex="1">
-
-                    <xul:dcpSaveButton />
-
-                    <xul:dcpCancelButton />
-
-                    <xul:dcpEditButton />
-
-                    <xul:spacer flex="1" />
-
-                    <xul:dcpChangeStateMenu mode="view" />
-
+    <content>
+        <xul:toolbox id="document-toolbox" flex="1">
+            <xul:toolbar anonid="document-toolbar" flex="1">
+                <xul:toolbarbutton class='menuitem-iconic' anonid="familybutton" type="menu" label="Family" >
+                    <xul:menupopup>
+                        <xul:dcpSaveButton />
+                        <xul:dcpCancelButton />
+                        <xul:dcpEditButton />
+                        <xul:spacer flex="1" />
+                    <xul:menuseparator />
+                    <xul:dcpRevertMenuItem />
+                    <xul:dcpBookMenuItem />
+                    <xul:dcpUnbookMenuItem />
+                    <xul:dcpRemoveMenuItem />
+                    <xul:dcpUnlinkMenuItem />
                     <xul:dcpPropertiesMenuItem />
-
-                    <xul:dcpAdvancedMenu />
-
-                    <xul:dcpCloseButton />
-
-                </xul:toolbar>
-            </xul:toolbox>
-        </content>
+                    </xul:menupopup>
+                </xul:toolbarbutton>
+                <xul:dcpChangeStateMenu mode="view" />
+                <xul:dcpCloseButton />
+            </xul:toolbar>
+        </xul:toolbox>
+    </content>
 
         <implementation>
 
@@ -715,7 +724,18 @@
                     this.documentNode.reloadMenu();
                 ]]></body>
             </method>
-
+            <constructor><![CDATA[
+                var button=this.getChild('familybutton');
+                  button.setAttribute('label','Document');
+                  var familyName=this.doc.getFamilyTitle();
+                  button.setAttribute('label',familyName.charAt(0).toUpperCase() + familyName.slice(1));
+                  /* // set icon
+                  button.setAttribute('image',this.doc.getIcon());
+                  button.style.listStyleImage='url("'+this.doc.getIcon()+'")';
+                  logConsole('icon:'+this.doc.getIcon());
+                  */
+                  
+             ]]></constructor>
         </implementation>
     </binding>
 

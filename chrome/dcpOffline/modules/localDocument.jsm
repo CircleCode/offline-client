@@ -13,6 +13,7 @@ function localDocument(config) {
     if (config) {
         this.values = {};
         this.properties = {};
+        this._modified=null;
         if (config.initid) {
             // existing document
             this.retrieve(config);
@@ -24,6 +25,7 @@ function localDocument(config) {
             throw "missing arguments";
         }
     }
+    logConsole('NEW DOC'+config.initid + ((this._modified===null)?'original':'used'));
 }
 localDocument.prototype = {
         _initid : null,
@@ -265,7 +267,9 @@ localDocument.prototype = {
                 throw "document " + this._initid + " is not editable";
             }
             this._dirty = false;
-            this._modified = true;
+            if (! config.noModificationDate) {
+               this._modified = true;
+            }
             return this;
         },
         
@@ -355,7 +359,9 @@ localDocument.prototype = {
                         initid: this._initid
                     }
                 });
-                this._modified = true && r[0].modified;
+                if (r.length > 0) {
+                   this._modified =  (r[0].modified)?true:false;
+                }
             }
             return this._modified;
         },
@@ -388,10 +394,39 @@ localDocument.prototype = {
             if (r.length == 1) {
                 return (r[0].editable == 1);
             }
-            // TODO
-            // search in docsbydomain
+           
             return false;
         },
+        /**
+         * verify is document has been locked by current user
+         * @returns {Boolean}
+         */
+        isLocked: function() {
+            
+            if(this.isOnlyLocal()){
+                //non syncronized documents are editable
+                return false;
+            }
+            if (!this.domainId) {
+                throw new ArgException("isLocked :: missing arguments");
+            }
+            
+            var r = storageManager
+            .execQuery({
+                query : 'select docsbydomain.editable from documents, docsbydomain where docsbydomain.initid = documents.initid and docsbydomain.domainid=:domainid and docsbydomain.initid=:initid',
+                params : {
+                    domainid : this.domainId,
+                    initid : this._initid
+                }
+            });
+           
+            if (r.length == 1) {
+                return (r[0].editable == 1);
+            }
+           
+            return false;
+        },
+        
         /**
          * @deprecated
          * @param id
