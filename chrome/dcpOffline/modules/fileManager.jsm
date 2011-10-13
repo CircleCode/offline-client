@@ -195,10 +195,15 @@ var fileManager = {
     /**
      * update modifydate from files
      */
-    updateModificationDates : function() {
+    updateModificationDates : function(initid) {
         var r = storageManager.execQuery({
-            query : 'SELECT * from ' + TABLE_FILES
+            query : 'SELECT *'
+                    + ' FROM ' + TABLE_FILES
                     + ' WHERE recorddate is not null'
+                    + (initid ? ' AND initid=:initid' : ''),
+            params : {
+                initid : initid
+            }
         });
         var mdate;
         var file = Components.classes["@mozilla.org/file/local;1"]
@@ -213,9 +218,11 @@ var fileManager = {
                 if (mdate != r[i].modifydate) {
                     storageManager
                             .execQuery({
-                                query : 'update '
-                                        + TABLE_FILES
-                                        + ' set modifydate=:modifydate WHERE "initid"=:initid and "index"=:index and attrid=:attrid',
+                                query : 'update ' + TABLE_FILES
+                                        + ' SET modifydate=:modifydate'
+                                        + ' WHERE "initid"=:initid'
+                                        + ' AND "index"=:index'
+                                        + ' AND attrid=:attrid',
                                 params : {
                                     modifydate : mdate,
                                     initid : r[i].initid,
@@ -229,7 +236,8 @@ var fileManager = {
                     });
                     // logConsole('doclocal', localDoc);
                     try {
-                        localDoc.save(); // to change modification date
+                        localDoc.touch(new Date(file.lastModifiedTime));
+                        //localDoc.save(); // to change modification date
                     } catch (e) {
                         // nothing may be not in good domain
                         // normaly never go here
