@@ -555,7 +555,6 @@ offlineSynchronize.prototype.recordFiles = function(config) {
                     me.updateWorkTables();
                     me.updateDomainSyncDate(config);
                     if (config.onAfterRecord) {
-                        logConsole('call end files recod', config);
                         config.onAfterRecord();
                     }
                 }
@@ -578,6 +577,7 @@ offlineSynchronize.prototype.updateDomainSyncDate = function(config) {
 
     if (config && config.domain) {
         var domain = config.domain;
+        if (! this.pullBeginDate) this.pullBeginDate=new Date();
         var syncDate=this.pullBeginDate.toISOString();
         storageManager
                 .execQuery({
@@ -1224,12 +1224,26 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
             domain : domain.id
         });
         // update file modification date
-        var modifiedFiles = fileManager.getModifiedFiles({
-            domain : domain.id
-        });
-        var modifiedDocs = this.getModifiedDocs({
-            domain : domain
-        });
+        var modifiedFiles=null;
+        var modifiedDocs=null;
+        if (config.pushOnly) {
+            Components.utils.import("resource://modules/localDocumentList.jsm");
+
+            modifiedFiles = fileManager.getModifiedFiles({
+                domain : domain.id,
+                initid:config.pushOnly
+            });
+            modifiedDocs=new localDocumentList({
+                content:[{initid:config.pushOnly}]
+            });
+        } else { 
+            modifiedFiles = fileManager.getModifiedFiles({
+                domain : domain.id
+            });
+            modifiedDocs = this.getModifiedDocs({
+                domain : domain
+            });
+        }
         this.synchroResults=null;
         var ldoc;
         // this.callObserver('onAddFilesToSave', modifiedFiles.length);
@@ -1284,6 +1298,9 @@ offlineSynchronize.prototype.pushDocuments = function(config) {
                         if (me.synchroResults.status != "successTransaction") {
                             me.retrieveReport({domain:domain});
                             me.callObserver('onError', me.synchroResults);
+                            if (onError) {
+                                onError(me.synchroResults);
+                            }
                             return false;
                         } else {
                             //me.callObserver('onSuccess', me.synchroResults);

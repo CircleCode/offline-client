@@ -15,8 +15,10 @@
 <!ENTITY  document.toolbar.button.advanced.tooltip          "Plus">
 <!ENTITY  document.toolbar.button.properties                "Properties">
 <!ENTITY  document.toolbar.button.properties.tooltip        "Properties">
-<!ENTITY  document.toolbar.button.revert                    "Restore">
-<!ENTITY  document.toolbar.button.revert.tooltip            "Abandon local changes">
+<!ENTITY  document.toolbar.button.revert                    "Synchronise &lt;">
+<!ENTITY  document.toolbar.button.revert.tooltip            "Retrieve document from application">
+<!ENTITY document.toolbar.button.push                      "Synchronise &gt;">
+<!ENTITY document.toolbar.button.push.tooltip              "Send local document to the application">
 <!ENTITY  document.toolbar.button.close                     "Close">
 <!ENTITY  document.toolbar.button.close.tooltip             "Close">
 <!ENTITY  document.toolbar.button.remove                    "Delete">
@@ -29,3 +31,6 @@
 <!ENTITY document.toolbar.button.unbook.tooltip            "To set document in read-only mode">
 <!ENTITY document.toolbar.button.unlink                    "unlink">
 <!ENTITY document.toolbar.button.unlink.tooltip            "Unlink document from my space">
+
+<!ENTITY  document.toolbar.button.abort                    "Abort">
+<!ENTITY  document.toolbar.button.abort.tooltip            "Abort local changes">

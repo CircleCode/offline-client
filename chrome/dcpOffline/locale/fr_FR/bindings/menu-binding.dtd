@@ -15,8 +15,10 @@
 <!ENTITY document.toolbar.button.advanced.tooltip          "Avancé">
 <!ENTITY document.toolbar.button.properties                "Propriétés">
 <!ENTITY document.toolbar.button.properties.tooltip        "Propriétés">
-<!ENTITY document.toolbar.button.revert                    "Abandonner les modifications">
-<!ENTITY document.toolbar.button.revert.tooltip            "Toutes les modifications effectuées sur le document depuis sa mise à jour depuis le serveur seront perdues">
+<!ENTITY document.toolbar.button.revert                    "Synchroniser &lt;">
+<!ENTITY document.toolbar.button.revert.tooltip            "Récupérer le document depuis l'application">
+<!ENTITY document.toolbar.button.push                      "Synchroniser &gt;">
+<!ENTITY document.toolbar.button.push.tooltip              "Envoyer le document local vers l'application">
 <!ENTITY document.toolbar.button.close                     "Fermer">
 <!ENTITY document.toolbar.button.close.tooltip             "Fermer">
 <!ENTITY document.toolbar.button.remove                     "Supprimer">
@@ -29,3 +31,5 @@
 <!ENTITY document.toolbar.button.unbook.tooltip            "Permettre aux autres utilisateurs de modifier le document">
 <!ENTITY document.toolbar.button.unlink                    "Retirer">
 <!ENTITY document.toolbar.button.unlink.tooltip            "Retirer le document de mon espace">
+<!ENTITY document.toolbar.button.abort                    "Abandonner les modifications">
+<!ENTITY document.toolbar.button.abort.tooltip            "Toutes les modifications effectuées sur le document depuis sa mise à jour depuis le serveur seront perdues">

@@ -158,19 +158,33 @@ var fileManager = {
 
     /**
      * return files modified
+     * @param int config.onlyDocument the idenificator of document to find modified files of this documents
      */
     getModifiedFiles : function(config) {
         if (config && config.domain) {
             var domainId = config.domain;
             this.updateModificationDates();
             logConsole('domain' + domainId);
-            var r = storageManager
-                    .execQuery({
-                        query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and recorddate < modifydate',
-                        params : {
-                            domainid : domainId
-                        }
-                    });
+            var r=null;
+            if (config.onlyDocument) {
+                r = storageManager
+                .execQuery({
+                    query : 'select files.* from files, docsbydomain where files.initid=:initid and docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and recorddate < modifydate',
+                    params : {
+                        domainid : domainId,
+                        initid : config.onlyDocument
+                    }
+                });
+            } else {
+                // all documents
+                r = storageManager
+                .execQuery({
+                    query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and recorddate < modifydate',
+                    params : {
+                        domainid : domainId
+                    }
+                });
+            }
             return r;
         } else {
             logError('getModifiedFiles : missing domain parameters');

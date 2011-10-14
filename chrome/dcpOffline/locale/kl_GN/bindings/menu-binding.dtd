@@ -17,6 +17,9 @@
 <!ENTITY document.toolbar.button.properties.tooltip        "Propriétés">
 <!ENTITY document.toolbar.button.revert                    "Revert">
 <!ENTITY document.toolbar.button.revert.tooltip            "Revert">
+
+<!ENTITY document.toolbar.button.push                      "Synchronise &gt;">
+<!ENTITY document.toolbar.button.push.tooltip              "Send local document to the application">
 <!ENTITY document.toolbar.button.close                     "Fermer">
 <!ENTITY document.toolbar.button.close.tooltip             "Fermer">
 <!ENTITY document.toolbar.button.remove                    "Remove">
@@ -29,3 +32,6 @@
 <!ENTITY document.toolbar.button.unbook.tooltip            "unBook">
 <!ENTITY document.toolbar.button.unlink                    "unLink">
 <!ENTITY document.toolbar.button.unlink.tooltip            "unLink">
+
+<!ENTITY document.toolbar.button.abort                    "Abort">
+<!ENTITY document.toolbar.button.abort.tooltip            "Aborts">

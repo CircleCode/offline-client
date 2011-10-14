@@ -84,6 +84,27 @@ docManagerSingleton.prototype = {
         logConsole('getUserDomainMode cache',this._userMode);
         return this._userMode;
     },
+
+    /**
+     * get transaction policy : 
+     * 
+     * @access public
+     * @return string [one | partial | global
+     */
+    getTransactionPolicy : function() {
+        var domainId=this._activeDomain;
+        var r=storageManager.execQuery({
+            query : "select transactionpolicy from domains where id=:domainId",
+            params:{
+                domainId:domainId
+            }
+        });
+        logConsole('getTransactionPolicy'+domainId,r);
+        if (r.length > 0) {
+            return r[0].transactionpolicy;
+        }
+        return '';
+    },
     /**
      * get document from local database
      * 

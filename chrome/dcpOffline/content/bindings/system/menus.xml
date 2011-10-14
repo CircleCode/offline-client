@@ -434,7 +434,13 @@
             </method>
 
             <constructor><![CDATA[
-                  if (networkChecker.isOffline()) {
+                  if (docManager.getTransactionPolicy() != 'one') {
+                       this.collapsed = true;
+                       this.disabled=true;
+                  } else if (this.doc.isModified()) {
+                       this.collapsed = true;
+                       this.disabled=true;
+                  } else if (networkChecker.isOffline()) {
                      button.disabled = true;
                      this.disabled=true;
                      button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.nonetwork'));
@@ -442,14 +448,92 @@
                          button.disabled = true;
                          this.disabled=true;
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.onlylocal'));
+                  }  
+             ]]></constructor>
+        </implementation>
+    </binding>
+      <binding
+        id="push-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.push;"
+                tooltiptext="&document.toolbar.button.push.tooltip;"
+                icon="clear"
+                flex="1"
+                enabledMode="view"
+                collapsed="false" />
+        </content>
+        <implementation>
+            <method name="doAction">
+                <parameter name="event" />
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.synchroniseOne();
+                ]]></body>
+            </method>
+
+            <constructor><![CDATA[
+                  if (docManager.getTransactionPolicy() != 'one') {
+                       this.collapsed = true;
+                       this.disabled=true;
+                  } else if (! this.doc.isModified()) {
+                       this.collapsed = true;
+                       this.disabled=true;
+                  } else if (networkChecker.isOffline()) {
+                     button.disabled = true;
+                     this.disabled=true;
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.push.disabled.nonetwork'));
+                  } else if (this.doc.isOnlyLocal()) {
+                         button.disabled = true;
+                         this.disabled=true;
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.push.disabled.onlylocal'));
+                  } 
+             ]]></constructor>
+        </implementation>
+    </binding>
+      <binding
+        id="abort-menuitem"
+        extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
+        <content>
+            <xul:menuitem
+                anonid="button"
+                label="&document.toolbar.button.abort;"
+                tooltiptext="&document.toolbar.button.abort.tooltip;"
+                icon="clear"
+                flex="1"
+                enabledMode="view"
+                collapsed="false" />
+        </content>
+        <implementation>
+            <method name="doAction">
+                <parameter name="event" />
+                <body><![CDATA[
+                    document.commandDispatcher.advanceFocus();
+                    this.documentNode.abort();
+                ]]></body>
+            </method>
+
+            <constructor><![CDATA[
+                  if (networkChecker.isOffline()) {
+                     button.disabled = true;
+                     this.disabled=true;
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.abort.disabled.nonetwork'));
+                  } else if (this.doc.isOnlyLocal()) {
+                         button.disabled = true;
+                         this.disabled=true;
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.abort.disabled.onlylocal'));
                   } else if (! this.doc.isModified()) {
                          button.disabled = true;
                          this.disabled=true;
-                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.revert.disabled.notmodified'));
+                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.abort.disabled.notmodified'));
                   }
              ]]></constructor>
         </implementation>
     </binding>
+    
+    
    <binding
         id="unlink-menuitem"
         extends="&systemBindingsDirPath;/menus.xml#doc-main-menu-menuitem">
@@ -486,6 +570,8 @@
                          button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
                          this.disabled=false;
                          this.collapsed=true; 
+                  } else if (this.documentNode.mode=='edit') {
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.editmode'));
                   } else if (networkChecker.isOffline()) {
                      button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.nonetwork'));
                   } else if (this.doc.isOnlyLocal()) {
@@ -594,9 +680,11 @@ if (this.doc.isLocked()) {
                      this.disabled=true;
                      this.collapsed=true;
                   } else if (docManager.getUserDomainMode()!='advanced') {
-                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unlink.disabled.noadvanced'));
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.noadvanced'));
                      this.disabled=true;
                      this.collapsed=true;
+                  } else if (this.documentNode.mode=='edit') {
+                     button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.editmode'));
                   } else if (networkChecker.isOffline()) {
                      button.setAttribute('tooltiptext',this.translate('document.toolbar.button.unbook.disabled.nonetwork'));
                   } else {
@@ -680,6 +768,8 @@ if (this.doc.isLocked()) {
                     <!-- <xul:dcpPropertiesMenuItem /> -->
                     <xul:menuseparator />
                     <xul:dcpRevertMenuItem />
+                    <xul:dcpPushMenuItem />
+                    <xul:dcpAbortMenuItem />
                     <xul:dcpBookMenuItem />
                     <xul:dcpUnbookMenuItem />
                     <xul:dcpRemoveMenuItem />
@@ -696,19 +786,21 @@ if (this.doc.isLocked()) {
     <content>
         <xul:toolbox id="document-toolbox" flex="1">
             <xul:toolbar anonid="document-toolbar" flex="1">
-                <xul:toolbarbutton class='menuitem-iconic' anonid="familybutton" type="menu" label="Family" >
+                <xul:toolbarbutton class='menuitem-iconic' anonid="familybutton" type="menu" label="Family">
                     <xul:menupopup>
                         <xul:dcpSaveButton />
                         <xul:dcpCancelButton />
                         <xul:dcpEditButton />
                         <xul:spacer flex="1" />
-                    <xul:menuseparator />
-                    <xul:dcpRevertMenuItem />
-                    <xul:dcpBookMenuItem />
-                    <xul:dcpUnbookMenuItem />
-                    <xul:dcpRemoveMenuItem />
-                    <xul:dcpUnlinkMenuItem />
-                    <xul:dcpPropertiesMenuItem />
+                        <xul:menuseparator />
+                        <xul:dcpAbortMenuItem />
+                        <xul:dcpRevertMenuItem />
+                        <xul:dcpPushMenuItem />
+                        <xul:dcpBookMenuItem />
+                        <xul:dcpUnbookMenuItem />
+                        <xul:dcpRemoveMenuItem />
+                        <xul:dcpUnlinkMenuItem />
+                        <xul:dcpPropertiesMenuItem />
                     </xul:menupopup>
                 </xul:toolbarbutton>
                 <xul:dcpChangeStateMenu mode="view" />
