@@ -39,30 +39,31 @@
 <!ENTITY main.domain.choose             "Choose your domain">
 
 <!-- synchronize -->
-<!ENTITY synchronize.dialogTitle        "Synchronisation">
-<!ENTITY synchronize.cancel             "Cancel">
-<!ENTITY synchronize.synchronize        "Synchronise">
-<!ENTITY synchro.progress               "Progress">
-<!ENTITY synchro.progressGlobal         "Global">
-<!ENTITY synchro.progressDetail         "Detail">
-<!ENTITY synchro.progressMessages       "Messages">
-<!ENTITY synchro.domain                 "Domain">
-<!ENTITY synchro.detail                 "Details">
-<!ENTITY synchro.documents.record       "Documents : to be recorded">
-<!ENTITY synchro.documents.recorded     "Documents : done">
-<!ENTITY synchro.files.record           "Files : to be recorded">
-<!ENTITY synchro.files.recorded         "Files : done">
-<!ENTITY synchro.documents.save         "Documents : to be loaded">
-<!ENTITY synchro.documents.saved        "Documents : done">
-<!ENTITY synchro.files.save             "Files : to be loaded">
-<!ENTITY synchro.files.saved            "Files : done">
-<!ENTITY synchro.client.server          "Upload (from client to the server)">
-<!ENTITY synchro.server.client          "Dowload (from server to the client)">
-<!ENTITY synchro.progress               "Progress">
-<!ENTITY synchro.status                 "status">
-<!ENTITY synchronize.report             "report">
-<!ENTITY synchro.result                 "result">
-<!ENTITY synchro.accessOnlineSpace      "Access online space">
+<!ENTITY synchronize.dialogTitle                "Synchronisation">
+<!ENTITY synchronize.cancel                     "Cancel">
+<!ENTITY synchronize.synchronize                "Synchronise">
+<!ENTITY synchro.progress                       "Progress">
+<!ENTITY synchro.progressGlobal                 "Global">
+<!ENTITY synchro.progressDetail                 "Detail">
+<!ENTITY synchro.progressMessages               "Messages">
+<!ENTITY synchro.domain                         "Domain">
+<!ENTITY synchro.detail                         "Details">
+<!ENTITY synchro.documents.record               "Documents : to be recorded">
+<!ENTITY synchro.documents.recorded             "Documents : done">
+<!ENTITY synchro.files.record                   "Files : to be recorded">
+<!ENTITY synchro.files.recorded                 "Files : done">
+<!ENTITY synchro.documents.save                 "Documents : to be loaded">
+<!ENTITY synchro.documents.saved                "Documents : done">
+<!ENTITY synchro.files.save                     "Files : to be loaded">
+<!ENTITY synchro.files.saved                    "Files : done">
+<!ENTITY synchro.client.server                  "Upload (from client to the server)">
+<!ENTITY synchro.server.client                  "Dowload (from server to the client)">
+<!ENTITY synchro.progress                       "Progress">
+<!ENTITY synchro.status                         "status">
+<!ENTITY synchronize.report                     "report">
+<!ENTITY synchro.result                         "result">
+<!ENTITY synchro.accessOnlineSpace              "Access online space">
+<!ENTITY synchro.details.splitter.tooltiptext   "Show/hide counters">
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle         "Preferences">

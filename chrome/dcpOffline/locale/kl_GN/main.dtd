@@ -63,6 +63,7 @@
 <!ENTITY synchronize.report                     "synchronize.report">
 <!ENTITY synchro.result                         "synchro.result">
 <!ENTITY synchro.accessOnlineSpace              "synchro.accessOnlineSpace">
+<!ENTITY synchro.details.splitter.tooltiptext   "synchro.details.splitter.tooltiptext">
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle                 "preference.dialogTitle">

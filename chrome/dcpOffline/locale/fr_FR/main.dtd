@@ -39,30 +39,31 @@
 <!ENTITY main.domain.choose                     "Choix du domaine">
 
 <!-- synchronize -->
-<!ENTITY synchronize.dialogTitle         "Synchronisation du domaine">
-<!ENTITY synchronize.cancel              "Annuler">
-<!ENTITY synchronize.synchronize         "Synchroniser">
-<!ENTITY synchro.progress                "Avancement">
-<!ENTITY synchro.progressGlobal          "global">
-<!ENTITY synchro.progressDetail          "détail">
-<!ENTITY synchro.progressMessages        "Messages de la synchronisation">
-<!ENTITY synchro.domain                  "Domaine de synchronisation">
-<!ENTITY synchro.detail                  "Détails">
-<!ENTITY synchro.documents.record        "documents à enregistrer">
-<!ENTITY synchro.documents.recorded      "documents enregistrés">
-<!ENTITY synchro.files.record            "fichiers à enregistrer">
-<!ENTITY synchro.files.recorded          "fichiers enregistrés">
-<!ENTITY synchro.documents.save          "documents à récupérer">
-<!ENTITY synchro.documents.saved         "documents récupérés">
-<!ENTITY synchro.files.save              "fichiers à récupérer">
-<!ENTITY synchro.files.saved             "fichiers récupérés">
-<!ENTITY synchro.client.server           "Téléversement (local vers serveur)">
-<!ENTITY synchro.server.client           "Téléchargement (serveur vers local)">
-<!ENTITY synchro.progress                "progression">
-<!ENTITY synchro.status                  "statut">
-<!ENTITY synchronize.report              "rapport">
-<!ENTITY synchro.result                  "résultat">
-<!ENTITY synchro.accessOnlineSpace       "Accéder à mon espace en ligne">
+<!ENTITY synchronize.dialogTitle                "Synchronisation du domaine">
+<!ENTITY synchronize.cancel                     "Annuler">
+<!ENTITY synchronize.synchronize                "Synchroniser">
+<!ENTITY synchro.progress                       "Avancement">
+<!ENTITY synchro.progressGlobal                 "global">
+<!ENTITY synchro.progressDetail                 "détail">
+<!ENTITY synchro.progressMessages               "Messages de la synchronisation">
+<!ENTITY synchro.domain                         "Domaine de synchronisation">
+<!ENTITY synchro.detail                         "Détails">
+<!ENTITY synchro.documents.record               "documents à enregistrer">
+<!ENTITY synchro.documents.recorded             "documents enregistrés">
+<!ENTITY synchro.files.record                   "fichiers à enregistrer">
+<!ENTITY synchro.files.recorded                 "fichiers enregistrés">
+<!ENTITY synchro.documents.save                 "documents à récupérer">
+<!ENTITY synchro.documents.saved                "documents récupérés">
+<!ENTITY synchro.files.save                     "fichiers à récupérer">
+<!ENTITY synchro.files.saved                    "fichiers récupérés">
+<!ENTITY synchro.client.server                  "Téléversement (local vers serveur)">
+<!ENTITY synchro.server.client                  "Téléchargement (serveur vers local)">
+<!ENTITY synchro.progress                       "progression">
+<!ENTITY synchro.status                         "statut">
+<!ENTITY synchronize.report                     "rapport">
+<!ENTITY synchro.result                         "résultat">
+<!ENTITY synchro.accessOnlineSpace              "Accéder à mon espace en ligne">
+<!ENTITY synchro.details.splitter.tooltiptext   "Afficher/masquer les compteurs de synchro">
 
 <!-- preference -->
 <!ENTITY preference.dialogTitle                 "Préférences">
