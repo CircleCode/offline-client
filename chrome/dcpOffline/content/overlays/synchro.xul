@@ -35,8 +35,11 @@
             <caption> 
                 <label value="&synchro.progressMessages;"/>
             </caption>
-            <textbox id="progressMessages" multiline="true" rows="10" value="" flex="1" disabled="true"/>
+            <textbox id="progressMessages" multiline="true" rows="10" cols="80" value="" disabled="true"/>
         </groupbox>
+        <splitter id="synchro-details-splitter" collapse="after" state="collapsed" persist="state" tooltiptext="&synchro.details.splitter.tooltiptext;" oncommand="window.sizeToContent()">
+            <grippy />
+        </splitter>
         <groupbox>
             <caption> 
                 <label value="&synchro.detail;"/>
