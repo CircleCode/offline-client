@@ -1,11 +1,11 @@
 <!ENTITY preference.dialogTitle               "Preferences">
 
-<!ENTITY preference.userPref                  "User's preferences">
+<!ENTITY preference.userPref                  "User">
 <!ENTITY dcpoffline.url.data                  "Server URL (data)">
 <!ENTITY dcpoffline.url.browser               "Server URL (browser)">
 <!ENTITY offline.user.locale                  "Language">
 
-<!ENTITY preference.applicationPref           "Application's preferences">
+<!ENTITY preference.applicationPref           "Application">
 <!ENTITY offline.application.modeOffline      "Offline ?">
 <!ENTITY offline.application.rememberLogin    "Remember login ?">
 <!ENTITY offline.application.autoLogin        "Auto login ?">
