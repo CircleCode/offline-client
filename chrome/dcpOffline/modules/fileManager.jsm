@@ -169,7 +169,7 @@ var fileManager = {
             if (config.onlyDocument) {
                 r = storageManager
                 .execQuery({
-                    query : 'select files.* from files, docsbydomain where files.initid=:initid and docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and recorddate < modifydate',
+                    query : "select files.* from files, docsbydomain where files.initid=:initid and docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and (recorddate < modifydate or serverid='newFile')",
                     params : {
                         domainid : domainId,
                         initid : config.onlyDocument
@@ -179,7 +179,7 @@ var fileManager = {
                 // all documents
                 r = storageManager
                 .execQuery({
-                    query : 'select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and recorddate < modifydate',
+                    query : "select files.* from files, docsbydomain where docsbydomain.initid = files.initid and docsbydomain.domainid=:domainid and docsbydomain.editable=1 and recorddate is not null and (recorddate < modifydate or serverid='newFile')",
                     params : {
                         domainid : domainId
                     }
