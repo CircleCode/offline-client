@@ -421,7 +421,7 @@ var fileManager = {
                         // me.filesToDownLoad.pop();
                         // refreshProgressBar()
                         if (typeof me.acquitFileCallback == "function")
-                            me.acquitFileCallback();
+                            me.acquitFileCallback(me);
 
                         logConsole("file in queue: "
                                 + me.filesToDownLoad.length);

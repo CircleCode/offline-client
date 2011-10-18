@@ -230,7 +230,6 @@ offlineSynchronize.prototype.recordFamilies = function(config) {
 };
 
 offlineSynchronize.prototype.recordFamiliesBinding = function(config) {
-
     if (config && config.domain) {
         this.callObserver('onDetailLabel',"retrieve families interfaces");
         var domain = config.domain;
@@ -532,11 +531,13 @@ offlineSynchronize.prototype.recordFiles = function(config) {
         if (this.filesToDownload.length > 0) {
             var me = this;
             this.recordFilesInProgress = true;
-
+            var filesLength=this.filesToDownload.length;
             fileManager.downloadFiles({
                 files : this.filesToDownload,
-                acquitFileCallback : function() {
+                acquitFileCallback : function(fm) {
                     me.callObserver('onAddFilesRecorded', 1);
+                    me.callObserver('onDetailLabel',fm.filesToDownLoad.length+'/'+filesLength);
+                    me.callObserver('onDetailPercent', (filesLength - fm.filesToDownLoad.length) / filesLength * 100);
                 },
                 completeFileCallback : function() {
                     //logConsole('end files', this.filesToDownload);
@@ -578,7 +579,7 @@ offlineSynchronize.prototype.updateDomainSyncDate = function(config) {
     if (config && config.domain) {
         var domain = config.domain;
         if (! this.pullBeginDate) this.pullBeginDate=new Date();
-        var syncDate=this.pullBeginDate.toISOString();
+        var syncDate=utils.toIso8601(this.pullBeginDate);
         storageManager
                 .execQuery({
                     query : "update domains set lastsyncremote=:pulldate where id=:domainid",
@@ -659,7 +660,6 @@ offlineSynchronize.prototype.retrieveReport = function(config) {
             dirname : "Logs",
             basename : reportFile.leafName
         });
-        
     } else {
         throw new ArgException("retrieveReport need domain parameter");
     }
@@ -878,7 +878,8 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
             this.callObserver('onDetailPercent', (j + 1) / userd.length * 100);
         }
         this.callObserver('onGlobalPercent', 90);
-        
+
+        this.retrieveReport({domain:domain});
         /*
          * storageManager .execQuery({ query : "insert into synchrotimes
          * (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid ,
@@ -886,7 +887,6 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
          * clientDate : clientDate, serverDate : serverDate } });
          */
         this.recordFiles({domain:domain});
-        this.retrieveReport({domain:domain});
         this.deleteDocuments({origin:'user', domain:domain, deleteList:domain.sync().getUserDocumentsToDelete()});
         storageManager.lockDatabase({
             lock : false

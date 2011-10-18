@@ -67,6 +67,27 @@ function openAbout() {
     "chrome,modal");
 }
 
+function openLocalExternal(aFile) {
+    var uri = Components.classes["@mozilla.org/network/io-service;1"].getService(
+            Components.interfaces.nsIIOService).newFileURI(aFile);
+
+    var protocolSvc = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+            .getService(Components.interfaces.nsIExternalProtocolService);
+    protocolSvc.loadUrl(uri);
+
+    return;
+}
+
+function openLocalFile(localFile) {
+    try {
+        localFile.launch();
+    } catch (ex) {
+        // if launch fails, try sending it through the system's external
+        // file: URL handler
+        openLocalExternal(localFile);
+        
+    }
+}
 function openSynchroReport(domainName){
     if(!domainName){
         var domainId = getCurrentDomain();
@@ -88,9 +109,8 @@ function openSynchroReport(domainName){
             .get("ProfD", Components.interfaces.nsILocalFile);
     reportFile.append('Logs');
     reportFile.append('report-' + domainName + '.html');
-
     if(reportFile.exists()){
-        reportFile.launch();
+        openLocalFile(reportFile);
     } else {
         logIHM("openSynchroReport : report file does not exists: " + reportFile.path);
     };
