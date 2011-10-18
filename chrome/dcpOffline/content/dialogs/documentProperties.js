@@ -36,7 +36,7 @@ function doLoad() {
         var serverUrl = Preferences.get('dcpoffline.url.browser');
         if (serverUrl) {
             var documentUrl = serverUrl
-                    + "?app=FDL&action=OPENDOC&&mode=view&referer=dcpoffline&id="
+                    + "?app=FDL&action=OPENDOC&latest=Y&mode=view&referer=dcpoffline&id="
                     + localDocument.getInitid();
             serverLink.value = serverUrl;
             serverLink.href = documentUrl;
