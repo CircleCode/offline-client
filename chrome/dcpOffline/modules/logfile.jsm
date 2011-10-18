@@ -32,7 +32,7 @@ logFileSingleton.prototype = {
                         Components.interfaces.nsIFile.DIRECTORY_TYPE, 0750);
             }
             var now = new Date();
-            this.logDailyFile.append("trace-" + now.toISOString() + ".log");
+            this.logDailyFile.append("trace-" + utils.DateToIso8601(now)+ ".log");
         }
         return this.logDailyFile;
     },
