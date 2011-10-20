@@ -16,7 +16,7 @@
 <!ENTITY authent.password            "Mot de passe">
 <!ENTITY authent.login.option        "Options">
 <!ENTITY authent.applicationURL      "URL du serveur Dynacase">
-<!ENTITY authent.remember.login.mdp  "Mémoriser les information de connexion">
+<!ENTITY authent.remember.login.mdp  "Mémoriser les informations de connexion">
 <!ENTITY authent.dialog              "login">
 <!ENTITY authent.login.progress      "Connexion en cours...">
 <!ENTITY authent.work.offline        "Fonctionnement en mode déconnecté">

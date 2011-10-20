@@ -863,36 +863,38 @@ offlineSynchronize.prototype.pullDocuments = function(config) {
             //until : this.getDomainSyncDate({domain:config.domain})
             stillRecorded:this.getRecordedDocuments({domain:domain,origin:'user'})
         });
+        if (userd) {
+            this.callObserver('onGlobalPercent', 60);
+            this.callObserver('onDetailLabel', 'recording user documents : '
+                    + userd.length);
+            logConsole('pull users : ' + userd.length);
+            for (j = 0; j < userd.length; j++) {
+                onedoc = userd.getDocument(j);
+                this.recordDocument({
+                    domain : domain,
+                    document : onedoc
+                });
+                this.log('pull from user :' + onedoc.getTitle());
+                this.callObserver('onDetailPercent', (j + 1) / userd.length * 100);
+            }
+            this.callObserver('onGlobalPercent', 90);
 
-        this.callObserver('onGlobalPercent', 60);
-        this.callObserver('onDetailLabel', 'recording user documents : '
-                + userd.length);
-        logConsole('pull users : ' + userd.length);
-        for (j = 0; j < userd.length; j++) {
-            onedoc = userd.getDocument(j);
-            this.recordDocument({
-                domain : domain,
-                document : onedoc
+            this.retrieveReport({domain:domain});
+            /*
+             * storageManager .execQuery({ query : "insert into synchrotimes
+             * (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid ,
+             * :serverDate, :clientDate , :clientDate from documents", params : {
+             * clientDate : clientDate, serverDate : serverDate } });
+             */
+            this.recordFiles({domain:domain});
+            this.deleteDocuments({origin:'user', domain:domain, deleteList:domain.sync().getUserDocumentsToDelete()});
+            storageManager.lockDatabase({
+                lock : false
             });
-            this.log('pull from user :' + onedoc.getTitle());
-            this.callObserver('onDetailPercent', (j + 1) / userd.length * 100);
+            // logConsole('synchrotimes : ', this.filesToDownload);
+        } else {
+            throw new SyncException("pull documents failed");
         }
-        this.callObserver('onGlobalPercent', 90);
-
-        this.retrieveReport({domain:domain});
-        /*
-         * storageManager .execQuery({ query : "insert into synchrotimes
-         * (initid, lastsyncremote, lastsynclocal, lastsavelocal) select initid ,
-         * :serverDate, :clientDate , :clientDate from documents", params : {
-         * clientDate : clientDate, serverDate : serverDate } });
-         */
-        this.recordFiles({domain:domain});
-        this.deleteDocuments({origin:'user', domain:domain, deleteList:domain.sync().getUserDocumentsToDelete()});
-        storageManager.lockDatabase({
-            lock : false
-        });
-        // logConsole('synchrotimes : ', this.filesToDownload);
-
         this.callObserver('onGlobalPercent', 100);
     } else {
         throw new ArgException("pullDocuments need domain parameter");

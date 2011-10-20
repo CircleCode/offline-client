@@ -26,7 +26,11 @@ function initDialog() {
 
     if (result.description.message) {
         document.getElementById("message").hidden = false;
-        document.getElementById("message").value = result.description.message;
+        try {
+            document.getElementById("message").value = result.description.toString();
+        } catch (e) {
+            document.getElementById("message").value = result.description.message;
+        }
     }
 }
 
