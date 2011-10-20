@@ -4,3 +4,4 @@
 <!ENTITY  attribute.image.button.delete                     "Delete">
 <!ENTITY  attribute.enum.empty                              "Unset">
 <!ENTITY  attribute.enum.multiple.button.clear.selection    "Clean">
+<!ENTITY  attribute.docid.noDocumentSet                     "Value not set">

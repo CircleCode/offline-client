@@ -39,7 +39,7 @@
                             anonid="choose"
                             value=""
                             class="dcpChooseDocid"
-                            label="choose document" />
+                            label="&attribute.docid.noDocumentSet;" />
                     </xul:menupopup>
                 </xul:menulist>
             </xul:hbox>
@@ -47,6 +47,23 @@
 
         <implementation>
 
+            <constructor><![CDATA[
+                    var ml=this.getChild('choose');
+                    if (ml) {
+                        var relFamId=this.getAttribute('relationFamily');
+                        if (relFamId) {
+                            /*
+                            var fTitle=docManager.getFamilyTitle({name:relFamId});
+                            if (fTitle && fTitle != 'no family title') {
+                                var translate = new StringBundle(
+                                        "chrome://dcpoffline/locale/bindings/leaf-attributes-binding.properties");
+                                var message = translate.get('attr.docid.choose', [fTitle]);
+                                ml.setAttribute('label', message);
+                            }
+                */
+                        }
+                    }
+            ]]></constructor>
             <field name="inputField"><![CDATA[
                 this.getChild('displayValue');
             ]]></field>

@@ -23,7 +23,7 @@ docManagerSingleton.prototype = {
     /**
      * @access private
      * @param config
-     * @returns
+     * @return
      */
     dropDomain : function(config) {
         if (config && config.domain) {
@@ -36,7 +36,7 @@ docManagerSingleton.prototype = {
     /**
      * @access private
      * @param config
-     * @returns
+     * @return
      */
     initDomain : function(config) {
         if (config && config.domain) {
@@ -279,7 +279,7 @@ docManagerSingleton.prototype = {
     /**
      * @access private
      * @param config
-     * @returns
+     * @return
      */
     initDocInstance : function(config) {
         if (config) {
@@ -309,7 +309,7 @@ docManagerSingleton.prototype = {
     /**
      * @access private
      * @param config
-     * @returns
+     * @return
      */
     dropDocInstance : function(config) {
         if (config && config.initid) {

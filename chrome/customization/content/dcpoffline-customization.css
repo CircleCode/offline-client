@@ -1,0 +1,71 @@
+
+    
+dcpDocument { 
+    margin:5px;   
+    padding:0px;
+    border-radius:5px;
+    box-shadow:1px 1px 5px #999, -1px -1px 5px #999;
+}
+dcpDocument > dcpDocMenu {
+    border:0px;
+    border-radius:5px;
+}
+dcpDocument > dcpDocHeader {
+    margin: 0px 0px 5px 0px;
+    padding: 5px;
+    border-top: 1px solid #AAA;
+    -moz-box-shadow: 0px 5px 5px #AAA;
+    background: -moz-linear-gradient(270deg,#FCFCFC,#ECECEC); 
+}
+dcpDocument > dcpDocHeader .header-text {
+    border-bottom-width:0px;
+}
+
+dcpDocument > dcpAttribute, dcpDocument > tabbox {
+    margin:5px;
+}
+.document-header image { height:20px; width:20px;  }
+.document-title {    
+    font-size:1.2em;
+    color:#555;
+    text-shadow:1px 1px 0px #fff;
+}
+.document-state {
+    font-size:0.9em;
+    color:#666;
+}
+
+
+ 
+.dcpFrame > .dcpLabel {
+  border-bottom : 1px solid #888;
+  text-shadow:1px 1px 0px #FFF;
+  color:#222;
+  width:100%;
+}
+
+/* array */
+dcpAttribute[type="array"]  .groupbox-title {
+    color:#222;
+    font-weight: normal;
+}
+dcpAttribute[type="array"]  .groupbox-body {
+    background-color : transparent;
+    border-width:1px;
+    border-style:solid;
+    border-color:#DDD #BBB #BBB #DDD;
+    padding:0px;
+}
+dcpAttribute[type="array"]  dcpAttribute {
+    border-bottom:1px solid #DDD;
+    min-height:0px;
+}
+dcpAttribute[type="array"] label {
+    padding:2px 0px 0px 2px;
+    margin:0px;
+}
+dcpAttribute[type="array"] label.header {
+    font-weight: normal;
+    color:#222;
+    text-align:left;
+}
