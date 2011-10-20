@@ -227,6 +227,7 @@ var fileManager = {
 
     /**
      * update modifydate from files
+     * @return boolean true if at least one touch is done
      */
     updateModificationDates : function(initid) {
         var r = storageManager.execQuery({
@@ -241,12 +242,11 @@ var fileManager = {
         var file = Components.classes["@mozilla.org/file/local;1"]
                 .createInstance(Components.interfaces.nsILocalFile);
         var localDoc = null;
-
+        var touches=false;
         for ( var i = 0; i < r.length; i++) {
             file.initWithPath(r[i].path);
             try {
                 mdate = new Date(file.lastModifiedTime).toISOString();
-
                 if (mdate != r[i].modifydate) {
                     storageManager
                             .execQuery({
@@ -269,6 +269,7 @@ var fileManager = {
                     // logConsole('doclocal', localDoc);
                     try {
                         localDoc.touch(new Date(file.lastModifiedTime));
+                        touches=true;
                         // localDoc.save(); // to change modification date
                     } catch (e) {
                         // nothing may be not in good domain
@@ -280,6 +281,7 @@ var fileManager = {
                 // logError(e);
             }
         }
+        return touches;
     },
     getFile : function getFile(config) {
         if (config && config.initid && config.attrid) {

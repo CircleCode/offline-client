@@ -485,10 +485,6 @@
                      button.disabled = true;
                      this.disabled=true;
                      button.setAttribute('tooltiptext',this.translate('document.toolbar.button.push.disabled.nonetwork'));
-                  } else if (this.doc.isOnlyLocal()) {
-                         button.disabled = true;
-                         this.disabled=true;
-                         button.setAttribute('tooltiptext',this.translate('document.toolbar.button.push.disabled.onlylocal'));
                   } 
              ]]></constructor>
         </implementation>

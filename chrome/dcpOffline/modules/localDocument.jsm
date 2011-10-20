@@ -348,19 +348,27 @@ localDocument.prototype = {
         },
         /*
          * check if the document has been modified and saved since its last synchro
+         * @param boolean config.reset : true to force re-inspection
          */
-        isModified : function(){
+        isModified : function(config){
+            if (config && config.reset) this._modified=null;
             if(this._modified === null){
-                var r = storageManager.execQuery({
-                    query : 'SELECT (lastsynclocal < lastsavelocal) as "modified"'
+                Components.utils.import("resource://modules/fileManager.jsm");
+                if (fileManager.updateModificationDates(this._initid)) {
+                    this._modified = true;
+                    logConsole('send postStoreDocument document');
+                } else {
+                    var r = storageManager.execQuery({
+                        query : 'SELECT (lastsynclocal < lastsavelocal) as "modified"'
                             + ' FROM synchrotimes'
                             + ' WHERE initid = :initid',
-                    params : {
-                        initid: this._initid
+                            params : {
+                                initid: this._initid
+                            }
+                    });
+                    if (r.length > 0) {
+                        this._modified =  (r[0].modified)?true:false;
                     }
-                });
-                if (r.length > 0) {
-                   this._modified =  (r[0].modified)?true:false;
                 }
             }
             return this._modified;
@@ -637,6 +645,7 @@ localDocument.prototype = {
                                 initid : that._initid
                             }
                         });
+                        applicationEvent.publish('postStoreDocument', {documentId: that.getInitid()});
                     }
                 }
             });

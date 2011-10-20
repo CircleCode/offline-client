@@ -536,7 +536,7 @@ offlineSynchronize.prototype.recordFiles = function(config) {
                 files : this.filesToDownload,
                 acquitFileCallback : function(fm) {
                     me.callObserver('onAddFilesRecorded', 1);
-                    me.callObserver('onDetailLabel',fm.filesToDownLoad.length+'/'+filesLength);
+                   // me.callObserver('onDetailLabel',fm.filesToDownLoad.length+'/'+filesLength);
                     me.callObserver('onDetailPercent', (filesLength - fm.filesToDownLoad.length) / filesLength * 100);
                 },
                 completeFileCallback : function() {

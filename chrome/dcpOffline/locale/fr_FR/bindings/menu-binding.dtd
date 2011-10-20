@@ -15,9 +15,9 @@
 <!ENTITY document.toolbar.button.advanced.tooltip          "Avancé">
 <!ENTITY document.toolbar.button.properties                "Propriétés">
 <!ENTITY document.toolbar.button.properties.tooltip        "Propriétés">
-<!ENTITY document.toolbar.button.revert                    "Synchroniser &lt;">
+<!ENTITY document.toolbar.button.revert                    "Synchroniser &#x2190;">
 <!ENTITY document.toolbar.button.revert.tooltip            "Récupérer le document depuis l'application">
-<!ENTITY document.toolbar.button.push                      "Synchroniser &gt;">
+<!ENTITY document.toolbar.button.push                      "Synchroniser &#x2192;">
 <!ENTITY document.toolbar.button.push.tooltip              "Envoyer le document local vers l'application">
 <!ENTITY document.toolbar.button.close                     "Fermer">
 <!ENTITY document.toolbar.button.close.tooltip             "Fermer">
