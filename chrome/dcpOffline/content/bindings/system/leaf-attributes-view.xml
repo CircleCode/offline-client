@@ -88,6 +88,13 @@
             </xul:hbox>
         </content>
         <implementation>
+            <method name="getDisplayValue">
+                <body><![CDATA[
+                    var s=this.getValue();
+                    if (s && this.index !== undefined) s=s.replace(/<BR>/g,"\n");
+                    return s;
+                ]]></body>
+            </method>
         </implementation>
     </binding>
     <binding
