@@ -208,7 +208,7 @@ dcpAttribute[type=docid] grid .dcpSeparator {
     visibility: collapse;
 }
 
-column .header{
+column .header, row .header{
     -moz-appearance: treeheadercell;
     -moz-box-align: center;
     text-align: center;

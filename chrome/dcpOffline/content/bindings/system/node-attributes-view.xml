@@ -84,30 +84,43 @@
                 
                 var tbody=this.getChild('tableBody');
                 var cn=this.childNodes; // these should be the attributes(ie: the columns)
-                
+
+
+                var arrayRowLength=0;
+                var headerRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+
                 for(var i = 0; i < cn.length; i++){
+
                     var currentColumn = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "column");
                     var columnFlex = cn[i].getAttribute('flex');
-                    currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
-                     
+
                     var clabel = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "label");
                     clabel.setAttribute('value', cn[i].getAttribute('label'));
                     clabel.setAttribute('tooltiptext', cn[i].getAttribute('label'));
                     clabel.setAttribute('visibility', cn[i].getAttribute('visibility'));
                     clabel.classList.add('header');
                     clabel.classList.add('plain');
-                    currentColumn.appendChild(clabel);
-                    
-                    var values=this.doc.getValue(cn[i].getAttribute('attrid'));
-                    var nbRow=values.length;
-                    for (var r=0;r<nbRow; r++) {
-                        var currentAttribute = cn[i].cloneNode(true);
-                        //currentAttribute.classList.add('body');
-                        currentAttribute.setAttribute('index', r);
-                        
-                        currentColumn.appendChild(currentAttribute);
-                    }
+                    headerRow.appendChild(clabel);
+                    arrayRowLength= Math.max(arrayRowLength, this.doc.getValue(cn[i].getAttribute('attrid')).length);
+
+
+                    currentColumn.setAttribute('flex', columnFlex?columnFlex:1);
                     this.getChild('columns').appendChild(currentColumn);
+                }
+                this.getChild('rows').appendChild(headerRow);
+
+
+                for(var i = 0; i < arrayRowLength; i++){
+                    var currentRow = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "row");
+
+                    for(var r = 0; r < cn.length; r++){
+                        var currentAttribute = cn[r].cloneNode(true);
+                        //currentAttribute.classList.add('body');
+                        currentAttribute.setAttribute('index', i);
+                        
+                        currentRow.appendChild(currentAttribute);
+                    }
+                    this.getChild('rows').appendChild(currentRow);
                 }
                 
             ]]></constructor>
