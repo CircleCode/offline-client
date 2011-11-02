@@ -133,6 +133,14 @@
                 <body><![CDATA[return true;]]></body>
             </method>
 
+            <method name="onBeforeLocalRemove">
+                <body><![CDATA[return true;]]></body>
+            </method>
+
+            <method name="onAfterLocalRemove">
+                <body><![CDATA[return true;]]></body>
+            </method>
+
             <method name="save">
                 <body><![CDATA[
                     try {
@@ -179,7 +187,10 @@
                                 .getService(Components.interfaces.nsIPromptService)
                                 .confirm(null, msgTitle, msgText);
                         if(wantDelete){
-                            this.doc.remove(); 
+                            this.onBeforeLocalRemove();
+                            this.doc.remove();
+                            this.onAfterLocalRemove();
+
                             var param = {
                                 documentId : this.initid
                             };
@@ -188,7 +199,7 @@
                         }
                     } catch(e) {
                         logError(e, "error on document ["+this.initid+"] save");
-                        alert('(FIXME) ' + e);
+                        alert(e);
                     }
                 ]]></body>
             </method>
