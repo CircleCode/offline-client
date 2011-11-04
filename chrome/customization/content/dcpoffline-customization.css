@@ -56,7 +56,7 @@ dcpAttribute[type="array"]  .groupbox-body {
     border-color:#DDD #BBB #BBB #DDD;
     padding:0px;
 }
-dcpAttribute[type="array"]  dcpAttribute {
+dcpAttribute[type="array"]  row {
     border-bottom:1px solid #DDD;
     min-height:0px;
 }
@@ -69,3 +69,4 @@ dcpAttribute[type="array"] label.header {
     color:#222;
     text-align:left;
 }
+
