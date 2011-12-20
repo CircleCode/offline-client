@@ -358,7 +358,13 @@ var storageManager = {
                         if(!dbCon.tableExists(TABLES_DOCUMENTS)){
                             throw "table "+TABLES_DOCUMENTS+" does not exists";
                         }
-                        dbCon.beginTransactionAs(dbCon.TRANSACTION_EXCLUSIVE);
+                        // FIXME: transaction should be reintroduced
+                        // with attempts until
+                        // - success
+                        // - a limit is reached
+                        // in addition, all synchronous statements have to be embraced in explicit transactions
+                        // to allow the use of mozIStorageConnection.transactionInProgress
+                        //dbCon.beginTransactionAs(dbCon.TRANSACTION_EXCLUSIVE);
                         try{
                             for each (let columnToAdd in columnsToAdd){
                                 try{
@@ -370,16 +376,20 @@ var storageManager = {
                                     throw(e);
                                 }
                             }
-                            dbCon.commitTransaction();
+                            // FIXME: transaction should be reintroduced (see above)
+                            //dbCon.commitTransaction();
                         }
                         catch(e){
-                            dbCon.rollbackTransaction();
+                            // FIXME: transaction should be reintroduced (see above)
+                            //dbCon.rollbackTransaction();
                             logError('storageManager::initFamilyView (transaction aborted)');
                             logError(e);
                             throw(e);
                         }
                     } catch(e){
-                        logError('storageManager::initFamilyView (could not create an exclusive transaction)');
+                        // FIXME: transaction should be reintroduced (see above)
+                        //logError('storageManager::initFamilyView (could not create an exclusive transaction)');
+                        logError('storageManager::initFamilyView an error occured during columns addition. The database may have been corrupted');
                         logError(e);
                         throw(e);
                     }
